@@ -1,8 +1,4 @@
  Command line instructions
-Git global setup
-`
-git config --global user.name "James Adey"
-git config --global user.email "jxa627@cs.bham.ac.uk"
 `
 Create a new repository
 `
