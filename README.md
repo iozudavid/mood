@@ -1,5 +1,5 @@
  Command line instructions
-`
+
 Create a new repository
 `
 git clone https://git-teaching.cs.bham.ac.uk/mod-team-proj-2017/knightlore.git
