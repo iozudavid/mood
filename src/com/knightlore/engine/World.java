@@ -1,0 +1,217 @@
+package com.knightlore.engine;
+
+import java.awt.Color;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.ListIterator;
+
+import com.knightlore.game.Map;
+import com.knightlore.render.Camera;
+import com.knightlore.render.Renderable;
+import com.knightlore.render.Screen;
+import com.knightlore.render.sprite.Texture;
+
+public class World implements Renderable {
+
+	private Map map;
+
+	private long ticker;
+	private List<Entity> entities;
+
+	private Camera camera;
+
+	public World() {
+		map = new Map(); // TODO: let this be a parameter
+		entities = new ArrayList<Entity>();
+		camera = new Camera(4.5, 4.5, 1, 0, 0, Camera.FIELD_OF_VIEW, map);
+	}
+
+	@Override
+	public void render(Screen screen, int x, int y) {
+
+		int[][] mapArr = map.getMapArray();
+		final int width = screen.getWidth();
+		final int height = screen.getHeight();
+
+		drawFloorAndSky(screen);
+
+		final int BLOCKINESS = 8; // how 'old school' you want to look.
+		final int FOG = 25; // fog?
+
+		for (int xx = 0; xx < width; xx = xx += BLOCKINESS) {
+
+			// Calculate direction of the ray based on camera direction.
+			double cameraX = 2 * xx / (double) (width) - 1;
+			double rayX = camera.getxDir() + camera.getxPlane() * cameraX;
+			double rayY = camera.getyDir() + camera.getyPlane() * cameraX;
+
+			// Round the camera position to the nearest map cell.
+			int mapX = (int) camera.getxPos();
+			int mapY = (int) camera.getyPos();
+
+			double sideDistX;
+			double sideDistY;
+
+			// Length of ray from one side to next in map
+			double deltaDistX = Math.sqrt(1 + (rayY * rayY) / (rayX * rayX));
+			double deltaDistY = Math.sqrt(1 + (rayX * rayX) / (rayY * rayY));
+
+			double distanceToWall;
+
+			boolean hit = false;
+			boolean side = false; // wall facing x-direction vs y-direction?
+
+			// find x and y components of the ray vector.
+			int stepX, stepY;
+			if (rayX < 0) {
+				stepX = -1;
+				sideDistX = (camera.getxPos() - mapX) * deltaDistX;
+			} else {
+				stepX = 1;
+				sideDistX = (mapX + 1.0 - camera.getxPos()) * deltaDistX;
+			}
+
+			if (rayY < 0) {
+				stepY = -1;
+				sideDistY = (camera.getyPos() - mapY) * deltaDistY;
+			} else {
+				stepY = 1;
+				sideDistY = (mapY + 1.0 - camera.getyPos()) * deltaDistY;
+			}
+
+			// Loop to find where the ray hits a wall
+			while (!hit) {
+
+				// Next cell
+				if (sideDistX < sideDistY) {
+					sideDistX += deltaDistX;
+					mapX += stepX;
+					side = false;
+				} else {
+					sideDistY += deltaDistY;
+					mapY += stepY;
+					side = true;
+				}
+
+				// If this is anything but an empty cell, we've hit a wall
+				if (mapArr[mapX][mapY] > 0)
+					hit = true;
+			}
+
+			// Calculate distance to the point of impact
+			if (!side)
+				distanceToWall = Math.abs((mapX - camera.getxPos() + (1 - stepX) / 2) / rayX);
+			else
+				distanceToWall = Math.abs((mapY - camera.getyPos() + (1 - stepY) / 2) / rayY);
+			// Now calculate the height of the wall based on the distance from
+			// the camera
+			int lineHeight;
+			if (distanceToWall > 0)
+				lineHeight = Math.abs((int) (height / distanceToWall));
+			else
+				lineHeight = height;
+			// calculate lowest and highest pixel to fill in current stripe
+			int drawStart = -lineHeight / 2 + height / 2;
+			if (drawStart < 0)
+				drawStart = 0;
+			int drawEnd = lineHeight / 2 + height / 2;
+			if (drawEnd >= height)
+				drawEnd = height - 1;
+
+			// add a texture
+			double wallX;// Exact position of where wall was hit
+			if (side) {// If its a y-axis wall
+				wallX = (camera.getxPos() + ((mapY - camera.getyPos() + (1 - stepY) / 2) / rayY) * rayX);
+			} else {// X-axis wall
+				wallX = (camera.getyPos() + ((mapX - camera.getxPos() + (1 - stepX) / 2) / rayX) * rayY);
+			}
+			wallX -= Math.floor(wallX);
+
+			// What pixel did we hit the texture on?
+			int texX = (int) (wallX * (Texture.BRICK.getSize()));
+			if (side && rayY < 0)
+				texX = Texture.BRICK.getSize() - texX - 1;
+			if (!side && rayX > 0)
+				texX = Texture.BRICK.getSize() - texX - 1;
+
+			// calculate y coordinate on texture
+			for (int yy = drawStart; yy < drawEnd; yy++) {
+
+				// TODO: only compensates for 16x16 textures here, maybe change?
+				int texY = (((yy * 2 - height + lineHeight) << 4) / lineHeight) / 2;
+
+				int color;
+				if (side)
+					color = (Texture.BRICK.getPixels()[texX + (texY * Texture.BRICK.getSize())] >> 1) & 0x7F7F7F;// Make//
+				else
+					color = Texture.BRICK.getPixels()[texX + (texY * Texture.BRICK.getSize())];
+
+				screen.fillRect(fogDarken(color, distanceToWall, FOG), xx, yy, BLOCKINESS, 1);
+			}
+
+		}
+
+		for (Entity e : entities) {
+			e.render(screen, e.getX(), e.getY());
+		}
+
+	}
+
+	public void tick() {
+
+		garbageCollect();
+
+		camera.tick(ticker);
+
+		for (Entity e : entities) {
+			e.tick(ticker);
+		}
+
+		ticker++;
+	}
+
+	private int fogDarken(int color, double distance, int fog) {
+		Color c = new Color(color);
+		double fogFactor = distance * fog;
+		int red = (int) (Math.max(0, c.getRed() - fogFactor));
+		int green = (int) (Math.max(0, c.getGreen() - fogFactor));
+		int blue = (int) (Math.max(0, c.getBlue() - fogFactor));
+		return new Color(red, green, blue).getRGB();
+	}
+
+	private void drawFloorAndSky(Screen screen) {
+		// Draw the floor.
+		// TODO: better, more modular lighting technique. This is essentially a
+		// hardcoded equation.
+		for (int yy = screen.getHeight() / 2; yy < screen.getHeight(); yy += 1) {
+			for (int xx = 0; xx < screen.getWidth(); xx++) {
+				int n = Math.max(0, Math.min(yy * yy / 5000, 255));
+				Color c = new Color(n, n, n);
+				screen.fillRect(c.getRGB(), xx, yy, 1, 1);
+				screen.fillRect(c.getRGB(), xx, -screen.getHeight() / 2 + yy, 1, 1);
+			}
+		}
+	}
+
+	/**
+	 * Deletes any entities that don't exist any more.
+	 */
+	private void garbageCollect() {
+		ListIterator<Entity> itr = entities.listIterator();
+		while (itr.hasNext()) {
+			Entity e = itr.next();
+			if (!e.exists()) {
+				itr.remove();
+			}
+		}
+	}
+
+	public List<Entity> getEntities() {
+		return entities;
+	}
+
+	public Map getMap() {
+		return map;
+	}
+
+}
