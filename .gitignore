@@ -80,3 +80,7 @@ local.properties
 .cache-main
 .scala_dependencies
 .worksheet
+
+# custom ignores
+.classpath
+.project
