@@ -6,8 +6,18 @@ public class LightOutdoorsEnvironment implements IEnvironment {
 
 	@Override
 	public void renderEnvironment(Screen screen) {
-		screen.fillRect(0x0000ff, 0, 0, screen.getWidth(), screen.getHeight() / 2);
-		screen.fillRect(0x4dbd33, 0, screen.getHeight() / 2, screen.getWidth(), screen.getHeight() / 2);
+
+		final int skyClose = 0x7ec0ee, skyFar = 0xffffff;
+		final int grassClose = 0x00aa0b, grassFar = 0x59FE64;
+
+		for (int yy = 0; yy < screen.getHeight() / 2; yy += 1) {
+			int sky = screen.mixColor(skyClose, skyFar, yy / (double) (screen.getHeight()) / 2);
+			int grass = screen.mixColor(grassFar, grassClose, yy / (double) (screen.getHeight()) / 2);
+			for (int xx = 0; xx < screen.getWidth(); xx++) {
+				screen.fillRect(sky, xx, yy, 1, 1);
+				screen.fillRect(grass, xx, yy + screen.getHeight() / 2, 1, 1);
+			}
+		}
 	}
 
 	@Override
