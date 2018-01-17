@@ -57,7 +57,7 @@ public class Map {
 	public static Map randMap(){
 		Random rand = new Random();
 		int w = 10 + rand.nextInt(20);
-		int h = 10 + rand.nextInt(20);
+		int h = 10 + rand.nextInt(5);
 		Map m = new Map(w,h);
 		
 		// make everything a wall
@@ -85,24 +85,25 @@ public class Map {
 		// make vertical rows of free space
 		for(int j=0; j<h; j++){
 			r = rand.nextInt(100);
-			if (rand.nextInt(100) > 70){
+			if (rand.nextInt(100) > 50){
 				for(int i=0; i<w; i++){
 					m.map[i][j] = 0;
 				}
-			}else if (r > 40){
+			}else if (r > 20){
 				for(int i=0; i<(w/2); i++){
 					m.map[i][j] = 0;
 				}
 			}
 		}
 		
-		m.makeSym();
+		m.makeSymX();
+		m.makeSymY();
 		m.addWalls();
 		return m;
 	}
 	
 	// reflection in x-axis
-	private void makeSym(){
+	private void makeSymX(){
 		int[][] symMap = new int[width][height*2];
 		for(int j=0; j<height; j++){
 			for(int i=0; i<width; i++){
@@ -112,6 +113,38 @@ public class Map {
 		}
 		height = height * 2;
 		map = symMap;
+	}
+	
+	private void makeSymY(){
+		int[][] symMap = new int[width*2][height];
+		for(int i=0; i<width; i++){
+			for(int j=0; j<height; j++){
+				symMap[i][j] = map[i][j];
+				symMap[(width*2 -1) - i][j] = map[i][j];
+			}
+		}
+		width = width * 2;
+		map = symMap;
+	}
+	
+	private static Map joinUpR(Map m1, Map m2){
+		
+		//ensure same height
+		assert(m1.height == m2.height);
+		
+		Map m3 = new Map(m1.width + m2.width, m1.height);
+		
+		for(int i=0; i<m1.height; i++){
+			for(int j=0; j<m1.width; j++){
+				m3.map[i][j] = m1.map[i][j];
+			}
+			for(int k=0; k<m2.width; k++){
+				m3.map[i][m1.width+1+k] = m2.map[i][k];
+			}
+		}
+		
+		return m3;
+		
 	}
 	
 	public String toString(){
@@ -137,6 +170,7 @@ public class Map {
 	//dumb test
 	public static void main(String args[]){
 		Map m = randMap();
+		//m = joinUpR(m,m);
 		System.out.println(m.toString());
 	}
 	
