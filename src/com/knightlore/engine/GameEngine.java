@@ -1,9 +1,9 @@
 package com.knightlore.engine;
 
 import com.knightlore.MainWindow;
-import com.knightlore.input.Keyboard;
 import com.knightlore.input.Mouse;
 import com.knightlore.render.Screen;
+import com.knightlore.render.environment.LightOutdoorsEnvironment;
 
 /**
  * Game engine acting as sort of a 'hub' for each of the individual game
@@ -20,19 +20,19 @@ public class GameEngine implements Runnable {
 
 	private Screen screen;
 	private MainWindow window;
-	
+
 	private World world;
 
 	public GameEngine() {
-		world = new World();
-		
+		world = new World(new LightOutdoorsEnvironment());
+
 		final int w = MainWindow.WIDTH, h = MainWindow.HEIGHT;
 		screen = new Screen(w, h);
 		window = new MainWindow(screen, MainWindow.TITLE, w, h);
 		InitEngine();
 	}
-	
-	private void InitEngine(){
+
+	private void InitEngine() {
 		Input.init();
 		setupKeyboard();
 		setupMouse();

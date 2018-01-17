@@ -9,6 +9,7 @@ import com.knightlore.game.Map;
 import com.knightlore.render.Camera;
 import com.knightlore.render.IRenderable;
 import com.knightlore.render.Screen;
+import com.knightlore.render.environment.IEnvironment;
 import com.knightlore.render.sprite.Texture;
 
 public class World implements IRenderable {
@@ -19,11 +20,13 @@ public class World implements IRenderable {
 	private List<GameObject> entities;
 
 	private Camera camera;
+	private IEnvironment environment;
 
-	public World() {
+	public World(IEnvironment environment) {
 		map = new Map(); // TODO: let this be a parameter
 		entities = new ArrayList<GameObject>();
 		camera = new Camera(4.5, 4.5, 1, 0, 0, Camera.FIELD_OF_VIEW, map);
+		this.environment = environment;
 	}
 
 	@Override
@@ -33,7 +36,7 @@ public class World implements IRenderable {
 		final int width = screen.getWidth();
 		final int height = screen.getHeight();
 
-		drawFloorAndSky(screen);
+		environment.renderEnvironment(screen);
 
 		final int BLOCKINESS = 8; // how 'old school' you want to look.
 		final int FOG = 25; // fog?
@@ -146,7 +149,7 @@ public class World implements IRenderable {
 				else
 					color = Texture.BRICK.getPixels()[texX + (texY * Texture.BRICK.getSize())];
 
-				screen.fillRect(fogDarken(color, distanceToWall, FOG), xx, yy, BLOCKINESS, 1);
+				screen.fillRect(darken(color, distanceToWall), xx, yy, BLOCKINESS, 1);
 			}
 
 		}
@@ -170,27 +173,13 @@ public class World implements IRenderable {
 		ticker++;
 	}
 
-	private int fogDarken(int color, double distance, int fog) {
+	private int darken(int color, double distance) {
 		Color c = new Color(color);
-		double fogFactor = distance * fog;
+		double fogFactor = distance * environment.getDarkness();
 		int red = (int) (Math.max(0, c.getRed() - fogFactor));
 		int green = (int) (Math.max(0, c.getGreen() - fogFactor));
 		int blue = (int) (Math.max(0, c.getBlue() - fogFactor));
 		return new Color(red, green, blue).getRGB();
-	}
-
-	private void drawFloorAndSky(Screen screen) {
-		// Draw the floor.
-		// TODO: better, more modular lighting technique. This is essentially a
-		// hardcoded equation.
-		for (int yy = screen.getHeight() / 2; yy < screen.getHeight(); yy += 1) {
-			for (int xx = 0; xx < screen.getWidth(); xx++) {
-				int n = Math.max(0, Math.min(yy * yy / 5000, 255));
-				Color c = new Color(n, n, n);
-				screen.fillRect(c.getRGB(), xx, yy, 1, 1);
-				screen.fillRect(c.getRGB(), xx, -screen.getHeight() / 2 + yy, 1, 1);
-			}
-		}
 	}
 
 	/**
