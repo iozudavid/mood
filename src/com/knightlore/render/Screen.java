@@ -32,7 +32,7 @@ public class Screen extends Canvas {
 	/**
 	 * Render the scene.
 	 */
-	public void render(int x, int y, Renderable renderable) {
+	public void render(int x, int y, IRenderable renderable) {
 
 		BufferStrategy bs = getBufferStrategy();
 		if (bs == null) {

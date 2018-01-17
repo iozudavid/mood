@@ -1,11 +1,12 @@
 package com.knightlore.render;
 
-import com.knightlore.engine.Updateable;
+import com.knightlore.engine.IUpdateable;
+import com.knightlore.engine.Input;
 import com.knightlore.game.Map;
 import com.knightlore.input.Controller;
 import com.knightlore.input.Keyboard;
 
-public class Camera implements Updateable {
+public class Camera implements IUpdateable {
 
 	private double xPos, yPos, xDir, yDir, xPlane, yPlane;
 	public final double MOVE_SPEED = .08, STRAFE_SPEED = .04;
@@ -30,7 +31,7 @@ public class Camera implements Updateable {
 
 		int[][] mapArr = map.getMapArray();
 
-		Controller controller = new Controller(Keyboard.getInstance());
+		Controller controller = new Controller(Input.GetKeyboard());
 		if (controller.w()) {
 			if (mapArr[(int) (xPos + xDir * MOVE_SPEED)][(int) (yPos)] == 0)
 				xPos += xDir * MOVE_SPEED;

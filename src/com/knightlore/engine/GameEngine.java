@@ -29,7 +29,11 @@ public class GameEngine implements Runnable {
 		final int w = MainWindow.WIDTH, h = MainWindow.HEIGHT;
 		screen = new Screen(w, h);
 		window = new MainWindow(screen, MainWindow.TITLE, w, h);
-
+		InitEngine();
+	}
+	
+	private void InitEngine(){
+		Input.init();
 		setupKeyboard();
 		setupMouse();
 	}
@@ -81,7 +85,7 @@ public class GameEngine implements Runnable {
 	 * Add the singleton keyboard instance to the canvas and request focus.
 	 */
 	private void setupKeyboard() {
-		screen.addKeyListener(Keyboard.getInstance());
+		screen.addKeyListener(Input.GetKeyboard());
 		screen.requestFocus();
 	}
 
@@ -89,7 +93,7 @@ public class GameEngine implements Runnable {
 	 * Add the singleton mouse instance to the canvas and request focus.
 	 */
 	private void setupMouse() {
-		Mouse mouse = Mouse.getInstance();
+		Mouse mouse = Input.GetMouse();
 		screen.addMouseListener(mouse);
 		screen.addMouseMotionListener(mouse);
 		screen.addMouseWheelListener(mouse);

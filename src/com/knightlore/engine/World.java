@@ -7,22 +7,22 @@ import java.util.ListIterator;
 
 import com.knightlore.game.Map;
 import com.knightlore.render.Camera;
-import com.knightlore.render.Renderable;
+import com.knightlore.render.IRenderable;
 import com.knightlore.render.Screen;
 import com.knightlore.render.sprite.Texture;
 
-public class World implements Renderable {
+public class World implements IRenderable {
 
 	private Map map;
 
 	private long ticker;
-	private List<Entity> entities;
+	private List<GameObject> entities;
 
 	private Camera camera;
 
 	public World() {
 		map = new Map(); // TODO: let this be a parameter
-		entities = new ArrayList<Entity>();
+		entities = new ArrayList<GameObject>();
 		camera = new Camera(4.5, 4.5, 1, 0, 0, Camera.FIELD_OF_VIEW, map);
 	}
 
@@ -151,7 +151,7 @@ public class World implements Renderable {
 
 		}
 
-		for (Entity e : entities) {
+		for (GameObject e : entities) {
 			e.render(screen, e.getX(), e.getY());
 		}
 
@@ -163,7 +163,7 @@ public class World implements Renderable {
 
 		camera.tick(ticker);
 
-		for (Entity e : entities) {
+		for (GameObject e : entities) {
 			e.tick(ticker);
 		}
 
@@ -197,16 +197,16 @@ public class World implements Renderable {
 	 * Deletes any entities that don't exist any more.
 	 */
 	private void garbageCollect() {
-		ListIterator<Entity> itr = entities.listIterator();
+		ListIterator<GameObject> itr = entities.listIterator();
 		while (itr.hasNext()) {
-			Entity e = itr.next();
+			GameObject e = itr.next();
 			if (!e.exists()) {
 				itr.remove();
 			}
 		}
 	}
 
-	public List<Entity> getEntities() {
+	public List<GameObject> getEntities() {
 		return entities;
 	}
 

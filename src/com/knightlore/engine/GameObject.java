@@ -1,8 +1,8 @@
 package com.knightlore.engine;
 
-import com.knightlore.render.Renderable;
+import com.knightlore.render.IRenderable;
 
-public abstract class Entity implements Renderable, Updateable {
+public abstract class GameObject implements IRenderable, IUpdateable {
 
 	/**
 	 * Position of the entity.
@@ -15,7 +15,7 @@ public abstract class Entity implements Renderable, Updateable {
 	 */
 	protected boolean exists;
 
-	public Entity(int x, int y) {
+	public GameObject(int x, int y) {
 		this.x = x;
 		this.y = y;
 		exists = true;

@@ -1,6 +1,6 @@
 package com.knightlore.engine;
 
-public interface Updateable {
+public interface IUpdateable {
 	
 	/**
 	 * Updates the updateable.

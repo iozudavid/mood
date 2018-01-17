@@ -17,8 +17,6 @@ import javax.swing.SwingUtilities;
  */
 public class Mouse implements MouseListener, MouseMotionListener, MouseWheelListener {
 
-	private static Mouse instance = null;
-
 	protected volatile int x, y;
 	protected volatile int scroll;
 
@@ -110,13 +108,6 @@ public class Mouse implements MouseListener, MouseMotionListener, MouseWheelList
 	 */
 	public boolean isRightHeld() {
 		return rightHeld;
-	}
-
-	public static Mouse getInstance() {
-		if (instance == null) {
-			instance = new Mouse();
-		}
-		return instance;
 	}
 
 	/* UNUSED */

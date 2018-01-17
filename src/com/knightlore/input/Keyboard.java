@@ -5,14 +5,10 @@ import java.awt.event.KeyEvent;
 
 public class Keyboard extends KeyAdapter {
 
-	/**
-	 * Singleton instance of the keyboard.
-	 */
-	private static Keyboard instance = null;
 
 	private boolean[] keys;
 
-	private Keyboard() {
+	public Keyboard() {
 		keys = new boolean[256];
 	}
 
@@ -35,18 +31,6 @@ public class Keyboard extends KeyAdapter {
 	 */
 	public boolean isPressed(int kc) {
 		return keys[kc];
-	}
-
-	/**
-	 * Gets the global keyboard.
-	 * 
-	 * @return the global keyboard object.
-	 */
-	public static Keyboard getInstance() {
-		if (instance == null) {
-			instance = new Keyboard();
-		}
-		return instance;
 	}
 
 }
