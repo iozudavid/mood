@@ -11,6 +11,11 @@ public class BrickTile extends Tile {
 	}
 
 	@Override
+	public double getSolidity() {
+		return 0.95D;
+	}
+
+	@Override
 	public void onShot() {
 		System.out.println("shot brick");
 	}
