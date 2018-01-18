@@ -4,7 +4,6 @@ import com.knightlore.engine.IUpdateable;
 import com.knightlore.engine.Input;
 import com.knightlore.game.Map;
 import com.knightlore.input.Controller;
-import com.knightlore.input.Keyboard;
 
 public class Camera implements IUpdateable {
 

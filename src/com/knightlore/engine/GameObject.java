@@ -1,12 +1,17 @@
 package com.knightlore.engine;
 
+import java.util.ArrayList;
+
 import com.knightlore.render.IRenderable;
 
-public abstract class GameObject implements IRenderable, IUpdateable {
+public abstract class GameObject {
 
+	
+	private ArrayList<GameComponent> components;
 	/**
 	 * Position of the entity.
 	 */
+	protected Vector2 position;
 	protected int x, y;
 
 	/**
@@ -15,22 +20,34 @@ public abstract class GameObject implements IRenderable, IUpdateable {
 	 */
 	protected boolean exists;
 
-	public GameObject(int x, int y) {
-		this.x = x;
-		this.y = y;
+	public GameObject(){
+		position = Vector2.ZERO;
+	}
+	
+	public GameObject(Vector2 position) {
+		this.position = position;
 		exists = true;
 	}
-
-	public int getX() {
-		return x;
-	}
-
-	public int getY() {
-		return y;
+	
+	public Vector2 getPosition(){
+		return position;
 	}
 
 	public boolean exists() {
 		return exists;
 	}
-
+	
+	// Called when the component is first added to the gameObject
+	public abstract void onCreate();
+		
+	// Called every game-frame to update it
+	public abstract void onUpdate();
+	
+	// Called when the attached gameObject is being removed from the game
+	public abstract void onDestroy();
+	
+	void Destroy(){
+		onDestroy();
+	}
+	
 }
