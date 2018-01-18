@@ -8,6 +8,7 @@ import javax.imageio.ImageIO;
 
 public class Texture {
 
+	public static final Texture AIR = null;
 	public static final Texture BRICK = TextureSheet.TEXTURES.spriteAt(0, 0);
 
 	private BufferedImage img;

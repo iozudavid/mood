@@ -3,8 +3,8 @@ package com.knightlore.render;
 import com.knightlore.engine.IUpdateable;
 import com.knightlore.engine.Input;
 import com.knightlore.game.Map;
+import com.knightlore.game.tile.Tile;
 import com.knightlore.input.Controller;
-import com.knightlore.input.Keyboard;
 
 public class Camera implements IUpdateable {
 
@@ -29,13 +29,13 @@ public class Camera implements IUpdateable {
 	@Override
 	public void tick(long ticker) {
 
-		int[][] mapArr = map.getMapArray();
+		Tile[][] mapArr = map.getMapArray();
 
 		Controller controller = new Controller(Input.GetKeyboard());
 		if (controller.w()) {
-			if (mapArr[(int) (xPos + xDir * MOVE_SPEED)][(int) (yPos)] == 0)
+			if (mapArr[(int) (xPos + xDir * MOVE_SPEED)][(int) (yPos)].getSolidity() == 0)
 				xPos += xDir * MOVE_SPEED;
-			if (mapArr[(int) xPos][(int) (yPos + yDir * MOVE_SPEED)] == 0)
+			if (mapArr[(int) xPos][(int) (yPos + yDir * MOVE_SPEED)].getSolidity() == 0)
 				yPos += yDir * MOVE_SPEED;
 		}
 
@@ -44,9 +44,9 @@ public class Camera implements IUpdateable {
 		}
 
 		if (controller.s()) {
-			if (mapArr[(int) (xPos - xDir * MOVE_SPEED)][(int) (yPos)] == 0)
+			if (mapArr[(int) (xPos - xDir * MOVE_SPEED)][(int) (yPos)].getSolidity() == 0)
 				xPos -= xDir * MOVE_SPEED;
-			if (mapArr[(int) xPos][(int) (yPos - yDir * MOVE_SPEED)] == 0)
+			if (mapArr[(int) xPos][(int) (yPos - yDir * MOVE_SPEED)].getSolidity() == 0)
 				yPos -= yDir * MOVE_SPEED;
 		}
 
@@ -58,11 +58,11 @@ public class Camera implements IUpdateable {
 			double newxPos = xPos + (controller.q() ? -1 : 1) * yDir * STRAFE_SPEED;
 			double newyPos = yPos + (controller.q() ? -1 : 1) * -xDir * STRAFE_SPEED;
 
-			if (mapArr[(int) (newxPos)][(int) (yPos)] == 0) {
+			if (mapArr[(int) (newxPos)][(int) (yPos)].getSolidity() == 0) {
 				xPos = newxPos;
 			}
 
-			if (mapArr[(int) (xPos)][(int) (newyPos)] == 0) {
+			if (mapArr[(int) (xPos)][(int) (newyPos)].getSolidity() == 0) {
 				yPos = newyPos;
 			}
 
