@@ -1,9 +1,9 @@
 package com.knightlore.engine;
 
 import com.knightlore.MainWindow;
+import com.knightlore.game.Map;
 import com.knightlore.input.Mouse;
 import com.knightlore.render.Screen;
-import com.knightlore.render.environment.LightOutdoorsEnvironment;
 
 /**
  * Game engine acting as sort of a 'hub' for each of the individual game
@@ -24,7 +24,7 @@ public class GameEngine implements Runnable {
 	private World world;
 
 	public GameEngine() {
-		world = new World(new LightOutdoorsEnvironment());
+		world = new World(Map.randMap());
 
 		final int w = MainWindow.WIDTH, h = MainWindow.HEIGHT;
 		screen = new Screen(w, h);
@@ -100,7 +100,7 @@ public class GameEngine implements Runnable {
 		screen.requestFocus();
 	}
 
-	public static void main(String[] args) throws InterruptedException {
+	public static void main(String[] args) {
 		GameEngine engine = new GameEngine();
 		engine.start();
 	}

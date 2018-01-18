@@ -52,6 +52,10 @@ public class Screen extends Canvas {
 
 		bs.show();
 	}
+	
+	public void fillPixel(int color, int x, int y) {
+		fillRect(color, x, y, 1, 1);
+	}
 
 	public void fillRect(int color, int x, int y, int w, int h) {
 		for (int yy = y; yy < y + h; yy++) {

@@ -9,7 +9,6 @@ import com.knightlore.game.Map;
 import com.knightlore.render.Camera;
 import com.knightlore.render.IRenderable;
 import com.knightlore.render.Screen;
-import com.knightlore.render.environment.IEnvironment;
 import com.knightlore.render.sprite.Texture;
 
 public class World implements IRenderable {
@@ -20,13 +19,11 @@ public class World implements IRenderable {
 	private List<GameObject> entities;
 
 	private Camera camera;
-	private IEnvironment environment;
 
-	public World(IEnvironment environment) {
-		map = new Map(); // TODO: let this be a parameter
+	public World(Map map) {
+		this.map = map;
 		entities = new ArrayList<GameObject>();
 		camera = new Camera(4.5, 4.5, 1, 0, 0, Camera.FIELD_OF_VIEW, map);
-		this.environment = environment;
 	}
 
 	@Override
@@ -36,7 +33,7 @@ public class World implements IRenderable {
 		final int width = screen.getWidth();
 		final int height = screen.getHeight();
 
-		environment.renderEnvironment(screen);
+		map.getEnvironment().renderEnvironment(screen);
 
 		final int BLOCKINESS = 8; // how 'old school' you want to look.
 		final int FOG = 25; // fog?
@@ -143,11 +140,7 @@ public class World implements IRenderable {
 				// TODO: only compensates for 16x16 textures here, maybe change?
 				int texY = (((yy * 2 - height + lineHeight) << 4) / lineHeight) / 2;
 
-				int color;
-				if (side)
-					color = (Texture.BRICK.getPixels()[texX + (texY * Texture.BRICK.getSize())] >> 1) & 0x7F7F7F;// Make//
-				else
-					color = Texture.BRICK.getPixels()[texX + (texY * Texture.BRICK.getSize())];
+				int color = Texture.BRICK.getPixels()[texX + (texY * Texture.BRICK.getSize())];
 
 				screen.fillRect(darken(color, distanceToWall), xx, yy, BLOCKINESS, 1);
 			}
@@ -175,7 +168,7 @@ public class World implements IRenderable {
 
 	private int darken(int color, double distance) {
 		Color c = new Color(color);
-		double fogFactor = distance * environment.getDarkness();
+		double fogFactor = distance * map.getEnvironment().getDarkness();
 		int red = (int) (Math.max(0, c.getRed() - fogFactor));
 		int green = (int) (Math.max(0, c.getGreen() - fogFactor));
 		int blue = (int) (Math.max(0, c.getBlue() - fogFactor));

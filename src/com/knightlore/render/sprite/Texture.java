@@ -39,7 +39,7 @@ public class Texture {
 	public BufferedImage getImage() {
 		return img;
 	}
-	
+
 	public int[] getPixels() {
 		return pixels;
 	}
