@@ -2,7 +2,7 @@ package com.knightlore.game;
 
 import java.util.Random;
 
-import com.knightlore.render.environment.DarkOutdoorsEnvironment;
+import com.knightlore.game.tile.Tile;
 import com.knightlore.render.environment.IEnvironment;
 
 public class Map {
@@ -12,14 +12,14 @@ public class Map {
 	 */
 
 	private int width, height;
-	public int[][] map;
+	public Tile[][] map;
 
 	/**
 	 * Maps have associated environments.
 	 */
 	private IEnvironment environment;
 
-	public int[][] getMapArray() {
+	public Tile[][] getMapArray() {
 		return map;
 	}
 
@@ -30,8 +30,8 @@ public class Map {
 	public Map(int w, int h) {
 		width = w;
 		height = h;
-		map = new int[w][h];
-		environment = IEnvironment.DARK_OUTDOORS;
+		map = new Tile[w][h];
+		environment = IEnvironment.DUNGEON;
 	}
 
 	public void addWalls() {
@@ -157,10 +157,10 @@ public class Map {
 	}
 
 	// dumb test
-//	public static void main(String args[]) {
-//		Map m = randMap();
-//		// m = joinUpR(m,m);
-//		System.out.println(m.toString());
-//	}
+	// public static void main(String args[]) {
+	// Map m = randMap();
+	// // m = joinUpR(m,m);
+	// System.out.println(m.toString());
+	// }
 
 }

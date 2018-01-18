@@ -35,8 +35,7 @@ public class World implements IRenderable {
 
 		map.getEnvironment().renderEnvironment(screen);
 
-		final int BLOCKINESS = 8; // how 'old school' you want to look.
-		final int FOG = 25; // fog?
+		final int BLOCKINESS = 1; // how 'old school' you want to look.
 
 		for (int xx = 0; xx < width; xx = xx += BLOCKINESS) {
 
