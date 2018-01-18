@@ -25,7 +25,25 @@ public class PlayerSpawnTile extends Tile{
 	}
 
 	public char toChar(){
-		return (char) teamNum;
+		return (char)(teamNum + '0');
+	}
+	
+	public Tile reflectTileX(){
+		if(teamNum == 1){
+			return new PlayerSpawnTile(2);
+		}else{
+			return new PlayerSpawnTile(0);
+		}
+	}
+	
+	public Tile reflectTileY(){
+		if(teamNum == 1){
+			return new PlayerSpawnTile(3);
+		}else if (teamNum == 2){
+			return new PlayerSpawnTile(4);
+		}else{
+			return new PlayerSpawnTile(0);
+		}
 	}
 	
 }

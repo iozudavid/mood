@@ -2,6 +2,8 @@ package com.knightlore.game;
 
 import java.util.Random;
 
+import com.knightlore.game.subArea.SpawnArea;
+import com.knightlore.game.subArea.SubArea;
 import com.knightlore.game.tile.*;
 import com.knightlore.render.environment.IEnvironment;
 
@@ -11,6 +13,7 @@ public class Map {
 	 * TODO: read in maps from files/procedurally generate.
 	 */
 
+	private int[][] spawnPosition; // will need to change with multiple players
 	private int width, height;
 	public Tile[][] map;
 
@@ -47,10 +50,10 @@ public class Map {
 
 	public static Map randMap() {
 		Random rand = new Random();
-		int w = 10 + rand.nextInt(20);
-		int h = 10 + rand.nextInt(5);
+		int w = 20 + rand.nextInt(20);
+		int h = 20 + rand.nextInt(5);
 		Map m = new Map(w, h);
-
+		
 		// make everything an undecided tile
 		for (int i = 0; i < w; i++) {
 			for (int j = 0; j < h; j++) {
@@ -58,6 +61,9 @@ public class Map {
 			}
 		}
 
+		m.placeSubArea(1,1, new SpawnArea(10,10));
+		
+		/*
 		int r = 0;
 		// make horizontal rows of free space
 		for (int i = 0; i < w; i++) {
@@ -86,14 +92,33 @@ public class Map {
 				}
 			}
 		}
-
-		//m.removeUndecided();
+		*/
+		
+		m.removeUndecided();
 		m.makeSymX();
-		m.makeSymY();
+		//m.makeSymY();
 		m.addWalls();
 		return m;
 	}
 
+	private boolean placeSubArea(int x, int y, SubArea subArea){
+		
+		if(x + subArea.width >= width || y + subArea.height >= height){
+			System.out.println("THIS");
+			return false;
+		}
+		
+		Tile[][] subGrid = subArea.grid;
+		for(int i=0; i<subArea.width; i++){
+			for(int j=0; j<subArea.width; j++){
+				map[x+i][y+j] = subGrid[i][j];
+			}
+		}
+		
+		
+		return true;
+	}
+	
 	// replace all undecided with air
 	private void removeUndecided(){
 		for (int i=0; i< width; i++){
@@ -109,8 +134,9 @@ public class Map {
 		Tile[][] symMap = new Tile[width][height * 2];
 		for (int j = 0; j < height; j++) {
 			for (int i = 0; i < width; i++) {
+				Tile reflectTile = map[i][j].reflectTileX();
 				symMap[i][j] = map[i][j];
-				symMap[i][(height * 2 - 1) - j] = map[i][j];
+				symMap[i][(height * 2 - 1) - j] = reflectTile;
 			}
 		}
 		height = height * 2;
@@ -122,8 +148,9 @@ public class Map {
 		Tile[][] symMap = new Tile[width * 2][height];
 		for (int i = 0; i < width; i++) {
 			for (int j = 0; j < height; j++) {
+				Tile reflectTile = map[i][j].reflectTileY();
 				symMap[i][j] = map[i][j];
-				symMap[(width * 2 - 1) - i][j] = map[i][j];
+				symMap[(width * 2 - 1) - i][j] = reflectTile;
 			}
 		}
 		width = width * 2;

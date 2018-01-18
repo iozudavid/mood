@@ -21,4 +21,12 @@ public abstract class Tile {
 		return ' ';
 	}
 	
+	public Tile reflectTileX(){
+		return this;
+	}
+	
+	public Tile reflectTileY(){
+		return this;
+	}
+	
 }
