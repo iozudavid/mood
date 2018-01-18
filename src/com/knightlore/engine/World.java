@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.ListIterator;
 
 import com.knightlore.game.Map;
+import com.knightlore.game.tile.AirTile;
+import com.knightlore.game.tile.Tile;
 import com.knightlore.render.Camera;
 import com.knightlore.render.IRenderable;
 import com.knightlore.render.Screen;
@@ -29,13 +31,13 @@ public class World implements IRenderable {
 	@Override
 	public void render(Screen screen, int x, int y) {
 
-		int[][] mapArr = map.getMapArray();
+		Tile[][] mapArr = map.getMapArray();
 		final int width = screen.getWidth();
 		final int height = screen.getHeight();
 
 		map.getEnvironment().renderEnvironment(screen);
 
-		final int BLOCKINESS = 1; // how 'old school' you want to look.
+		final int BLOCKINESS = 8; // how 'old school' you want to look.
 
 		for (int xx = 0; xx < width; xx = xx += BLOCKINESS) {
 
@@ -93,7 +95,7 @@ public class World implements IRenderable {
 				}
 
 				// If this is anything but an empty cell, we've hit a wall
-				if (mapArr[mapX][mapY] > 0)
+				if (mapArr[mapX][mapY].getClass() != AirTile.class)
 					hit = true;
 			}
 

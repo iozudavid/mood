@@ -2,6 +2,8 @@ package com.knightlore.game;
 
 import java.util.Random;
 
+import com.knightlore.game.tile.AirTile;
+import com.knightlore.game.tile.BrickTile;
 import com.knightlore.game.tile.Tile;
 import com.knightlore.render.environment.IEnvironment;
 
@@ -31,17 +33,17 @@ public class Map {
 		width = w;
 		height = h;
 		map = new Tile[w][h];
-		environment = IEnvironment.DUNGEON;
+		environment = IEnvironment.LIGHT_OUTDOORS;
 	}
 
 	public void addWalls() {
 		for (int i = 0; i < width; i++) {
-			map[i][0] = 1;
-			map[i][height - 1] = 1;
+			map[i][0] = new BrickTile();
+			map[i][height - 1] = new BrickTile();
 		}
 		for (int j = 0; j < height; j++) {
-			map[0][j] = 1;
-			map[width - 1][j] = 1;
+			map[0][j] = new BrickTile();
+			map[width - 1][j] = new BrickTile();
 		}
 	}
 
@@ -54,7 +56,7 @@ public class Map {
 		// make everything a wall
 		for (int i = 0; i < w; i++) {
 			for (int j = 0; j < h; j++) {
-				m.map[i][j] = 1;
+				m.map[i][j] = new BrickTile();
 			}
 		}
 
@@ -64,11 +66,11 @@ public class Map {
 			r = rand.nextInt(100);
 			if (r > 80) {
 				for (int j = 0; j < h; j++) {
-					m.map[i][j] = 0;
+					m.map[i][j] = Tile.AIR;
 				}
 			} else if (r > 40) {
 				for (int j = 0; j < (h / 2); j++) {
-					m.map[i][j] = 0;
+					m.map[i][j] = Tile.AIR;
 				}
 			}
 		}
@@ -78,11 +80,11 @@ public class Map {
 			r = rand.nextInt(100);
 			if (rand.nextInt(100) > 50) {
 				for (int i = 0; i < w; i++) {
-					m.map[i][j] = 0;
+					m.map[i][j] = Tile.AIR;
 				}
 			} else if (r > 20) {
 				for (int i = 0; i < (w / 2); i++) {
-					m.map[i][j] = 0;
+					m.map[i][j] = Tile.AIR;
 				}
 			}
 		}
@@ -95,7 +97,7 @@ public class Map {
 
 	// reflection in x-axis
 	private void makeSymX() {
-		int[][] symMap = new int[width][height * 2];
+		Tile[][] symMap = new Tile[width][height * 2];
 		for (int j = 0; j < height; j++) {
 			for (int i = 0; i < width; i++) {
 				symMap[i][j] = map[i][j];
@@ -107,7 +109,7 @@ public class Map {
 	}
 
 	private void makeSymY() {
-		int[][] symMap = new int[width * 2][height];
+		Tile[][] symMap = new Tile[width * 2][height];
 		for (int i = 0; i < width; i++) {
 			for (int j = 0; j < height; j++) {
 				symMap[i][j] = map[i][j];
@@ -143,10 +145,8 @@ public class Map {
 		String s = "MAP\n" + "WIDTH = " + width + "\n" + "HEIGHT = " + height + "\n";
 		for (int j = 0; j < height; j++) {
 			for (int i = 0; i < width; i++) {
-				if (map[i][j] == 0)
+				if (map[i][j].getClass() == AirTile.class)
 					s = s += " ";
-				else if (map[i][j] == 3)
-					s = s + "Y";
 				else
 					s = s + "X";
 			}

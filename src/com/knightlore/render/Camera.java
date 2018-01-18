@@ -33,10 +33,10 @@ public class Camera implements IUpdateable {
 
 		Controller controller = new Controller(Input.GetKeyboard());
 		if (controller.w()) {
-			if (mapArr[(int) (xPos + xDir * MOVE_SPEED)][(int) (yPos)].getSolidity() == 0)
-				xPos += xDir * MOVE_SPEED;
-			if (mapArr[(int) xPos][(int) (yPos + yDir * MOVE_SPEED)].getSolidity() == 0)
-				yPos += yDir * MOVE_SPEED;
+			Tile xTile = mapArr[(int) (xPos + xDir * MOVE_SPEED)][(int) (yPos)];
+			Tile yTile = mapArr[(int) xPos][(int) (yPos + yDir * MOVE_SPEED)];
+			xPos += xDir * MOVE_SPEED * (1 - xTile.getSolidity());
+			yPos += yDir * MOVE_SPEED * (1 - yTile.getSolidity());
 		}
 
 		if (controller.a()) {
@@ -44,10 +44,10 @@ public class Camera implements IUpdateable {
 		}
 
 		if (controller.s()) {
-			if (mapArr[(int) (xPos - xDir * MOVE_SPEED)][(int) (yPos)].getSolidity() == 0)
-				xPos -= xDir * MOVE_SPEED;
-			if (mapArr[(int) xPos][(int) (yPos - yDir * MOVE_SPEED)].getSolidity() == 0)
-				yPos -= yDir * MOVE_SPEED;
+			Tile xTile = mapArr[(int) (xPos - xDir * MOVE_SPEED)][(int) (yPos)];
+			Tile yTile = mapArr[(int) xPos][(int) (yPos - yDir * MOVE_SPEED)];
+			xPos -= xDir * MOVE_SPEED * (1 - xTile.getSolidity());
+			yPos -= yDir * MOVE_SPEED * (1 - yTile.getSolidity());
 		}
 
 		if (controller.d()) {
@@ -55,6 +55,8 @@ public class Camera implements IUpdateable {
 		}
 
 		if (controller.q() || controller.e()) {
+
+			// TODO: sort slowing here!!
 			double newxPos = xPos + (controller.q() ? -1 : 1) * yDir * STRAFE_SPEED;
 			double newyPos = yPos + (controller.q() ? -1 : 1) * -xDir * STRAFE_SPEED;
 

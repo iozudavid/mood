@@ -4,6 +4,8 @@ import com.knightlore.render.Camera;
 import com.knightlore.render.sprite.Texture;
 
 public abstract class Tile {
+	
+	public static final Tile AIR = new AirTile();
 
 	public abstract Texture getTexture();
 
