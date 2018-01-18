@@ -6,8 +6,9 @@ public interface IEnvironment {
 
 	public static final IEnvironment DARK_OUTDOORS = new DarkOutdoorsEnvironment();
 	public static final IEnvironment LIGHT_OUTDOORS = new LightOutdoorsEnvironment();
+	public static final IEnvironment DUNGEON = new DungeonEnvironment();
 
-	public static final IEnvironment[] ENVIRONMENTS = new IEnvironment[] { DARK_OUTDOORS, LIGHT_OUTDOORS };
+	public static final IEnvironment[] ENVIRONMENTS = new IEnvironment[] { DARK_OUTDOORS, LIGHT_OUTDOORS, DUNGEON };
 
 	public void renderEnvironment(Screen screen);
 

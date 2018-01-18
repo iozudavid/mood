@@ -31,7 +31,7 @@ public class Map {
 		width = w;
 		height = h;
 		map = new int[w][h];
-		environment = IEnvironment.LIGHT_OUTDOORS;
+		environment = IEnvironment.DARK_OUTDOORS;
 	}
 
 	public void addWalls() {
@@ -157,10 +157,10 @@ public class Map {
 	}
 
 	// dumb test
-	public static void main(String args[]) {
-		Map m = randMap();
-		// m = joinUpR(m,m);
-		System.out.println(m.toString());
-	}
+//	public static void main(String args[]) {
+//		Map m = randMap();
+//		// m = joinUpR(m,m);
+//		System.out.println(m.toString());
+//	}
 
 }
