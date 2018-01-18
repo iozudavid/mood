@@ -148,10 +148,6 @@ public class World implements IRenderable {
 
 		}
 
-		for (GameObject e : entities) {
-			e.render(screen, e.getX(), e.getY());
-		}
-
 	}
 
 	public void tick() {
@@ -159,10 +155,6 @@ public class World implements IRenderable {
 		garbageCollect();
 
 		camera.tick(ticker);
-
-		for (GameObject e : entities) {
-			e.tick(ticker);
-		}
 
 		ticker++;
 	}
