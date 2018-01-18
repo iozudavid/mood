@@ -2,9 +2,7 @@ package com.knightlore.game;
 
 import java.util.Random;
 
-import com.knightlore.game.tile.AirTile;
-import com.knightlore.game.tile.BrickTile;
-import com.knightlore.game.tile.Tile;
+import com.knightlore.game.tile.*;
 import com.knightlore.render.environment.IEnvironment;
 
 public class Map {
@@ -53,10 +51,10 @@ public class Map {
 		int h = 10 + rand.nextInt(5);
 		Map m = new Map(w, h);
 
-		// make everything a wall
+		// make everything an undecided tile
 		for (int i = 0; i < w; i++) {
 			for (int j = 0; j < h; j++) {
-				m.map[i][j] = new BrickTile();
+				m.map[i][j] = new UndecidedTile();
 			}
 		}
 
@@ -89,12 +87,23 @@ public class Map {
 			}
 		}
 
+		//m.removeUndecided();
 		m.makeSymX();
 		m.makeSymY();
 		m.addWalls();
 		return m;
 	}
 
+	// replace all undecided with air
+	private void removeUndecided(){
+		for (int i=0; i< width; i++){
+			for (int j=0; j<height; j++){
+				if (map[i][j].toChar() == '?')
+					map[i][j] = Tile.AIR;
+			}
+		}
+	}
+	
 	// reflection in x-axis
 	private void makeSymX() {
 		Tile[][] symMap = new Tile[width][height * 2];
@@ -108,6 +117,7 @@ public class Map {
 		map = symMap;
 	}
 
+	// reflection in y-axis
 	private void makeSymY() {
 		Tile[][] symMap = new Tile[width * 2][height];
 		for (int i = 0; i < width; i++) {
@@ -119,7 +129,7 @@ public class Map {
 		width = width * 2;
 		map = symMap;
 	}
-
+	
 	private static Map joinUpR(Map m1, Map m2) {
 
 		// ensure same height
@@ -145,10 +155,7 @@ public class Map {
 		String s = "MAP\n" + "WIDTH = " + width + "\n" + "HEIGHT = " + height + "\n";
 		for (int j = 0; j < height; j++) {
 			for (int i = 0; i < width; i++) {
-				if (map[i][j].getClass() == AirTile.class)
-					s = s += " ";
-				else
-					s = s + "X";
+				s = s + map[i][j].toChar();
 			}
 			s = s + "\n";
 		}
@@ -157,10 +164,10 @@ public class Map {
 	}
 
 	// dumb test
-	// public static void main(String args[]) {
-	// Map m = randMap();
+	public static void main(String args[]) {
+	 Map m = randMap();
 	// // m = joinUpR(m,m);
-	// System.out.println(m.toString());
-	// }
+	 System.out.println(m.toString());
+	}
 
 }
