@@ -7,7 +7,6 @@ import com.knightlore.render.IRenderable;
 public abstract class GameObject {
 
 	
-	private ArrayList<GameComponent> components;
 	/**
 	 * Position of the entity.
 	 */
