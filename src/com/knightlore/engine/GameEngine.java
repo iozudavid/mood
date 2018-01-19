@@ -1,5 +1,7 @@
 package com.knightlore.engine;
 
+import java.util.ArrayList;
+
 import com.knightlore.MainWindow;
 import com.knightlore.game.Map;
 import com.knightlore.input.Mouse;
@@ -23,9 +25,13 @@ public class GameEngine implements Runnable {
 
 	private World world;
 
+	private ArrayList<GameObject> objects;
+	
 	public GameEngine() {
 		world = new World(Map.randMap());
-
+		
+		objects = new ArrayList<GameObject>();
+		
 		final int w = MainWindow.WIDTH, h = MainWindow.HEIGHT;
 		screen = new Screen(w, h);
 		window = new MainWindow(screen, MainWindow.TITLE, w, h);
@@ -73,11 +79,18 @@ public class GameEngine implements Runnable {
 			lastTime = now;
 
 			while (delta >= 1) {
+				updateObjects();
 				world.tick();
 				screen.render(0, 0, world);
 				delta -= 1;
 			}
 
+		}
+	}
+	
+	private void updateObjects(){
+		for(int i=0;i<objects.size();i++){
+			objects.get(i).onUpdate();
 		}
 	}
 

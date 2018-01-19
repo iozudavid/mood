@@ -7,9 +7,13 @@ import java.io.IOException;
 import javax.imageio.ImageIO;
 
 public class Texture {
+	
+	public static final Texture EMPTY = null;
 
+	public static final Texture AIR = EMPTY;
 	public static final Texture BRICK = TextureSheet.TEXTURES.spriteAt(0, 0);
-
+	public static final Texture BUSH = TextureSheet.TEXTURES.spriteAt(1, 0);
+	
 	private BufferedImage img;
 	private int size;
 	private int[] pixels;

@@ -1,0 +1,36 @@
+package com.knightlore.game.tile;
+
+import com.knightlore.render.Camera;
+import com.knightlore.render.sprite.Texture;
+
+public class ExpectRoom extends Tile{
+
+	private char direction;
+	
+	public static final char RIGHT = 'r';
+	public static final char DOWN  = 'd';
+	public static final char BOTH  = 'b';
+	
+	public ExpectRoom(char c){
+		assert(c == RIGHT || c == DOWN || c == BOTH);
+		direction = c;
+	}
+	
+	@Override
+	public Texture getTexture() {
+		return Texture.AIR;
+	}
+
+	@Override
+	public void onShot() {
+	}
+
+	@Override
+	public void onTouch(Camera c) {
+	}
+
+	public char toChar(){
+		return direction;
+	}
+	
+}
