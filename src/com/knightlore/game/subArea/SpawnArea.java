@@ -27,7 +27,7 @@ public class SpawnArea extends SubArea{
 			super.grid[i][h-1] = new BrickTile();
 		}
 		for(int j=0; j<h/3; j++){
-			super.grid[w-1][j] = new BrickTile();
+			super.grid[w - 1][j] = new BrickTile();
 		}
 		
 		for(int j=h*2/3; j<h; j++){

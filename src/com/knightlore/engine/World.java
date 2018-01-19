@@ -127,12 +127,17 @@ public class World implements IRenderable {
 			}
 			wallX -= Math.floor(wallX);
 
+			Texture texture = mapArr[mapX][mapY].getTexture();
+			if (texture == Texture.EMPTY) {
+				continue;
+			}
+
 			// What pixel did we hit the texture on?
-			int texX = (int) (wallX * (Texture.BRICK.getSize()));
+			int texX = (int) (wallX * (texture.getSize()));
 			if (side && rayY < 0)
-				texX = Texture.BRICK.getSize() - texX - 1;
+				texX = texture.getSize() - texX - 1;
 			if (!side && rayX > 0)
-				texX = Texture.BRICK.getSize() - texX - 1;
+				texX = texture.getSize() - texX - 1;
 
 			// calculate y coordinate on texture
 			for (int yy = drawStart; yy < drawEnd; yy++) {
@@ -140,19 +145,30 @@ public class World implements IRenderable {
 				// TODO: only compensates for 16x16 textures here, maybe change?
 				int texY = (((yy * 2 - height + lineHeight) << 4) / lineHeight) / 2;
 
-				int color = Texture.BRICK.getPixels()[texX + (texY * Texture.BRICK.getSize())];
+				int color = texture.getPixels()[texX + (texY * texture.getSize())];
 
 				screen.fillRect(darken(color, distanceToWall), xx, yy, BLOCKINESS, 1);
 			}
 
 		}
 
+		drawCrosshair(screen);
+
+	}
+
+	private void drawCrosshair(Screen screen) {
+		final int CROSSHAIR_SIZE = 10;
+		final int CROSSHAIR_WIDTH = 2;
+		final int CROSSHAIR_COLOR = 0xFFFFFF;
+		final int w = screen.getWidth() / 2, h = screen.getHeight() / 2;
+		screen.fillRect(CROSSHAIR_COLOR, w - CROSSHAIR_SIZE, h - CROSSHAIR_WIDTH / 2, CROSSHAIR_SIZE * 2,
+				CROSSHAIR_WIDTH);
+		screen.fillRect(CROSSHAIR_COLOR, w - CROSSHAIR_WIDTH / 2, h - CROSSHAIR_SIZE, CROSSHAIR_WIDTH,
+				CROSSHAIR_SIZE * 2);
 	}
 
 	public void tick() {
-
 		garbageCollect();
-
 		camera.tick(ticker);
 
 		ticker++;

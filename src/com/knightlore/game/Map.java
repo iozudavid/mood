@@ -34,7 +34,7 @@ public class Map {
 		width = w;
 		height = h;
 		map = new Tile[w][h];
-		environment = IEnvironment.LIGHT_OUTDOORS;
+		environment = IEnvironment.DARK_OUTDOORS;
 	}
 
 	public void addWalls() {

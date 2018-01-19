@@ -8,6 +8,8 @@ import java.awt.image.BufferStrategy;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferInt;
 
+import com.knightlore.render.sprite.Texture;
+
 /**
  * The Screen is the Swing component to which all game content is rendered to.
  * 
@@ -52,7 +54,19 @@ public class Screen extends Canvas {
 
 		bs.show();
 	}
-	
+
+	public void drawGraphic(Texture texture, int x, int y) {
+		for (int yy = 0; yy < texture.getSize(); yy++) {
+			for (int xx = 0; xx < texture.getSize(); xx++) {
+				int drawX = x + xx;
+				int drawY = y + yy;
+				if (drawX < 0 || drawX >= width || drawY < 0 || drawY >= height)
+					continue;
+				pixels[drawX + drawY * width] = texture.getPixels()[xx + yy * texture.getSize()];
+			}
+		}
+	}
+
 	public void fillPixel(int color, int x, int y) {
 		fillRect(color, x, y, 1, 1);
 	}
@@ -60,9 +74,9 @@ public class Screen extends Canvas {
 	public void fillRect(int color, int x, int y, int w, int h) {
 		for (int yy = y; yy < y + h; yy++) {
 			for (int xx = x; xx < x + w; xx++) {
-				if (xx < 0 || xx >= this.width || yy < 0 || yy >= this.height)
+				if (xx < 0 || xx >= width || yy < 0 || yy >= height)
 					continue;
-				pixels[xx + yy * this.width] = color;
+				pixels[xx + yy * width] = color;
 			}
 		}
 	}
@@ -70,7 +84,7 @@ public class Screen extends Canvas {
 	public int mixColor(int color1, int color2, double mix) {
 		Color c1 = new Color(color1);
 		Color c2 = new Color(color2);
-		
+
 		int r = (int) (c1.getRed() * (1 - mix) + c2.getRed() * mix);
 		int g = (int) (c1.getGreen() * (1 - mix) + c2.getGreen() * mix);
 		int b = (int) (c1.getBlue() * (1 - mix) + c2.getBlue() * mix);
