@@ -17,4 +17,16 @@ public abstract class Tile {
 
 	public abstract void onTouch(Camera c/* Player p */);
 
+	public char toChar(){
+		return ' ';
+	}
+	
+	public Tile reflectTileX(){
+		return this;
+	}
+	
+	public Tile reflectTileY(){
+		return this;
+	}
+	
 }

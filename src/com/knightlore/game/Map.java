@@ -2,9 +2,9 @@ package com.knightlore.game;
 
 import java.util.Random;
 
-import com.knightlore.game.tile.AirTile;
-import com.knightlore.game.tile.BrickTile;
-import com.knightlore.game.tile.Tile;
+import com.knightlore.game.subArea.SpawnArea;
+import com.knightlore.game.subArea.SubArea;
+import com.knightlore.game.tile.*;
 import com.knightlore.render.environment.IEnvironment;
 
 public class Map {
@@ -13,6 +13,7 @@ public class Map {
 	 * TODO: read in maps from files/procedurally generate.
 	 */
 
+	private int[][] spawnPosition; // will need to change with multiple players
 	private int width, height;
 	public Tile[][] map;
 
@@ -49,50 +50,63 @@ public class Map {
 
 	public static Map randMap() {
 		Random rand = new Random();
-		int w = 10 + rand.nextInt(20);
-		int h = 10 + rand.nextInt(5);
+		int w = 20 + rand.nextInt(20);
+		int h = 20 + rand.nextInt(5);
 		Map m = new Map(w, h);
 
-		// make everything a wall
+		// make everything an undecided tile
 		for (int i = 0; i < w; i++) {
 			for (int j = 0; j < h; j++) {
-				m.map[i][j] = new BrickTile();
+				m.map[i][j] = new UndecidedTile();
 			}
 		}
 
-		int r = 0;
-		// make horizontal rows of free space
-		for (int i = 0; i < w; i++) {
-			r = rand.nextInt(100);
-			if (r > 80) {
-				for (int j = 0; j < h; j++) {
-					m.map[i][j] = Tile.AIR;
-				}
-			} else if (r > 40) {
-				for (int j = 0; j < (h / 2); j++) {
-					m.map[i][j] = Tile.AIR;
-				}
-			}
-		}
+		m.placeSubArea(1, 1, new SpawnArea(10, 10));
 
-		// make vertical rows of free space
-		for (int j = 0; j < h; j++) {
-			r = rand.nextInt(100);
-			if (rand.nextInt(100) > 50) {
-				for (int i = 0; i < w; i++) {
-					m.map[i][j] = Tile.AIR;
-				}
-			} else if (r > 20) {
-				for (int i = 0; i < (w / 2); i++) {
-					m.map[i][j] = Tile.AIR;
-				}
-			}
-		}
+		/*
+		 * int r = 0; // make horizontal rows of free space for (int i = 0; i <
+		 * w; i++) { r = rand.nextInt(100); if (r > 80) { for (int j = 0; j < h;
+		 * j++) { m.map[i][j] = Tile.AIR; } } else if (r > 40) { for (int j = 0;
+		 * j < (h / 2); j++) { m.map[i][j] = Tile.AIR; } } }
+		 * 
+		 * // make vertical rows of free space for (int j = 0; j < h; j++) { r =
+		 * rand.nextInt(100); if (rand.nextInt(100) > 50) { for (int i = 0; i <
+		 * w; i++) { m.map[i][j] = Tile.AIR; } } else if (r > 20) { for (int i =
+		 * 0; i < (w / 2); i++) { m.map[i][j] = Tile.AIR; } } }
+		 */
 
+		m.removeUndecided();
 		m.makeSymX();
-		m.makeSymY();
+		// m.makeSymY();
 		m.addWalls();
 		return m;
+	}
+
+	private boolean placeSubArea(int x, int y, SubArea subArea) {
+
+		if (x + subArea.width >= width || y + subArea.height >= height) {
+			System.out.println("THIS");
+			return false;
+		}
+
+		Tile[][] subGrid = subArea.grid;
+		for (int i = 0; i < subArea.width; i++) {
+			for (int j = 0; j < subArea.width; j++) {
+				map[x + i][y + j] = subGrid[i][j];
+			}
+		}
+
+		return true;
+	}
+
+	// replace all undecided with air
+	private void removeUndecided() {
+		for (int i = 0; i < width; i++) {
+			for (int j = 0; j < height; j++) {
+				if (map[i][j].toChar() == '?')
+					map[i][j] = Tile.AIR;
+			}
+		}
 	}
 
 	// reflection in x-axis
@@ -100,20 +114,23 @@ public class Map {
 		Tile[][] symMap = new Tile[width][height * 2];
 		for (int j = 0; j < height; j++) {
 			for (int i = 0; i < width; i++) {
+				Tile reflectTile = map[i][j].reflectTileX();
 				symMap[i][j] = map[i][j];
-				symMap[i][(height * 2 - 1) - j] = map[i][j];
+				symMap[i][(height * 2 - 1) - j] = reflectTile;
 			}
 		}
 		height = height * 2;
 		map = symMap;
 	}
 
+	// reflection in y-axis
 	private void makeSymY() {
 		Tile[][] symMap = new Tile[width * 2][height];
 		for (int i = 0; i < width; i++) {
 			for (int j = 0; j < height; j++) {
+				Tile reflectTile = map[i][j].reflectTileY();
 				symMap[i][j] = map[i][j];
-				symMap[(width * 2 - 1) - i][j] = map[i][j];
+				symMap[(width * 2 - 1) - i][j] = reflectTile;
 			}
 		}
 		width = width * 2;
@@ -145,10 +162,7 @@ public class Map {
 		String s = "MAP\n" + "WIDTH = " + width + "\n" + "HEIGHT = " + height + "\n";
 		for (int j = 0; j < height; j++) {
 			for (int i = 0; i < width; i++) {
-				if (map[i][j] == Tile.AIR)
-					s = s += " ";
-				else
-					s = s + "X";
+				s = s + map[i][j].toChar();
 			}
 			s = s + "\n";
 		}
@@ -157,10 +171,10 @@ public class Map {
 	}
 
 	// dumb test
-	// public static void main(String args[]) {
-	// Map m = randMap();
-	// // m = joinUpR(m,m);
-	// System.out.println(m.toString());
-	// }
+	public static void main(String args[]) {
+		Map m = randMap();
+		// // m = joinUpR(m,m);
+		System.out.println(m.toString());
+	}
 
 }

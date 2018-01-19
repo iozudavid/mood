@@ -25,4 +25,9 @@ public class BrickTile extends Tile {
 		System.out.println("touched brick");
 	}
 
+	@Override
+	public char toChar(){
+		return 'B';
+	}
+	
 }
