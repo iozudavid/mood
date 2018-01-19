@@ -54,20 +54,17 @@ public class Camera implements IUpdateable {
 			rotateRight();
 		}
 
-		if (controller.q() || controller.e()) {
+		Tile xTile = mapArr[(int) (xPos + yDir * STRAFE_SPEED)][(int) (yPos)];
+		Tile yTile = mapArr[(int) (xPos)][(int) (yPos + -xDir * STRAFE_SPEED)];
 
-			// TODO: sort slowing here!!
-			double newxPos = xPos + (controller.q() ? -1 : 1) * yDir * STRAFE_SPEED;
-			double newyPos = yPos + (controller.q() ? -1 : 1) * -xDir * STRAFE_SPEED;
+		if (controller.q()) {
+			xPos -= yDir * STRAFE_SPEED * (1 - xTile.getSolidity());
+			yPos -= -xDir * STRAFE_SPEED * (1 - yTile.getSolidity());
+		}
 
-			if (mapArr[(int) (newxPos)][(int) (yPos)].getSolidity() == 0) {
-				xPos = newxPos;
-			}
-
-			if (mapArr[(int) (xPos)][(int) (newyPos)].getSolidity() == 0) {
-				yPos = newyPos;
-			}
-
+		if (controller.e()) {
+			xPos += yDir * STRAFE_SPEED * (1 - xTile.getSolidity());
+			yPos += -xDir * STRAFE_SPEED * (1 - yTile.getSolidity());
 		}
 	}
 

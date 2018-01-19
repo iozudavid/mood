@@ -145,7 +145,7 @@ public class Map {
 		String s = "MAP\n" + "WIDTH = " + width + "\n" + "HEIGHT = " + height + "\n";
 		for (int j = 0; j < height; j++) {
 			for (int i = 0; i < width; i++) {
-				if (map[i][j].getClass() == AirTile.class)
+				if (map[i][j] == Tile.AIR)
 					s = s += " ";
 				else
 					s = s + "X";
