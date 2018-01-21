@@ -18,7 +18,7 @@ public class AirTile extends Tile {
 	public Texture getTexture() {
 		return Texture.AIR;
 	}
-	
+
 	@Override
 	public double getSolidity() {
 		return 0D;

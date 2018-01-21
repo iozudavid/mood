@@ -4,7 +4,7 @@ import com.knightlore.render.Camera;
 import com.knightlore.render.sprite.Texture;
 
 public abstract class Tile {
-
+	
 	public abstract Texture getTexture();
 
 	public double getSolidity() {

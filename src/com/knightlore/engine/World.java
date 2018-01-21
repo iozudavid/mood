@@ -26,15 +26,26 @@ public class World implements Renderable {
 
 	@Override
 	public void render(Screen screen, int x, int y) {
-
-		final int width = screen.getWidth();
-		final int height = screen.getHeight();
-
 		map.getEnvironment().renderEnvironment(screen);
+		drawPerspective(screen);
+		drawCrosshair(screen);
 
-		final int BLOCKINESS = 1; // how 'old school' you want to look.
+	}
 
-		for (int xx = 0; xx < width; xx = xx += BLOCKINESS) {
+	private void drawPerspective(Screen screen) {
+
+		final int width = screen.getWidth(), height = screen.getHeight();
+		final int BLOCKINESS = 5; // how 'old school' you want to look.
+
+		/*
+		 * NOTE: THIS ONLY AFFECTS THE RENDERING SIZE OF A TILE. If you change
+		 * this variable, tiles will be drawn differently but the player will
+		 * still move at their usual speed over a single tile. You might want to
+		 * compensate a change here with a change in player move speed.
+		 */
+		final float TILE_SIZE = 1F;
+
+		for (int xx = 0; xx < width; xx += BLOCKINESS) {
 
 			// Calculate direction of the ray based on camera direction.
 			double cameraX = 2 * xx / (double) (width) - 1;
@@ -97,9 +108,9 @@ public class World implements Renderable {
 
 			// Calculate distance to the point of impact
 			if (!side) {
-				distanceToWall = Math.abs((mapX - camera.getxPos() + (1 - stepX) / 2) / rayX);
+				distanceToWall = Math.abs((mapX - camera.getxPos() + (1 - stepX) / 2) / (rayX / TILE_SIZE));
 			} else {
-				distanceToWall = Math.abs((mapY - camera.getyPos() + (1 - stepY) / 2) / rayY);
+				distanceToWall = Math.abs((mapY - camera.getyPos() + (1 - stepY) / 2) / (rayY / TILE_SIZE));
 			}
 
 			// Now calculate the height of the wall based on the distance from
@@ -158,9 +169,6 @@ public class World implements Renderable {
 			}
 
 		}
-
-		drawCrosshair(screen);
-
 	}
 
 	private void drawCrosshair(Screen screen) {
