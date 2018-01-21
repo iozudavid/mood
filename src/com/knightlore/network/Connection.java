@@ -22,7 +22,7 @@ public class Connection implements Runnable {
 
     private UUID clientUUID;
     // Whether this connection has been closed.
-    private boolean terminated;
+    private volatile boolean terminated;
     // The time-stamp of when the most recent communication (packet) was
     // received.
     private Date lastPacketDate;
@@ -93,8 +93,6 @@ public class Connection implements Runnable {
                 e.printStackTrace();
                 this.terminated = true;
                 return;
-            } finally {
-                future.cancel(true); // may or may not desire this
             }
 
             byte[] receivedData = receive();

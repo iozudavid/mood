@@ -30,5 +30,9 @@ public class Manager implements Runnable {
             // object for each
         }
     }
+    
+    public static void main(String[] args) {
+        (new Manager()).run();
+    }
 
 }
