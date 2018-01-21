@@ -2,13 +2,13 @@ package com.knightlore.game.area;
 
 import com.knightlore.game.area.subarea.SpawnArea;
 import com.knightlore.game.tile.*;
-import com.knightlore.render.environment.IEnvironment;
+import com.knightlore.render.Environment;
 
 import java.util.Random;
 
 public final class AreaFactory {
 
-    public static Map createRandomMap(IEnvironment environment) {
+    public static Map createRandomMap(Environment environment) {
         Random rand = new Random();
         int seedWidth = 20 + rand.nextInt(20);
         int seedHeight = 20 + rand.nextInt(5);

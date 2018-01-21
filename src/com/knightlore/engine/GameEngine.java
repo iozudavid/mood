@@ -6,7 +6,7 @@ import com.knightlore.MainWindow;
 import com.knightlore.game.area.AreaFactory;
 import com.knightlore.input.Mouse;
 import com.knightlore.render.Screen;
-import com.knightlore.render.environment.IEnvironment;
+import com.knightlore.render.Environment;
 
 /**
  * Game engine acting as sort of a 'hub' for each of the individual game
@@ -26,7 +26,7 @@ public class GameEngine implements Runnable {
 	private volatile boolean running = false;
 	
 	public GameEngine() {
-		world = new World(AreaFactory.createRandomMap(IEnvironment.DARK_OUTDOORS));
+		world = new World(AreaFactory.createRandomMap(Environment.DARK_OUTDOORS));
 		objects = new ArrayList<>();
 
 		final int w = MainWindow.WIDTH, h = MainWindow.HEIGHT;

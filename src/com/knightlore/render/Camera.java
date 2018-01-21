@@ -7,14 +7,15 @@ import com.knightlore.game.tile.Tile;
 import com.knightlore.input.Controller;
 
 public class Camera implements IUpdateable {
+    public static final double FIELD_OF_VIEW = -0.66;
+	private static final double MOVE_SPEED = .084;
+	private static final double STRAFE_SPEED = .04;
+	private static final double ROTATION_SPEED = .045;
 
-	private double xPos, yPos, xDir, yDir, xPlane, yPlane;
-	public final double MOVE_SPEED = .08, STRAFE_SPEED = .04;
-	public final double ROTATION_SPEED = .045;
-	public static final double FIELD_OF_VIEW = -0.66;
+	private final Map map;
+    private double xPos, yPos, xDir, yDir, xPlane, yPlane;
 
-	private Map map;
-
+    // TODO constructor takes a lot of parameters, maybe use Builder Pattern instead?
 	public Camera(double xPos, double yPos, double xDir, double yDir, double xPlane, double yPlane, Map map) {
 		super();
 		this.xPos = xPos;

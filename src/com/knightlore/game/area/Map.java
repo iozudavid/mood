@@ -1,17 +1,17 @@
 package com.knightlore.game.area;
 import com.knightlore.game.tile.*;
-import com.knightlore.render.environment.IEnvironment;
+import com.knightlore.render.Environment;
 
 public class Map extends Area {
     // TODO: read in maps from files/procedurally generate.
     // Maps have associated environments
-	private final IEnvironment environment;
+	private final Environment environment;
 
-	public IEnvironment getEnvironment() {
+	public Environment getEnvironment() {
 		return environment;
 	}
 
-	Map(Tile[][] grid, IEnvironment environment) {
+	Map(Tile[][] grid, Environment environment) {
 		super(grid);
 		this.environment = environment;
 	}
@@ -38,7 +38,7 @@ public class Map extends Area {
 
 	// dumb test
 	public static void main(String args[]) {
-		Map m = AreaFactory.createRandomMap(IEnvironment.LIGHT_OUTDOORS);
+		Map m = AreaFactory.createRandomMap(Environment.LIGHT_OUTDOORS);
 		// // m = joinUpR(m,m);
 		System.out.println(m.toString());
 	}
