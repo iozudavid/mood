@@ -5,8 +5,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.ListIterator;
 
-import com.knightlore.game.Map;
-import com.knightlore.game.tile.Tile;
+import com.knightlore.game.area.Map;
+import com.knightlore.game.tile.AirTile;
 import com.knightlore.render.Camera;
 import com.knightlore.render.IRenderable;
 import com.knightlore.render.Screen;
@@ -27,7 +27,6 @@ public class World implements IRenderable {
 	@Override
 	public void render(Screen screen, int x, int y) {
 
-		Tile[][] mapArr = map.getMapArray();
 		final int width = screen.getWidth();
 		final int height = screen.getHeight();
 
@@ -91,7 +90,7 @@ public class World implements IRenderable {
 				}
 
 				// If this is anything but an empty cell, we've hit a wall
-				if (mapArr[mapX][mapY] != Tile.AIR) {
+				if (map.getTile(mapX, mapY) != AirTile.getInstance()) {
 					hit = true;
 				}
 			}
@@ -132,7 +131,7 @@ public class World implements IRenderable {
 			}
 			wallX -= Math.floor(wallX);
 
-			Texture texture = mapArr[mapX][mapY].getTexture();
+			Texture texture = map.getTile(mapX, mapY).getTexture();
 			if (texture == Texture.EMPTY) {
 				continue;
 			}
