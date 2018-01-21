@@ -17,6 +17,7 @@ import com.knightlore.render.sprite.Texture;
  *
  */
 public class Screen extends Canvas {
+
 	private final BufferedImage img;
 	private final int width, height;
 	private final int[] pixels, imagePixels;

@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.ListIterator;
 
+import com.knightlore.game.Player;
 import com.knightlore.game.area.Map;
 import com.knightlore.game.tile.AirTile;
 import com.knightlore.render.Camera;
@@ -13,15 +14,18 @@ import com.knightlore.render.Screen;
 import com.knightlore.render.sprite.Texture;
 
 public class World implements Renderable {
-	private final Map map;
 	private final List<GameObject> entities;
-	private final Camera camera;
 	private long ticker;
+
+	private final Map map;
+	private Player player;
 
 	public World(Map map) {
 		this.map = map;
 		entities = new ArrayList<>();
-		camera = new Camera(4.5, 4.5, 1, 0, 0, Camera.FIELD_OF_VIEW, map);
+		
+		Camera camera = new Camera(4.5, 4.5, 1, 0, 0, Camera.FIELD_OF_VIEW, map);
+		player = new Player(camera);
 	}
 
 	@Override
@@ -44,6 +48,8 @@ public class World implements Renderable {
 		 * compensate a change here with a change in player move speed.
 		 */
 		final float TILE_SIZE = 1F;
+		
+		Camera camera = player.getCamera();
 
 		for (int xx = 0; xx < width; xx += BLOCKINESS) {
 
@@ -184,7 +190,7 @@ public class World implements Renderable {
 
 	public void tick() {
 		garbageCollect();
-		camera.tick(ticker);
+		player.tick(ticker);
 
 		ticker++;
 	}
