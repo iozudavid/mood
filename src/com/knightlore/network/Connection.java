@@ -8,6 +8,11 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
+import java.io.IOException;
+import java.net.DatagramPacket;
+import java.net.DatagramSocket;
+import java.net.InetAddress;
+import java.net.SocketException;
 import java.util.concurrent.TimeoutException;
 
 /**
@@ -16,7 +21,8 @@ import java.util.concurrent.TimeoutException;
  * 
  * @author Will
  */
-public class Connection implements Runnable {
+
+public class Connection extends Thread {
     // Wait 5 seconds without receiving packets before disconnecting.
     private static int TIMEOUT_MILLIS = 5 * 1000;
 
@@ -27,11 +33,48 @@ public class Connection implements Runnable {
     // received.
     private Date lastPacketDate;
     private Queue<Command> commandQueue;
+    private DatagramSocket socket;
+    private DatagramPacket packet;
+    private byte[] data;
+    private InetAddress address;
+    private long lastReceiving;
+    private final Object lock;
+    private Thread timeoutThread;
 
-    public Connection(UUID clientUUID, Queue<Command> commandQueue) {
+    public Connection(InetAddress address, UUID clientUUID,
+            Queue<Command> commandQueue) {
+
         this.clientUUID = clientUUID;
         this.commandQueue = commandQueue;
         this.terminated = false;
+
+        lastReceiving = System.currentTimeMillis();
+        lock = new Object();
+        this.address = address;
+        this.data = new byte[256];
+        try {
+            this.socket = new DatagramSocket(Port.number);
+        } catch (SocketException e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    private void setLastReceivingTime(long newReceivingTime) {
+        synchronized (lock) {
+            this.lastReceiving = newReceivingTime;
+        }
+    }
+
+    private long getLastReceivingTime() {
+        synchronized (lock) {
+            return this.lastReceiving;
+        }
+    }
+
+    private boolean verify(byte[] data) {
+        // verify the ip from receciving packet
+        return true;
     }
 
     /**
@@ -41,6 +84,13 @@ public class Connection implements Runnable {
      */
     public void send(byte[] data) {
         // TODO
+        try {
+            this.packet = new DatagramPacket(data, data.length, this.address,
+                    Port.number);
+            socket.send(packet);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     /**
@@ -48,7 +98,14 @@ public class Connection implements Runnable {
      * method will not return until a packet is received.
      */
     public byte[] receive() {
-        // TODO
+        try {
+            this.packet = new DatagramPacket(data, data.length);
+            socket.receive(packet);
+            this.setLastReceivingTime(System.currentTimeMillis());
+            return packet.getData();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         return null;
     }
 
@@ -99,5 +156,9 @@ public class Connection implements Runnable {
             // TODO: process the received data, and add a command to the queue
             // if necessary.
         }
+    }
+
+    public boolean isStillAlive() {
+        return timeoutThread.isAlive();
     }
 }
