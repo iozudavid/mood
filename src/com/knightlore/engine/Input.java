@@ -2,26 +2,27 @@ package com.knightlore.engine;
 
 import com.knightlore.input.Keyboard;
 import com.knightlore.input.Mouse;
+import com.knightlore.utils.Vector2D;
 
 public class Input {
 	
 	private static Keyboard keyboard;
 	private static Mouse mouse;
 	
-	public static Keyboard GetKeyboard(){
+	public static Keyboard getKeyboard() {
 		return keyboard;
 	}
-	
-	public static Mouse GetMouse(){
+
+	public static Mouse getMouse() {
 		return mouse;
 	}
 	
-	public static Boolean IsKeyDown (int keyCode) {
+	public static Boolean isKeyDown(int keyCode) {
 		return keyboard.isPressed(keyCode);
 	}
 	
-	public static Vector2 GetMousePos(){
-		return new Vector2(mouse.getX(),mouse.getY());
+	public static Vector2D getMousePos() {
+		return new Vector2D(mouse.getX(), mouse.getY());
 	}
 	
 	static void init(){

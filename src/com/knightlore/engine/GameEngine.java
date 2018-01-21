@@ -15,30 +15,26 @@ import com.knightlore.render.Screen;
  *
  */
 public class GameEngine implements Runnable {
+	private static final double UPDATES_PER_SECOND = 60D;
 
-	private volatile boolean running = false;
+	private final Screen screen;
+	private final MainWindow window;
+	private final World world;
+	private final ArrayList<GameObject> objects;
 	private Thread thread;
-	private final double updatesPerSecond = 60D;
-
-	private Screen screen;
-	private MainWindow window;
-
-	private World world;
-
-	private ArrayList<GameObject> objects;
+	private volatile boolean running = false;
 	
 	public GameEngine() {
 		world = new World(Map.randMap());
-		
-		objects = new ArrayList<GameObject>();
-		
+		objects = new ArrayList<>();
+
 		final int w = MainWindow.WIDTH, h = MainWindow.HEIGHT;
 		screen = new Screen(w, h);
 		window = new MainWindow(screen, MainWindow.TITLE, w, h);
-		InitEngine();
+		initEngine();
 	}
 
-	private void InitEngine() {
+	private void initEngine() {
 		Input.init();
 		setupKeyboard();
 		setupMouse();
@@ -51,7 +47,7 @@ public class GameEngine implements Runnable {
 		window.setVisible(true);
 	}
 
-	private void stop() {
+	public void stop() {
 		running = false;
 		try {
 			thread.join();
@@ -63,16 +59,13 @@ public class GameEngine implements Runnable {
 
 	@Override
 	public void run() {
-
 		/*
 		 * This piece of code limits the number of game updates per second to
-		 * whatever it is set to in the variable uupdatesPerSecond.
+		 * whatever it is set to in the variable updatesPerSecond.
 		 */
-
 		long lastTime = System.nanoTime();
 		double delta = 0D;
-		double ns = 1E9D / updatesPerSecond;
-
+		double ns = 1E9D / UPDATES_PER_SECOND;
 		while (running) {
 			long now = System.nanoTime();
 			delta += (now - lastTime) / ns;
@@ -84,13 +77,12 @@ public class GameEngine implements Runnable {
 				screen.render(0, 0, world);
 				delta -= 1;
 			}
-
 		}
 	}
 	
-	private void updateObjects(){
-		for(int i=0;i<objects.size();i++){
-			objects.get(i).onUpdate();
+	private void updateObjects() {
+		for (GameObject obj: objects) {
+			obj.onUpdate();
 		}
 	}
 
@@ -98,7 +90,7 @@ public class GameEngine implements Runnable {
 	 * Add the singleton keyboard instance to the canvas and request focus.
 	 */
 	private void setupKeyboard() {
-		screen.addKeyListener(Input.GetKeyboard());
+		screen.addKeyListener(Input.getKeyboard());
 		screen.requestFocus();
 	}
 
@@ -106,7 +98,7 @@ public class GameEngine implements Runnable {
 	 * Add the singleton mouse instance to the canvas and request focus.
 	 */
 	private void setupMouse() {
-		Mouse mouse = Input.GetMouse();
+		Mouse mouse = Input.getMouse();
 		screen.addMouseListener(mouse);
 		screen.addMouseMotionListener(mouse);
 		screen.addMouseWheelListener(mouse);
@@ -117,5 +109,4 @@ public class GameEngine implements Runnable {
 		GameEngine engine = new GameEngine();
 		engine.start();
 	}
-
 }

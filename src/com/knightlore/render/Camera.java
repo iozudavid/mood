@@ -31,7 +31,7 @@ public class Camera implements IUpdateable {
 
 		Tile[][] mapArr = map.getMapArray();
 
-		Controller controller = new Controller(Input.GetKeyboard());
+		Controller controller = new Controller(Input.getKeyboard());
 		if (controller.w()) {
 			Tile xTile = mapArr[(int) (xPos + xDir * MOVE_SPEED)][(int) (yPos)];
 			Tile yTile = mapArr[(int) xPos][(int) (yPos + yDir * MOVE_SPEED)];
