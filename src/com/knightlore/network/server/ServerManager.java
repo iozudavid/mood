@@ -1,9 +1,12 @@
-package com.knightlore.network;
+package com.knightlore.network.server;
 
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.LinkedBlockingQueue;
+
+import com.knightlore.network.Connection;
+
 import java.net.InetAddress;
 import java.util.Map;
 
@@ -13,12 +16,9 @@ import java.util.Map;
  * 
  * @author Will
  */
-public class Manager implements Runnable {
+public class ServerManager implements Runnable {
     //ip-connection map
     private ConcurrentHashMap<InetAddress, Connection> connections;
-    // A queue of commands to be processed, received from clients. This queue is
-    // populated by clients' Connection objects.
-    private LinkedBlockingQueue<Command> commandQueue;
 
     @Override
     public void run() {
@@ -35,12 +35,13 @@ public class Manager implements Runnable {
             //here will be the verification of the convention for 4 bytes for example
             //then create an entry in map
             //and also start a new connection thread
+            //new Client();
         }
     }
 
     
     public static void main(String[] args) {
-        (new Manager()).run();
+        (new ServerManager()).run();
     }
 
 }

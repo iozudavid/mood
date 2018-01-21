@@ -1,15 +1,18 @@
-package com.knightlore.network;
+package com.knightlore.network.server;
 
 import java.util.List;
 import java.util.concurrent.LinkedBlockingQueue;
 
-public class CommandProcessor implements Runnable {
-    private List<Connection> conns;
+import com.knightlore.network.Command;
+import com.knightlore.network.Connection;
+
+public class ReceiveFromClient implements Runnable {
+    private Connection conn;
     private LinkedBlockingQueue<Command> commandQueue;
 
-    public CommandProcessor(List<Connection> conns,
+    public ReceiveFromClient(Connection conn,
             LinkedBlockingQueue<Command> commandQueue) {
-        this.conns = conns;
+        this.conn = conn;
         this.commandQueue = commandQueue;
     }
 

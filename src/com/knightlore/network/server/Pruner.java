@@ -1,9 +1,11 @@
-package com.knightlore.network;
+package com.knightlore.network.server;
 
 import java.net.InetAddress;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+
+import com.knightlore.network.Connection;
 
 /**
  * Constantly checks for inactive client connections, and removes them from the
