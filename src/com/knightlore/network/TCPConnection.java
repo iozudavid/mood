@@ -12,50 +12,52 @@ import java.util.Queue;
  */
 
 public class TCPConnection extends Connection {
-	
-	private InputStream infoReceive;
-	private OutputStream infoSend;
-	private Socket socket;
 
-	public TCPConnection(Queue<Command> commandQueue, Socket socketConnection) {
-		super(commandQueue);
-		this.socket = socketConnection;
-		try {
-			this.infoReceive = socketConnection.getInputStream();
-			this.infoSend = socketConnection.getOutputStream();
-		} catch (IOException e) {
-			System.err.println("The connection doesn't seem to work...");
-			System.exit(1);
-		}
-	}
+    private InputStream infoReceive;
+    private OutputStream infoSend;
 
-	@Override
-	public void send(byte[] data) {
-		try {
-			infoSend.write(data);
-		} catch (IOException e) {
-			System.err.println("Communication broke...");
-			System.exit(1);
-		}
+    public TCPConnection(Queue<Command> commandQueue, Socket socket) {
+        super(commandQueue);
+        try {
+            this.infoReceive = socket.getInputStream();
+            this.infoSend = socket.getOutputStream();
+        } catch (IOException e) {
+            System.err.println("The connection doesn't seem to work...");
+            System.exit(1);
+        }
+    }
 
-	}
+    @Override
+    public void send(byte[] data) {
+        try {
+            infoSend.write(data.length);
+            infoSend.write(data);
+            infoSend.flush();
+        } catch (IOException e) {
+            System.err.println("Communication broke...");
+            System.exit(1);
+        }
 
-	@Override
-	public byte[] receive() {
-		byte[] data = null;
-		try {
-			int i, count=0;
-			data = new byte[256];
-			while((i = infoReceive.read())!=-1) {
-				data[count] = (byte) i;
-				count++;
-	         }
-			return data;
-		} catch (IOException e) {
-			System.err.println("Communication broke...");
-			System.exit(1);
-		}
-		return null;
-	}
+    }
+
+    @Override
+    public byte[] receiveBlocking() {
+        byte[] data = null;
+        try {
+            int len = infoReceive.read();
+            // Unexpected end of stream.
+            if (len == -1)
+                throw new IOException();
+            data = new byte[len];
+            int i, count = 0;
+            while (count < len && (i = infoReceive.read()) != -1) {
+                data[count++] = (byte) i;
+            }
+        } catch (IOException e) {
+            System.err.println("Communication broke...");
+            System.exit(1);
+        }
+        return data;
+    }
 
 }

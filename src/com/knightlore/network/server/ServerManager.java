@@ -29,11 +29,12 @@ public class ServerManager implements Runnable {
     private ServerSocket serverSocket = null;
     
     public ServerManager(){
-    	connections = new ConcurrentHashMap<InetAddress, Connection>();
+    	    connections = new ConcurrentHashMap<InetAddress, Connection>();
     }
 
     @Override
     public void run() {
+        System.out.println("Server started");
    //     Thread pruner = new Thread(new Pruner(connections));
     //    pruner.start();
         
@@ -57,13 +58,11 @@ public class ServerManager implements Runnable {
             //new Client();
         	try {
 				Socket socket = serverSocket.accept();
-				System.out.println(socket.toString());
 				Connection conn = new TCPConnection(new LinkedBlockingQueue<Command>(), socket);
-				new Thread(conn).start();
 				new Thread(new ReceiveFromClient(conn, new LinkedBlockingQueue<Command>())).start();
 				new Thread(new SendToClient(conn, new LinkedBlockingQueue<Command>())).start();
-				conn.send("You have been connected to the server".getBytes());
-				connections.put(socket.getInetAddress(), conn);
+				
+				this.connections.put(socket.getInetAddress(), conn);
 			} catch (IOException e) {
 				System.err.println("Couldn't create the connection...");
 				System.exit(1);

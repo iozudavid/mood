@@ -12,12 +12,11 @@ public class ReceiveFromServer implements Runnable {
 
 	@Override
 	public void run() {
-
-		while (true) {
-			byte[] packet = conn.receive();
-			System.out.println(packet);
-			
+	    byte[] packet;
+		while ((packet = conn.receiveBlocking()) != null) {
+			System.out.println("Received: " + new String(packet, Connection.CHARSET));
 		}
+		System.out.println("Got null packet, exiting");
 		
 	}
 	

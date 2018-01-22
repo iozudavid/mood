@@ -18,11 +18,12 @@ public class SendToServer implements Runnable{
 		BufferedReader user = new BufferedReader(new InputStreamReader(System.in));
 		while (true) {
 			try {
+			    System.out.println("Enter a String: ");
 				String message = user.readLine();
-				System.out.println(message);
-				conn.send(message.getBytes());
+				conn.send(message.getBytes(Connection.CHARSET));
 			} catch (IOException e) {
 				e.printStackTrace();
+				return;
 			}
 		}
 

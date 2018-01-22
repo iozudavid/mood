@@ -17,7 +17,9 @@ public class ReceiveFromClient implements Runnable {
 
     @Override
     public void run() {
-        while (true) {
+        byte[] packet;
+        while ((packet = conn.receiveBlocking()) != null) {
+            System.out.println("Received: " + new String(packet, Connection.CHARSET));
 //            Command c = null;
 //            try {
 //                c = commandQueue.take();
@@ -30,12 +32,12 @@ public class ReceiveFromClient implements Runnable {
             // TODO: update game state based on command, send state delta to
             // clients??
         	
-        	byte[] packet = conn.receive();
-        	System.out.println("packet: " + packet);
         	
       
         	
         }
+
+        System.out.println("Got null packet, exiting");
     }
 
 }

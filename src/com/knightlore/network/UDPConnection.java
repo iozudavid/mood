@@ -75,7 +75,7 @@ public class UDPConnection extends Connection {
      * Receive data from the other party. This is a blocking operation, so the
      * method will not return until a packet is received.
      */
-    public byte[] receive() {
+    public byte[] receiveBlocking() {
         try {
             this.data = new byte[256];
             while (!this.verify(this.data)) {

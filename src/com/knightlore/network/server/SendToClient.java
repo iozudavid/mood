@@ -3,6 +3,8 @@ package com.knightlore.network.server;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.concurrent.LinkedBlockingQueue;
 
 import com.knightlore.network.Command;
@@ -22,10 +24,12 @@ public class SendToClient implements Runnable{
 		BufferedReader user = new BufferedReader(new InputStreamReader(System.in));
 		while (true) {
 			try {
+			    System.out.println("Enter a String: ");
 				String message = user.readLine();
-				conn.send(message.getBytes());
+				conn.send(message.getBytes(Connection.CHARSET));
 			} catch (IOException e) {
 				e.printStackTrace();
+				return;
 			}
 		}
 
