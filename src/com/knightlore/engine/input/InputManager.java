@@ -1,10 +1,8 @@
-package com.knightlore.engine;
+package com.knightlore.engine.input;
 
-import com.knightlore.input.Keyboard;
-import com.knightlore.input.Mouse;
 import com.knightlore.utils.Vector2D;
 
-public class Input {
+public class InputManager {
 	
 	private static Keyboard keyboard;
 	private static Mouse mouse;
@@ -25,7 +23,7 @@ public class Input {
 		return new Vector2D(mouse.getX(), mouse.getY());
 	}
 	
-	static void init(){
+	public static void init(){
 		keyboard = new Keyboard();
 		mouse = new Mouse();
 	}

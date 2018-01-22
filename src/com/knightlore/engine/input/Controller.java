@@ -1,4 +1,4 @@
-package com.knightlore.input;
+package com.knightlore.engine.input;
 
 import java.awt.event.KeyEvent;
 

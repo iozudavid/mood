@@ -3,8 +3,9 @@ package com.knightlore.engine;
 import java.util.ArrayList;
 
 import com.knightlore.MainWindow;
+import com.knightlore.engine.input.InputManager;
 import com.knightlore.game.area.AreaFactory;
-import com.knightlore.input.Mouse;
+import com.knightlore.engine.input.Mouse;
 import com.knightlore.render.Screen;
 import com.knightlore.render.Environment;
 
@@ -12,7 +13,7 @@ import com.knightlore.render.Environment;
  * Game engine acting as sort of a 'hub' for each of the individual game
  * components.
  * 
- * @author Joe Ellis
+ * @authors Joe Ellis, James Adey 
  *
  */
 public class GameEngine implements Runnable {
@@ -37,7 +38,7 @@ public class GameEngine implements Runnable {
 
 	private void initEngine() {
 		System.out.println("Initialising Engine...");
-		Input.init();
+		InputManager.init();
 		setupKeyboard();
 		setupMouse();
 		System.out.println("Engine Initialised Successfully.");
@@ -93,7 +94,7 @@ public class GameEngine implements Runnable {
 	 * Add the singleton keyboard instance to the canvas and request focus.
 	 */
 	private void setupKeyboard() {
-		screen.addKeyListener(Input.getKeyboard());
+		screen.addKeyListener(InputManager.getKeyboard());
 		screen.requestFocus();
 	}
 
@@ -101,7 +102,7 @@ public class GameEngine implements Runnable {
 	 * Add the singleton mouse instance to the canvas and request focus.
 	 */
 	private void setupMouse() {
-		Mouse mouse = Input.getMouse();
+		Mouse mouse = InputManager.getMouse();
 		screen.addMouseListener(mouse);
 		screen.addMouseMotionListener(mouse);
 		screen.addMouseWheelListener(mouse);

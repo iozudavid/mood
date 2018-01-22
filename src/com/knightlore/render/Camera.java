@@ -1,10 +1,10 @@
 package com.knightlore.render;
 
 import com.knightlore.engine.IUpdateable;
-import com.knightlore.engine.Input;
+import com.knightlore.engine.input.InputManager;
 import com.knightlore.game.area.Map;
 import com.knightlore.game.tile.Tile;
-import com.knightlore.input.Controller;
+import com.knightlore.engine.input.Controller;
 
 public class Camera implements IUpdateable {
     public static final double FIELD_OF_VIEW = -0.66;
@@ -29,7 +29,7 @@ public class Camera implements IUpdateable {
 
 	@Override
 	public void tick(long ticker) {
-		Controller controller = new Controller(Input.getKeyboard());
+		Controller controller = new Controller(InputManager.getKeyboard());
 		if (controller.w()) {
 			Tile xTile = map.getTile((int) (xPos + xDir * MOVE_SPEED), (int) yPos);
 			Tile yTile = map.getTile((int) xPos, (int) (yPos + yDir * MOVE_SPEED));
