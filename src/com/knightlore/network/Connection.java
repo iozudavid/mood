@@ -13,7 +13,7 @@ import java.util.concurrent.TimeoutException;
 public abstract class Connection {
     public static final Charset CHARSET = StandardCharsets.UTF_8;
     // Wait 5 seconds without receiving packets before disconnecting.
-    protected static int TIMEOUT_MILLIS = 100000 * 1000;
+    protected static int TIMEOUT_MILLIS = 5 * 1000;
 
     protected Queue<Command> commandQueue;
     public volatile boolean terminated;
