@@ -23,7 +23,7 @@ public class World implements Renderable {
 	public World(Map map) {
 		this.map = map;
 		entities = new ArrayList<>();
-		
+
 		Camera camera = new Camera(4.5, 4.5, 1, 0, 0, Camera.FIELD_OF_VIEW, map);
 		player = new Player(camera);
 	}
@@ -48,7 +48,7 @@ public class World implements Renderable {
 		 * compensate a change here with a change in player move speed.
 		 */
 		final float TILE_SIZE = 1F;
-		
+
 		Camera camera = player.getCamera();
 
 		for (int xx = 0; xx < width; xx += BLOCKINESS) {
@@ -169,7 +169,9 @@ public class World implements Renderable {
 				// TODO: only compensates for 16x16 textures here, maybe change?
 				int texY = (((yy * 2 - height + lineHeight) << 4) / lineHeight) / 2;
 
-				int color = texture.getPixels()[texX + (texY * texture.getSize())];
+				int transparency = (int) (map.getTile(mapX, mapY).getTransparency() * 255);
+				transparency <<= 24;
+				int color = transparency + texture.getPixels()[texX + (texY * texture.getSize())];
 
 				screen.fillRect(darken(color, distanceToWall), xx, yy, BLOCKINESS, 1);
 			}

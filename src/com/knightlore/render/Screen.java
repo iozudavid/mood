@@ -26,7 +26,7 @@ public class Screen extends Canvas {
 		super();
 		this.width = width;
 		this.height = height;
-		img = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
+		img = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
 		pixels = new int[width * height];
 		imagePixels = ((DataBufferInt) img.getRaster().getDataBuffer()).getData();
 	}
@@ -45,6 +45,7 @@ public class Screen extends Canvas {
 		Graphics2D g = (Graphics2D) bs.getDrawGraphics();
 		g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
+		g.fillRect(0, 0, getWidth(), getHeight());
 		renderable.render(this, x, y);
 
 		copy();

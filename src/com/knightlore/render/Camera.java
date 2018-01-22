@@ -9,7 +9,7 @@ import com.knightlore.input.Controller;
 import com.knightlore.input.Keyboard;
 
 public class Camera implements IUpdateable {
-	
+
 	public static final double FIELD_OF_VIEW = -0.66;
 	private static final double MOVE_SPEED = .084;
 	private static final double STRAFE_SPEED = .04;
@@ -37,10 +37,7 @@ public class Camera implements IUpdateable {
 		Controller controller = new BasicController();
 
 		if (keyboard.isPressed(controller.moveForward())) {
-			Tile xTile = map.getTile((int) (xPos + xDir * MOVE_SPEED), (int) yPos);
-			Tile yTile = map.getTile((int) xPos, (int) (yPos + yDir * MOVE_SPEED));
-			xPos += xDir * MOVE_SPEED * (1 - xTile.getSolidity());
-			yPos += yDir * MOVE_SPEED * (1 - yTile.getSolidity());
+			moveForward();
 		}
 
 		if (keyboard.isPressed(controller.rotateAntiClockwise())) {
@@ -48,28 +45,48 @@ public class Camera implements IUpdateable {
 		}
 
 		if (keyboard.isPressed(controller.moveBackward())) {
-			Tile xTile = map.getTile((int) (xPos - xDir * MOVE_SPEED), (int) yPos);
-			Tile yTile = map.getTile((int) xPos, (int) (yPos - yDir * MOVE_SPEED));
-			xPos -= xDir * MOVE_SPEED * (1 - xTile.getSolidity());
-			yPos -= yDir * MOVE_SPEED * (1 - yTile.getSolidity());
+			moveBackward();
 		}
 
 		if (keyboard.isPressed(controller.rotateClockwise())) {
 			rotateClockwise();
 		}
 
-		Tile xTile = map.getTile((int) (xPos + yDir * STRAFE_SPEED), (int) (yPos));
-		Tile yTile = map.getTile((int) (xPos), (int) (yPos + -xDir * STRAFE_SPEED));
-
 		if (keyboard.isPressed(controller.moveLeft())) {
-			xPos -= yDir * STRAFE_SPEED * (1 - xTile.getSolidity());
-			yPos -= -xDir * STRAFE_SPEED * (1 - yTile.getSolidity());
+			strafeLeft();
 		}
 
 		if (keyboard.isPressed(controller.moveRight())) {
-			xPos += yDir * STRAFE_SPEED * (1 - xTile.getSolidity());
-			yPos += -xDir * STRAFE_SPEED * (1 - yTile.getSolidity());
+			strafeRight();
 		}
+	}
+
+	private void moveForward() {
+		Tile xTile = map.getTile((int) (xPos + xDir * MOVE_SPEED), (int) yPos);
+		Tile yTile = map.getTile((int) xPos, (int) (yPos + yDir * MOVE_SPEED));
+		xPos += xDir * MOVE_SPEED * (1 - xTile.getSolidity());
+		yPos += yDir * MOVE_SPEED * (1 - yTile.getSolidity());
+	}
+
+	private void moveBackward() {
+		Tile xTile = map.getTile((int) (xPos - xDir * MOVE_SPEED), (int) yPos);
+		Tile yTile = map.getTile((int) xPos, (int) (yPos - yDir * MOVE_SPEED));
+		xPos -= xDir * MOVE_SPEED * (1 - xTile.getSolidity());
+		yPos -= yDir * MOVE_SPEED * (1 - yTile.getSolidity());
+	}
+
+	private void strafeLeft() {
+		Tile xTile = map.getTile((int) (xPos - yDir * STRAFE_SPEED), (int) (yPos));
+		Tile yTile = map.getTile((int) (xPos), (int) (yPos + xDir * STRAFE_SPEED));
+		xPos -= yDir * STRAFE_SPEED * (1 - xTile.getSolidity());
+		yPos -= -xDir * STRAFE_SPEED * (1 - yTile.getSolidity());
+	}
+
+	private void strafeRight() {
+		Tile xTile = map.getTile((int) (xPos + yDir * STRAFE_SPEED), (int) (yPos));
+		Tile yTile = map.getTile((int) (xPos), (int) (yPos + -xDir * STRAFE_SPEED));
+		xPos += yDir * STRAFE_SPEED * (1 - xTile.getSolidity());
+		yPos += -xDir * STRAFE_SPEED * (1 - yTile.getSolidity());
 	}
 
 	/**
