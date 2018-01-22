@@ -5,40 +5,47 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.ListIterator;
 
-import com.knightlore.game.Map;
-import com.knightlore.game.tile.Tile;
+import com.knightlore.game.area.Map;
+import com.knightlore.game.tile.AirTile;
 import com.knightlore.render.Camera;
-import com.knightlore.render.IRenderable;
+import com.knightlore.render.Renderable;
 import com.knightlore.render.Screen;
 import com.knightlore.render.sprite.Texture;
 
-public class World implements IRenderable {
-
-	private Map map;
-
+public class World implements Renderable {
+	private final Map map;
+	private final List<GameObject> entities;
+	private final Camera camera;
 	private long ticker;
-	private List<GameObject> entities;
-
-	private Camera camera;
 
 	public World(Map map) {
 		this.map = map;
-		entities = new ArrayList<GameObject>();
+		entities = new ArrayList<>();
 		camera = new Camera(4.5, 4.5, 1, 0, 0, Camera.FIELD_OF_VIEW, map);
 	}
 
 	@Override
 	public void render(Screen screen, int x, int y) {
-
-		Tile[][] mapArr = map.getMapArray();
-		final int width = screen.getWidth();
-		final int height = screen.getHeight();
-
 		map.getEnvironment().renderEnvironment(screen);
+		drawPerspective(screen);
+		drawCrosshair(screen);
 
-		final int BLOCKINESS = 1; // how 'old school' you want to look.
+	}
 
-		for (int xx = 0; xx < width; xx = xx += BLOCKINESS) {
+	private void drawPerspective(Screen screen) {
+
+		final int width = screen.getWidth(), height = screen.getHeight();
+		final int BLOCKINESS = 5; // how 'old school' you want to look.
+
+		/*
+		 * NOTE: THIS ONLY AFFECTS THE RENDERING SIZE OF A TILE. If you change
+		 * this variable, tiles will be drawn differently but the player will
+		 * still move at their usual speed over a single tile. You might want to
+		 * compensate a change here with a change in player move speed.
+		 */
+		final float TILE_SIZE = 1F;
+
+		for (int xx = 0; xx < width; xx += BLOCKINESS) {
 
 			// Calculate direction of the ray based on camera direction.
 			double cameraX = 2 * xx / (double) (width) - 1;
@@ -94,29 +101,37 @@ public class World implements IRenderable {
 				}
 
 				// If this is anything but an empty cell, we've hit a wall
-				if (mapArr[mapX][mapY] != Tile.AIR)
+				if (map.getTile(mapX, mapY) != AirTile.getInstance()) {
 					hit = true;
+				}
 			}
 
 			// Calculate distance to the point of impact
-			if (!side)
-				distanceToWall = Math.abs((mapX - camera.getxPos() + (1 - stepX) / 2) / rayX);
-			else
-				distanceToWall = Math.abs((mapY - camera.getyPos() + (1 - stepY) / 2) / rayY);
+			if (!side) {
+				distanceToWall = Math.abs((mapX - camera.getxPos() + (1 - stepX) / 2) / (rayX / TILE_SIZE));
+			} else {
+				distanceToWall = Math.abs((mapY - camera.getyPos() + (1 - stepY) / 2) / (rayY / TILE_SIZE));
+			}
+
 			// Now calculate the height of the wall based on the distance from
 			// the camera
 			int lineHeight;
-			if (distanceToWall > 0)
+			if (distanceToWall > 0) {
 				lineHeight = Math.abs((int) (height / distanceToWall));
-			else
+			} else {
 				lineHeight = height;
+			}
+
 			// calculate lowest and highest pixel to fill in current stripe
 			int drawStart = -lineHeight / 2 + height / 2;
-			if (drawStart < 0)
+			if (drawStart < 0) {
 				drawStart = 0;
+			}
+
 			int drawEnd = lineHeight / 2 + height / 2;
-			if (drawEnd >= height)
+			if (drawEnd >= height) {
 				drawEnd = height - 1;
+			}
 
 			// add a texture
 			double wallX;// Exact position of where wall was hit
@@ -127,17 +142,20 @@ public class World implements IRenderable {
 			}
 			wallX -= Math.floor(wallX);
 
-			Texture texture = mapArr[mapX][mapY].getTexture();
+			Texture texture = map.getTile(mapX, mapY).getTexture();
 			if (texture == Texture.EMPTY) {
 				continue;
 			}
 
 			// What pixel did we hit the texture on?
 			int texX = (int) (wallX * (texture.getSize()));
-			if (side && rayY < 0)
+			if (side && rayY < 0) {
 				texX = texture.getSize() - texX - 1;
-			if (!side && rayX > 0)
+			}
+
+			if (!side && rayX > 0) {
 				texX = texture.getSize() - texX - 1;
+			}
 
 			// calculate y coordinate on texture
 			for (int yy = drawStart; yy < drawEnd; yy++) {
@@ -151,9 +169,6 @@ public class World implements IRenderable {
 			}
 
 		}
-
-		drawCrosshair(screen);
-
 	}
 
 	private void drawCrosshair(Screen screen) {

@@ -1,18 +1,9 @@
 package com.knightlore.engine;
 
-import java.util.ArrayList;
-
-import com.knightlore.render.IRenderable;
+import com.knightlore.utils.Vector2D;
 
 public abstract class GameObject {
-
-	
-	/**
-	 * Position of the entity.
-	 */
-	protected Vector2 position;
-	protected int x, y;
-
+	protected final Vector2D position;
 	/**
 	 * Whether the entity currently exists. If this variable is set to false,
 	 * entities will be 'garbage collected' by the game engine.
@@ -20,15 +11,15 @@ public abstract class GameObject {
 	protected boolean exists;
 
 	public GameObject(){
-		position = Vector2.ZERO;
+		position = Vector2D.ZERO;
 	}
 	
-	public GameObject(Vector2 position) {
+	public GameObject(Vector2D position) {
 		this.position = position;
-		exists = true;
+		this.exists = true;
 	}
 	
-	public Vector2 getPosition(){
+	public Vector2D getPosition(){
 		return position;
 	}
 
@@ -45,7 +36,7 @@ public abstract class GameObject {
 	// Called when the attached gameObject is being removed from the game
 	public abstract void onDestroy();
 	
-	void Destroy(){
+	void destroy(){
 		onDestroy();
 	}
 	

@@ -84,3 +84,8 @@ local.properties
 # custom ignores
 .classpath
 .project
+
+# INTELLIJ STUFF
+
+.idea/
+*.iml

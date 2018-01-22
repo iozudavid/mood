@@ -1,20 +1,21 @@
 package com.knightlore.render;
 
 import com.knightlore.engine.IUpdateable;
-import com.knightlore.engine.Input;
-import com.knightlore.game.Map;
+import com.knightlore.engine.input.InputManager;
+import com.knightlore.game.area.Map;
 import com.knightlore.game.tile.Tile;
-import com.knightlore.input.Controller;
+import com.knightlore.engine.input.Controller;
 
 public class Camera implements IUpdateable {
+    public static final double FIELD_OF_VIEW = -0.66;
+	private static final double MOVE_SPEED = .084;
+	private static final double STRAFE_SPEED = .04;
+	private static final double ROTATION_SPEED = .045;
 
-	private double xPos, yPos, xDir, yDir, xPlane, yPlane;
-	public final double MOVE_SPEED = .08, STRAFE_SPEED = .04;
-	public final double ROTATION_SPEED = .045;
-	public static final double FIELD_OF_VIEW = -0.66;
+	private final Map map;
+    private double xPos, yPos, xDir, yDir, xPlane, yPlane;
 
-	private Map map;
-
+    // TODO constructor takes a lot of parameters, maybe use Builder Pattern instead?
 	public Camera(double xPos, double yPos, double xDir, double yDir, double xPlane, double yPlane, Map map) {
 		super();
 		this.xPos = xPos;
@@ -28,13 +29,10 @@ public class Camera implements IUpdateable {
 
 	@Override
 	public void tick(long ticker) {
-
-		Tile[][] mapArr = map.getMapArray();
-
-		Controller controller = new Controller(Input.GetKeyboard());
+		Controller controller = new Controller(InputManager.getKeyboard());
 		if (controller.w()) {
-			Tile xTile = mapArr[(int) (xPos + xDir * MOVE_SPEED)][(int) (yPos)];
-			Tile yTile = mapArr[(int) xPos][(int) (yPos + yDir * MOVE_SPEED)];
+			Tile xTile = map.getTile((int) (xPos + xDir * MOVE_SPEED), (int) yPos);
+			Tile yTile = map.getTile((int) xPos, (int) (yPos + yDir * MOVE_SPEED));
 			xPos += xDir * MOVE_SPEED * (1 - xTile.getSolidity());
 			yPos += yDir * MOVE_SPEED * (1 - yTile.getSolidity());
 		}
@@ -44,8 +42,8 @@ public class Camera implements IUpdateable {
 		}
 
 		if (controller.s()) {
-			Tile xTile = mapArr[(int) (xPos - xDir * MOVE_SPEED)][(int) (yPos)];
-			Tile yTile = mapArr[(int) xPos][(int) (yPos - yDir * MOVE_SPEED)];
+			Tile xTile = map.getTile((int) (xPos - xDir * MOVE_SPEED), (int) yPos);
+			Tile yTile = map.getTile((int) xPos, (int) (yPos - yDir * MOVE_SPEED));
 			xPos -= xDir * MOVE_SPEED * (1 - xTile.getSolidity());
 			yPos -= yDir * MOVE_SPEED * (1 - yTile.getSolidity());
 		}
@@ -54,8 +52,8 @@ public class Camera implements IUpdateable {
 			rotateRight();
 		}
 
-		Tile xTile = mapArr[(int) (xPos + yDir * STRAFE_SPEED)][(int) (yPos)];
-		Tile yTile = mapArr[(int) (xPos)][(int) (yPos + -xDir * STRAFE_SPEED)];
+		Tile xTile = map.getTile((int) (xPos + yDir * STRAFE_SPEED), (int) (yPos));
+		Tile yTile = map.getTile((int) (xPos), (int) (yPos + -xDir * STRAFE_SPEED));
 
 		if (controller.q()) {
 			xPos -= yDir * STRAFE_SPEED * (1 - xTile.getSolidity());

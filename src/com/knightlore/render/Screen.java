@@ -17,11 +17,9 @@ import com.knightlore.render.sprite.Texture;
  *
  */
 public class Screen extends Canvas {
-
-	private BufferedImage img;
-
+	private final BufferedImage img;
 	private final int width, height;
-	private int[] pixels, imagePixels;
+	private final int[] pixels, imagePixels;
 
 	public Screen(int width, int height) {
 		super();
@@ -35,7 +33,7 @@ public class Screen extends Canvas {
 	/**
 	 * Render the scene.
 	 */
-	public void render(int x, int y, IRenderable renderable) {
+	public void render(int x, int y, Renderable renderable) {
 
 		BufferStrategy bs = getBufferStrategy();
 		if (bs == null) {
@@ -92,7 +90,7 @@ public class Screen extends Canvas {
 		return result.getRGB();
 	}
 
-	public void copy() {
+	private void copy() {
 		for (int i = 0; i < width * height; i++) {
 			imagePixels[i] = pixels[i];
 		}
