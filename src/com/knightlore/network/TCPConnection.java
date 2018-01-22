@@ -13,11 +13,13 @@ import java.util.Queue;
 
 public class TCPConnection extends Connection {
 	
-	InputStream infoReceive;
-	OutputStream infoSend;
+	private InputStream infoReceive;
+	private OutputStream infoSend;
+	private Socket socket;
 
 	public TCPConnection(Queue<Command> commandQueue, Socket socketConnection) {
 		super(commandQueue);
+		this.socket = socketConnection;
 		try {
 			this.infoReceive = socketConnection.getInputStream();
 			this.infoSend = socketConnection.getOutputStream();
@@ -35,15 +37,7 @@ public class TCPConnection extends Connection {
 			System.err.println("Communication broke...");
 			System.exit(1);
 		}
-		finally{
-			try {
-				if (infoSend != null)
-					infoSend.close();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-			
-		}
+
 	}
 
 	@Override
@@ -56,20 +50,12 @@ public class TCPConnection extends Connection {
 				data[count] = (byte) i;
 				count++;
 	         }
+			return data;
 		} catch (IOException e) {
 			System.err.println("Communication broke...");
 			System.exit(1);
 		}
-		finally{
-			try {
-				if (infoSend != null)
-					infoSend.close();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-			
-		}
-		return data;
+		return null;
 	}
 
 }

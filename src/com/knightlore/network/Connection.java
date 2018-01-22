@@ -44,6 +44,7 @@ public abstract class Connection implements Runnable {
             try {
                 byte[] receivedData = future.get(TIMEOUT_MILLIS,
                         TimeUnit.MILLISECONDS);
+                
             } catch (TimeoutException ex) {
                 System.err.println(
                         "Connection timed out while waiting for a packet.");
@@ -64,6 +65,8 @@ public abstract class Connection implements Runnable {
             }
             // TODO: process the received data, and add a command to the queue
             // if necessary.
+            
+            
         }
     }
 }
