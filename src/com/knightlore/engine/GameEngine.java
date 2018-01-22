@@ -13,7 +13,7 @@ import com.knightlore.render.Environment;
  * Game engine acting as sort of a 'hub' for each of the individual game
  * components.
  * 
- * @author Joe Ellis
+ * @authors Joe Ellis, James Adey 
  *
  */
 public class GameEngine implements Runnable {
@@ -37,9 +37,11 @@ public class GameEngine implements Runnable {
 	}
 
 	private void initEngine() {
+		System.out.println("Initialising Engine...");
 		InputManager.init();
 		setupKeyboard();
 		setupMouse();
+		System.out.println("Engine Initialised Successfully.");
 	}
 
 	public void start() {
@@ -108,7 +110,5 @@ public class GameEngine implements Runnable {
 	}
 
 	public static void main(String[] args) {
-		GameEngine engine = new GameEngine();
-		engine.start();
 	}
 }
