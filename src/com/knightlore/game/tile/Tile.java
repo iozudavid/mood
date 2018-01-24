@@ -7,8 +7,8 @@ public abstract class Tile {
 
 	public abstract Texture getTexture();
 
-	public double getTransparency() {
-		return .1D;
+	public double getOpacity() {
+		return 1D;
 	}
 
 	public double getSolidity() {

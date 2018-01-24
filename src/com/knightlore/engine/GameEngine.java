@@ -16,7 +16,7 @@ import com.knightlore.render.Environment;
  *
  */
 public class GameEngine implements Runnable {
-	
+
 	private static final double UPDATES_PER_SECOND = 60D;
 
 	private final Screen screen;
@@ -27,7 +27,7 @@ public class GameEngine implements Runnable {
 	private volatile boolean running = false;
 
 	public GameEngine() {
-		world = new World(AreaFactory.createRandomMap(Environment.DARK_OUTDOORS));
+		world = new World(AreaFactory.createRandomMap(Environment.LIGHT_OUTDOORS));
 		objects = new ArrayList<>();
 
 		final int w = MainWindow.WIDTH, h = MainWindow.HEIGHT;

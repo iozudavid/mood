@@ -26,7 +26,7 @@ public class Screen extends Canvas {
 		super();
 		this.width = width;
 		this.height = height;
-		img = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+		img = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
 		pixels = new int[width * height];
 		imagePixels = ((DataBufferInt) img.getRaster().getDataBuffer()).getData();
 	}
