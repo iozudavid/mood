@@ -13,10 +13,16 @@ public class ReceiveFromServer implements Runnable {
 	@Override
 	public void run() {
 	    byte[] packet;
-		while ((packet = conn.receiveBlocking()) != null) {
-			System.out.println("Received: " + new String(packet, Connection.CHARSET));
+		try {
+			while (conn.terminated==false && (packet = conn.receive()) != null) {
+				System.out.println("Received: " + new String(packet, Connection.CHARSET));
+			}
+			if(conn.terminated==false)
+				System.out.println("Got null packet, exiting");
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
-		System.out.println("Got null packet, exiting");
 		
 	}
 	

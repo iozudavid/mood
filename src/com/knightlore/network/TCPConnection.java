@@ -27,6 +27,22 @@ public class TCPConnection extends Connection {
         }
     }
 
+    public void closeInputStream(){
+    	try {
+			infoReceive.close();
+		} catch (IOException e) {
+			System.err.println("Something wrong " + e.getMessage());
+		}
+    }
+    
+    public void closeOutputStream(){
+    	try {
+			infoSend.close();
+		} catch (IOException e) {
+			System.err.println("Something wrong " + e.getMessage());
+		}
+    }
+    
     @Override
     public void send(byte[] data) {
         try {
@@ -35,7 +51,6 @@ public class TCPConnection extends Connection {
             infoSend.flush();
         } catch (IOException e) {
             System.err.println("Communication broke...");
-            System.exit(1);
         }
 
     }
@@ -55,7 +70,6 @@ public class TCPConnection extends Connection {
             }
         } catch (IOException e) {
             System.err.println("Communication broke...");
-            System.exit(1);
         }
         return data;
     }

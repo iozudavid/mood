@@ -1,21 +1,16 @@
 package com.knightlore.network.server;
 
-import java.util.UUID;
+import java.io.IOException;
+import java.net.InetAddress;
+import java.net.ServerSocket;
+import java.net.Socket;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.LinkedBlockingQueue;
 
 import com.knightlore.network.Command;
 import com.knightlore.network.Connection;
 import com.knightlore.network.Port;
 import com.knightlore.network.TCPConnection;
-
-import java.io.IOException;
-import java.net.InetAddress;
-import java.net.ServerSocket;
-import java.net.Socket;
-import java.util.Map;
-import java.util.Queue;
 
 /**
  * A network connection manager that runs server-side and deals with all
@@ -35,8 +30,8 @@ public class ServerManager implements Runnable {
     @Override
     public void run() {
         System.out.println("Server started");
-   //     Thread pruner = new Thread(new Pruner(connections));
-    //    pruner.start();
+        Thread pruner = new Thread(new Pruner(connections));
+        pruner.start();
         
         // DEBUG
         //Connection testConn = new Connection(UUID.randomUUID(), commandQueue);

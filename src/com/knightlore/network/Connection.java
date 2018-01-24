@@ -9,6 +9,9 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
+import java.util.regex.Matcher;
+
+import com.sun.org.apache.xerces.internal.impl.xpath.regex.Match;
 
 public abstract class Connection {
     public static final Charset CHARSET = StandardCharsets.UTF_8;
@@ -23,7 +26,7 @@ public abstract class Connection {
         this.commandQueue = commandQueue;
     }
 
-    public boolean getTerminated() {
+    public synchronized boolean getTerminated() {
         return terminated;
     }
 
@@ -39,7 +42,7 @@ public abstract class Connection {
         // terminating the thread.
         Callable<byte[]> task = new Callable<byte[]>() {
             public byte[] call() {
-                return Connection.this.receiveBlocking();
+                return (Connection.this.receiveBlocking());
             }
         };
         Future<byte[]> future = Executors.newCachedThreadPool().submit(task);
