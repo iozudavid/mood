@@ -8,11 +8,11 @@ import java.util.ListIterator;
 import com.knightlore.game.area.Map;
 import com.knightlore.game.tile.AirTile;
 import com.knightlore.render.Camera;
-import com.knightlore.render.Renderable;
+import com.knightlore.render.IRenderable;
 import com.knightlore.render.Screen;
 import com.knightlore.render.sprite.Texture;
 
-public class World implements Renderable {
+public class World implements IRenderable {
 	private final Map map;
 	private final List<GameObject> entities;
 	private final Camera camera;
