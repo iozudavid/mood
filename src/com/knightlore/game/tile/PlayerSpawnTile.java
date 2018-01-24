@@ -18,7 +18,12 @@ public class PlayerSpawnTile extends Tile {
 
 	@Override
 	public double getOpacity() {
-		return 0.9D;
+		return 0.3D;
+	}
+
+	@Override
+	public double getSolidity() {
+		return 0D;
 	}
 
 	@Override

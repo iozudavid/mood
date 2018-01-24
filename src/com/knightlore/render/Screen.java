@@ -89,6 +89,7 @@ public class Screen extends Canvas {
 		int g = (int) (c1.getGreen() * (1 - mix) + c2.getGreen() * mix);
 		int b = (int) (c1.getBlue() * (1 - mix) + c2.getBlue() * mix);
 		Color result = new Color(r, g, b);
+
 		return result.getRGB();
 	}
 

@@ -37,7 +37,7 @@ public class World implements Renderable {
 
 	}
 
-	private final int BLOCKINESS = 5; // how 'old school' you want to look.
+	private final int BLOCKINESS = 3; // how 'old school' you want to look.
 
 	/*
 	 * NOTE: THIS ONLY AFFECTS THE RENDERING SIZE OF A TILE. If you change this
@@ -51,8 +51,6 @@ public class World implements Renderable {
 
 		final int width = screen.getWidth(), height = screen.getHeight();
 		Camera camera = player.getCamera();
-
-		int[] environmentPixels = screen.getPixels().clone();
 
 		double opacity = 1D;
 
@@ -161,11 +159,6 @@ public class World implements Renderable {
 				int texY = (((yy * 2 - height + lineHeight) << 4) / lineHeight) / 2;
 
 				int color = texture.getPixels()[texX + (texY * texture.getSize())];
-				//
-				// if (opacity < 1) {
-				// color = screen.mixColor(color, environmentPixels[xx + yy *
-				// width], opacity);
-				// }
 
 				if (last < 1) {
 					color = screen.mixColor(color, screen.getPixels()[xx + yy * width], last);
