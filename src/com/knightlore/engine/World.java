@@ -37,7 +37,7 @@ public class World implements Renderable {
 
 	}
 
-	private final int BLOCKINESS = 3; // how 'old school' you want to look.
+	private final int BLOCKINESS = 8; // how 'old school' you want to look.
 
 	/*
 	 * NOTE: THIS ONLY AFFECTS THE RENDERING SIZE OF A TILE. If you change this
@@ -51,6 +51,9 @@ public class World implements Renderable {
 
 		final int width = screen.getWidth(), height = screen.getHeight();
 		Camera camera = player.getCamera();
+
+		// Buffer used to draw transparent objects for later mixing...
+		int[] transBuffer = new int[width * height];
 
 		double opacity = 1D;
 
@@ -76,7 +79,6 @@ public class World implements Renderable {
 
 			boolean hit = false;
 			boolean side = false; // wall facing x-direction vs y-direction?
-			double last = opacity;
 
 			// find x and y components of the ray vector.
 			int stepX, stepY;
@@ -160,10 +162,12 @@ public class World implements Renderable {
 
 				int color = texture.getPixels()[texX + (texY * texture.getSize())];
 
-				if (last < 1) {
-					color = screen.mixColor(color, screen.getPixels()[xx + yy * width], last);
+				if (opacity < 1) {
+					color += ((int) (opacity * 127)) << 24;
+					transBuffer[xx + yy * width] = color;
+				} else {
+					screen.fillRect(darken(color, distanceToWall), xx, yy, BLOCKINESS, 1);
 				}
-				screen.fillRect(darken(color, distanceToWall), xx, yy, BLOCKINESS, 1);
 			}
 
 			if (opacity < 1) {
@@ -171,6 +175,19 @@ public class World implements Renderable {
 			}
 
 		}
+
+		// Now mix with the transparency buffer to render transparent tiles.
+		for (int yy = 0; yy < height; yy++) {
+			for (int xx = 0; xx < width; xx++) {
+				if (transBuffer[xx + yy * width] != 0) {
+					int transColor = transBuffer[xx + yy * width];
+					double transOpacity = ((transColor & 0xFF000000) >> 24) / 127D;
+					int color = screen.mixColor(screen.getPixels()[xx + yy * width], transColor, transOpacity);
+					screen.fillRect(color, xx, yy, BLOCKINESS, 1);
+				}
+			}
+		}
+
 	}
 
 	private double getWallHitPosition(Camera camera, double rayX, double rayY, int mapX, int mapY, boolean side,

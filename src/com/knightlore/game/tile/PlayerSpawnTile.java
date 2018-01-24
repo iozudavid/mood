@@ -18,7 +18,7 @@ public class PlayerSpawnTile extends Tile {
 
 	@Override
 	public double getOpacity() {
-		return 0.3D;
+		return 0.5D;
 	}
 
 	@Override
