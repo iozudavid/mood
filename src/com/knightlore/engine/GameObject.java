@@ -8,23 +8,28 @@ public abstract class GameObject {
 	 * Whether the entity currently exists. If this variable is set to false,
 	 * entities will be 'garbage collected' by the game engine.
 	 */
-	protected boolean exists;
+	private boolean exists;
 
 	public GameObject(){
 		position = Vector2D.ZERO;
+		GameEngine.getSingleton().addGameObject(this);
 	}
 	
 	public GameObject(Vector2D position) {
 		this.position = position;
-		this.exists = true;
+		GameEngine.getSingleton().addGameObject(this);
 	}
 	
 	public Vector2D getPosition(){
 		return position;
 	}
-
+	
 	public boolean exists() {
 		return exists;
+	}
+	
+	void setExists(Boolean b){
+		
 	}
 	
 	// Called when the component is first added to the gameObject
@@ -36,8 +41,8 @@ public abstract class GameObject {
 	// Called when the attached gameObject is being removed from the game
 	public abstract void onDestroy();
 	
-	void destroy(){
-		onDestroy();
+	protected void destroy(){
+		GameEngine.getSingleton().removeGameObject(this);
 	}
 	
 }
