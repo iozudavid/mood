@@ -162,6 +162,8 @@ public class World implements Renderable {
 
 				int color = texture.getPixels()[texX + (texY * texture.getSize())];
 
+				// If the block our ray hit is NOT COMPLETELY OPAQUE,
+				// we write it to the transBuffer.
 				if (opacity < 1) {
 					color += ((int) (opacity * 127)) << 24;
 					transBuffer[xx + yy * width] = color;
@@ -175,6 +177,8 @@ public class World implements Renderable {
 			}
 
 		}
+
+		// TODO: fix illumination of transparent blocks...
 
 		// Now mix with the transparency buffer to render transparent tiles.
 		for (int yy = 0; yy < height; yy++) {

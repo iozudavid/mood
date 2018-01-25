@@ -5,8 +5,8 @@ import java.util.ArrayList;
 import com.knightlore.MainWindow;
 import com.knightlore.game.area.AreaFactory;
 import com.knightlore.input.Mouse;
-import com.knightlore.render.Screen;
 import com.knightlore.render.Environment;
+import com.knightlore.render.Screen;
 
 /**
  * Game engine acting as sort of a 'hub' for each of the individual game

@@ -23,7 +23,7 @@ public class PlayerSpawnTile extends Tile {
 
 	@Override
 	public double getSolidity() {
-		return 0D;
+		return 0.5D;
 	}
 
 	@Override
