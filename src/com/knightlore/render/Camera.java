@@ -1,6 +1,6 @@
 package com.knightlore.render;
 
-import com.knightlore.engine.IUpdateable;
+import com.knightlore.engine.GameObject;
 import com.knightlore.engine.input.Controller;
 import com.knightlore.engine.input.InputManager;
 import com.knightlore.engine.input.Keyboard;
@@ -8,7 +8,7 @@ import com.knightlore.game.area.Map;
 import com.knightlore.game.tile.Tile;
 import com.knightlore.input.BasicController;
 
-public class Camera implements IUpdateable {
+public class Camera extends GameObject {
 
 	public static final double FIELD_OF_VIEW = -0.66;
 	private static final double MOVE_SPEED = .084;
@@ -32,7 +32,7 @@ public class Camera implements IUpdateable {
 	}
 
 	@Override
-	public void tick(long ticker) {
+	public void onUpdate(long ticker) {
 		Keyboard keyboard = InputManager.getKeyboard();
 		Controller controller = new BasicController();
 
@@ -59,6 +59,14 @@ public class Camera implements IUpdateable {
 		if (keyboard.isPressed(controller.moveRight())) {
 			strafeRight();
 		}
+	}
+
+	@Override
+	public void onCreate() {
+	}
+
+	@Override
+	public void onDestroy() {
 	}
 
 	private void moveForward() {

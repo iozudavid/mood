@@ -10,14 +10,15 @@ import com.knightlore.game.area.Map;
 import com.knightlore.game.tile.AirTile;
 import com.knightlore.game.tile.Tile;
 import com.knightlore.render.Camera;
+import com.knightlore.render.ColorUtils;
 import com.knightlore.render.IRenderable;
+import com.knightlore.render.PixelBuffer;
 import com.knightlore.render.Screen;
 import com.knightlore.render.sprite.Texture;
 
 public class World implements IRenderable {
-	
+
 	private final List<GameObject> entities;
-	private long ticker;
 
 	private final Map map;
 	private Player player;
@@ -32,13 +33,14 @@ public class World implements IRenderable {
 
 	@Override
 	public void render(Screen screen, int x, int y) {
-		map.getEnvironment().renderEnvironment(screen);
-		drawPerspective(screen);
-		drawCrosshair(screen);
+		PixelBuffer mainPixelBuffer = screen.getMainPixelBuffer();
+		map.getEnvironment().renderEnvironment(mainPixelBuffer);
+		drawPerspective(mainPixelBuffer);
+		drawCrosshair(mainPixelBuffer);
 
 	}
 
-	private final int BLOCKINESS = 1; // how 'old school' you want to look.
+	private final int BLOCKINESS = 10; // how 'old school' you want to look.
 
 	/*
 	 * NOTE: THIS ONLY AFFECTS THE RENDERING SIZE OF A TILE. If you change this
@@ -48,13 +50,13 @@ public class World implements IRenderable {
 	 */
 	private final float TILE_SIZE = 1F;
 
-	private void drawPerspective(Screen screen) {
+	private void drawPerspective(PixelBuffer pix) {
 
-		final int width = screen.getWidth(), height = screen.getHeight();
+		final int width = pix.getWidth(), height = pix.getHeight();
 		Camera camera = player.getCamera();
 
 		// Buffer used to draw transparent objects for later mixing...
-		int[] transBuffer = new int[width * height];
+		PixelBuffer transBuffer = new PixelBuffer(width, height);
 
 		double opacity = 1D;
 
@@ -167,9 +169,9 @@ public class World implements IRenderable {
 				// we write it to the transBuffer.
 				if (opacity < 1) {
 					color += ((int) (opacity * 127)) << 24;
-					transBuffer[xx + yy * width] = color;
+					transBuffer.fillPixel(color, xx, yy);
 				} else {
-					screen.fillRect(darken(color, distanceToWall), xx, yy, BLOCKINESS, 1);
+					pix.fillRect(darken(color, distanceToWall), xx, yy, BLOCKINESS, 1);
 				}
 			}
 
@@ -184,11 +186,11 @@ public class World implements IRenderable {
 		// Now mix with the transparency buffer to render transparent tiles.
 		for (int yy = 0; yy < height; yy++) {
 			for (int xx = 0; xx < width; xx++) {
-				if (transBuffer[xx + yy * width] != 0) {
-					int transColor = transBuffer[xx + yy * width];
+				if (transBuffer.pixelAt(xx, yy) != 0) {
+					int transColor = transBuffer.pixelAt(xx, yy);
 					double transOpacity = ((transColor & 0xFF000000) >> 24) / 127D;
-					int color = screen.mixColor(screen.getPixels()[xx + yy * width], transColor, transOpacity);
-					screen.fillRect(color, xx, yy, BLOCKINESS, 1);
+					int color = ColorUtils.mixColor(pix.getPixels()[xx + yy * width], transColor, transOpacity);
+					pix.fillRect(color, xx, yy, BLOCKINESS, 1);
 				}
 			}
 		}
@@ -230,22 +232,18 @@ public class World implements IRenderable {
 		return distanceToWall;
 	}
 
-	private void drawCrosshair(Screen screen) {
+	private void drawCrosshair(PixelBuffer pix) {
 		final int CROSSHAIR_SIZE = 10;
 		final int CROSSHAIR_WIDTH = 2;
 		final int CROSSHAIR_COLOR = 0xFFFFFF;
-		final int w = screen.getWidth() / 2, h = screen.getHeight() / 2;
-		screen.fillRect(CROSSHAIR_COLOR, w - CROSSHAIR_SIZE, h - CROSSHAIR_WIDTH / 2, CROSSHAIR_SIZE * 2,
-				CROSSHAIR_WIDTH);
-		screen.fillRect(CROSSHAIR_COLOR, w - CROSSHAIR_WIDTH / 2, h - CROSSHAIR_SIZE, CROSSHAIR_WIDTH,
-				CROSSHAIR_SIZE * 2);
+		final int w = pix.getWidth() / 2, h = pix.getHeight() / 2;
+		pix.fillRect(CROSSHAIR_COLOR, w - CROSSHAIR_SIZE, h - CROSSHAIR_WIDTH / 2, CROSSHAIR_SIZE * 2, CROSSHAIR_WIDTH);
+		pix.fillRect(CROSSHAIR_COLOR, w - CROSSHAIR_WIDTH / 2, h - CROSSHAIR_SIZE, CROSSHAIR_WIDTH, CROSSHAIR_SIZE * 2);
 	}
 
-	public void tick() {
+	public void tick(long ticker) {
 		garbageCollect();
-		player.tick(ticker);
-
-		ticker++;
+		player.onUpdate(ticker);
 	}
 
 	private int darken(int color, double distance) {

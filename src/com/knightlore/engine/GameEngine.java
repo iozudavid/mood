@@ -19,6 +19,8 @@ import com.knightlore.render.Screen;
 public class GameEngine implements Runnable {
 
 	private static final double UPDATES_PER_SECOND = 60D;
+	
+	private long ticker;
 
 	private final Screen screen;
 	private final MainWindow window;
@@ -28,6 +30,8 @@ public class GameEngine implements Runnable {
 	private volatile boolean running = false;
 
 	public GameEngine() {
+		ticker = 0;
+		
 		world = new World(AreaFactory.createRandomMap(Environment.LIGHT_OUTDOORS));
 		objects = new ArrayList<>();
 
@@ -78,7 +82,7 @@ public class GameEngine implements Runnable {
 
 			while (delta >= 1) {
 				updateObjects();
-				world.tick();
+				world.tick(ticker);
 				screen.render(0, 0, world);
 				delta -= 1;
 			}
@@ -87,7 +91,7 @@ public class GameEngine implements Runnable {
 
 	private void updateObjects() {
 		for (GameObject obj : objects) {
-			obj.onUpdate();
+			obj.onUpdate(ticker);
 		}
 	}
 
@@ -108,9 +112,6 @@ public class GameEngine implements Runnable {
 		screen.addMouseMotionListener(mouse);
 		screen.addMouseWheelListener(mouse);
 		screen.requestFocus();
-	}
-
-	public static void main(String[] args) {
 	}
 	
 }
