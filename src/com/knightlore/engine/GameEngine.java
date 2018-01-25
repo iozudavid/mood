@@ -6,10 +6,10 @@ import java.util.LinkedList;
 
 import com.knightlore.MainWindow;
 import com.knightlore.engine.input.InputManager;
-import com.knightlore.game.area.AreaFactory;
 import com.knightlore.engine.input.Mouse;
-import com.knightlore.render.Screen;
+import com.knightlore.game.area.AreaFactory;
 import com.knightlore.render.Environment;
+import com.knightlore.render.Screen;
 
 /**
  * Game engine acting as sort of a 'hub' for each of the individual game
@@ -21,6 +21,7 @@ import com.knightlore.render.Environment;
 public class GameEngine implements Runnable {
 	
 	private static GameEngine singleton;
+
 	private static final double UPDATES_PER_SECOND = 60D;
 
 	private final Screen screen;
@@ -32,7 +33,7 @@ public class GameEngine implements Runnable {
 	
 	private LinkedList<GameObject> notifyToCreate;
 	private LinkedList<GameObject> notifyToDestroy;
-	
+
 	public GameEngine() {
 		world = new World(AreaFactory.createRandomMap(Environment.LIGHT_OUTDOORS));
 		objects = new ArrayList<>();
@@ -107,7 +108,7 @@ public class GameEngine implements Runnable {
 			}
 		}
 	}
-	
+
 	private void updateObjects() {
 		// perform internal list management before updating.
 		// as modifying a list whilst iterating over it is a very bad idea.
@@ -164,4 +165,5 @@ public class GameEngine implements Runnable {
 
 	public static void main(String[] args) {
 	}
+	
 }

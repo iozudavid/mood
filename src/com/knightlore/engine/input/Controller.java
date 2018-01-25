@@ -1,37 +1,19 @@
 package com.knightlore.engine.input;
 
-import java.awt.event.KeyEvent;
+public interface Controller {
 
-public class Controller {
+	public int moveForward();
 
-	private Keyboard keyboard;
+	public int moveBackward();
 
-	public Controller(Keyboard keyboard) {
-		this.keyboard = keyboard;
-	}
+	public int moveLeft();
 
-	public boolean w() {
-		return keyboard.isPressed(KeyEvent.VK_W);
-	}
+	public int moveRight();
 
-	public boolean a() {
-		return keyboard.isPressed(KeyEvent.VK_A);
-	}
+	public int rotateClockwise();
 
-	public boolean s() {
-		return keyboard.isPressed(KeyEvent.VK_S);
-	}
+	public int rotateAntiClockwise();
 
-	public boolean d() {
-		return keyboard.isPressed(KeyEvent.VK_D);
-	}
-
-	public boolean q() {
-		return keyboard.isPressed(KeyEvent.VK_Q);
-	}
-
-	public boolean e() {
-		return keyboard.isPressed(KeyEvent.VK_E);
-	}
+	public int shoot();
 
 }

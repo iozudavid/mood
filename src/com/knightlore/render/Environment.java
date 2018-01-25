@@ -1,6 +1,6 @@
 package com.knightlore.render;
 
-import java.awt.*;
+import java.awt.Color;
 
 public enum Environment {
 	DARK_OUTDOORS(50) {

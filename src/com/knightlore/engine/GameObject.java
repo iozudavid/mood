@@ -10,17 +10,17 @@ public abstract class GameObject {
 	 */
 	private boolean exists;
 
-	public GameObject(){
+	public GameObject() {
 		position = Vector2D.ZERO;
 		GameEngine.getSingleton().addGameObject(this);
 	}
-	
+
 	public GameObject(Vector2D position) {
 		this.position = position;
 		GameEngine.getSingleton().addGameObject(this);
 	}
-	
-	public Vector2D getPosition(){
+
+	public Vector2D getPosition() {
 		return position;
 	}
 	
@@ -31,18 +31,18 @@ public abstract class GameObject {
 	void setExists(Boolean b){
 		
 	}
-	
+
 	// Called when the component is first added to the gameObject
 	public abstract void onCreate();
-		
+
 	// Called every game-frame to update it
 	public abstract void onUpdate();
-	
+
 	// Called when the attached gameObject is being removed from the game
 	public abstract void onDestroy();
 	
 	protected void destroy(){
 		GameEngine.getSingleton().removeGameObject(this);
 	}
-	
+
 }

@@ -17,6 +17,7 @@ import com.knightlore.render.sprite.Texture;
  *
  */
 public class Screen extends Canvas {
+
 	private final BufferedImage img;
 	private final int width, height;
 	private final int[] pixels, imagePixels;
@@ -33,7 +34,7 @@ public class Screen extends Canvas {
 	/**
 	 * Render the scene.
 	 */
-	public void render(int x, int y, Renderable renderable) {
+	public void render(int x, int y, IRenderable renderable) {
 
 		BufferStrategy bs = getBufferStrategy();
 		if (bs == null) {
@@ -44,6 +45,7 @@ public class Screen extends Canvas {
 		Graphics2D g = (Graphics2D) bs.getDrawGraphics();
 		g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
+		g.fillRect(0, 0, getWidth(), getHeight());
 		renderable.render(this, x, y);
 
 		copy();
@@ -87,6 +89,7 @@ public class Screen extends Canvas {
 		int g = (int) (c1.getGreen() * (1 - mix) + c2.getGreen() * mix);
 		int b = (int) (c1.getBlue() * (1 - mix) + c2.getBlue() * mix);
 		Color result = new Color(r, g, b);
+
 		return result.getRGB();
 	}
 

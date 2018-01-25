@@ -11,6 +11,11 @@ public class BushTile extends Tile {
 	}
 
 	@Override
+	public double getOpacity() {
+		return 1D;
+	}
+
+	@Override
 	public void onShot() {
 	}
 
