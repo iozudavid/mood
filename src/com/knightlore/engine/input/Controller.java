@@ -1,4 +1,4 @@
-package com.knightlore.input;
+package com.knightlore.engine.input;
 
 public interface Controller {
 

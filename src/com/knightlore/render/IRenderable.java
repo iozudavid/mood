@@ -6,7 +6,7 @@ package com.knightlore.render;
  * @author Joe Ellis
  *
  */
-public interface Renderable {
+public interface IRenderable {
 
 	void render(Screen screen, int x, int y);
 

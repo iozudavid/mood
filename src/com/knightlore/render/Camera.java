@@ -1,12 +1,12 @@
 package com.knightlore.render;
 
 import com.knightlore.engine.IUpdateable;
-import com.knightlore.engine.Input;
+import com.knightlore.engine.input.Controller;
+import com.knightlore.engine.input.InputManager;
+import com.knightlore.engine.input.Keyboard;
 import com.knightlore.game.area.Map;
 import com.knightlore.game.tile.Tile;
 import com.knightlore.input.BasicController;
-import com.knightlore.input.Controller;
-import com.knightlore.input.Keyboard;
 
 public class Camera implements IUpdateable {
 
@@ -33,7 +33,7 @@ public class Camera implements IUpdateable {
 
 	@Override
 	public void tick(long ticker) {
-		Keyboard keyboard = Input.getKeyboard();
+		Keyboard keyboard = InputManager.getKeyboard();
 		Controller controller = new BasicController();
 
 		if (keyboard.isPressed(controller.moveForward())) {

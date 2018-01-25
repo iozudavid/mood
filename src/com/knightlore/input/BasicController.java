@@ -2,6 +2,8 @@ package com.knightlore.input;
 
 import java.awt.event.KeyEvent;
 
+import com.knightlore.engine.input.Controller;
+
 public class BasicController implements Controller {
 
 	@Override
