@@ -14,7 +14,7 @@ import com.knightlore.render.ColorUtils;
 import com.knightlore.render.IRenderable;
 import com.knightlore.render.PixelBuffer;
 import com.knightlore.render.Screen;
-import com.knightlore.render.sprite.Texture;
+import com.knightlore.render.graphic.Texture;
 
 public class World implements IRenderable {
 
@@ -40,7 +40,7 @@ public class World implements IRenderable {
 
 	}
 
-	private final int BLOCKINESS = 10; // how 'old school' you want to look.
+	private final int BLOCKINESS = 1; // how 'old school' you want to look.
 
 	/*
 	 * NOTE: THIS ONLY AFFECTS THE RENDERING SIZE OF A TILE. If you change this

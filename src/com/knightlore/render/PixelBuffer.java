@@ -1,6 +1,6 @@
 package com.knightlore.render;
 
-import com.knightlore.render.sprite.Texture;
+import com.knightlore.render.graphic.Graphic;
 
 public class PixelBuffer {
 
@@ -13,20 +13,20 @@ public class PixelBuffer {
 		pixels = new int[WIDTH * HEIGHT];
 	}
 
-	public void drawGraphic(Texture texture, int x, int y) {
-		for (int yy = 0; yy < texture.getSize(); yy++) {
-			for (int xx = 0; xx < texture.getSize(); xx++) {
+	public void drawGraphic(Graphic graphic, int x, int y) {
+		for (int yy = 0; yy < graphic.getHeight(); yy++) {
+			for (int xx = 0; xx < graphic.getWidth(); xx++) {
 				int drawX = x + xx;
 				int drawY = y + yy;
 				if (drawX < 0 || drawX >= WIDTH || drawY < 0 || drawY >= HEIGHT)
 					continue;
-				pixels[drawX + drawY * WIDTH] = texture.getPixels()[xx + yy * texture.getSize()];
+				pixels[drawX + drawY * WIDTH] = graphic.getPixels()[xx + yy * graphic.getWidth()];
 			}
 		}
 	}
-	
+
 	public void copy(int[] c) {
-		for(int i = 0; i < WIDTH * HEIGHT; i++) {
+		for (int i = 0; i < WIDTH * HEIGHT; i++) {
 			c[i] = pixels[i];
 		}
 	}
@@ -44,7 +44,7 @@ public class PixelBuffer {
 			}
 		}
 	}
-	
+
 	public int pixelAt(int x, int y) {
 		return pixels[x + y * WIDTH];
 	}

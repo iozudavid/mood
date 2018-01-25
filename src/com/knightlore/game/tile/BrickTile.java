@@ -1,7 +1,7 @@
 package com.knightlore.game.tile;
 
 import com.knightlore.render.Camera;
-import com.knightlore.render.sprite.Texture;
+import com.knightlore.render.graphic.Texture;
 
 public class BrickTile extends Tile {
 
