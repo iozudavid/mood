@@ -38,7 +38,7 @@ public class World implements IRenderable {
 
 	}
 
-	private final int BLOCKINESS = 8; // how 'old school' you want to look.
+	private final int BLOCKINESS = 1; // how 'old school' you want to look.
 
 	/*
 	 * NOTE: THIS ONLY AFFECTS THE RENDERING SIZE OF A TILE. If you change this
