@@ -31,8 +31,8 @@ public class Player extends GameObject {
 	}
 
 	@Override
-	public void onUpdate(long ticker) {
-		camera.onUpdate(ticker);
+	public void onUpdate() {
+		camera.onUpdate();
 	}
 
 	@Override

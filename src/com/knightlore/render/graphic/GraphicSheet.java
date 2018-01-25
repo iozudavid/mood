@@ -9,6 +9,7 @@ import javax.imageio.ImageIO;
 public class GraphicSheet {
 
 	public final static GraphicSheet TEXTURES = new GraphicSheet("res/graphics/textures.png", 16);
+	public final static GraphicSheet SPRITES = new GraphicSheet("res/graphics/sprites.png", 64);
 
 	private final int cellSize;
 	private BufferedImage sheet;
@@ -26,13 +27,13 @@ public class GraphicSheet {
 		}
 	}
 
-	public Texture graphicAt(int x, int y) {
+	public Graphic graphicAt(int x, int y) {
 		return graphicAt(x, y, 1, 1);
 	}
 
-	public Texture graphicAt(int x, int y, int xx, int yy) {
+	public Graphic graphicAt(int x, int y, int xx, int yy) {
 		BufferedImage subImg = sheet.getSubimage(x * cellSize, y * cellSize, xx * cellSize, yy * cellSize);
-		return new Texture(subImg);
+		return new Graphic(subImg);
 	}
 
 }

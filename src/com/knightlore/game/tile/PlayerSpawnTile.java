@@ -1,6 +1,8 @@
 package com.knightlore.game.tile;
 
+import com.knightlore.engine.Ticker;
 import com.knightlore.render.Camera;
+import com.knightlore.render.graphic.Graphic;
 import com.knightlore.render.graphic.Texture;
 
 public class PlayerSpawnTile extends Tile {
@@ -12,13 +14,14 @@ public class PlayerSpawnTile extends Tile {
 	}
 
 	@Override
-	public Texture getTexture() {
+	public Graphic getTexture() {
 		return Texture.BUSH;
 	}
 
 	@Override
 	public double getOpacity() {
-		return 0.5D;
+		double opacity = 0.5 + (Math.sin(Ticker.getTime() * 0.1)) / 4;
+		return opacity;
 	}
 
 	@Override

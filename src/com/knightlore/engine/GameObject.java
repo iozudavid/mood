@@ -32,7 +32,7 @@ public abstract class GameObject {
 	public abstract void onCreate();
 
 	// Called every game-frame to update it
-	public abstract void onUpdate(long ticker);
+	public abstract void onUpdate();
 
 	// Called when the attached gameObject is being removed from the game
 	public abstract void onDestroy();

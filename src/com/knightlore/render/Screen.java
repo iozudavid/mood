@@ -17,7 +17,7 @@ public class Screen extends Canvas {
 
 	private final BufferedImage img;
 	private final int width, height;
-	
+
 	private final PixelBuffer mainPixelBuffer;
 	private final int[] imagePixels;
 
@@ -45,7 +45,7 @@ public class Screen extends Canvas {
 		g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
 		g.fillRect(0, 0, getWidth(), getHeight());
-		renderable.render(this, x, y);
+		renderable.render(mainPixelBuffer, x, y);
 
 		mainPixelBuffer.copy(imagePixels);
 		g.drawImage(getImage(), x, y, width, height, null);
@@ -57,7 +57,7 @@ public class Screen extends Canvas {
 	public BufferedImage getImage() {
 		return img;
 	}
-	
+
 	public PixelBuffer getMainPixelBuffer() {
 		return mainPixelBuffer;
 	}

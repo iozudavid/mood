@@ -20,8 +20,6 @@ public class GameEngine implements Runnable {
 
 	private static final double UPDATES_PER_SECOND = 60D;
 	
-	private long ticker;
-
 	private final Screen screen;
 	private final MainWindow window;
 	private final World world;
@@ -30,8 +28,6 @@ public class GameEngine implements Runnable {
 	private volatile boolean running = false;
 
 	public GameEngine() {
-		ticker = 0;
-		
 		world = new World(AreaFactory.createRandomMap(Environment.LIGHT_OUTDOORS));
 		objects = new ArrayList<>();
 
@@ -82,16 +78,18 @@ public class GameEngine implements Runnable {
 
 			while (delta >= 1) {
 				updateObjects();
-				world.tick(ticker);
+				world.tick();
 				screen.render(0, 0, world);
 				delta -= 1;
+				
+				Ticker.tick();
 			}
 		}
 	}
 
 	private void updateObjects() {
 		for (GameObject obj : objects) {
-			obj.onUpdate(ticker);
+			obj.onUpdate();
 		}
 	}
 

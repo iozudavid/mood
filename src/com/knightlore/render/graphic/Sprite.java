@@ -1,11 +1,10 @@
 package com.knightlore.render.graphic;
 
-import java.awt.image.BufferedImage;
+public class Sprite {
 
-public class Sprite extends Graphic {
+	public static final Graphic SAMPLE_SPRITE = GraphicSheet.SPRITES.graphicAt(0, 0, 1, 2);
 
-	public Sprite(BufferedImage img) {
-		super(img, img.getWidth(), img.getHeight());
+	private Sprite() {
 	}
 
 }

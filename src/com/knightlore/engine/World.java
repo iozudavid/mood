@@ -7,14 +7,14 @@ import java.util.ListIterator;
 
 import com.knightlore.game.Player;
 import com.knightlore.game.area.Map;
+import com.knightlore.game.entity.Enemy;
 import com.knightlore.game.tile.AirTile;
 import com.knightlore.game.tile.Tile;
 import com.knightlore.render.Camera;
 import com.knightlore.render.ColorUtils;
 import com.knightlore.render.IRenderable;
 import com.knightlore.render.PixelBuffer;
-import com.knightlore.render.Screen;
-import com.knightlore.render.graphic.Texture;
+import com.knightlore.render.graphic.Graphic;
 
 public class World implements IRenderable {
 
@@ -32,12 +32,11 @@ public class World implements IRenderable {
 	}
 
 	@Override
-	public void render(Screen screen, int x, int y) {
-		PixelBuffer mainPixelBuffer = screen.getMainPixelBuffer();
-		map.getEnvironment().renderEnvironment(mainPixelBuffer);
-		drawPerspective(mainPixelBuffer);
-		drawCrosshair(mainPixelBuffer);
-
+	public void render(PixelBuffer pix, int x, int y) {
+		map.getEnvironment().renderEnvironment(pix);
+		drawPerspective(pix);
+		drawCrosshair(pix);
+		new Enemy().render(pix, 50, 50);
 	}
 
 	private final int BLOCKINESS = 1; // how 'old school' you want to look.
@@ -142,8 +141,8 @@ public class World implements IRenderable {
 
 			double wallX = getWallHitPosition(camera, rayX, rayY, mapX, mapY, side, stepX, stepY);
 
-			Texture texture = map.getTile(mapX, mapY).getTexture();
-			if (texture == Texture.EMPTY) {
+			Graphic texture = map.getTile(mapX, mapY).getTexture();
+			if (texture == Graphic.EMPTY) {
 				continue;
 			}
 
@@ -241,9 +240,9 @@ public class World implements IRenderable {
 		pix.fillRect(CROSSHAIR_COLOR, w - CROSSHAIR_WIDTH / 2, h - CROSSHAIR_SIZE, CROSSHAIR_WIDTH, CROSSHAIR_SIZE * 2);
 	}
 
-	public void tick(long ticker) {
+	public void tick() {
 		garbageCollect();
-		player.onUpdate(ticker);
+		player.onUpdate();
 	}
 
 	private int darken(int color, double distance) {

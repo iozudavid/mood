@@ -1,12 +1,13 @@
 package com.knightlore.game.tile;
 
 import com.knightlore.render.Camera;
+import com.knightlore.render.graphic.Graphic;
 import com.knightlore.render.graphic.Texture;
 
 public class BrickTile extends Tile {
 
 	@Override
-	public Texture getTexture() {
+	public Graphic getTexture() {
 		return Texture.BRICK;
 	}
 

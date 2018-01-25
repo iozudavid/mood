@@ -32,7 +32,7 @@ public class Camera extends GameObject {
 	}
 
 	@Override
-	public void onUpdate(long ticker) {
+	public void onUpdate() {
 		Keyboard keyboard = InputManager.getKeyboard();
 		Controller controller = new BasicController();
 
