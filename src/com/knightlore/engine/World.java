@@ -5,23 +5,29 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.ListIterator;
 
+import com.knightlore.game.Player;
 import com.knightlore.game.area.Map;
 import com.knightlore.game.tile.AirTile;
+import com.knightlore.game.tile.Tile;
 import com.knightlore.render.Camera;
 import com.knightlore.render.IRenderable;
 import com.knightlore.render.Screen;
 import com.knightlore.render.sprite.Texture;
 
 public class World implements IRenderable {
-	private final Map map;
+	
 	private final List<GameObject> entities;
-	private final Camera camera;
 	private long ticker;
+
+	private final Map map;
+	private Player player;
 
 	public World(Map map) {
 		this.map = map;
 		entities = new ArrayList<>();
-		camera = new Camera(4.5, 4.5, 1, 0, 0, Camera.FIELD_OF_VIEW, map);
+
+		Camera camera = new Camera(4.5, 4.5, 1, 0, 0, Camera.FIELD_OF_VIEW, map);
+		player = new Player(camera);
 	}
 
 	@Override
@@ -32,18 +38,25 @@ public class World implements IRenderable {
 
 	}
 
+	private final int BLOCKINESS = 1; // how 'old school' you want to look.
+
+	/*
+	 * NOTE: THIS ONLY AFFECTS THE RENDERING SIZE OF A TILE. If you change this
+	 * variable, tiles will be drawn differently but the player will still move
+	 * at their usual speed over a single tile. You might want to compensate a
+	 * change here with a change in player move speed.
+	 */
+	private final float TILE_SIZE = 1F;
+
 	private void drawPerspective(Screen screen) {
 
 		final int width = screen.getWidth(), height = screen.getHeight();
-		final int BLOCKINESS = 5; // how 'old school' you want to look.
+		Camera camera = player.getCamera();
 
-		/*
-		 * NOTE: THIS ONLY AFFECTS THE RENDERING SIZE OF A TILE. If you change
-		 * this variable, tiles will be drawn differently but the player will
-		 * still move at their usual speed over a single tile. You might want to
-		 * compensate a change here with a change in player move speed.
-		 */
-		final float TILE_SIZE = 1F;
+		// Buffer used to draw transparent objects for later mixing...
+		int[] transBuffer = new int[width * height];
+
+		double opacity = 1D;
 
 		for (int xx = 0; xx < width; xx += BLOCKINESS) {
 
@@ -100,29 +113,21 @@ public class World implements IRenderable {
 					side = true;
 				}
 
-				// If this is anything but an empty cell, we've hit a wall
-				if (map.getTile(mapX, mapY) != AirTile.getInstance()) {
+				Tile tile = map.getTile(mapX, mapY);
+
+				// If this is anything but an empty cell, we've hit a tile
+				if (tile != AirTile.getInstance()) {
+					if (opacity < 1 && tile.getOpacity() < 1)
+						continue;
 					hit = true;
+					opacity = tile.getOpacity();
 				}
 			}
 
-			// Calculate distance to the point of impact
-			if (!side) {
-				distanceToWall = Math.abs((mapX - camera.getxPos() + (1 - stepX) / 2) / (rayX / TILE_SIZE));
-			} else {
-				distanceToWall = Math.abs((mapY - camera.getyPos() + (1 - stepY) / 2) / (rayY / TILE_SIZE));
-			}
+			distanceToWall = getImpactDistance(camera, rayX, rayY, mapX, mapY, side, stepX, stepY);
+			int lineHeight = getDrawHeight(height, distanceToWall);
 
-			// Now calculate the height of the wall based on the distance from
-			// the camera
-			int lineHeight;
-			if (distanceToWall > 0) {
-				lineHeight = Math.abs((int) (height / distanceToWall));
-			} else {
-				lineHeight = height;
-			}
-
-			// calculate lowest and highest pixel to fill in current stripe
+			// calculate lowest and highest pixel to fill in current strip
 			int drawStart = -lineHeight / 2 + height / 2;
 			if (drawStart < 0) {
 				drawStart = 0;
@@ -133,14 +138,7 @@ public class World implements IRenderable {
 				drawEnd = height - 1;
 			}
 
-			// add a texture
-			double wallX;// Exact position of where wall was hit
-			if (side) {// If its a y-axis wall
-				wallX = (camera.getxPos() + ((mapY - camera.getyPos() + (1 - stepY) / 2) / rayY) * rayX);
-			} else {// X-axis wall
-				wallX = (camera.getyPos() + ((mapX - camera.getxPos() + (1 - stepX) / 2) / rayX) * rayY);
-			}
-			wallX -= Math.floor(wallX);
+			double wallX = getWallHitPosition(camera, rayX, rayY, mapX, mapY, side, stepX, stepY);
 
 			Texture texture = map.getTile(mapX, mapY).getTexture();
 			if (texture == Texture.EMPTY) {
@@ -165,10 +163,71 @@ public class World implements IRenderable {
 
 				int color = texture.getPixels()[texX + (texY * texture.getSize())];
 
-				screen.fillRect(darken(color, distanceToWall), xx, yy, BLOCKINESS, 1);
+				// If the block our ray hit is NOT COMPLETELY OPAQUE,
+				// we write it to the transBuffer.
+				if (opacity < 1) {
+					color += ((int) (opacity * 127)) << 24;
+					transBuffer[xx + yy * width] = color;
+				} else {
+					screen.fillRect(darken(color, distanceToWall), xx, yy, BLOCKINESS, 1);
+				}
+			}
+
+			if (opacity < 1) {
+				xx -= BLOCKINESS;
 			}
 
 		}
+
+		// TODO: fix illumination of transparent blocks...
+
+		// Now mix with the transparency buffer to render transparent tiles.
+		for (int yy = 0; yy < height; yy++) {
+			for (int xx = 0; xx < width; xx++) {
+				if (transBuffer[xx + yy * width] != 0) {
+					int transColor = transBuffer[xx + yy * width];
+					double transOpacity = ((transColor & 0xFF000000) >> 24) / 127D;
+					int color = screen.mixColor(screen.getPixels()[xx + yy * width], transColor, transOpacity);
+					screen.fillRect(color, xx, yy, BLOCKINESS, 1);
+				}
+			}
+		}
+
+	}
+
+	private double getWallHitPosition(Camera camera, double rayX, double rayY, int mapX, int mapY, boolean side,
+			int stepX, int stepY) {
+		// add a texture
+		double wallX;// Exact position of where wall was hit
+		if (side) {// If its a y-axis wall
+			wallX = (camera.getxPos() + ((mapY - camera.getyPos() + (1 - stepY) / 2) / rayY) * rayX);
+		} else {// X-axis wall
+			wallX = (camera.getyPos() + ((mapX - camera.getxPos() + (1 - stepX) / 2) / rayX) * rayY);
+		}
+		wallX -= Math.floor(wallX);
+		return wallX;
+	}
+
+	private int getDrawHeight(final int screenHeight, double distanceToWall) {
+		int lineHeight;
+		if (distanceToWall > 0) {
+			lineHeight = Math.abs((int) (screenHeight / distanceToWall));
+		} else {
+			lineHeight = screenHeight;
+		}
+		return lineHeight;
+	}
+
+	private double getImpactDistance(Camera camera, double rayX, double rayY, int mapX, int mapY, boolean side,
+			int stepX, int stepY) {
+		double distanceToWall;
+		// Calculate distance to the point of impact
+		if (!side) {
+			distanceToWall = Math.abs((mapX - camera.getxPos() + (1 - stepX) / 2) / (rayX / TILE_SIZE));
+		} else {
+			distanceToWall = Math.abs((mapY - camera.getyPos() + (1 - stepY) / 2) / (rayY / TILE_SIZE));
+		}
+		return distanceToWall;
 	}
 
 	private void drawCrosshair(Screen screen) {
@@ -184,7 +243,7 @@ public class World implements IRenderable {
 
 	public void tick() {
 		garbageCollect();
-		camera.tick(ticker);
+		player.tick(ticker);
 
 		ticker++;
 	}

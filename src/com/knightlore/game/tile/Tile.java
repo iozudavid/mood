@@ -4,8 +4,12 @@ import com.knightlore.render.Camera;
 import com.knightlore.render.sprite.Texture;
 
 public abstract class Tile {
-	
+
 	public abstract Texture getTexture();
+
+	public double getOpacity() {
+		return 1D;
+	}
 
 	public double getSolidity() {
 		return 1D;
@@ -15,16 +19,16 @@ public abstract class Tile {
 
 	public abstract void onTouch(Camera c/* Player p */);
 
-	public char toChar(){
+	public char toChar() {
 		return ' ';
 	}
-	
-	public Tile reflectTileX(){
+
+	public Tile reflectTileX() {
 		return this;
 	}
-	
-	public Tile reflectTileY(){
+
+	public Tile reflectTileY() {
 		return this;
 	}
-	
+
 }

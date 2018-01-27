@@ -13,7 +13,17 @@ public class PlayerSpawnTile extends Tile {
 
 	@Override
 	public Texture getTexture() {
-		return Texture.EMPTY;
+		return Texture.BUSH;
+	}
+
+	@Override
+	public double getOpacity() {
+		return 0.5D;
+	}
+
+	@Override
+	public double getSolidity() {
+		return 0.5D;
 	}
 
 	@Override
