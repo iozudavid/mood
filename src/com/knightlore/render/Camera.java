@@ -3,12 +3,11 @@ package com.knightlore.render;
 import java.util.HashMap;
 import java.util.Map.Entry;
 
-import com.knightlore.engine.IUpdateable;
 import com.knightlore.game.area.Map;
 import com.knightlore.game.tile.Tile;
 import com.knightlore.network.protocol.ClientControl;
 
-public class Camera implements IUpdateable {
+public class Camera {
 
     public static final double FIELD_OF_VIEW = -0.66;
     private static final double MOVE_SPEED = .084;
@@ -46,16 +45,21 @@ public class Camera implements IUpdateable {
         ACTION_MAPPINGS.put(ClientControl.RIGHT, Camera.this::strafeRight);
     }
 
-    @Override
-    public void tick(long ticker) {
+    public void update() {
         synchronized (inputState) {
             // Check whether each input is triggered - if it is, execute the
             // respective method.
+            //DEBUG
+            String s = "";
             for (Entry<ClientControl, Byte> entry : inputState.entrySet())
                 // For boolean inputs (i.e. all current inputs), 0 represents
                 // false.
-                if (entry.getValue() != 0)
+                if (entry.getValue() != 0) {
                     ACTION_MAPPINGS.get(entry.getKey()).run();
+                    s += entry.getKey().name();
+                }
+            if (!s.equals(""))
+                System.out.println(s);
         }
     }
 

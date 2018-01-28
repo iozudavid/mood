@@ -6,7 +6,6 @@ import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.SocketException;
 import java.util.Date;
-import java.util.UUID;
 
 /**
  * Represents a connection from the server to a particular client, identified by
@@ -25,8 +24,7 @@ public class UDPConnection extends Connection {
     private byte[] data;
     private InetAddress address;
 
-    public UDPConnection(InetAddress address, UUID clientUUID) {
-        super(clientUUID);
+    public UDPConnection(InetAddress address) {
 
         lastPacketDate = new Date(System.currentTimeMillis());
         this.address = address;

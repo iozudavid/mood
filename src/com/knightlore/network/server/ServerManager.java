@@ -12,7 +12,6 @@ import com.knightlore.network.Connection;
 import com.knightlore.network.Port;
 import com.knightlore.network.TCPConnection;
 import com.knightlore.render.Camera;
-import com.knightlore.utils.Vector2D;
 
 /**
  * A network connection manager that runs server-side and deals with all
@@ -58,13 +57,13 @@ public class ServerManager implements Runnable {
             try {
                 Socket socket = serverSocket.accept();
                 UUID clientID = UUID.randomUUID();
-                Connection conn = new TCPConnection(socket, clientID);
+                Connection conn = new TCPConnection(socket);
 
                 // TODO: decide how to choose player location
                 Player player = engine.createPlayer(4.5, 4.5, 1, 0, 0,
                         Camera.FIELD_OF_VIEW);
 
-                new Thread(new ReceiveFromClient(conn)).start();
+                new Thread(new ReceiveFromClient(conn, player)).start();
                 new Thread(new SendToClient(conn)).start();
 
                 this.connections.put(clientID, conn);

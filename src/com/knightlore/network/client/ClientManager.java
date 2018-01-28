@@ -16,8 +16,7 @@ public class ClientManager implements Runnable {
         try {
             Socket server = new Socket(hostname, Port.number);
             System.out.println("Connected to server " + hostname);
-            TCPConnection conn = new TCPConnection(server,
-                    GenerateNextId.forClient());
+            TCPConnection conn = new TCPConnection(server);
             SendToServer sender = new SendToServer(conn);
             ReceiveFromServer receiver = new ReceiveFromServer(conn);
             Thread receiveFromServer = new Thread(receiver);

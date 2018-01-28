@@ -1,13 +1,15 @@
 package com.knightlore.game;
 
+import java.util.Map;
+
 import com.knightlore.engine.GameObject;
-import com.knightlore.engine.IUpdateable;
+import com.knightlore.network.protocol.ClientControl;
 import com.knightlore.render.Camera;
 import com.knightlore.render.IRenderable;
 import com.knightlore.render.Screen;
 import com.knightlore.utils.Vector2D;
 
-public class Player extends GameObject implements IRenderable, IUpdateable {
+public class Player extends GameObject implements IRenderable {
 
 	private Camera camera;
 	
@@ -28,10 +30,9 @@ public class Player extends GameObject implements IRenderable, IUpdateable {
 	public Camera getCamera() {
 		return camera;
 	}
-
-	@Override
-	public void tick(long ticker) {
-		camera.tick(ticker);
+	
+	public void setInputState(Map<ClientControl, Byte> inputState) {
+	    camera.setInputState(inputState);
 	}
 
     @Override
@@ -48,8 +49,7 @@ public class Player extends GameObject implements IRenderable, IUpdateable {
 
     @Override
     public void onUpdate() {
-        // TODO Auto-generated method stub
-        
+        camera.update();
     }
 
     @Override

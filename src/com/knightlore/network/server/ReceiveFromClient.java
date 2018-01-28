@@ -4,21 +4,21 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.LinkedBlockingQueue;
 
+import com.knightlore.game.Player;
 import com.knightlore.network.Connection;
 import com.knightlore.network.protocol.ClientControl;
 import com.knightlore.network.protocol.ClientProtocol;
 import com.knightlore.network.protocol.Command;
 
 public class ReceiveFromClient implements Runnable {
-    public BlockingQueue<Command> commandQueue = new LinkedBlockingQueue<>();
-
     private Connection conn;
 
-    public ReceiveFromClient(Connection conn) {
+    private Player player;
+
+    public ReceiveFromClient(Connection conn, Player player) {
         this.conn = conn;
+        this.player = player;
     }
 
     @Override
@@ -26,7 +26,8 @@ public class ReceiveFromClient implements Runnable {
         byte[] packet;
         try {
             while ((packet = conn.receive()) != null)
-                this.commandQueue.put(getPacketDecoded(packet));
+                // Execute the received command on the relevant player.
+                getPacketDecoded(packet).execute(player);
         } catch (Exception e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
@@ -42,15 +43,18 @@ public class ReceiveFromClient implements Runnable {
 
         try {
             Map<ClientControl, Byte> clientInput = new HashMap<ClientControl, Byte>();
-            for (int i = ClientProtocol.METADATA_LENGTH; i < packet.length; i++) {
+            for (int i = 0; i < ClientProtocol.getIndexActionMap()
+                    .size(); i++) {
                 // using the protocol
                 // to decode the byte array
                 ClientControl control = ClientProtocol.getByIndex(i);
-                clientInput.put(control, packet[i]);
+                clientInput.put(control,
+                        packet[i + ClientProtocol.METADATA_LENGTH]);
             }
             return new Command(clientInput, timeSent);
         } catch (IOException e) {
-            System.err.println("Bad input");
+            System.err.println("Bad input: ");
+            e.printStackTrace();
         }
         return null;
     }

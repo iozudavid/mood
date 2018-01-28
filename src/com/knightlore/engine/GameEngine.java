@@ -77,11 +77,11 @@ public class GameEngine implements Runnable {
 		System.out.println("Engine Initialised Successfully.");
 	}
 
-	public void start() {
+	public void start(boolean visible) {
 		running = true;
 		thread = new Thread(this);
 		thread.start();
-		window.setVisible(true);
+		window.setVisible(visible);
 	}
 
 	public void stop() {

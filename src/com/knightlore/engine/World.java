@@ -20,7 +20,6 @@ public class World implements IRenderable {
 	private long ticker;
 
 	private final Map map;
-	private Player player;
 
 	public World(Map map) {
 		this.map = map;
@@ -30,8 +29,8 @@ public class World implements IRenderable {
 	@Override
 	public void render(Screen screen, int x, int y) {
 		map.getEnvironment().renderEnvironment(screen);
-		drawPerspective(screen);
-		drawCrosshair(screen);
+		//drawPerspective(screen);
+		//drawCrosshair(screen);
 
 	}
 
@@ -48,7 +47,8 @@ public class World implements IRenderable {
 	private void drawPerspective(Screen screen) {
 
 		final int width = screen.getWidth(), height = screen.getHeight();
-		Camera camera = player.getCamera();
+		//Camera camera = player.getCamera();
+		Camera camera = null;
 
 		// Buffer used to draw transparent objects for later mixing...
 		int[] transBuffer = new int[width * height];
@@ -240,7 +240,7 @@ public class World implements IRenderable {
 
 	public void tick() {
 		garbageCollect();
-		player.tick(ticker);
+		//player.tick(ticker);
 
 		ticker++;
 	}

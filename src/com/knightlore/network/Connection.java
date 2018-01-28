@@ -2,7 +2,6 @@ package com.knightlore.network;
 
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
-import java.util.UUID;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executors;
@@ -13,14 +12,14 @@ import java.util.concurrent.TimeoutException;
 public abstract class Connection {
     public static final Charset CHARSET = StandardCharsets.UTF_8;
     // Wait 5 seconds without receiving packets before disconnecting.
-    protected static int TIMEOUT_MILLIS = 5 * 1000;
+    //protected static int TIMEOUT_MILLIS = 5 * 1000;
+    //DEBUG
+    protected static int TIMEOUT_MILLIS = 30 * 1000;
 
     public volatile boolean terminated;
-    protected UUID clientID;
 
-    public Connection(UUID clientID) {
+    public Connection() {
         this.terminated = false;
-        this.clientID = clientID;
     }
 
     public synchronized boolean getTerminated() {

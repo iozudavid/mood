@@ -19,9 +19,9 @@ public final class ClientProtocol {
     static {
         indexAction = new HashMap<Integer, ClientControl>();
         indexAction.put(0, ClientControl.FORWARD);
-        indexAction.put(1, ClientControl.LEFT);
+        indexAction.put(1, ClientControl.ROTATE_ANTI_CLOCKWISE);
         indexAction.put(2, ClientControl.BACKWARD);
-        indexAction.put(3, ClientControl.RIGHT);
+        indexAction.put(3, ClientControl.ROTATE_CLOCKWISE);
         // just this for now
     }
 

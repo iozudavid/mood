@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.Socket;
-import java.util.UUID;
 
 /*
  * Basic network connection
@@ -16,8 +15,7 @@ public class TCPConnection extends Connection {
     private InputStream infoReceive;
     private OutputStream infoSend;
 
-    public TCPConnection(Socket socket, UUID clientID) {
-        super(clientID);
+    public TCPConnection(Socket socket) {
         try {
             this.infoReceive = socket.getInputStream();
             this.infoSend = socket.getOutputStream();

@@ -26,24 +26,23 @@ public class SendToServer implements Runnable {
 
         // Prepend metadata to the state array.
         byte[] metadata = ClientProtocol.getMetadata();
-        int i = 0;
-        while (i < ClientProtocol.METADATA_LENGTH) {
+        for (int i = 0; i < ClientProtocol.METADATA_LENGTH; i++) {
             thisState[i] = metadata[i];
-            i++;
         }
 
         try {
-            while (i < ClientProtocol.getIndexActionMap().size()) {
+            for (int i = 0; i < ClientProtocol.getIndexActionMap()
+                    .size(); i++) {
                 // taking the current control
                 ClientControl currentControl = ClientProtocol.getByIndex(i);
                 int keyCode = ClientControl.getKeyCode(currentControl);
                 boolean currententControlState = InputManager
                         .isKeyDown(keyCode);
                 if (currententControlState == false) {
-                    thisState[i] = 0;
-                } else
-                    thisState[i] = 1;
-                i++;
+                    thisState[i + ClientProtocol.METADATA_LENGTH] = 0;
+                } else {
+                    thisState[i + ClientProtocol.METADATA_LENGTH] = 1;
+                }
             }
         } catch (IOException e) {
             System.err.println("Index not good...");
@@ -52,12 +51,15 @@ public class SendToServer implements Runnable {
     }
 
     private boolean isLastStateDifferent(byte[] currentState) {
-        for (int i = 0; i < this.lastState.length; i++) {
-            if (this.lastState[i] == currentState[i])
-                continue;
-            return true;
-        }
-        return false;
+        // for (int i = 0; i < this.lastState.length; i++) {
+        // if (this.lastState[i] == currentState[i])
+        // continue;
+        // return true;
+        // }
+        // return false;
+        // }
+        // DEBUG
+        return true;
     }
 
     public void run() {
