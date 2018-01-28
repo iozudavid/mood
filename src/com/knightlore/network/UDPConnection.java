@@ -1,19 +1,13 @@
 package com.knightlore.network;
 
-import java.util.Date;
-import java.util.Queue;
-import java.util.UUID;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
-import java.util.concurrent.TimeUnit;
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.SocketException;
-import java.util.concurrent.TimeoutException;
+import java.util.Date;
+import java.util.UUID;
+import java.util.concurrent.BlockingQueue;
 
 /**
  * Represents a connection from the server to a particular client, identified by
@@ -24,7 +18,6 @@ import java.util.concurrent.TimeoutException;
 
 public class UDPConnection extends Connection {
 
-    private UUID clientUUID;
     // The time-stamp of when the most recent communication (packet) was
     // received.
     private Date lastPacketDate;
@@ -33,10 +26,9 @@ public class UDPConnection extends Connection {
     private byte[] data;
     private InetAddress address;
 
-    public UDPConnection(Queue<Command> commandQueue, InetAddress address,
+    public UDPConnection(BlockingQueue<Command> commandQueue, InetAddress address,
             UUID clientUUID) {
-        super(commandQueue);
-        this.clientUUID = clientUUID;
+        super(commandQueue, clientUUID);
 
         lastPacketDate = new Date(System.currentTimeMillis());
         this.address = address;

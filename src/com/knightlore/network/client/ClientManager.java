@@ -6,7 +6,7 @@ import java.net.UnknownHostException;
 import java.util.concurrent.LinkedBlockingQueue;
 
 import com.knightlore.network.Command;
-import com.knightlore.network.Connection;
+import com.knightlore.network.GenerateNextId;
 import com.knightlore.network.Port;
 import com.knightlore.network.TCPConnection;
 
@@ -18,8 +18,7 @@ public class ClientManager implements Runnable {
         try {
             Socket server = new Socket(hostname, Port.number);
             System.out.println("Connected to server " + hostname);
-            TCPConnection conn = new TCPConnection(
-                    new LinkedBlockingQueue<Command>(), server);
+            TCPConnection conn = new TCPConnection(new LinkedBlockingQueue<Command>(), server, GenerateNextId.forClient());
             SendToServer sender = new SendToServer(conn);
             ReceiveFromServer receiver = new ReceiveFromServer(conn);
             Thread receiveFromServer = new Thread(receiver);

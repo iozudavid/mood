@@ -4,7 +4,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.Socket;
-import java.util.Queue;
+import java.util.UUID;
+import java.util.concurrent.BlockingQueue;
 
 /*
  * Basic network connection
@@ -16,8 +17,8 @@ public class TCPConnection extends Connection {
     private InputStream infoReceive;
     private OutputStream infoSend;
 
-    public TCPConnection(Queue<Command> commandQueue, Socket socket) {
-        super(commandQueue);
+    public TCPConnection(BlockingQueue<Command> commandQueue, Socket socket, UUID clientID) {
+        super(commandQueue, clientID);
         try {
             this.infoReceive = socket.getInputStream();
             this.infoSend = socket.getOutputStream();
