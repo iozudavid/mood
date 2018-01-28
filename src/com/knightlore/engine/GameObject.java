@@ -3,7 +3,7 @@ package com.knightlore.engine;
 import com.knightlore.utils.Vector2D;
 
 public abstract class GameObject {
-	protected final Vector2D position;
+	public Vector2D position;
 	/**
 	 * Whether the entity currently exists. If this variable is set to false,
 	 * entities will be 'garbage collected' by the game engine.

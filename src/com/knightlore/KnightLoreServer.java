@@ -1,6 +1,7 @@
 package com.knightlore;
 
 import com.knightlore.engine.GameEngine;
+import com.knightlore.network.server.ServerManager;
 
 public class KnightLoreServer {
 
@@ -8,6 +9,7 @@ public class KnightLoreServer {
 		System.out.println("Starting Server...");
 		GameEngine engine = new GameEngine();
 		engine.start();
+		ServerManager networkManager = new ServerManager();
 		// TODO setup the server here
 	}
 
