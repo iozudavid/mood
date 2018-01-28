@@ -5,12 +5,14 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.LinkedBlockingQueue;
 
+import com.knightlore.engine.GameEngine;
+import com.knightlore.game.Player;
 import com.knightlore.network.Connection;
 import com.knightlore.network.Port;
 import com.knightlore.network.TCPConnection;
-import com.knightlore.network.protocol.Command;
+import com.knightlore.render.Camera;
+import com.knightlore.utils.Vector2D;
 
 /**
  * A network connection manager that runs server-side and deals with all
@@ -21,8 +23,10 @@ import com.knightlore.network.protocol.Command;
 public class ServerManager implements Runnable {
     private ConcurrentHashMap<UUID, Connection> connections = new ConcurrentHashMap<UUID, Connection>();
     private ServerSocket serverSocket = null;
+    private GameEngine engine;
 
-    public ServerManager() {
+    public ServerManager(GameEngine engine) {
+        this.engine = engine;
     }
 
     @Override
@@ -53,9 +57,13 @@ public class ServerManager implements Runnable {
             // new Client();
             try {
                 Socket socket = serverSocket.accept();
-                LinkedBlockingQueue<Command> queue = new LinkedBlockingQueue<Command>();
                 UUID clientID = UUID.randomUUID();
-                Connection conn = new TCPConnection(queue, socket, clientID);
+                Connection conn = new TCPConnection(socket, clientID);
+
+                // TODO: decide how to choose player location
+                Player player = engine.createPlayer(4.5, 4.5, 1, 0, 0,
+                        Camera.FIELD_OF_VIEW);
+
                 new Thread(new ReceiveFromClient(conn)).start();
                 new Thread(new SendToClient(conn)).start();
 
@@ -66,10 +74,6 @@ public class ServerManager implements Runnable {
             }
 
         }
-    }
-
-    public static void main(String[] args) {
-        (new ServerManager()).run();
     }
 
 }

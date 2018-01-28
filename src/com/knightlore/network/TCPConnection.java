@@ -5,9 +5,6 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.Socket;
 import java.util.UUID;
-import java.util.concurrent.BlockingQueue;
-
-import com.knightlore.network.protocol.Command;
 
 /*
  * Basic network connection
@@ -19,7 +16,7 @@ public class TCPConnection extends Connection {
     private InputStream infoReceive;
     private OutputStream infoSend;
 
-    public TCPConnection(BlockingQueue<Command> commandQueue, Socket socket, UUID clientID) {
+    public TCPConnection(Socket socket, UUID clientID) {
         super(clientID);
         try {
             this.infoReceive = socket.getInputStream();
@@ -30,22 +27,22 @@ public class TCPConnection extends Connection {
         }
     }
 
-    public void closeInputStream(){
-    	try {
-			infoReceive.close();
-		} catch (IOException e) {
-			System.err.println("Something wrong " + e.getMessage());
-		}
+    public void closeInputStream() {
+        try {
+            infoReceive.close();
+        } catch (IOException e) {
+            System.err.println("Something wrong " + e.getMessage());
+        }
     }
-    
-    public void closeOutputStream(){
-    	try {
-			infoSend.close();
-		} catch (IOException e) {
-			System.err.println("Something wrong " + e.getMessage());
-		}
+
+    public void closeOutputStream() {
+        try {
+            infoSend.close();
+        } catch (IOException e) {
+            System.err.println("Something wrong " + e.getMessage());
+        }
     }
-    
+
     @Override
     public void send(byte[] data) {
         try {

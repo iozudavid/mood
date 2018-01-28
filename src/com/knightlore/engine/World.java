@@ -25,9 +25,6 @@ public class World implements IRenderable {
 	public World(Map map) {
 		this.map = map;
 		entities = new ArrayList<>();
-
-		Camera camera = new Camera(4.5, 4.5, 1, 0, 0, Camera.FIELD_OF_VIEW, map);
-		player = new Player(camera);
 	}
 
 	@Override

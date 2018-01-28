@@ -7,7 +7,9 @@ import java.util.LinkedList;
 import com.knightlore.MainWindow;
 import com.knightlore.engine.input.InputManager;
 import com.knightlore.engine.input.Mouse;
+import com.knightlore.game.Player;
 import com.knightlore.game.area.AreaFactory;
+import com.knightlore.render.Camera;
 import com.knightlore.render.Environment;
 import com.knightlore.render.Screen;
 
@@ -59,6 +61,12 @@ public class GameEngine implements Runnable {
 	void removeGameObject(GameObject g){
 		// delay deleting until next loop
 		notifyToDestroy.add(g);
+	}
+	
+	public Player createPlayer(double xPos, double yPos, double xDir, double yDir,
+            double xPlane, double yPlane) {
+	    Camera camera = new Camera(xPos, yPos, xDir, yDir, xPlane, yPlane, world.getMap());
+	    return new Player(camera);
 	}
 
 	private void initEngine() {
