@@ -4,11 +4,13 @@ import java.io.IOException;
 import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.LinkedBlockingQueue;
 
 import com.knightlore.network.Command;
 import com.knightlore.network.Connection;
+import com.knightlore.network.GenerateNextId;
 import com.knightlore.network.Port;
 import com.knightlore.network.TCPConnection;
 
@@ -53,9 +55,10 @@ public class ServerManager implements Runnable {
             //new Client();
         	try {
 				Socket socket = serverSocket.accept();
-				Connection conn = new TCPConnection(new LinkedBlockingQueue<Command>(), socket);
-				new Thread(new ReceiveFromClient(conn, new LinkedBlockingQueue<Command>())).start();
-				new Thread(new SendToClient(conn, new LinkedBlockingQueue<Command>())).start();
+				LinkedBlockingQueue<Command> queue = new LinkedBlockingQueue<Command>();
+				Connection conn = new TCPConnection(queue, socket, GenerateNextId.forServer());
+				new Thread(new ReceiveFromClient(conn)).start();
+				new Thread(new SendToClient(conn)).start();
 				
 				this.connections.put(socket.getInetAddress(), conn);
 			} catch (IOException e) {
@@ -65,7 +68,6 @@ public class ServerManager implements Runnable {
         
         }
     }
-
     
     public static void main(String[] args) {
         (new ServerManager()).run();

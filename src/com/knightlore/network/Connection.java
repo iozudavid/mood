@@ -2,28 +2,28 @@ package com.knightlore.network;
 
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
-import java.util.Queue;
+import java.util.UUID;
+import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
-import java.util.regex.Matcher;
-
-import com.sun.org.apache.xerces.internal.impl.xpath.regex.Match;
 
 public abstract class Connection {
     public static final Charset CHARSET = StandardCharsets.UTF_8;
     // Wait 5 seconds without receiving packets before disconnecting.
     protected static int TIMEOUT_MILLIS = 5 * 1000;
 
-    protected Queue<Command> commandQueue;
+    protected BlockingQueue<Command> commandQueue;
     public volatile boolean terminated;
+    protected UUID clientID;
 
-    public Connection(Queue<Command> commandQueue) {
+    public Connection(BlockingQueue<Command> commandQueue, UUID clientID) {
         this.terminated = false;
         this.commandQueue = commandQueue;
+        this.clientID = clientID;
     }
 
     public synchronized boolean getTerminated() {
@@ -58,5 +58,20 @@ public abstract class Connection {
         }
         return null;
     }
+    
+    public void addToCommandQueue(Command newCommand) {
+        commandQueue.offer(newCommand);
+    }
+    
+	public Command takeNextCommand() {
+
+		while (true) {
+			try {
+				return (commandQueue.take());
+			} catch (InterruptedException e) {
+				System.err.println("Thread interrupted wile waiting for the next command");
+			}
+		}
+	}
 
 }
