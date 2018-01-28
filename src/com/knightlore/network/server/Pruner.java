@@ -1,9 +1,8 @@
 package com.knightlore.network.server;
 
-import java.net.InetAddress;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import com.knightlore.network.Connection;
 
@@ -16,9 +15,9 @@ import com.knightlore.network.Connection;
 public class Pruner implements Runnable {
     // The time to wait, in milliseconds, between checks for terminated threads.
     private static int PERIOD_MILLIS = 1000;
-    private Map<InetAddress, Connection> conns;
+    private Map<UUID, Connection> conns;
 
-    public Pruner(Map<InetAddress, Connection> conns) {
+    public Pruner(Map<UUID, Connection> conns) {
         this.conns = conns;
     }
 

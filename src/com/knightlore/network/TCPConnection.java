@@ -7,6 +7,8 @@ import java.net.Socket;
 import java.util.UUID;
 import java.util.concurrent.BlockingQueue;
 
+import com.knightlore.network.protocol.Command;
+
 /*
  * Basic network connection
  * start using tcp for now, adpat it in the future to use udp
@@ -18,7 +20,7 @@ public class TCPConnection extends Connection {
     private OutputStream infoSend;
 
     public TCPConnection(BlockingQueue<Command> commandQueue, Socket socket, UUID clientID) {
-        super(commandQueue, clientID);
+        super(clientID);
         try {
             this.infoReceive = socket.getInputStream();
             this.infoSend = socket.getOutputStream();

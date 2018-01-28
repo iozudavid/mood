@@ -7,7 +7,6 @@ import java.net.InetAddress;
 import java.net.SocketException;
 import java.util.Date;
 import java.util.UUID;
-import java.util.concurrent.BlockingQueue;
 
 /**
  * Represents a connection from the server to a particular client, identified by
@@ -26,9 +25,8 @@ public class UDPConnection extends Connection {
     private byte[] data;
     private InetAddress address;
 
-    public UDPConnection(BlockingQueue<Command> commandQueue, InetAddress address,
-            UUID clientUUID) {
-        super(commandQueue, clientUUID);
+    public UDPConnection(InetAddress address, UUID clientUUID) {
+        super(clientUUID);
 
         lastPacketDate = new Date(System.currentTimeMillis());
         this.address = address;
@@ -85,6 +83,5 @@ public class UDPConnection extends Connection {
     public Date getLastPacketDate() {
         return lastPacketDate;
     }
-
 
 }

@@ -3,7 +3,6 @@ package com.knightlore.network;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.UUID;
-import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executors;
@@ -16,13 +15,11 @@ public abstract class Connection {
     // Wait 5 seconds without receiving packets before disconnecting.
     protected static int TIMEOUT_MILLIS = 5 * 1000;
 
-    protected BlockingQueue<Command> commandQueue;
     public volatile boolean terminated;
     protected UUID clientID;
 
-    public Connection(BlockingQueue<Command> commandQueue, UUID clientID) {
+    public Connection(UUID clientID) {
         this.terminated = false;
-        this.commandQueue = commandQueue;
         this.clientID = clientID;
     }
 
@@ -58,20 +55,5 @@ public abstract class Connection {
         }
         return null;
     }
-    
-    public void addToCommandQueue(Command newCommand) {
-        commandQueue.offer(newCommand);
-    }
-    
-	public Command takeNextCommand() {
-
-		while (true) {
-			try {
-				return (commandQueue.take());
-			} catch (InterruptedException e) {
-				System.err.println("Thread interrupted wile waiting for the next command");
-			}
-		}
-	}
 
 }

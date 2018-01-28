@@ -5,10 +5,10 @@ import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.concurrent.LinkedBlockingQueue;
 
-import com.knightlore.network.Command;
 import com.knightlore.network.GenerateNextId;
 import com.knightlore.network.Port;
 import com.knightlore.network.TCPConnection;
+import com.knightlore.network.protocol.Command;
 
 public class ClientManager implements Runnable {
     private String hostname = "localhost";
