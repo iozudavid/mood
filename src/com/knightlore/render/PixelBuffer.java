@@ -46,6 +46,9 @@ public class PixelBuffer {
 	}
 
 	public int pixelAt(int x, int y) {
+		int i = x + y * WIDTH;
+		if (i < 0 || i >= pixels.length)
+			return 0;
 		return pixels[x + y * WIDTH];
 	}
 

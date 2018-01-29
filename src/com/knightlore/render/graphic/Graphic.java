@@ -3,7 +3,7 @@ package com.knightlore.render.graphic;
 import java.awt.image.BufferedImage;
 
 public class Graphic {
-	
+
 	public static final Graphic EMPTY = null;
 
 	protected int width, height;
@@ -27,7 +27,7 @@ public class Graphic {
 	public int getHeight() {
 		return height;
 	}
-	
+
 	public int getSize() {
 		return Math.max(width, height);
 	}

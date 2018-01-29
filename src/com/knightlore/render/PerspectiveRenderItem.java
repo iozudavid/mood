@@ -8,6 +8,7 @@ public class PerspectiveRenderItem {
 	public int drawStart;
 	public int drawEnd;
 	public int lineHeight;
+	
 	public Graphic texture;
 
 	public int texX;

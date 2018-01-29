@@ -2,6 +2,7 @@ package com.knightlore.engine;
 
 import java.awt.Color;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Stack;
@@ -34,7 +35,8 @@ public class World implements IRenderable {
 		Camera camera = new Camera(4.5, 4.5, 1, 0, 0, Camera.FIELD_OF_VIEW, map);
 		player = new Player(camera);
 
-		mobs.add(new Zombie(0.2D, new Vector2D(5, 5)));
+		mobs.add(new Zombie(0.5D, new Vector2D(7, 7)));
+		mobs.add(new Zombie(0.5D, new Vector2D(25, 25)));
 	}
 
 	@Override
@@ -44,7 +46,7 @@ public class World implements IRenderable {
 		drawCrosshair(pix);
 	}
 
-	private final int BLOCKINESS = 8; // how 'old school' you want to look.
+	private final int BLOCKINESS = 6; // how 'old school' you want to look.
 
 	/*
 	 * NOTE: THIS ONLY AFFECTS THE RENDERING SIZE OF A TILE. If you change this
@@ -59,8 +61,9 @@ public class World implements IRenderable {
 		final int width = pix.getWidth(), height = pix.getHeight();
 		Camera camera = player.getCamera();
 
-		for (int xx = 0; xx < width; xx += BLOCKINESS) {
+		double[] zbuffer = new double[width];
 
+		for (int xx = 0; xx < width; xx += BLOCKINESS) {
 			Stack<PerspectiveRenderItem> renderStack = new Stack<PerspectiveRenderItem>();
 
 			// Calculate direction of the ray based on camera direction.
@@ -156,9 +159,11 @@ public class World implements IRenderable {
 					if (!side && rayX > 0) {
 						texX = texture.getSize() - texX - 1;
 					}
+
 					PerspectiveRenderItem p = new PerspectiveRenderItem(opacity, drawStart, drawEnd, lineHeight,
 							texture, texX, distanceToWall, xx);
 					renderStack.push(p);
+					zbuffer[xx] = p.distanceToWall;
 
 				}
 
@@ -170,6 +175,80 @@ public class World implements IRenderable {
 
 		}
 
+		drawSprites(pix, zbuffer);
+
+	}
+
+	private void drawSprites(PixelBuffer pix, double[] zbuffer) {
+		Camera cam = player.getCamera();
+
+		mobs.sort(new Comparator<Mob>() {
+
+			@Override
+			public int compare(Mob o1, Mob o2) {
+				final double distance1 = cam.getPosition().distance(o1.position);
+				final double distance2 = cam.getPosition().distance(o2.position);
+				return Double.compare(distance2, distance1);
+			}
+
+		});
+
+		for (Mob m : mobs) {
+			double spriteX = m.getPosition().getX() - cam.getxPos();
+			double spriteY = m.getPosition().getY() - cam.getyPos();
+
+			double invDet = 1.0 / (cam.getxPlane() * cam.getyDir() - cam.getxDir() * cam.getyPlane());
+
+			double transformX = invDet * (cam.getyDir() * spriteX - cam.getxDir() * spriteY);
+			double transformY = invDet * (-cam.getyPlane() * spriteX + cam.getxPlane() * spriteY);
+
+			int spriteScreenX = (int) ((pix.getWidth() / 2) * (1 + transformX / transformY));
+			int spriteHeight = Math.abs((int) (pix.getHeight() / transformY));
+
+			// calculate lowest and highest pixel to fill in current stripe
+			int drawStartY = -spriteHeight / 2 + pix.getHeight() / 2;
+			if (drawStartY < 0)
+				drawStartY = 0;
+			int drawEndY = spriteHeight / 2 + pix.getHeight() / 2;
+			if (drawEndY >= pix.getHeight())
+				drawEndY = pix.getHeight() - 1;
+
+			// calculate width of the sprite
+			int spriteWidth = Math.abs((int) (pix.getHeight() / transformY));
+			int drawStartX = -spriteWidth / 2 + spriteScreenX;
+			if (drawStartX < 0)
+				drawStartX = 0;
+			int drawEndX = spriteWidth / 2 + spriteScreenX;
+			if (drawEndX >= pix.getWidth())
+				drawEndX = pix.getWidth() - 1;
+
+			// loop through every vertical stripe of the sprite on screen
+			for (int stripe = drawStartX; stripe < drawEndX; stripe++) {
+				int texX = (int) (256 * (stripe - (-spriteWidth / 2 + spriteScreenX)) * m.getSprite().getWidth()
+						/ spriteWidth) / 256;
+
+				// the conditions in the if are:
+				// 1) it's in front of camera plane so you don't see things
+				// behind you
+				// 2) it's on the screen (left)
+				// 3) it's on the screen (right)
+				// 4) ZBuffer, with perpendicular distance
+				if (transformY > 0 && stripe > 0 && stripe < pix.getWidth() && transformY < zbuffer[stripe])
+					for (int y = drawStartY; y < drawEndY; y++) {
+						// here, 256 and 128 are factors to avoid floats.
+						int d = y * 256 - pix.getHeight() * 128 + spriteHeight * 128;
+						int texY = ((d * m.getSprite().getHeight()) / spriteHeight) / 256;
+						int color = m.getSprite().getPixels()[m.getSprite().getWidth() * texY + texX];
+						
+						if (color != -16747777) // TODO REMOVE
+							continue; // texture
+						color = darken(color, cam.getPosition().distance(m.getPosition()));
+
+						int drawY = y + player.getCamera().getMotionOffset();
+						pix.fillRect(color, stripe, drawY, BLOCKINESS, 1);
+					}
+			}
+		}
 	}
 
 	private void draw(PixelBuffer pix, PerspectiveRenderItem p) {
@@ -180,9 +259,10 @@ public class World implements IRenderable {
 
 			int color = p.texture.getPixels()[p.texX + (texY * p.texture.getSize())];
 
-			color = ColorUtils.mixColor(pix.pixelAt(p.xx, yy), color, p.opacity);
+			int drawY = yy + player.getCamera().getMotionOffset();
+			color = ColorUtils.mixColor(pix.pixelAt(p.xx, drawY), color, p.opacity);
 
-			pix.fillRect(darken(color, p.distanceToWall), p.xx, yy, BLOCKINESS, 1);
+			pix.fillRect(darken(color, p.distanceToWall), p.xx, drawY, BLOCKINESS, 1);
 		}
 	}
 

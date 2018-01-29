@@ -3,7 +3,7 @@ package com.knightlore.render;
 import java.awt.Color;
 
 public enum Environment {
-	DARK_OUTDOORS(50) {
+	DARK_OUTDOORS(15) {
 		@Override
 		public void renderEnvironment(PixelBuffer pix) {
 			for (int yy = pix.getHeight() / 2; yy < pix.getHeight(); yy += 1) {
