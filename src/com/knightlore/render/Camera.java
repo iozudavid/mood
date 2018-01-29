@@ -1,6 +1,8 @@
 package com.knightlore.render;
 
+import com.knightlore.engine.GameEngine;
 import com.knightlore.engine.GameObject;
+import com.knightlore.engine.TickListener;
 import com.knightlore.engine.input.Controller;
 import com.knightlore.engine.input.InputManager;
 import com.knightlore.engine.input.Keyboard;
@@ -8,9 +10,9 @@ import com.knightlore.game.area.Map;
 import com.knightlore.game.tile.Tile;
 import com.knightlore.input.BasicController;
 
-public class Camera extends GameObject {
+public class Camera extends GameObject implements TickListener {
 
-	public static final double FIELD_OF_VIEW = -0.66;
+	public static final double FIELD_OF_VIEW = -.66;
 	private static final double MOVE_SPEED = .084;
 	private static final double STRAFE_SPEED = .04;
 	private static final double ROTATION_SPEED = .045;
@@ -29,6 +31,8 @@ public class Camera extends GameObject {
 		this.xPlane = xPlane;
 		this.yPlane = yPlane;
 		this.map = map;
+
+		GameEngine.ticker.addTickListener(this);
 	}
 
 	@Override
@@ -59,6 +63,7 @@ public class Camera extends GameObject {
 		if (keyboard.isPressed(controller.moveRight())) {
 			strafeRight();
 		}
+
 	}
 
 	@Override
@@ -161,6 +166,16 @@ public class Camera extends GameObject {
 
 	public void setyPlane(double yPlane) {
 		this.yPlane = yPlane;
+	}
+
+	@Override
+	public void onTick() {
+		System.out.println(xPos + " " + yPos);
+	}
+
+	@Override
+	public long interval() {
+		return 60;
 	}
 
 }

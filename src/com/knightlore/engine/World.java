@@ -4,31 +4,37 @@ import java.awt.Color;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ListIterator;
+import java.util.Stack;
 
 import com.knightlore.game.Player;
 import com.knightlore.game.area.Map;
-import com.knightlore.game.entity.Enemy;
+import com.knightlore.game.entity.Mob;
+import com.knightlore.game.entity.Zombie;
 import com.knightlore.game.tile.AirTile;
 import com.knightlore.game.tile.Tile;
 import com.knightlore.render.Camera;
 import com.knightlore.render.ColorUtils;
 import com.knightlore.render.IRenderable;
+import com.knightlore.render.PerspectiveRenderItem;
 import com.knightlore.render.PixelBuffer;
 import com.knightlore.render.graphic.Graphic;
+import com.knightlore.utils.Vector2D;
 
 public class World implements IRenderable {
 
-	private final List<GameObject> entities;
+	private final List<Mob> mobs;
 
 	private final Map map;
 	private Player player;
 
 	public World(Map map) {
 		this.map = map;
-		entities = new ArrayList<>();
+		mobs = new ArrayList<>();
 
 		Camera camera = new Camera(4.5, 4.5, 1, 0, 0, Camera.FIELD_OF_VIEW, map);
 		player = new Player(camera);
+
+		mobs.add(new Zombie(0.2D, new Vector2D(5, 5)));
 	}
 
 	@Override
@@ -36,10 +42,9 @@ public class World implements IRenderable {
 		map.getEnvironment().renderEnvironment(pix);
 		drawPerspective(pix);
 		drawCrosshair(pix);
-		new Enemy().render(pix, 50, 50);
 	}
 
-	private final int BLOCKINESS = 1; // how 'old school' you want to look.
+	private final int BLOCKINESS = 8; // how 'old school' you want to look.
 
 	/*
 	 * NOTE: THIS ONLY AFFECTS THE RENDERING SIZE OF A TILE. If you change this
@@ -54,12 +59,9 @@ public class World implements IRenderable {
 		final int width = pix.getWidth(), height = pix.getHeight();
 		Camera camera = player.getCamera();
 
-		// Buffer used to draw transparent objects for later mixing...
-		PixelBuffer transBuffer = new PixelBuffer(width, height);
-
-		double opacity = 1D;
-
 		for (int xx = 0; xx < width; xx += BLOCKINESS) {
+
+			Stack<PerspectiveRenderItem> renderStack = new Stack<PerspectiveRenderItem>();
 
 			// Calculate direction of the ray based on camera direction.
 			double cameraX = 2 * xx / (double) (width) - 1;
@@ -118,82 +120,70 @@ public class World implements IRenderable {
 
 				// If this is anything but an empty cell, we've hit a tile
 				if (tile != AirTile.getInstance()) {
-					if (opacity < 1 && tile.getOpacity() < 1)
+
+					double opacity = tile.getOpacity();
+					if (opacity >= 1)
+						hit = true;
+
+					distanceToWall = getImpactDistance(camera, rayX, rayY, mapX, mapY, side, stepX, stepY);
+					int lineHeight = getDrawHeight(height, distanceToWall);
+
+					// calculate lowest and highest pixel to fill in current
+					// strip
+					int drawStart = -lineHeight / 2 + height / 2;
+					if (drawStart < 0) {
+						drawStart = 0;
+					}
+
+					int drawEnd = lineHeight / 2 + height / 2;
+					if (drawEnd >= height) {
+						drawEnd = height - 1;
+					}
+
+					double wallX = getWallHitPosition(camera, rayX, rayY, mapX, mapY, side, stepX, stepY);
+
+					Graphic texture = map.getTile(mapX, mapY).getTexture();
+					if (texture == Graphic.EMPTY) {
 						continue;
-					hit = true;
-					opacity = tile.getOpacity();
+					}
+
+					// What pixel did we hit the texture on?
+					int texX = (int) (wallX * (texture.getSize()));
+					if (side && rayY < 0) {
+						texX = texture.getSize() - texX - 1;
+					}
+
+					if (!side && rayX > 0) {
+						texX = texture.getSize() - texX - 1;
+					}
+					PerspectiveRenderItem p = new PerspectiveRenderItem(opacity, drawStart, drawEnd, lineHeight,
+							texture, texX, distanceToWall, xx);
+					renderStack.push(p);
+
 				}
+
 			}
 
-			distanceToWall = getImpactDistance(camera, rayX, rayY, mapX, mapY, side, stepX, stepY);
-			int lineHeight = getDrawHeight(height, distanceToWall);
-
-			// calculate lowest and highest pixel to fill in current strip
-			int drawStart = -lineHeight / 2 + height / 2;
-			if (drawStart < 0) {
-				drawStart = 0;
-			}
-
-			int drawEnd = lineHeight / 2 + height / 2;
-			if (drawEnd >= height) {
-				drawEnd = height - 1;
-			}
-
-			double wallX = getWallHitPosition(camera, rayX, rayY, mapX, mapY, side, stepX, stepY);
-
-			Graphic texture = map.getTile(mapX, mapY).getTexture();
-			if (texture == Graphic.EMPTY) {
-				continue;
-			}
-
-			// What pixel did we hit the texture on?
-			int texX = (int) (wallX * (texture.getSize()));
-			if (side && rayY < 0) {
-				texX = texture.getSize() - texX - 1;
-			}
-
-			if (!side && rayX > 0) {
-				texX = texture.getSize() - texX - 1;
-			}
-
-			// calculate y coordinate on texture
-			for (int yy = drawStart; yy < drawEnd; yy++) {
-
-				// TODO: only compensates for 16x16 textures here, maybe change?
-				int texY = (((yy * 2 - height + lineHeight) << 4) / lineHeight) / 2;
-
-				int color = texture.getPixels()[texX + (texY * texture.getSize())];
-
-				// If the block our ray hit is NOT COMPLETELY OPAQUE,
-				// we write it to the transBuffer.
-				if (opacity < 1) {
-					color += ((int) (opacity * 127)) << 24;
-					transBuffer.fillPixel(color, xx, yy);
-				} else {
-					pix.fillRect(darken(color, distanceToWall), xx, yy, BLOCKINESS, 1);
-				}
-			}
-
-			if (opacity < 1) {
-				xx -= BLOCKINESS;
+			while (!renderStack.isEmpty()) {
+				draw(pix, renderStack.pop());
 			}
 
 		}
 
-		// TODO: fix illumination of transparent blocks...
+	}
 
-		// Now mix with the transparency buffer to render transparent tiles.
-		for (int yy = 0; yy < height; yy++) {
-			for (int xx = 0; xx < width; xx++) {
-				if (transBuffer.pixelAt(xx, yy) != 0) {
-					int transColor = transBuffer.pixelAt(xx, yy);
-					double transOpacity = ((transColor & 0xFF000000) >> 24) / 127D;
-					int color = ColorUtils.mixColor(pix.getPixels()[xx + yy * width], transColor, transOpacity);
-					pix.fillRect(color, xx, yy, BLOCKINESS, 1);
-				}
-			}
+	private void draw(PixelBuffer pix, PerspectiveRenderItem p) {
+		// calculate y coordinate on texture
+		for (int yy = p.drawStart; yy < p.drawEnd; yy++) {
+
+			int texY = (((yy * 2 - pix.getHeight() + p.lineHeight) << 4) / p.lineHeight) / 2;
+
+			int color = p.texture.getPixels()[p.texX + (texY * p.texture.getSize())];
+
+			color = ColorUtils.mixColor(pix.pixelAt(p.xx, yy), color, p.opacity);
+
+			pix.fillRect(darken(color, p.distanceToWall), p.xx, yy, BLOCKINESS, 1);
 		}
-
 	}
 
 	private double getWallHitPosition(Camera camera, double rayX, double rayY, int mapX, int mapY, boolean side,
@@ -258,7 +248,7 @@ public class World implements IRenderable {
 	 * Deletes any entities that don't exist any more.
 	 */
 	private void garbageCollect() {
-		ListIterator<GameObject> itr = entities.listIterator();
+		ListIterator<Mob> itr = mobs.listIterator();
 		while (itr.hasNext()) {
 			GameObject e = itr.next();
 			if (!e.exists()) {
@@ -267,8 +257,8 @@ public class World implements IRenderable {
 		}
 	}
 
-	public List<GameObject> getEntities() {
-		return entities;
+	public List<Mob> getMobs() {
+		return mobs;
 	}
 
 	public Map getMap() {
