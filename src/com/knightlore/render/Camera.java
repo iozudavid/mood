@@ -64,7 +64,7 @@ public class Camera {
     }
 
     public void setInputState(java.util.Map<ClientControl, Byte> inputState) {
-        synchronized (inputState) {
+    	synchronized (this.inputState) {
             this.inputState = inputState;
         }
     }
