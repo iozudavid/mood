@@ -66,7 +66,8 @@ public class Player extends NetworkObject implements IRenderable {
 
     @Override
     public void onUpdate() {
-        camera.update();
+    	if(camera!=null)
+    		camera.update();
     }
 
     @Override

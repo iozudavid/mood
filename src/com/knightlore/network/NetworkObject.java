@@ -18,7 +18,7 @@ public abstract class NetworkObject extends GameObject{
 	
 	public abstract ServerCommand deserialize(byte[] packet);
 	
-	public UUID getObjectId(){
+	public synchronized UUID getObjectId(){
 		return this.objectUniqueID;
 	}
 	

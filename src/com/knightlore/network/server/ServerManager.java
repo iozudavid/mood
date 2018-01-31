@@ -56,7 +56,6 @@ public class ServerManager implements Runnable {
             // new Client();
             try {
                 Socket socket = serverSocket.accept();
-                UUID clientID = UUID.randomUUID();
                 Connection conn = new TCPConnection(socket);
                 new Thread(conn).start();
 
@@ -65,9 +64,9 @@ public class ServerManager implements Runnable {
                         Camera.FIELD_OF_VIEW);
 
                 new Thread(new ReceiveFromClient(conn, player)).start();
-                new Thread(new SendToClient(conn)).start();
+                new Thread(new SendToClient(conn, player)).start();
 
-                this.connections.put(clientID, conn);
+            //    this.connections.put(player.getObjectId(), conn);
             } catch (IOException e) {
                 System.err.println("Couldn't create the connection...");
                 System.exit(1);
