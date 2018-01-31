@@ -10,11 +10,11 @@ import com.knightlore.game.Player;
  * 
  * @author Will
  */
-public class Command {
+public class ClientCommand {
     public long timeSent;
     private Map<ClientControl, Byte> inputs;
 
-    public Command(Map<ClientControl, Byte> inputs, long timeSent) {
+    public ClientCommand(Map<ClientControl, Byte> inputs, long timeSent) {
         this.timeSent = timeSent;
         this.inputs = inputs;
     }

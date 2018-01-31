@@ -1,12 +1,14 @@
 package com.knightlore.game;
 
 import java.io.IOException;
+import java.nio.ByteBuffer;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
 import com.knightlore.network.NetworkObject;
 import com.knightlore.network.protocol.ClientControl;
+import com.knightlore.network.protocol.ServerCommand;
 import com.knightlore.network.protocol.ServerControl;
 import com.knightlore.network.protocol.ServerProtocol;
 import com.knightlore.render.Camera;
@@ -119,8 +121,37 @@ public class Player extends NetworkObject implements IRenderable {
     }
     
 	@Override
-	public Map<ServerControl, Double> deserialize(byte[] packet) {
-		// TODO Auto-generated method stub
+	public ServerCommand deserialize(byte[] packet) {
+		try {
+			//creating the initial map
+			Map<ServerControl, Double> objectStats = new HashMap<ServerControl, Double>();
+			
+			// Metadata processing.
+			ByteBuffer buf = ByteBuffer.wrap(packet);
+			long timeSent = buf.getLong();
+
+			// set the new position in order to read objectid
+			buf.position(ServerProtocol.METADATA_LENGTH);
+			byte[] objectIdByte = new byte[ServerProtocol.PLAYERID_LENGTH];
+			buf.get(objectIdByte, 0, ServerProtocol.PLAYERID_LENGTH);
+
+			UUID playerID = ServerProtocol.bytesAsUuid(objectIdByte);
+
+			buf.position(ServerProtocol.MESSAGE_STARTING_POINT);
+
+			int position = 0;
+			while (buf.hasRemaining()) {
+				ServerControl currentControl = ServerProtocol.getControlByPosition(position);
+				double valueOfCurrentControl = buf.getDouble(buf.position());
+				objectStats.put(currentControl, valueOfCurrentControl);
+				buf.position(buf.position() + ServerProtocol.DOUBLE_TO_BYTES_LENGTH);
+				position++;
+			}
+			return new ServerCommand(timeSent, playerID, objectStats);
+
+		} catch (IOException e) {
+			System.err.println("Bad index...");
+		}
 		return null;
 	}
 	
@@ -128,13 +159,5 @@ public class Player extends NetworkObject implements IRenderable {
     public static interface CameraCommunicatingInterface{
         double accessDataFromCamera();
     }
-    
-//    public static void main(String[] args){
-//    	Player p = new Player(new Camera(0.2, 0.3, 0.1, 0.04, 0.2, 0.3, null));
-//    	byte[] b =p.serialize();
-//    	for(byte a : b){
-//    		System.out.println(a);
-//    	}
-//    }
 
 }

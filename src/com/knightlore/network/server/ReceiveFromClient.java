@@ -9,7 +9,7 @@ import com.knightlore.game.Player;
 import com.knightlore.network.Connection;
 import com.knightlore.network.protocol.ClientControl;
 import com.knightlore.network.protocol.ClientProtocol;
-import com.knightlore.network.protocol.Command;
+import com.knightlore.network.protocol.ClientCommand;
 
 public class ReceiveFromClient implements Runnable {
     private Connection conn;
@@ -36,7 +36,7 @@ public class ReceiveFromClient implements Runnable {
         System.out.println("Got null packet, exiting");
     }
 
-    public Command getPacketDecoded(byte[] packet) {
+    public ClientCommand getPacketDecoded(byte[] packet) {
         // Metadata processing.
         ByteBuffer buf = ByteBuffer.wrap(packet);
         long timeSent = buf.getLong();
@@ -51,7 +51,7 @@ public class ReceiveFromClient implements Runnable {
                 clientInput.put(control,
                         packet[i + ClientProtocol.METADATA_LENGTH]);
             }
-            return new Command(clientInput, timeSent);
+            return new ClientCommand(clientInput, timeSent);
         } catch (IOException e) {
             System.err.println("Bad input: ");
             e.printStackTrace();
