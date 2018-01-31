@@ -43,7 +43,7 @@ public class Button extends GUIObject {
 		}
 		else{
 			g.setColor(activeColor());
-			g.drawRect(rect.x, rect.y, rect.width, rect.height);
+			g.fillRect(rect.x, rect.y, rect.width, rect.height);
 		}
 		
 	}
@@ -62,6 +62,11 @@ public class Button extends GUIObject {
 	@Override
 	void OnMouseExit(){
 		state = ButtonState.UP;
+	}
+	
+	@Override
+	boolean isSelectable(){
+		return true;
 	}
 
 }

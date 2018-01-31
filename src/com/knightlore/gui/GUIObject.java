@@ -15,7 +15,7 @@ public abstract class GUIObject {
 	
 	abstract void Draw(Graphics g);
 	
-	Boolean isSelectable () {
+	boolean isSelectable () {
 		return false;
 	}
 	 

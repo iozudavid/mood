@@ -62,4 +62,9 @@ public final class Vector2D {
 	public double sqrMagnitude(){
 		return (x*x) + (y*y);
 	}
+	
+	@Override
+	public String toString (){
+		return "("+x+","+y+")";
+	}
 }

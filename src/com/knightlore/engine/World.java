@@ -53,6 +53,7 @@ public class World implements IRenderable {
 		map.getEnvironment().renderEnvironment(pix);
 		drawPerspective(pix);
 		drawCrosshair(pix);
+		gui.render(pix, x, y);
 	}
 
 	private final int BLOCKINESS = 6; // how 'old school' you want to look.
