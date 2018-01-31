@@ -8,8 +8,9 @@ import java.util.ArrayList;
 import com.knightlore.engine.GameObject;
 import com.knightlore.engine.input.InputManager;
 import com.knightlore.render.IRenderable;
+import com.knightlore.render.PixelBuffer;
 import com.knightlore.render.Screen;
-import com.knightlore.render.sprite.Texture;
+import com.knightlore.render.graphic.Graphic;
 import com.knightlore.utils.Physics;
 import com.knightlore.utils.Vector2D;
 
@@ -17,28 +18,28 @@ public class GUICanvas extends GameObject implements IRenderable {
 
 	private ArrayList<GUIObject> guis;
 	
-	private Texture canvasTexture;
+	private Graphic canvasGraphic;
 	private BufferedImage canvasImage;
-	private Graphics2D canvasGraphics;
+	private Graphics2D canvasG2D;
 	
 	public GUICanvas (){
 		super();
 		guis = new ArrayList<GUIObject>();
 		canvasImage = new BufferedImage(300,300, BufferedImage.TYPE_INT_ARGB);
-		canvasTexture = new Texture(canvasImage);
-		canvasGraphics = canvasImage.createGraphics();
+		canvasGraphic = new Graphic(canvasImage);
+		canvasG2D = canvasImage.createGraphics();
 	}
 	
 	@Override
-	public void render(Screen screen, int x, int y) {
+	public void render(PixelBuffer pix, int x, int y) {
 		// TODO Auto-generated method stub
-		canvasGraphics.setColor(Color.PINK);
-		canvasGraphics.fillRect(0, 0, canvasImage.getWidth(), canvasImage.getHeight());
+		canvasG2D.setColor(Color.PINK);
+		canvasG2D.fillRect(0, 0, canvasImage.getWidth(), canvasImage.getHeight());
 		for(int i=0;i<guis.size();i++){
-			guis.get(i).Draw(canvasGraphics);
+			guis.get(i).Draw(canvasG2D);
 		}
 		
-		screen.drawGraphic(canvasTexture, x, y);
+		pix.drawGraphic(canvasGraphic, x, y);
 	}
 
 	@Override
@@ -84,7 +85,7 @@ public class GUICanvas extends GameObject implements IRenderable {
 
 	@Override
 	public void onDestroy() {
-		canvasGraphics.dispose();
+		canvasG2D.dispose();
 	}
 	
 	private void sort(){
