@@ -43,9 +43,21 @@ public class MapGenerator extends ProceduralGenerator {
 
     private void createPerliNoiseForGrid(long seed) {
         // TODO implement
+    	Random rand = new Random(seed); 
     	// need a predictable way of getting same
     	// pseudo-random vector for tile "corner"
-
+    	// store some random values into an array
+    	// that can be referenced at will
+    	PerlinVector[][] gradVectors = 
+    			new PerlinVector[grid.length + 1][grid[0].length + 1];
+    	for(int i=0; i < gradVectors.length; i++){
+    		for(int j=0; j < gradVectors[0].length; j++){
+    			double r1 = rand.nextDouble();
+    			double r2 = rand.nextDouble();
+    			gradVectors[i][j] = new PerlinVector(r1,r2);
+    		}
+    	}
+    	
     }
 
     private double perlin(double x, double y){
