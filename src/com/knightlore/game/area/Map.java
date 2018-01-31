@@ -1,44 +1,32 @@
 package com.knightlore.game.area;
+import com.knightlore.game.area.generation.MapGenerator;
 import com.knightlore.game.tile.*;
 import com.knightlore.render.Environment;
 
 public class Map extends Area {
     // TODO: read in maps from files/procedurally generate.
     // Maps have associated environments
+	private final long seed;
 	private final Environment environment;
 
 	public Environment getEnvironment() {
 		return environment;
 	}
 
-	Map(Tile[][] grid, Environment environment) {
+	public Map(Tile[][] grid, Environment environment, long seed) {
 		super(grid);
 		this.environment = environment;
+		this.seed = seed;
 	}
 
-	/* private static Map joinUpR(Map m1, Map m2) { TODO not used, dead code? if so, delete
-
-		// ensure same height
-		assert (m1.height == m2.height);
-
-		Map m3 = new Map(m1.width + m2.width, m1.height);
-
-		for (int i = 0; i < m1.height; i++) {
-			for (int j = 0; j < m1.width; j++) {
-				m3.map[i][j] = m1.map[i][j];
-			}
-			for (int k = 0; k < m2.width; k++) {
-				m3.map[i][m1.width + 1 + k] = m2.map[i][k];
-			}
-		}
-
-		return m3;
-
-	} */
+	public long getSeed() {
+		return seed;
+	}
 
 	// dumb test
 	public static void main(String args[]) {
-		Map m = AreaFactory.createRandomMap(Environment.LIGHT_OUTDOORS);
+		MapGenerator generator = new MapGenerator();
+		Map m = generator.createMap(100, 100, Environment.LIGHT_OUTDOORS);
 		// // m = joinUpR(m,m);
 		System.out.println(m.toString());
 	}

@@ -7,7 +7,7 @@ import java.util.LinkedList;
 import com.knightlore.MainWindow;
 import com.knightlore.engine.input.InputManager;
 import com.knightlore.engine.input.Mouse;
-import com.knightlore.game.area.AreaFactory;
+import com.knightlore.game.area.generation.MapGenerator;
 import com.knightlore.render.Environment;
 import com.knightlore.render.Screen;
 
@@ -35,7 +35,8 @@ public class GameEngine implements Runnable {
 	private LinkedList<GameObject> notifyToDestroy;
 
 	public GameEngine() {
-		world = new World(AreaFactory.createRandomMap(Environment.LIGHT_OUTDOORS));
+		MapGenerator generator = new MapGenerator();
+		world = new World(generator.createMap(100, 100, Environment.LIGHT_OUTDOORS));
 		objects = new ArrayList<>();
 		notifyToCreate = new LinkedList<GameObject>();
 		notifyToDestroy = new LinkedList<GameObject>();
