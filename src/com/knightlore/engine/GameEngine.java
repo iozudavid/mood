@@ -19,8 +19,6 @@ import com.knightlore.render.Screen;
  *
  */
 public class GameEngine implements Runnable {
-	
-	private static GameEngine singleton;
 
 	private static final double UPDATES_PER_SECOND = 60D;
 	public static final Ticker ticker = new Ticker();
@@ -31,7 +29,7 @@ public class GameEngine implements Runnable {
 	private final ArrayList<GameObject> objects;
 	private Thread thread;
 	private volatile boolean running = false;
-	
+
 	private LinkedList<GameObject> notifyToCreate;
 	private LinkedList<GameObject> notifyToDestroy;
 
@@ -44,20 +42,15 @@ public class GameEngine implements Runnable {
 		final int w = MainWindow.WIDTH, h = MainWindow.HEIGHT;
 		screen = new Screen(w, h);
 		window = new MainWindow(screen, MainWindow.TITLE, w, h);
-		singleton = this;
 		initEngine();
 	}
-	
-	static GameEngine getSingleton(){
-		return singleton;
-	}
-	
-	void addGameObject(GameObject g){
+
+	void addGameObject(GameObject g) {
 		// delay adding until next loop
 		notifyToCreate.add(g);
 	}
-	
-	void removeGameObject(GameObject g){
+
+	void removeGameObject(GameObject g) {
 		// delay deleting until next loop
 		notifyToDestroy.add(g);
 	}
@@ -115,9 +108,9 @@ public class GameEngine implements Runnable {
 	private void updateObjects() {
 		// perform internal list management before updating.
 		// as modifying a list whilst iterating over it is a very bad idea.
-		
+
 		Iterator<GameObject> it = notifyToCreate.iterator();
-		while(it.hasNext()){
+		while (it.hasNext()) {
 			GameObject obj = it.next();
 			// add the object to the update list
 			objects.add(obj);
@@ -126,10 +119,10 @@ public class GameEngine implements Runnable {
 			obj.onCreate();
 		}
 		notifyToCreate.clear();
-		
-		// remove any objects that need deleting		
+
+		// remove any objects that need deleting
 		it = notifyToDestroy.iterator();
-		while(it.hasNext()){
+		while (it.hasNext()) {
 			GameObject obj = it.next();
 			// remove the object from the update list
 			objects.remove(obj);
@@ -138,12 +131,11 @@ public class GameEngine implements Runnable {
 			obj.onDestroy();
 		}
 		notifyToDestroy.clear();
-		
+
 		// update all objects
-		for (GameObject obj: objects) {
+		for (GameObject obj : objects) {
 			obj.onUpdate();
 		}
-		
 
 	}
 

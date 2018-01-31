@@ -5,7 +5,7 @@ import com.knightlore.utils.Vector2D;
 public abstract class GameObject {
 
 	protected Vector2D position;
-	
+
 	/**
 	 * Whether the entity currently exists. If this variable is set to false,
 	 * entities will be 'garbage collected' by the game engine.
@@ -18,19 +18,19 @@ public abstract class GameObject {
 
 	public GameObject(Vector2D position) {
 		this.position = position;
-		GameEngine.getSingleton().addGameObject(this);
+		// GameEngine.getInstance().addGameObject(this);
 	}
 
 	public Vector2D getPosition() {
 		return position;
 	}
-	
+
 	public boolean exists() {
 		return exists;
 	}
-	
-	void setExists(Boolean b){
-		
+
+	void setExists(Boolean b) {
+
 	}
 
 	// Called when the component is first added to the gameObject
@@ -41,9 +41,9 @@ public abstract class GameObject {
 
 	// Called when the attached gameObject is being removed from the game
 	public abstract void onDestroy();
-	
-	protected void destroy(){
-		GameEngine.getSingleton().removeGameObject(this);
+
+	protected void destroy() {
+		// GameEngine.getInstance().removeGameObject(this);
 	}
 
 }
