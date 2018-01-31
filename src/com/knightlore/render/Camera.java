@@ -19,6 +19,7 @@ public class Camera {
     // Maps all inputs that the player could be making to their values.
     private java.util.Map<ClientControl, Byte> inputState = new HashMap<>();
     private java.util.Map<ClientControl, Runnable> ACTION_MAPPINGS = new HashMap<>();
+    private Object lock;
 
     // TODO constructor takes a lot of parameters, maybe use Builder Pattern
     // instead?
@@ -32,7 +33,7 @@ public class Camera {
         this.xPlane = xPlane;
         this.yPlane = yPlane;
         this.map = map;
-
+        this.lock = new Object();
         // Map possible inputs to the methods that handle them. Avoids long
         // if-statement chain.
         ACTION_MAPPINGS.put(ClientControl.FORWARD, Camera.this::moveForward);
@@ -70,35 +71,39 @@ public class Camera {
     }
 
     private void moveForward() {
-        Tile xTile = map.getTile((int) (xPos + xDir * MOVE_SPEED), (int) yPos);
-        Tile yTile = map.getTile((int) xPos, (int) (yPos + yDir * MOVE_SPEED));
-        xPos += xDir * MOVE_SPEED * (1 - xTile.getSolidity());
-        yPos += yDir * MOVE_SPEED * (1 - yTile.getSolidity());
+		synchronized (this.lock) {
+			Tile xTile = map.getTile((int) (xPos + xDir * MOVE_SPEED), (int) yPos);
+			Tile yTile = map.getTile((int) xPos, (int) (yPos + yDir * MOVE_SPEED));
+			xPos += xDir * MOVE_SPEED * (1 - xTile.getSolidity());
+			yPos += yDir * MOVE_SPEED * (1 - yTile.getSolidity());
+		}
     }
 
     private void moveBackward() {
-        Tile xTile = map.getTile((int) (xPos - xDir * MOVE_SPEED), (int) yPos);
-        Tile yTile = map.getTile((int) xPos, (int) (yPos - yDir * MOVE_SPEED));
-        xPos -= xDir * MOVE_SPEED * (1 - xTile.getSolidity());
-        yPos -= yDir * MOVE_SPEED * (1 - yTile.getSolidity());
+		synchronized (this.lock) {
+			Tile xTile = map.getTile((int) (xPos - xDir * MOVE_SPEED), (int) yPos);
+			Tile yTile = map.getTile((int) xPos, (int) (yPos - yDir * MOVE_SPEED));
+			xPos -= xDir * MOVE_SPEED * (1 - xTile.getSolidity());
+			yPos -= yDir * MOVE_SPEED * (1 - yTile.getSolidity());
+		}
     }
 
     private void strafeLeft() {
-        Tile xTile = map.getTile((int) (xPos - yDir * STRAFE_SPEED),
-                (int) (yPos));
-        Tile yTile = map.getTile((int) (xPos),
-                (int) (yPos + xDir * STRAFE_SPEED));
-        xPos -= yDir * STRAFE_SPEED * (1 - xTile.getSolidity());
-        yPos -= -xDir * STRAFE_SPEED * (1 - yTile.getSolidity());
+		synchronized (this.lock) {
+			Tile xTile = map.getTile((int) (xPos - yDir * STRAFE_SPEED), (int) (yPos));
+			Tile yTile = map.getTile((int) (xPos), (int) (yPos + xDir * STRAFE_SPEED));
+			xPos -= yDir * STRAFE_SPEED * (1 - xTile.getSolidity());
+			yPos -= -xDir * STRAFE_SPEED * (1 - yTile.getSolidity());
+		}
     }
 
     private void strafeRight() {
-        Tile xTile = map.getTile((int) (xPos + yDir * STRAFE_SPEED),
-                (int) (yPos));
-        Tile yTile = map.getTile((int) (xPos),
-                (int) (yPos + -xDir * STRAFE_SPEED));
-        xPos += yDir * STRAFE_SPEED * (1 - xTile.getSolidity());
-        yPos += -xDir * STRAFE_SPEED * (1 - yTile.getSolidity());
+		synchronized (this.lock) {
+			Tile xTile = map.getTile((int) (xPos + yDir * STRAFE_SPEED), (int) (yPos));
+			Tile yTile = map.getTile((int) (xPos), (int) (yPos + -xDir * STRAFE_SPEED));
+			xPos += yDir * STRAFE_SPEED * (1 - xTile.getSolidity());
+			yPos += -xDir * STRAFE_SPEED * (1 - yTile.getSolidity());
+		}
     }
 
     /**
@@ -107,72 +112,88 @@ public class Camera {
      * (whose parameter is ROTATION_SPEED). This lets us rotate.
      */
     private void rotateAntiClockwise() {
-        double oldxDir = xDir;
-        xDir = xDir * Math.cos(ROTATION_SPEED)
-                - yDir * Math.sin(ROTATION_SPEED);
-        yDir = oldxDir * Math.sin(ROTATION_SPEED)
-                + yDir * Math.cos(ROTATION_SPEED);
-        double oldxPlane = xPlane;
-        xPlane = xPlane * Math.cos(ROTATION_SPEED)
-                - yPlane * Math.sin(ROTATION_SPEED);
-        yPlane = oldxPlane * Math.sin(ROTATION_SPEED)
-                + yPlane * Math.cos(ROTATION_SPEED);
+		synchronized (this.lock) {
+			double oldxDir = xDir;
+			xDir = xDir * Math.cos(ROTATION_SPEED) - yDir * Math.sin(ROTATION_SPEED);
+			yDir = oldxDir * Math.sin(ROTATION_SPEED) + yDir * Math.cos(ROTATION_SPEED);
+			double oldxPlane = xPlane;
+			xPlane = xPlane * Math.cos(ROTATION_SPEED) - yPlane * Math.sin(ROTATION_SPEED);
+			yPlane = oldxPlane * Math.sin(ROTATION_SPEED) + yPlane * Math.cos(ROTATION_SPEED);
+		}
     }
 
     /**
      * Same as rotating left but clockwise this time.
      */
     private void rotateClockwise() {
-        double oldxDir = xDir;
-        xDir = xDir * Math.cos(-ROTATION_SPEED)
-                - yDir * Math.sin(-ROTATION_SPEED);
-        yDir = oldxDir * Math.sin(-ROTATION_SPEED)
-                + yDir * Math.cos(-ROTATION_SPEED);
-        double oldxPlane = xPlane;
-        xPlane = xPlane * Math.cos(-ROTATION_SPEED)
-                - yPlane * Math.sin(-ROTATION_SPEED);
-        yPlane = oldxPlane * Math.sin(-ROTATION_SPEED)
-                + yPlane * Math.cos(-ROTATION_SPEED);
+		synchronized (this.lock) {
+			double oldxDir = xDir;
+			xDir = xDir * Math.cos(-ROTATION_SPEED) - yDir * Math.sin(-ROTATION_SPEED);
+			yDir = oldxDir * Math.sin(-ROTATION_SPEED) + yDir * Math.cos(-ROTATION_SPEED);
+			double oldxPlane = xPlane;
+			xPlane = xPlane * Math.cos(-ROTATION_SPEED) - yPlane * Math.sin(-ROTATION_SPEED);
+			yPlane = oldxPlane * Math.sin(-ROTATION_SPEED) + yPlane * Math.cos(-ROTATION_SPEED);
+		}
     }
 
     public double getxPos() {
-        return xPos;
+		synchronized (this.lock) {
+			return xPos;
+		}
     }
 
     public double getyPos() {
-        return yPos;
+    	synchronized(this.lock){
+    		return yPos;
+    	}
     }
 
     public double getxDir() {
-        return xDir;
+    	synchronized(this.lock){
+    		return xDir;
+    	}
     }
 
     public void setxDir(double xDir) {
-        this.xDir = xDir;
+    	synchronized(this.lock){
+    		this.xDir = xDir;
+    	}
     }
 
     public double getyDir() {
-        return yDir;
+    	synchronized(this.lock){
+    		return yDir;
+    	}
     }
 
     public void setyDir(double yDir) {
-        this.yDir = yDir;
+    	synchronized(this.lock){
+    		this.yDir = yDir;
+    	}
     }
 
     public double getxPlane() {
-        return xPlane;
+    	synchronized(this.lock){
+    		return xPlane;
+    	}
     }
 
     public void setxPlane(double xPlane) {
-        this.xPlane = xPlane;
+    	synchronized(this.lock){
+    		this.xPlane = xPlane;
+    	}
     }
 
     public double getyPlane() {
-        return yPlane;
+    	synchronized(this.lock){
+    		return yPlane;
+    	}
     }
 
     public void setyPlane(double yPlane) {
-        this.yPlane = yPlane;
+    	synchronized(this.lock){
+    		this.yPlane = yPlane;
+    	}
     }
 
 }

@@ -14,11 +14,12 @@ public final class ServerProtocol {
     // The number of bytes taken up after metadata of each packet with playerid.
     public static final int PLAYERID_LENGTH = 16;
     
+    //where actual stats are written
     public static final int MESSAGE_STARTING_POINT = METADATA_LENGTH + PLAYERID_LENGTH;
     
-    // double will have exactly 18 entries in array
+    // double will have exactly 8 entries in array
     //when serialize it
-    public static final int DOUBLE_TO_BYTES_LENGTH = 18;
+    public static final int DOUBLE_TO_BYTES_LENGTH = 8;
     
     private static final Map<Integer, ServerControl> positionAction;
     static {
@@ -36,19 +37,19 @@ public final class ServerProtocol {
     // convention of the server
     // to create the packet
     //array of length 2: array[0] = position from
-    //                   array[1] = position to
+    //                   array[1] = position to (not included)
     //construct the server data
     private static final Map<Integer[], ServerControl> indexAction;
     static {
         indexAction = new HashMap<Integer[], ServerControl>();
         try {
-        	//mentain 18 entries for each element
-			indexAction.put(new Integer[]{0, DOUBLE_TO_BYTES_LENGTH}, ServerControl.XPOS);               // 0, 18
-			indexAction.put(new Integer[]{DOUBLE_TO_BYTES_LENGTH + 1, (getPositionByControl(ServerControl.YPOS) + 1) * DOUBLE_TO_BYTES_LENGTH + 1}, ServerControl.YPOS); //19, 37
-			indexAction.put(new Integer[]{DOUBLE_TO_BYTES_LENGTH*2 + 2, (getPositionByControl(ServerControl.XDIR) + 1) * DOUBLE_TO_BYTES_LENGTH + 2}, ServerControl.XDIR); //38, 56
-			indexAction.put(new Integer[]{DOUBLE_TO_BYTES_LENGTH*3 + 3, (getPositionByControl(ServerControl.YDIR) + 1) * DOUBLE_TO_BYTES_LENGTH + 3}, ServerControl.YDIR); //57, 75
-			indexAction.put(new Integer[]{DOUBLE_TO_BYTES_LENGTH*4 + 4, (getPositionByControl(ServerControl.XPLANE) + 1) * DOUBLE_TO_BYTES_LENGTH + 4}, ServerControl.XPLANE);
-			indexAction.put(new Integer[]{DOUBLE_TO_BYTES_LENGTH*5 + 5, (getPositionByControl(ServerControl.YPLANE) + 1) * DOUBLE_TO_BYTES_LENGTH + 5}, ServerControl.YPLANE);
+        	//mentain 8 entries for each element
+			indexAction.put(new Integer[]{getPositionByControl(ServerControl.XPOS) * DOUBLE_TO_BYTES_LENGTH, (getPositionByControl(ServerControl.XPOS) + 1)   * DOUBLE_TO_BYTES_LENGTH}, ServerControl.XPOS);   // 0, 8
+			indexAction.put(new Integer[]{getPositionByControl(ServerControl.YPOS) * DOUBLE_TO_BYTES_LENGTH, (getPositionByControl(ServerControl.YPOS) + 1)   * DOUBLE_TO_BYTES_LENGTH}, ServerControl.YPOS);   //8, 16
+			indexAction.put(new Integer[]{getPositionByControl(ServerControl.XDIR) * DOUBLE_TO_BYTES_LENGTH, (getPositionByControl(ServerControl.XDIR) + 1)   * DOUBLE_TO_BYTES_LENGTH}, ServerControl.XDIR);   //16, 24
+			indexAction.put(new Integer[]{getPositionByControl(ServerControl.YDIR) * DOUBLE_TO_BYTES_LENGTH, (getPositionByControl(ServerControl.YDIR) + 1)   * DOUBLE_TO_BYTES_LENGTH}, ServerControl.YDIR);   //32, 40
+			indexAction.put(new Integer[]{getPositionByControl(ServerControl.XPLANE)*DOUBLE_TO_BYTES_LENGTH, (getPositionByControl(ServerControl.XPLANE) + 1) * DOUBLE_TO_BYTES_LENGTH}, ServerControl.XPLANE); //40, 48
+			indexAction.put(new Integer[]{getPositionByControl(ServerControl.YPLANE)*DOUBLE_TO_BYTES_LENGTH, (getPositionByControl(ServerControl.YPLANE) + 1) * DOUBLE_TO_BYTES_LENGTH}, ServerControl.YPLANE); //48, 56
 			// just this for now
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
@@ -57,7 +58,9 @@ public final class ServerProtocol {
     }
     
     
-    public static final int TOTAL_LENGTH = METADATA_LENGTH + PLAYERID_LENGTH + indexAction.size();
+    public static final int TOTAL_LENGTH = METADATA_LENGTH + PLAYERID_LENGTH + (indexAction.size()) * ServerProtocol.DOUBLE_TO_BYTES_LENGTH;
+    
+    
 
     // get the key by passing index in the array
     public static ServerControl getIndexesByPosition(int i) throws IOException {
@@ -81,7 +84,14 @@ public final class ServerProtocol {
         return null;
     }
 
-    // get the index by passing the key
+	// get the control by passing the position
+	public static ServerControl getControlByPosition(int pos) throws IOException {
+		if (!positionAction.containsKey(pos))
+			throw new IOException();
+		return positionAction.get(pos);
+	}
+    
+    // get the position by passing the control
     public static Integer getPositionByControl(ServerControl key) throws IOException {
         if (!positionAction.containsValue(key))
             throw new IOException();
@@ -107,18 +117,29 @@ public final class ServerProtocol {
         return metadata.array();
     }
     
-	public static UUID asUuid(byte[] bytes) {
+	public static UUID bytesAsUuid(byte[] bytes) {
 		ByteBuffer byteBuffer = ByteBuffer.wrap(bytes);
 		long firstLong = byteBuffer.getLong();
 		long secondLong = byteBuffer.getLong();
 		return new UUID(firstLong, secondLong);
 	}
 
-	public static byte[] asBytes(UUID uuid) {
+	public static byte[] uuidAsBytes(UUID uuid) {
 		ByteBuffer byteBuffer = ByteBuffer.wrap(new byte[16]);
 		byteBuffer.putLong(uuid.getMostSignificantBits());
 		byteBuffer.putLong(uuid.getLeastSignificantBits());
 		return byteBuffer.array();
 	}
+	
+	public static byte[] doubleToByteArray(double value) {
+	    byte[] bytes = new byte[8];
+	    ByteBuffer.wrap(bytes).putDouble(value);
+	    return bytes;
+	}
+
+	public static double byteArrayToDouble(byte[] bytes) {
+	    return ByteBuffer.wrap(bytes).getDouble();
+	}
+	
 	
 }
