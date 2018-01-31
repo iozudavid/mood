@@ -1,6 +1,6 @@
 package com.knightlore.game.tile;
 
-import com.knightlore.render.Camera;
+import com.knightlore.game.Player;
 import com.knightlore.render.graphic.Graphic;
 import com.knightlore.render.graphic.Texture;
 
@@ -22,7 +22,7 @@ public class BrickTile extends Tile {
 	}
 
 	@Override
-	public void onTouch(Camera c) {
+	public void onEntered(Player p) {
 		System.out.println("touched brick");
 	}
 

@@ -9,12 +9,12 @@ public class Player extends GameObject {
 	private Camera camera;
 
 	public Player(Camera camera) {
+		super();
 		this.camera = camera;
 	}
 
 	public Vector2D getPosition() {
-		Vector2D pos = new Vector2D(camera.getxPos(), camera.getyPos());
-		return pos;
+		return camera.getPosition();
 	}
 
 	public Vector2D getDirection() {

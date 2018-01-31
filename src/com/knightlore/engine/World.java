@@ -1,6 +1,5 @@
 package com.knightlore.engine;
 
-import java.awt.Color;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -239,10 +238,11 @@ public class World implements IRenderable {
 						int d = y * 256 - pix.getHeight() * 128 + spriteHeight * 128;
 						int texY = ((d * m.getSprite().getHeight()) / spriteHeight) / 256;
 						int color = m.getSprite().getPixels()[m.getSprite().getWidth() * texY + texX];
-						
+
 						if (color != -16747777) // TODO REMOVE
 							continue; // texture
-						color = darken(color, cam.getPosition().distance(m.getPosition()));
+						color = ColorUtils.darken(color, map.getEnvironment().getDarkness(),
+								cam.getPosition().distance(m.getPosition()));
 
 						int drawY = y + player.getCamera().getMotionOffset();
 						pix.fillRect(color, stripe, drawY, BLOCKINESS, 1);
@@ -262,7 +262,8 @@ public class World implements IRenderable {
 			int drawY = yy + player.getCamera().getMotionOffset();
 			color = ColorUtils.mixColor(pix.pixelAt(p.xx, drawY), color, p.opacity);
 
-			pix.fillRect(darken(color, p.distanceToWall), p.xx, drawY, BLOCKINESS, 1);
+			color = ColorUtils.darken(color, map.getEnvironment().getDarkness(), p.distanceToWall);
+			pix.fillRect(color, p.xx, drawY, BLOCKINESS, 1);
 		}
 	}
 
@@ -313,15 +314,11 @@ public class World implements IRenderable {
 	public void tick() {
 		garbageCollect();
 		player.onUpdate();
-	}
 
-	private int darken(int color, double distance) {
-		Color c = new Color(color);
-		double fogFactor = distance * map.getEnvironment().getDarkness();
-		int red = (int) (Math.max(0, c.getRed() - fogFactor));
-		int green = (int) (Math.max(0, c.getGreen() - fogFactor));
-		int blue = (int) (Math.max(0, c.getBlue() - fogFactor));
-		return new Color(red, green, blue).getRGB();
+		// Handle player touching tile.
+		Vector2D pos = player.getPosition();
+		Tile t = map.getTile((int) pos.getX(), (int) pos.getY());
+		t.onEntered(player);
 	}
 
 	/**

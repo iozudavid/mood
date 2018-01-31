@@ -18,6 +18,7 @@ public abstract class GameObject {
 
 	public GameObject(Vector2D position) {
 		this.position = position;
+		exists = true;
 		// GameEngine.getInstance().addGameObject(this);
 	}
 

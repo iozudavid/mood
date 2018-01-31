@@ -19,5 +19,14 @@ public class ColorUtils {
 
 		return result.getRGB();
 	}
+	
+	public static int darken(int color, double environmentDarkFactor, double distance) {
+		Color c = new Color(color);
+		double fogFactor = distance * environmentDarkFactor;
+		int red = (int) (Math.max(0, c.getRed() - fogFactor));
+		int green = (int) (Math.max(0, c.getGreen() - fogFactor));
+		int blue = (int) (Math.max(0, c.getBlue() - fogFactor));
+		return new Color(red, green, blue).getRGB();
+	}
 
 }
