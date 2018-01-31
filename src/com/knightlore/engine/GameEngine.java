@@ -15,7 +15,7 @@ import com.knightlore.render.Screen;
  * Game engine acting as sort of a 'hub' for each of the individual game
  * components.
  * 
- * @authors Joe Ellis, James Adey 
+ * @authors Joe Ellis, James Adey
  *
  */
 public class GameEngine implements Runnable {
@@ -23,6 +23,7 @@ public class GameEngine implements Runnable {
 	private static GameEngine singleton;
 
 	private static final double UPDATES_PER_SECOND = 60D;
+	public static final Ticker ticker = new Ticker();
 
 	private final Screen screen;
 	private final MainWindow window;
@@ -105,6 +106,8 @@ public class GameEngine implements Runnable {
 				world.tick();
 				screen.render(0, 0, world);
 				delta -= 1;
+
+				ticker.tick();
 			}
 		}
 	}
@@ -163,7 +166,4 @@ public class GameEngine implements Runnable {
 		screen.requestFocus();
 	}
 
-	public static void main(String[] args) {
-	}
-	
 }

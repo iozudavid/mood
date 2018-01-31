@@ -3,7 +3,9 @@ package com.knightlore.engine;
 import com.knightlore.utils.Vector2D;
 
 public abstract class GameObject {
-	protected final Vector2D position;
+
+	protected Vector2D position;
+	
 	/**
 	 * Whether the entity currently exists. If this variable is set to false,
 	 * entities will be 'garbage collected' by the game engine.
@@ -11,8 +13,7 @@ public abstract class GameObject {
 	private boolean exists;
 
 	public GameObject() {
-		position = Vector2D.ZERO;
-		GameEngine.getSingleton().addGameObject(this);
+		this(Vector2D.ZERO);
 	}
 
 	public GameObject(Vector2D position) {
