@@ -2,24 +2,23 @@ package com.knightlore.network;
 
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
 
-public abstract class Connection {
+public abstract class Connection implements Runnable {
     public static final Charset CHARSET = StandardCharsets.UTF_8;
     // Wait 5 seconds without receiving packets before disconnecting.
-    //protected static int TIMEOUT_MILLIS = 5 * 1000;
-    //DEBUG
+    // protected static int TIMEOUT_MILLIS = 5 * 1000;
+    // DEBUG
     protected static int TIMEOUT_MILLIS = 30 * 1000;
 
     public volatile boolean terminated;
+    // Stores the most recently received packet.
+    private BlockingQueue<byte[]> packets;
 
     public Connection() {
         this.terminated = false;
+        this.packets = new LinkedBlockingQueue<>();
     }
 
     public synchronized boolean getTerminated() {
@@ -33,26 +32,20 @@ public abstract class Connection {
 
     // Wrapper for receiveBlocking() that implements a timeout.
     public byte[] receive() throws Exception {
-        // Use Future to execute a blocking operation (receiving a packet) with
-        // a timeout. This run() method will return upon a timeout,
-        // terminating the thread.
-        Callable<byte[]> task = new Callable<byte[]>() {
-            public byte[] call() {
-                return (Connection.this.receiveBlocking());
+        return this.packets.take();
+    }
+    
+    @Override
+    public void run() {
+        // Receive packets and put them into the blocking queue, ready to be
+        // taken.
+        while (true) {
+            try {
+                packets.put(Connection.this.receiveBlocking());
+            } catch (InterruptedException e) {
+                System.err.println("Interrupted while receiving packet");
             }
-        };
-        Future<byte[]> future = Executors.newCachedThreadPool().submit(task);
-        try {
-            return future.get(TIMEOUT_MILLIS, TimeUnit.MILLISECONDS);
-        } catch (TimeoutException ex) {
-            System.err.println(
-                    "Connection timed out while waiting for a packet.");
-            this.terminated = true;
-        } catch (InterruptedException | ExecutionException ex) {
-            System.err.println(
-                    "Unexpected exception while waiting to receive packet:");
         }
-        return null;
     }
 
 }

@@ -58,6 +58,7 @@ public class ServerManager implements Runnable {
                 Socket socket = serverSocket.accept();
                 UUID clientID = UUID.randomUUID();
                 Connection conn = new TCPConnection(socket);
+                new Thread(conn).start();
 
                 // TODO: decide how to choose player location
                 Player player = engine.createPlayer(4.5, 4.5, 1, 0, 0,

@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.net.Socket;
 import java.net.UnknownHostException;
 
-import com.knightlore.network.GenerateNextId;
 import com.knightlore.network.Port;
 import com.knightlore.network.TCPConnection;
 
@@ -17,6 +16,7 @@ public class ClientManager implements Runnable {
             Socket server = new Socket(hostname, Port.number);
             System.out.println("Connected to server " + hostname);
             TCPConnection conn = new TCPConnection(server);
+            new Thread(conn).start();
             SendToServer sender = new SendToServer(conn);
             ReceiveFromServer receiver = new ReceiveFromServer(conn);
             Thread receiveFromServer = new Thread(receiver);

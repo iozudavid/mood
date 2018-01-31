@@ -49,7 +49,7 @@ public class Camera {
         synchronized (inputState) {
             // Check whether each input is triggered - if it is, execute the
             // respective method.
-            //DEBUG
+            // DEBUG
             String s = "";
             for (Entry<ClientControl, Byte> entry : inputState.entrySet())
                 // For boolean inputs (i.e. all current inputs), 0 represents
@@ -64,7 +64,7 @@ public class Camera {
     }
 
     public void setInputState(java.util.Map<ClientControl, Byte> inputState) {
-    	synchronized (this.inputState) {
+        synchronized (this.inputState) {
             this.inputState = inputState;
         }
     }
