@@ -57,5 +57,43 @@ public class Player extends GameObject implements IRenderable {
         // TODO Auto-generated method stub
         
     }
+    
+//    public byte[] serialize(){
+//		byte[] thisState = new byte[ServerProtocol.METADATA_LENGTH + ServerProtocol.getIndexActionMap().size()];
+//
+//		// Prepend metadata to the state array.
+//		byte[] metadata = ServerProtocol.getMetadata();
+//		for (int i = 0; i < ServerProtocol.METADATA_LENGTH; i++) {
+//			thisState[i] = metadata[i];
+//		}
+//		
+//		byte[] playerID = ServerProtocol.asBytes(this.playerID);
+//		//add player id to the packet
+//		for(int i=ServerProtocol.METADATA_LENGTH; i<ServerProtocol.METADATA_LENGTH+ServerProtocol.PLAYERID_LENGTH; i++){
+//			thisState[i] = playerID[i-ServerProtocol.METADATA_LENGTH];
+//		}
+//
+//		try {
+//			for (int i = ServerProtocol.MESSAGE_STARTING_POINT; i < ServerProtocol.TOTAL_LENGTH; i++) {
+//				// taking the current control
+//				
+//			}
+//		} catch (IOException e) {
+//			System.err.println("Index not good...");
+//		}
+//		return thisState;
+//
+//    }
+//    
+//    public static void main(String[] args){
+//    	double a = 0.12312312D;
+//    	long b = Double.doubleToLongBits(a);
+//    	System.out.println(b);
+//    	UUID uuid = UUID.randomUUID();
+//    	System.out.println(uuid);
+//    	byte[] ac = ServerProtocol.asBytes(uuid);
+//    	System.out.println(ac);
+//    	System.out.println(ServerProtocol.asUuid(ac));
+//    }
 
 }
