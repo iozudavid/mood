@@ -35,15 +35,17 @@ public class GameEngine implements Runnable {
 	private LinkedList<GameObject> notifyToDestroy;
 
 	public GameEngine() {
-		world = new World(AreaFactory.createRandomMap(Environment.LIGHT_OUTDOORS));
-		objects = new ArrayList<>();
+		singleton = this;
+		
+		objects = new ArrayList<GameObject>();
 		notifyToCreate = new LinkedList<GameObject>();
 		notifyToDestroy = new LinkedList<GameObject>();
 
 		final int w = MainWindow.WIDTH, h = MainWindow.HEIGHT;
 		screen = new Screen(w, h);
 		window = new MainWindow(screen, MainWindow.TITLE, w, h);
-		singleton = this;
+		world = new World(AreaFactory.createRandomMap(Environment.LIGHT_OUTDOORS));
+		
 		initEngine();
 	}
 	

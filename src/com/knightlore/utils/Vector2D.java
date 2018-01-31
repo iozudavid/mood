@@ -1,6 +1,6 @@
 package com.knightlore.utils;
 
-public class Vector2D {
+public final class Vector2D {
 	private double x;
 	private double y;
 	
@@ -21,9 +21,17 @@ public class Vector2D {
 		y = y + v.y;
 	}
 	
+	public Vector2D add(Vector2D v){
+		return new Vector2D(x+v.x,y+v.y);
+	}
+	
 	public void subtractInPlace(Vector2D v){
 		x = x - v.x;
 		y = y - v.y;
+	}
+	
+	public Vector2D subtract(Vector2D v){
+		return new Vector2D(x+v.x,y+v.y);
 	}
 	
 	public double dotInPlace(Vector2D v){
@@ -36,5 +44,9 @@ public class Vector2D {
 
 	public double getY() {
 		return y;
+	}
+	
+	public double sqrMagnitude(){
+		return (x*x) + (y*y);
 	}
 }
