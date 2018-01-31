@@ -1,7 +1,8 @@
 package com.knightlore.gui;
 
 import java.awt.Graphics;
-import com.knightlore.render.sprite.Texture;
+
+import com.knightlore.render.graphic.Graphic;
 
 public class Image extends GUIObject{
 
@@ -10,12 +11,10 @@ public class Image extends GUIObject{
 		// TODO Auto-generated constructor stub
 	}
 
-	public Texture texture;
+	public Graphic graphic;
 
 	@Override
 	void Draw(Graphics g) {
-		
-		g.drawImage(texture.getImage(), rect.x, rect.y, null);
 		
 	}
 

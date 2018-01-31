@@ -3,11 +3,11 @@ package com.knightlore.gui;
 import java.awt.Color;
 import java.awt.Graphics;
 
-import com.knightlore.render.sprite.Texture;
+import com.knightlore.render.graphic.Graphic;
 
 public class Button extends GUIObject {
 	
-	Texture activeTexture = null;
+	Graphic activeGraphic = null;
 	
 	private ButtonState state = ButtonState.UP;
 	
@@ -38,7 +38,7 @@ public class Button extends GUIObject {
 	@Override
 	void Draw(Graphics g) {
 		// TODO Auto-generated method stub
-		if(activeTexture != null){
+		if(activeGraphic != null){
 			
 		}
 		else{
