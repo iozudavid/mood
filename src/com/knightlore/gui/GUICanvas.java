@@ -21,30 +21,36 @@ public class GUICanvas extends GameObject implements IRenderable {
 	private Graphic canvasGraphic;
 	private BufferedImage canvasImage;
 	private Graphics2D canvasG2D;
+	private int[] drawPixels;
 	
 	private boolean lastHeld;
+	
+	// TODO remove this and make it screen size
+	private final int TEMP_SIZE = 200;
+	
+	private final Color backgroundColor = new Color(0xFF000000,true);
 	
 	public GUICanvas (){
 		super();
 		guis = new ArrayList<GUIObject>();
-		canvasImage = new BufferedImage(300,300, BufferedImage.TYPE_INT_ARGB);
+		canvasImage = new BufferedImage(TEMP_SIZE,TEMP_SIZE, BufferedImage.TYPE_INT_ARGB);
 		canvasG2D = canvasImage.createGraphics();
 		canvasG2D.setComposite(AlphaComposite.SrcOver);
+		canvasGraphic = new Graphic(canvasImage);
+		// store pixel array
+		drawPixels = canvasGraphic.getPixels();
+		
 	}
 	
 	@Override
 	public void render(PixelBuffer pix, int x, int y) {
-		Color c = new Color(0xFF000000,true);
-		canvasG2D.setColor(c);
-		canvasG2D.fillRect(x, y, 300, 300);
+		canvasG2D.setColor(backgroundColor);
+		canvasG2D.fillRect(x, y, TEMP_SIZE, TEMP_SIZE);
 		
 		for(int i=0;i<guis.size();i++){
 			guis.get(i).Draw(canvasG2D);
 		}
-		// TODO PLEASE ALLOW THE RENDERER TO NOT HAVE TO ALLOCATE MEMORY FOR DYNAMIC TEXTURES
-		// TODO THIS IS DISCARDING AN ENTIRE PIXEL BUFFER EVERY FRAME
-		// TODO HELP, INEFFICIENT!
-		canvasGraphic = new Graphic(canvasImage);
+		canvasImage.getRGB(0, 0, TEMP_SIZE, TEMP_SIZE, drawPixels, 0, TEMP_SIZE);
 		pix.drawGraphic(canvasGraphic, x, y);
 	}
 
