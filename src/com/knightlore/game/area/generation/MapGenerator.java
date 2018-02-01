@@ -112,13 +112,13 @@ public class MapGenerator extends ProceduralGenerator {
     	// generate distance vectors
     	PerlinVector d1,d2,d3,d4;
     	// 1 (x0,y1) --> (x,y)
-    	d1 = new PerlinVector(x, y - 1);
+    	d1 = new PerlinVector(xm, ym - 1);
     	// 2 (x1,y1) --> (x,y)
-    	d2 = new PerlinVector(x - 1,y - 1);
+    	d2 = new PerlinVector(xm - 1,ym - 1);
     	// 3 (x0,y0) --> (x,y)
-    	d3 = new PerlinVector(x, y);
+    	d3 = new PerlinVector(xm, ym);
     	// 4 (x1,y0) --> (x,y)
-    	d4 = new PerlinVector(x - 1, y);
+    	d4 = new PerlinVector(xm - 1, ym);
     	
     	// dot product gradient vectors with corresponding
     	// distance vectors, generating the influence values
@@ -133,8 +133,8 @@ public class MapGenerator extends ProceduralGenerator {
     	i4 = PerlinVector.dotProduct(g4, d4);
     	
     	// apply fade function (ease curve) on x and y
-    	x = fade(x);
-    	y = fade(y);
+    	x = fade(xm);
+    	y = fade(ym);
     	
     	// return "interpolation" of influence vectors
     	return ( (i1 + i2)/2 + (i3 + i4)/2 )/2;
@@ -244,14 +244,19 @@ public class MapGenerator extends ProceduralGenerator {
     	genr.createMap(9 , 4, Environment.LIGHT_OUTDOORS);
     	System.out.println("Width: " + genr.width());
     	System.out.println("Height: " + genr.height());
+    	double max = -1;
+    	
     	double[][] p = genr.perlinNoise;
     	for(int i=0; i< p.length; i++) {
     		System.out.print(i + "::: ");
     		for(int j=0; j < p[0].length; j++) {
+    			if (p[i][j] > max) max = p[i][j];
     			System.out.print(j + ": " + p[i][j]);
     		}
     		System.out.println();
     	}
+    	
+    	System.out.println("MAX: " + max);
     }
     
 }

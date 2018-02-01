@@ -1,7 +1,7 @@
 package com.knightlore.game.area.generation;
 
 public class PerlinVector {
-	//a simple, 2D non-polymorphic vector class 
+	//a simple, 2D non-generic vector class 
 	// for implementation ease of Perlin Noise
 	private double x;
 	private double y;
