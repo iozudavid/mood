@@ -10,6 +10,7 @@ import com.knightlore.game.Player;
 import com.knightlore.game.area.Map;
 import com.knightlore.game.entity.Mob;
 import com.knightlore.game.entity.ShotgunPickup;
+import com.knightlore.game.entity.Zombie;
 import com.knightlore.game.tile.AirTile;
 import com.knightlore.game.tile.Tile;
 import com.knightlore.gui.Button;
@@ -38,7 +39,7 @@ public class World implements IRenderable {
 		player = new Player(camera);
 		
 		mobs.add(new ShotgunPickup(new Vector2D(20, 20)));
-		mobs.add(new ShotgunPickup(new Vector2D(21, 20)));
+		mobs.add(new Zombie(1, new Vector2D(21, 20)));
 		
 		// setup testing ui
 		gui = new GUICanvas();
