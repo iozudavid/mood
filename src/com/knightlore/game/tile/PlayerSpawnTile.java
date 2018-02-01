@@ -3,7 +3,7 @@ package com.knightlore.game.tile;
 import com.knightlore.engine.GameEngine;
 import com.knightlore.game.Player;
 import com.knightlore.render.graphic.Graphic;
-import com.knightlore.render.graphic.Texture;
+import com.knightlore.render.graphic.texture.Texture;
 
 public class PlayerSpawnTile extends Tile {
 

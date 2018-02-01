@@ -9,7 +9,8 @@ import javax.imageio.ImageIO;
 public class GraphicSheet {
 
 	public final static GraphicSheet TEXTURES = new GraphicSheet("res/graphics/textures.png", 16);
-	public final static GraphicSheet SPRITES = new GraphicSheet("res/graphics/sprites.png", 64);
+	public final static GraphicSheet GENERAL_SPRITES = new GraphicSheet("res/graphics/sprites.png", 64);
+	public final static GraphicSheet SHOTGUN_SPRITES = new GraphicSheet("res/graphics/shotgun_sprites.png", 128);
 
 	private final int cellSize;
 	private BufferedImage sheet;

@@ -30,21 +30,23 @@ public abstract class GameObject {
 		return exists;
 	}
 
-	void setExists(Boolean b) {
-
+	public void setExists(boolean b) {
+		exists = b;
 	}
 
-	// Called when the component is first added to the gameObject
+	// Called when the component is first added to the gameObject, before it is first updated
+	// Use this to subscribe to listeners
 	public abstract void onCreate();
 
 	// Called every game-frame to update it
 	public abstract void onUpdate();
 
-	// Called when the attached gameObject is being removed from the game
+	// Called when the attached gameObject is being removed from the game, it will no longer receive updates
+	// Use this to unsubscribe from event listeners
 	public abstract void onDestroy();
 
 	protected void destroy() {
-		// GameEngine.getInstance().removeGameObject(this);
+		 GameEngine.getSingleton().removeGameObject(this);
 	}
 
 }

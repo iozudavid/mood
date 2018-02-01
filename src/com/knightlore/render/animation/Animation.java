@@ -6,7 +6,7 @@ import java.util.List;
 import com.knightlore.render.graphic.Graphic;
 
 public class Animation {
-
+	
 	private List<Graphic> frames;
 	private int currentFrame;
 

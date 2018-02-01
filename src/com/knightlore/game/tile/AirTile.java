@@ -2,7 +2,7 @@ package com.knightlore.game.tile;
 
 import com.knightlore.game.Player;
 import com.knightlore.render.graphic.Graphic;
-import com.knightlore.render.graphic.Texture;
+import com.knightlore.render.graphic.texture.Texture;
 
 // it's a singleton to avoid having multiple copies of air
 public class AirTile extends Tile {

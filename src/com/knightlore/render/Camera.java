@@ -13,8 +13,8 @@ import com.knightlore.utils.Vector2D;
 
 public class Camera extends GameObject implements TickListener {
 
-	private static final double MOTION_BOB_AMOUNT = 5.0;
-	private static final double MOTION_BOB_SPEED = 0.25;
+	private static final double MOTION_BOB_AMOUNT = 7.0;
+	private static final double MOTION_BOB_SPEED = 0.15;
 	private int motionOffset;
 	private long moveTicks;
 
@@ -102,7 +102,7 @@ public class Camera extends GameObject implements TickListener {
 
 	private void updateMotionOffset() {
 		moveTicks++;
-		this.motionOffset = (int) (Math.sin(moveTicks * MOTION_BOB_SPEED) * MOTION_BOB_AMOUNT);
+		this.motionOffset = (int) (Math.abs(Math.sin(moveTicks * MOTION_BOB_SPEED) * MOTION_BOB_AMOUNT));
 	}
 
 	public int getMotionOffset() {
