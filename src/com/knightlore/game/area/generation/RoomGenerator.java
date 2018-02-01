@@ -5,6 +5,7 @@ import com.knightlore.game.tile.AirTile;
 import com.knightlore.game.tile.BrickTile;
 import com.knightlore.game.tile.Tile;
 import com.knightlore.game.tile.UndecidedTile;
+import com.knightlore.utils.Direction;
 
 import java.util.Random;
 
@@ -13,6 +14,8 @@ public class RoomGenerator extends ProceduralGenerator {
     private static final int MAX_SIZE = 16;
     private static final float MEAN_SIZE = (MAX_SIZE + MIN_SIZE) / 2;
     private static final float STD_DEV = (MEAN_SIZE - MIN_SIZE) / 2;
+    private static final int MIN_ENTRANCES_NUM = 2;
+    private static final int MAX_ENTRANCES_NUM = 6;
 
     public Room createRoom(long seed) {
         rand = new Random(seed);
@@ -39,6 +42,7 @@ public class RoomGenerator extends ProceduralGenerator {
     protected void fillGrid() {
         // TODO think about creating something more than just walls
         addWalls();
+        addEntrances();
         fillUndecidedTiles();
     }
 
@@ -65,5 +69,36 @@ public class RoomGenerator extends ProceduralGenerator {
             grid[0][j] = new BrickTile();
             grid[width - 1][j] = new BrickTile();
         }
+    }
+
+    private void addEntrances() {
+        int entrancesNum = MIN_ENTRANCES_NUM + rand.nextInt(MAX_ENTRANCES_NUM - MIN_ENTRANCES_NUM);
+        for (int i = 0; i < entrancesNum; i++) {
+            addEntrance();
+        }
+    }
+
+    private void addEntrance() {
+        int xPos = rand.nextInt(grid.length);
+        int yPos = rand.nextInt(grid[0].length);
+        Direction wall = Direction.values()[rand.nextInt(Direction.values().length)];
+        switch (wall) {
+            case NORTH:
+                yPos = 0;
+                break;
+            case WEST:
+                xPos = 0;
+                break;
+            case SOUTH:
+                yPos = grid[0].length - 1;
+                break;
+            case EAST:
+                xPos = grid.length - 1;
+                break;
+        }
+
+        // TODO remember somehow where entrances occur?
+        // TODO make it possible to decied what tile is at entrance
+        grid[xPos][yPos] = AirTile.getInstance();
     }
 }
