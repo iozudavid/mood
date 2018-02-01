@@ -1,11 +1,11 @@
 package com.knightlore.game.tile;
 
-import com.knightlore.render.Camera;
-import com.knightlore.render.sprite.Texture;
+import com.knightlore.game.Player;
+import com.knightlore.render.graphic.Graphic;
 
 public abstract class Tile {
 
-	public abstract Texture getTexture();
+	public abstract Graphic getTexture();
 
 	public double getOpacity() {
 		return 1D;
@@ -17,7 +17,7 @@ public abstract class Tile {
 
 	public abstract void onShot();
 
-	public abstract void onTouch(Camera c/* Player p */);
+	public abstract void onEntered(Player player);
 
 	public char toChar() {
 		return ' ';

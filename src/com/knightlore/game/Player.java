@@ -1,20 +1,20 @@
 package com.knightlore.game;
 
-import com.knightlore.engine.IUpdateable;
+import com.knightlore.engine.GameObject;
 import com.knightlore.render.Camera;
 import com.knightlore.utils.Vector2D;
 
-public class Player implements IUpdateable {
+public class Player extends GameObject {
 
 	private Camera camera;
-	
+
 	public Player(Camera camera) {
+		super();
 		this.camera = camera;
 	}
 
 	public Vector2D getPosition() {
-		Vector2D pos = new Vector2D(camera.getxPos(), camera.getyPos());
-		return pos;
+		return camera.getPosition();
 	}
 
 	public Vector2D getDirection() {
@@ -27,8 +27,16 @@ public class Player implements IUpdateable {
 	}
 
 	@Override
-	public void tick(long ticker) {
-		camera.tick(ticker);
+	public void onCreate() {
+	}
+
+	@Override
+	public void onUpdate() {
+		camera.onUpdate();
+	}
+
+	@Override
+	public void onDestroy() {
 	}
 
 }

@@ -1,16 +1,24 @@
 package com.knightlore.render;
 
-import com.knightlore.engine.IUpdateable;
+import com.knightlore.engine.GameEngine;
+import com.knightlore.engine.GameObject;
+import com.knightlore.engine.TickListener;
 import com.knightlore.engine.input.Controller;
 import com.knightlore.engine.input.InputManager;
 import com.knightlore.engine.input.Keyboard;
 import com.knightlore.game.area.Map;
 import com.knightlore.game.tile.Tile;
 import com.knightlore.input.BasicController;
+import com.knightlore.utils.Vector2D;
 
-public class Camera implements IUpdateable {
+public class Camera extends GameObject implements TickListener {
 
-	public static final double FIELD_OF_VIEW = -0.66;
+	private static final double MOTION_BOB_AMOUNT = 5.0;
+	private static final double MOTION_BOB_SPEED = 0.25;
+	private int motionOffset;
+	private long moveTicks;
+
+	public static final double FIELD_OF_VIEW = -.66;
 	private static final double MOVE_SPEED = .084;
 	private static final double STRAFE_SPEED = .04;
 	private static final double ROTATION_SPEED = .045;
@@ -29,12 +37,23 @@ public class Camera implements IUpdateable {
 		this.xPlane = xPlane;
 		this.yPlane = yPlane;
 		this.map = map;
+
+		this.motionOffset = 0;
+		this.moveTicks = 0;
+
+		GameEngine.ticker.addTickListener(this);
 	}
 
 	@Override
-	public void tick(long ticker) {
+	public Vector2D getPosition() {
+		return new Vector2D(xPos, yPos);
+	}
+
+	@Override
+	public void onUpdate() {
 		Keyboard keyboard = InputManager.getKeyboard();
 		Controller controller = new BasicController();
+		double oX = xPos, oY = yPos;
 
 		if (keyboard.isPressed(controller.moveForward())) {
 			moveForward();
@@ -59,6 +78,35 @@ public class Camera implements IUpdateable {
 		if (keyboard.isPressed(controller.moveRight())) {
 			strafeRight();
 		}
+
+		if (oX != xPos || oY != yPos) {
+			updateMotionOffset();
+		}
+
+	}
+
+	@Override
+	public void onCreate() {
+	}
+
+	@Override
+	public void onDestroy() {
+	}
+
+	public boolean isMoving() {
+		Keyboard keyboard = InputManager.getKeyboard();
+		Controller controller = new BasicController();
+		return keyboard.isPressed(controller.moveForward()) || keyboard.isPressed(controller.moveBackward())
+				|| keyboard.isPressed(controller.moveLeft()) || keyboard.isPressed(controller.moveRight());
+	}
+
+	private void updateMotionOffset() {
+		moveTicks++;
+		this.motionOffset = (int) (Math.sin(moveTicks * MOTION_BOB_SPEED) * MOTION_BOB_AMOUNT);
+	}
+
+	public int getMotionOffset() {
+		return motionOffset;
 	}
 
 	private void moveForward() {
@@ -153,6 +201,16 @@ public class Camera implements IUpdateable {
 
 	public void setyPlane(double yPlane) {
 		this.yPlane = yPlane;
+	}
+
+	@Override
+	public void onTick() {
+		System.out.println(xPos + " " + yPos);
+	}
+
+	@Override
+	public long interval() {
+		return 60;
 	}
 
 }
