@@ -89,3 +89,6 @@ local.properties
 
 .idea/
 *.iml
+
+# BLENDER STUFF
+*.blend1
