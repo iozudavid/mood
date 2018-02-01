@@ -10,8 +10,9 @@ import java.util.Random;
 
 public class RoomGenerator extends ProceduralGenerator {
     private static final int MIN_SIZE = 4;
-    private static final int MAX_SIZE = 32;
-    private static final float STD_DEV = 6;
+    private static final int MAX_SIZE = 16;
+    private static final float MEAN_SIZE = (MAX_SIZE + MIN_SIZE) / 2;
+    private static final float STD_DEV = (MEAN_SIZE - MIN_SIZE) / 2;
 
     public Room createRoom(long seed) {
         rand = new Random(seed);
@@ -26,10 +27,9 @@ public class RoomGenerator extends ProceduralGenerator {
     }
 
     private int getRandomSize() {
-        int meanSize = (MIN_SIZE + MAX_SIZE);
         double gaussSize = -1;
         while (gaussSize < MIN_SIZE || gaussSize > MAX_SIZE) {
-            gaussSize = (rand.nextGaussian() * STD_DEV) + meanSize;
+            gaussSize = (rand.nextGaussian() * STD_DEV) + MEAN_SIZE;
         }
 
         return (int) Math.round(gaussSize);
