@@ -9,9 +9,9 @@ public abstract class NetworkObject extends GameObject{
 	
 	protected UUID objectUniqueID;
 	
-	public NetworkObject(){
+	public NetworkObject(UUID uuid){
 		super();
-		this.objectUniqueID = UUID.randomUUID();
+		this.objectUniqueID = uuid;
 	}
 	
 	public abstract byte[] serialize();

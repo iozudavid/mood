@@ -3,6 +3,7 @@ package com.knightlore.engine;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.UUID;
 
 import com.knightlore.MainWindow;
 import com.knightlore.engine.input.InputManager;
@@ -64,9 +65,9 @@ public class GameEngine implements Runnable {
 	}
 	
 	public Player createPlayer(double xPos, double yPos, double xDir, double yDir,
-            double xPlane, double yPlane) {
+            double xPlane, double yPlane, UUID uuid) {
 	    Camera camera = new Camera(xPos, yPos, xDir, yDir, xPlane, yPlane, world.getMap());
-	    return new Player(camera);
+	    return new Player(uuid, camera);
 	}
 
 	private void initEngine() {

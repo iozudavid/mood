@@ -54,14 +54,16 @@ public class ServerManager implements Runnable {
             // then create an entry in map
             // and also start a new connection thread
             // new Client();
+            UUID nextUUID = UUID.randomUUID();
             try {
                 Socket socket = serverSocket.accept();
-                Connection conn = new TCPConnection(socket);
-                new Thread(conn).start();
-
                 // TODO: decide how to choose player location
                 Player player = engine.createPlayer(4.5, 4.5, 1, 0, 0,
-                        Camera.FIELD_OF_VIEW);
+                        Camera.FIELD_OF_VIEW, nextUUID);
+                System.out.println("created player");
+                Connection conn = new TCPConnection(socket);
+                new Thread(conn).start();
+                System.out.println("started conn thread");
 
                 new Thread(new ReceiveFromClient(conn, player)).start();
                 new Thread(new SendToClient(conn, player)).start();

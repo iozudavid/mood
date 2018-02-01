@@ -18,7 +18,7 @@ public class ReceiveFromServer implements Runnable {
 	    byte[] packet;
 		try {
 			while (conn.terminated==false && (packet = conn.receive()) != null) {
-				ServerCommand command = new Player(null).deserialize(packet);
+				ServerCommand command = new Player(null, null).deserialize(packet);
 				System.out.println("=====NEW PACKET=====");
 				System.out.println("Received time: " + command.getTimeSent());
 				System.out.println("Client ID: " + command.getPlayerId());
