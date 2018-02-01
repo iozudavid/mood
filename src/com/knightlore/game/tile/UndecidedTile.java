@@ -3,7 +3,15 @@ package com.knightlore.game.tile;
 import com.knightlore.render.Camera;
 import com.knightlore.render.sprite.Texture;
 
-public class UndecidedTile extends Tile{
+public class UndecidedTile extends Tile {
+	private static UndecidedTile instance = new UndecidedTile();
+
+	private UndecidedTile() {
+	}
+
+	public static UndecidedTile getInstance() {
+		return instance;
+	}
 
 	@Override
 	public Texture getTexture() {
