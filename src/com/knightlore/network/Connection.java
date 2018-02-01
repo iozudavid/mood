@@ -8,9 +8,7 @@ import java.util.concurrent.LinkedBlockingQueue;
 public abstract class Connection implements Runnable {
     public static final Charset CHARSET = StandardCharsets.UTF_8;
     // Wait 5 seconds without receiving packets before disconnecting.
-    // protected static int TIMEOUT_MILLIS = 5 * 1000;
-    // DEBUG
-    protected static int TIMEOUT_MILLIS = 30 * 1000;
+    protected static int TIMEOUT_MILLIS = 5 * 1000;
 
     public volatile boolean terminated;
     // Stores the most recently received packet.
@@ -34,18 +32,24 @@ public abstract class Connection implements Runnable {
     public byte[] receive() throws Exception {
         return this.packets.take();
     }
-    
+
     @Override
     public void run() {
         // Receive packets and put them into the blocking queue, ready to be
         // taken.
         while (true) {
+            byte[] packet = Connection.this.receiveBlocking();
+            if (packet == null) {
+                System.err.println("Received a null packet.");
+                break;
+            }
             try {
-                packets.put(Connection.this.receiveBlocking());
+                packets.put(packet);
             } catch (InterruptedException e) {
-                System.err.println("Interrupted while receiving packet");
+                System.err
+                        .println("Thread interrupted while receiving packet: ");
+                break;
             }
         }
     }
-
 }

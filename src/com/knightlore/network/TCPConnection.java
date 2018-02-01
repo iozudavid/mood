@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.Socket;
+import java.net.SocketTimeoutException;
 
 /*
  * Basic network connection
@@ -17,6 +18,7 @@ public class TCPConnection extends Connection {
 
     public TCPConnection(Socket socket) {
         try {
+            socket.setSoTimeout(TIMEOUT_MILLIS);
             this.infoReceive = socket.getInputStream();
             this.infoSend = socket.getOutputStream();
         } catch (IOException e) {
@@ -66,6 +68,8 @@ public class TCPConnection extends Connection {
             while (count < len && (i = infoReceive.read()) != -1) {
                 data[count++] = (byte) i;
             }
+        } catch (SocketTimeoutException e) {
+            System.err.println("Timed out while waiting to receive a packet.");
         } catch (IOException e) {
             System.err.println("Communication broke...");
         }
