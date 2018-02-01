@@ -66,7 +66,7 @@ public class ServerManager implements Runnable {
                 new Thread(new ReceiveFromClient(conn, player)).start();
                 new Thread(new SendToClient(conn, player)).start();
 
-            //    this.connections.put(player.getObjectId(), conn);
+                this.connections.put(player.getObjectId(), conn);
             } catch (IOException e) {
                 System.err.println("Couldn't create the connection...");
                 System.exit(1);
