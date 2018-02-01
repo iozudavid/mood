@@ -16,7 +16,8 @@ import java.util.Vector;
 public class MapGenerator extends ProceduralGenerator {
     private double[][] perlinNoise;
     private final List<Room> rooms = new LinkedList<>();
-
+    private PerlinVector[][] gradVectors;
+    
     public MapGenerator() {
     }
 
@@ -43,18 +44,38 @@ public class MapGenerator extends ProceduralGenerator {
         addWalls(); // TODO delete
     }
 
+    private int width() {
+    	return grid.length;
+    }
+    
+    private int height() {
+    	if(width() == 0)
+    		return 0;
+    	return grid[0].length;
+    }
+    
     private void createPerliNoiseForGrid() {
+    	System.out.println("Creating perlin noise");
     	// need a predictable way of getting same
     	// pseudo-random vector for tile "corner"
     	// store some random values into an array
     	// that can be referenced at will
-    	PerlinVector[][] gradVectors = 
-    			new PerlinVector[grid.length + 1][grid[0].length + 1];
+    	gradVectors = new PerlinVector[width() + 1][height() + 1];
     	for(int i=0; i < gradVectors.length; i++){
     		for(int j=0; j < gradVectors[0].length; j++){
     			double r1 = rand.nextDouble();
     			double r2 = rand.nextDouble();
     			gradVectors[i][j] = new PerlinVector(r1,r2);
+    		}
+    	}
+    	
+    	// populate perlinNoise grid
+    	perlinNoise = new double[width()][height()];
+    	for(int i=0; i < perlinNoise.length; i++) {
+    		for(int j=0; j< perlinNoise[0].length; j++) {
+    			double x = i + rand.nextDouble();
+    			double y = j + rand.nextDouble();
+    			perlinNoise[i][j] = perlin(x,y);
     		}
     	}
     	
@@ -65,10 +86,10 @@ public class MapGenerator extends ProceduralGenerator {
     	double xm = x % 1; // map to coordinates in unit square
     	double ym = y % 1;
     	
-    	double x0 = x - xm; // get coordinates of square points surrounding 
-    	double y0 = y - ym; // x any y
-    	double x1 = x0 + 1;
-    	double y1 = y0 + 1;
+    	int x0 = (int) (x - xm); // get coordinates of square points surrounding 
+    	int y0 = (int) (y - ym); // x any y
+    	int x1 = x0 + 1;
+    	int y1 = y0 + 1;
     	
     	//  (x0,y1)------(x1,y1)
     	//      |           |
@@ -78,44 +99,52 @@ public class MapGenerator extends ProceduralGenerator {
     	
     	// get pseudo-random gradient vectors
     	// should be predictable given x0, y0, x1, y1
-    	// 1
-    	// 2
-    	// 3
-    	// 4
+    	PerlinVector g1,g2,g3,g4;
+    	// 1 (x0,y1) -->
+    	g1 = gradVectors[x0][y1];
+    	// 2 (x1,y1) -->
+    	g2 = gradVectors[x1][y1];
+    	// 3 (x0,y0) -->
+    	g3 = gradVectors[x0][y0];
+    	// 4 (x1,y0) -->
+    	g4 = gradVectors[x1][y0];
     	
     	// generate distance vectors
-    	Vector<Double> d1,d2,d3,d4;
+    	PerlinVector d1,d2,d3,d4;
     	// 1 (x0,y1) --> (x,y)
-    	d1 = new Vector<Double>(2);
-    	d1.add(0, x);
-    	d1.add(1, y - 1);
+    	d1 = new PerlinVector(x, y - 1);
     	// 2 (x1,y1) --> (x,y)
-    	d2 = new Vector<Double>(2);
-    	d2.add(0, x - 1);
-    	d2.add(1, y - 1);
+    	d2 = new PerlinVector(x - 1,y - 1);
     	// 3 (x0,y0) --> (x,y)
-    	d3 = new Vector<Double>(2);
-    	d3.add(0, x);
-    	d3.add(0, y);
+    	d3 = new PerlinVector(x, y);
     	// 4 (x1,y0) --> (x,y)
-    	d4 = new Vector<Double>(2);
-    	d4.add(0, x - 1);
-    	d4.add(0, y);
+    	d4 = new PerlinVector(x - 1, y);
     	
     	// dot product gradient vectors with corresponding
-    	// distance vectors, generating the influence vectors
+    	// distance vectors, generating the influence values
+    	double i1, i2, i3, i4;
     	// 1
+    	i1 = PerlinVector.dotProduct(g1, d1);
     	// 2
+    	i2 = PerlinVector.dotProduct(g2, d2);
     	// 3
+    	i3 = PerlinVector.dotProduct(g3, d3);
     	// 4
+    	i4 = PerlinVector.dotProduct(g4, d4);
     	
-    	// apply fade function (ease curve)
+    	// apply fade function (ease curve) on x and y
+    	x = fade(x);
+    	y = fade(y);
     	
-    	// "interpolate" influence vectors
-    	
-    	return 0.0;
+    	// return "interpolation" of influence vectors
+    	return ( (i1 + i2)/2 + (i3 + i4)/2 )/2;
     }
 
+    private double fade(double t) {
+    	// 6t^5 - 15t^4 + 10t^3
+    	return 6 * (t*t*t*t*t) - 15 * (t*t*t*t) + 10 * (t*t*t);
+    }
+    
     private void generateRooms() {
         RoomGenerator roomGenerator = new RoomGenerator();
         Room room = roomGenerator.createRoom(rand.nextLong());
@@ -209,4 +238,20 @@ public class MapGenerator extends ProceduralGenerator {
         }
     }
 
+    // TODO delete
+    public static void main(String[] args) {
+    	MapGenerator genr = new MapGenerator();
+    	genr.createMap(9 , 4, Environment.LIGHT_OUTDOORS);
+    	System.out.println("Width: " + genr.width());
+    	System.out.println("Height: " + genr.height());
+    	double[][] p = genr.perlinNoise;
+    	for(int i=0; i< p.length; i++) {
+    		System.out.print(i + "::: ");
+    		for(int j=0; j < p[0].length; j++) {
+    			System.out.print(j + ": " + p[i][j]);
+    		}
+    		System.out.println();
+    	}
+    }
+    
 }
