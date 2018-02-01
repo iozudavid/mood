@@ -19,7 +19,7 @@ public abstract class GameObject {
 	public GameObject(Vector2D position) {
 		this.position = position;
 		exists = true;
-		// GameEngine.getInstance().addGameObject(this);
+		GameEngine.getSingleton().addGameObject(this);
 	}
 
 	public Vector2D getPosition() {
@@ -34,17 +34,19 @@ public abstract class GameObject {
 		exists = b;
 	}
 
-	// Called when the component is first added to the gameObject
+	// Called when the component is first added to the gameObject, before it is first updated
+	// Use this to subscribe to listeners
 	public abstract void onCreate();
 
 	// Called every game-frame to update it
 	public abstract void onUpdate();
 
-	// Called when the attached gameObject is being removed from the game
+	// Called when the attached gameObject is being removed from the game, it will no longer receive updates
+	// Use this to unsubscribe from event listeners
 	public abstract void onDestroy();
 
 	protected void destroy() {
-		// GameEngine.getInstance().removeGameObject(this);
+		 GameEngine.getSingleton().removeGameObject(this);
 	}
 
 }

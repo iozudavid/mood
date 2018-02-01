@@ -20,12 +20,14 @@ import com.knightlore.render.Screen;
  */
 public class GameEngine implements Runnable {
 
+	private static GameEngine singleton = null;
+	
 	private static final double UPDATES_PER_SECOND = 60D;
 	public static final Ticker ticker = new Ticker();
 
 	private final Screen screen;
 	private final MainWindow window;
-	private final World world;
+	private World world;
 	private final ArrayList<GameObject> objects;
 	private Thread thread;
 	private volatile boolean running = false;
@@ -34,15 +36,20 @@ public class GameEngine implements Runnable {
 	private LinkedList<GameObject> notifyToDestroy;
 
 	public GameEngine() {
-		world = new World(AreaFactory.createRandomMap(Environment.LIGHT_OUTDOORS));
-		objects = new ArrayList<>();
+		singleton = this;
+		
+		objects = new ArrayList<GameObject>();
 		notifyToCreate = new LinkedList<GameObject>();
 		notifyToDestroy = new LinkedList<GameObject>();
-
+		
 		final int w = MainWindow.WIDTH, h = MainWindow.HEIGHT;
 		screen = new Screen(w, h);
 		window = new MainWindow(screen, MainWindow.TITLE, w, h);
 		initEngine();
+	}
+	
+	static GameEngine getSingleton(){
+		return singleton;
 	}
 
 	void addGameObject(GameObject g) {
@@ -60,6 +67,7 @@ public class GameEngine implements Runnable {
 		InputManager.init();
 		setupKeyboard();
 		setupMouse();
+		world = new World(AreaFactory.createRandomMap(Environment.LIGHT_OUTDOORS));
 		System.out.println("Engine Initialised Successfully.");
 	}
 

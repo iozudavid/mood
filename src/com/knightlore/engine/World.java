@@ -12,6 +12,8 @@ import com.knightlore.game.entity.Mob;
 import com.knightlore.game.entity.ShotgunPickup;
 import com.knightlore.game.tile.AirTile;
 import com.knightlore.game.tile.Tile;
+import com.knightlore.gui.Button;
+import com.knightlore.gui.GUICanvas;
 import com.knightlore.render.Camera;
 import com.knightlore.render.ColorUtils;
 import com.knightlore.render.IRenderable;
@@ -26,6 +28,7 @@ public class World implements IRenderable {
 
 	private final Map map;
 	private Player player;
+	private GUICanvas gui;
 
 	public World(Map map) {
 		this.map = map;
@@ -33,9 +36,17 @@ public class World implements IRenderable {
 
 		Camera camera = new Camera(4.5, 4.5, 1, 0, 0, Camera.FIELD_OF_VIEW, map);
 		player = new Player(camera);
-
+		
 		mobs.add(new ShotgunPickup(new Vector2D(20, 20)));
 		mobs.add(new ShotgunPickup(new Vector2D(21, 20)));
+		
+		// setup testing ui
+		gui = new GUICanvas();
+		Button b = new Button(5,5,0);
+		b.rect.width = 100;
+		b.rect.height = 30;
+		gui.addGUIObject(b);
+
 	}
 
 	@Override
@@ -43,6 +54,7 @@ public class World implements IRenderable {
 		map.getEnvironment().renderEnvironment(pix);
 		drawPerspective(pix);
 		drawCrosshair(pix);
+		gui.render(pix, x, y);
 	}
 
 	private final int BLOCKINESS = 6; // how 'old school' you want to look.

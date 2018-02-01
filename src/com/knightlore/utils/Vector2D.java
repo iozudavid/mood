@@ -1,6 +1,6 @@
 package com.knightlore.utils;
 
-public class Vector2D {
+public final class Vector2D {
 	private double x;
 	private double y;
 
@@ -24,15 +24,32 @@ public class Vector2D {
 		y = _y;
 	}
 
+	
+	// ADDITION
+	
 	public void addInPlace(Vector2D v) {
 		x = x + v.x;
 		y = y + v.y;
 	}
-
-	public void subtractInPlace(Vector2D v) {
+	
+	// allocates a new vector, does not modify the original
+	public Vector2D add(Vector2D v){
+		return new Vector2D(x+v.x,y+v.y);
+	}
+	
+	// SUBTRACTION
+	
+	public void subtractInPlace(Vector2D v){
 		x = x - v.x;
 		y = y - v.y;
 	}
+	
+	// allocates a new vector, does not modify the original
+	public Vector2D subtract(Vector2D v){
+		return new Vector2D(x+v.x,y+v.y);
+	}
+	
+	// FUNCTIONS
 
 	public double dot(Vector2D v) {
 		return (x * v.x) + (y * v.y);
@@ -54,6 +71,10 @@ public class Vector2D {
 
 	public double getY() {
 		return y;
+	}
+	
+	public double sqrMagnitude(){
+		return (x*x) + (y*y);
 	}
 	
 	@Override
