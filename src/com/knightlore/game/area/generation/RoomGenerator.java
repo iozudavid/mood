@@ -4,6 +4,7 @@ import com.knightlore.game.area.Room;
 import com.knightlore.game.tile.AirTile;
 import com.knightlore.game.tile.BrickTile;
 import com.knightlore.game.tile.Tile;
+import com.knightlore.game.tile.UndecidedTile;
 
 import java.util.Random;
 
@@ -24,18 +25,6 @@ public class RoomGenerator extends ProceduralGenerator {
         return new Room(grid);
     }
 
-    @Override
-    protected void fillGrid() {
-        // TODO think about creating something more than just walls
-        for (int x = 0; x < grid.length; x++) {
-            for (int y = 0; y < grid[0].length; y++) {
-                grid[x][y] = AirTile.getInstance();
-            }
-        }
-
-        addWalls();
-    }
-
     private int getRandomSize() {
         int meanSize = (MIN_SIZE + MAX_SIZE);
         double gaussSize = -1;
@@ -43,7 +32,25 @@ public class RoomGenerator extends ProceduralGenerator {
             gaussSize = (rand.nextGaussian() * STD_DEV) + meanSize;
         }
 
-        return (int)Math.round(gaussSize);
+        return (int) Math.round(gaussSize);
+    }
+
+    @Override
+    protected void fillGrid() {
+        // TODO think about creating something more than just walls
+        addWalls();
+        fillUndecidedTiles();
+    }
+
+    @Override
+    protected void fillUndecidedTiles() {
+        for (int x = 0; x < grid.length; x++) {
+            for (int y = 0; y < grid[0].length; y++) {
+                if(grid[x][y] == UndecidedTile.getInstance()) {
+                    grid[x][y] = AirTile.getInstance();
+                }
+            }
+        }
     }
 
     private void addWalls() {

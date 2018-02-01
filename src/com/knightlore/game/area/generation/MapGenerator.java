@@ -2,8 +2,10 @@ package com.knightlore.game.area.generation;
 
 import com.knightlore.game.area.Map;
 import com.knightlore.game.area.Room;
+import com.knightlore.game.tile.AirTile;
 import com.knightlore.game.tile.BrickTile;
 import com.knightlore.game.tile.Tile;
+import com.knightlore.game.tile.UndecidedTile;
 import com.knightlore.render.Environment;
 
 import java.util.LinkedList;
@@ -36,6 +38,7 @@ public class MapGenerator extends ProceduralGenerator {
         createPerliNoiseForGrid();
         generateRooms();
         generatePaths();
+        fillUndecidedTiles();
         makeSymY();
         addWalls(); // TODO delete
     }
@@ -114,15 +117,65 @@ public class MapGenerator extends ProceduralGenerator {
     }
 
     private void generateRooms() {
-        // TODO implement
+        RoomGenerator roomGenerator = new RoomGenerator();
+        Room room = roomGenerator.createRoom(rand.nextLong());
+        while (setRoomPosition(room)) {
+            rooms.add(room);
+            room = roomGenerator.createRoom(rand.nextLong());
+        }
+
+        System.out.println("Number of rooms generated: " + rooms.size());
+    }
+
+    private boolean setRoomPosition(Room room) {
+        // TODO make something like x += rand and y += rand instead of x++ and y++?
+        for (int x = 0; x < grid.length - room.getWidth(); x++) {
+            for (int y = 0; y < grid[0].length - room.getHeight(); y++) {
+                room.setRoomPosition(x, y);
+                if (canBePlaced(room)) {
+                    placeRoom(room);
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
+    private boolean canBePlaced(Room room) {
+        int leftWallX = room.getXPosition();
+        int rightWallX = room.getXPosition() + room.getWidth();
+        int topWallY = room.getYPosition();
+        int bottomWallY = room.getYPosition() + room.getHeight();
+        return grid[leftWallX][topWallY] == UndecidedTile.getInstance()
+            && grid[leftWallX][bottomWallY] == UndecidedTile.getInstance()
+            && grid[rightWallX][topWallY] == UndecidedTile.getInstance()
+            && grid[rightWallX][topWallY] == UndecidedTile.getInstance();
     }
 
     private void placeRoom(Room r) {
-        // TODO implement
+        int xPos = r.getXPosition();
+        int yPos = r.getYPosition();
+        for (int x = xPos; x < xPos + r.getWidth(); x++) {
+            for (int y = yPos; y < yPos + r.getHeight(); y++) {
+                grid[x][y] = r.getTile(x - xPos, y - yPos);
+            }
+        }
     }
 
     private void generatePaths() {
         // TODO implement
+    }
+
+    @Override
+    protected void fillUndecidedTiles() {
+        for (int x = 0; x < grid.length; x++) {
+            for (int y = 0; y < grid[0].length; y++) {
+                if(grid[x][y] == UndecidedTile.getInstance()) {
+                    grid[x][y] = AirTile.getInstance();
+                }
+            }
+        }
     }
 
     // reflection in y-axis

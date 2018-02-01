@@ -1,6 +1,5 @@
 package com.knightlore.game.area.generation;
 
-import com.knightlore.game.tile.AirTile;
 import com.knightlore.game.tile.Tile;
 import com.knightlore.game.tile.UndecidedTile;
 
@@ -12,10 +11,12 @@ abstract class ProceduralGenerator {
 
     protected abstract void fillGrid();
 
+    protected abstract void fillUndecidedTiles();
+
     protected void resetGrid() {
         for (int i = 0; i < grid.length; i++) {
             for (int j = 0; j < grid[0].length; j++) {
-                grid[i][j] = UndecidedTile.getInstance(); // TODO change to some block
+                grid[i][j] = UndecidedTile.getInstance();
             }
         }
     }
