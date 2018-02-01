@@ -14,20 +14,22 @@ public class SpriteSheetMaker {
 	
 	static int width;
 	static int height;
+	static int numDirs;
 	
 	static Color alphaColor = Color.green;
 
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
-		if (args.length == 3) {
+		if (args.length == 4) {
 			// read operation mode
 			mode = args[0];
 			// calc dimensions
 			String[] dimString = args[1].split("x");
 			width = Integer.parseInt(dimString[0]);
 			height = Integer.parseInt(dimString[1]);
+			numDirs = Integer.parseInt(args[2]);
 			// get file name
-			baseFileName = args[2];
+			baseFileName = args[3];
 			switch (mode) {
 			case "-static":
 				createStatic();
@@ -40,19 +42,15 @@ public class SpriteSheetMaker {
 		}
 		else{
 			System.out.println("expected 3 arguments, got "+args.length);
-			System.out.println("<mode> <dimensions> <name>");
+			System.out.println("<mode> <dimensions> <directions> <name>");
 		}
 
 	}
 
-	static final int NUM_DIRECTIONS = 8;
-
 	static void createStatic() {
-
-		int angle = 360 / NUM_DIRECTIONS;
 		
 		int totalWidth = width;
-		int totalHeight = height*NUM_DIRECTIONS;
+		int totalHeight = height*numDirs;
 		
 		BufferedImage outImg = new BufferedImage(totalWidth,totalHeight,BufferedImage.TYPE_INT_ARGB);
 		
@@ -65,9 +63,9 @@ public class SpriteSheetMaker {
 		// load in images, and output into buffer 
 		BufferedImage img = null;
 		String fileName = null;
-		for (int i = 0; i < NUM_DIRECTIONS; i++) {
+		for (int i = 0; i < numDirs; i++) {
 			// get file name
-			fileName = baseFileName + "_" + (angle * i) + ".png";
+			fileName = baseFileName + "_" + (i) + ".png";
 			File file = new File(fileName);
 			// try to read the image
 			try {
