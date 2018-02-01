@@ -24,6 +24,14 @@ public abstract class Area {
         return grid[x][y];
     }
 
+    public int getWidth() {
+        return width;
+    }
+
+    public int getHeight() {
+        return height;
+    }
+
 	public String toString() {
         StringBuilder sBuilder = new StringBuilder("AREA\n" + "WIDTH = " + width + "\n" + "HEIGHT = " + height + "\n");
         for (int j = 0; j < height; j++) {

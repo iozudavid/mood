@@ -20,30 +20,27 @@ public class MapGenerator extends ProceduralGenerator {
 
     public Map createMap(int width, int height, Environment env) {
         Random rand = new Random();
-        long seed = rand.nextLong();
-        return createMap(width, height, env, seed);
+        return createMap(width, height, env, rand.nextLong());
     }
 
     public Map createMap(int width, int height, Environment env, long seed) {
+        rand = new Random(seed);
         grid = new Tile[width][height];
-        fillGrid(seed);
+        fillGrid();
         return new Map(grid, env, seed);
     }
 
     @Override
-    protected void fillGrid(long seed) {
+    protected void fillGrid() {
         resetGrid();
-        createPerliNoiseForGrid(seed);
-        generateRooms(seed);
-        placeRooms(seed);
-        generatePaths(seed);
+        createPerliNoiseForGrid();
+        generateRooms();
+        generatePaths();
         makeSymY();
         addWalls(); // TODO delete
     }
 
-    private void createPerliNoiseForGrid(long seed) {
-        // TODO implement
-    	Random rand = new Random(seed); 
+    private void createPerliNoiseForGrid() {
     	// need a predictable way of getting same
     	// pseudo-random vector for tile "corner"
     	// store some random values into an array
@@ -60,7 +57,7 @@ public class MapGenerator extends ProceduralGenerator {
     	
     }
 
-    private double perlin(double x, double y){
+    private double perlin(double x, double y) {
     	
     	double xm = x % 1; // map to coordinates in unit square
     	double ym = y % 1;
@@ -115,16 +112,16 @@ public class MapGenerator extends ProceduralGenerator {
     	
     	return 0.0;
     }
-    
-    private void generateRooms(long seed) {
+
+    private void generateRooms() {
         // TODO implement
     }
 
-    private void placeRooms(long seed) {
+    private void placeRoom(Room r) {
         // TODO implement
     }
 
-    private void generatePaths(long seed) {
+    private void generatePaths() {
         // TODO implement
     }
 

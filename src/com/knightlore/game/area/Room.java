@@ -13,7 +13,7 @@ public class Room extends Area {
         super(grid);
     }
 
-    public void placeOnMap(int xPosition, int yPosition) {
+    public void setRoomPosition(int xPosition, int yPosition) {
         this.xPosition = xPosition;
         this.yPosition = yPosition;
     }
