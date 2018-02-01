@@ -30,8 +30,8 @@ public abstract class GameObject {
 		return exists;
 	}
 
-	void setExists(Boolean b) {
-
+	public void setExists(boolean b) {
+		exists = b;
 	}
 
 	// Called when the component is first added to the gameObject

@@ -1,43 +1,28 @@
 package com.knightlore.game.entity;
 
-import com.knightlore.engine.GameEngine;
 import com.knightlore.engine.GameObject;
-import com.knightlore.engine.TickListener;
-import com.knightlore.render.animation.Animation;
 import com.knightlore.render.graphic.Graphic;
-import com.knightlore.render.graphic.Sprite;
+import com.knightlore.render.graphic.sprite.DirectionalSprite;
 import com.knightlore.utils.Vector2D;
 
 public abstract class Mob extends GameObject {
 
-	protected Animation anim;
+	protected DirectionalSprite dSprite;
 	protected double size;
 	protected Vector2D direction;
 
-	protected Mob(double size, Vector2D direction) {
-		super(direction);
+	protected int zOffset;
+
+	protected Mob(double size, DirectionalSprite dSprite, Vector2D position, Vector2D direction) {
+		super(position);
 		this.size = size;
+		this.dSprite = dSprite;
 		this.direction = direction;
-		anim = new Animation();
-		anim.addFrame(Sprite.SAMPLE_SPRITE);
-		anim.addFrame(Sprite.SAMPLE_SPRITE2);
-
-		GameEngine.ticker.addTickListener(new TickListener() {
-
-			@Override
-			public void onTick() {
-				anim.nextFrame();
-			}
-
-			@Override
-			public long interval() {
-				return 20;
-			}
-		});
+		this.zOffset = 0;
 	}
 
-	public Graphic getSprite() {
-		return anim.getGraphic();
+	public Graphic getGraphic(Vector2D playerPos) {
+		return dSprite.getCurrentGraphic(position, direction, playerPos);
 	}
 
 	public double getSize() {
@@ -46,6 +31,10 @@ public abstract class Mob extends GameObject {
 
 	public Vector2D getDirection() {
 		return direction;
+	}
+	
+	public int getzOffset() {
+		return zOffset;
 	}
 
 }

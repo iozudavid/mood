@@ -9,7 +9,7 @@ import java.util.Stack;
 import com.knightlore.game.Player;
 import com.knightlore.game.area.Map;
 import com.knightlore.game.entity.Mob;
-import com.knightlore.game.entity.Zombie;
+import com.knightlore.game.entity.ShotgunPickup;
 import com.knightlore.game.tile.AirTile;
 import com.knightlore.game.tile.Tile;
 import com.knightlore.render.Camera;
@@ -34,8 +34,8 @@ public class World implements IRenderable {
 		Camera camera = new Camera(4.5, 4.5, 1, 0, 0, Camera.FIELD_OF_VIEW, map);
 		player = new Player(camera);
 
-		mobs.add(new Zombie(0.5D, new Vector2D(7, 7)));
-		mobs.add(new Zombie(0.5D, new Vector2D(25, 25)));
+		mobs.add(new ShotgunPickup(new Vector2D(20, 20)));
+		mobs.add(new ShotgunPickup(new Vector2D(21, 20)));
 	}
 
 	@Override
@@ -193,6 +193,7 @@ public class World implements IRenderable {
 		});
 
 		for (Mob m : mobs) {
+			m.onUpdate();
 			double spriteX = m.getPosition().getX() - cam.getxPos();
 			double spriteY = m.getPosition().getY() - cam.getyPos();
 
@@ -223,8 +224,10 @@ public class World implements IRenderable {
 
 			// loop through every vertical stripe of the sprite on screen
 			for (int stripe = drawStartX; stripe < drawEndX; stripe++) {
-				int texX = (int) (256 * (stripe - (-spriteWidth / 2 + spriteScreenX)) * m.getSprite().getWidth()
-						/ spriteWidth) / 256;
+				Graphic g = m.getGraphic(player.getPosition());
+
+				int texX = (int) (256 * (stripe - (-spriteWidth / 2 + spriteScreenX)) * g.getWidth() / spriteWidth)
+						/ 256;
 
 				// the conditions in the if are:
 				// 1) it's in front of camera plane so you don't see things
@@ -236,15 +239,17 @@ public class World implements IRenderable {
 					for (int y = drawStartY; y < drawEndY; y++) {
 						// here, 256 and 128 are factors to avoid floats.
 						int d = y * 256 - pix.getHeight() * 128 + spriteHeight * 128;
-						int texY = ((d * m.getSprite().getHeight()) / spriteHeight) / 256;
-						int color = m.getSprite().getPixels()[m.getSprite().getWidth() * texY + texX];
+						int texY = ((d * g.getHeight()) / spriteHeight) / 256;
+						int color = g.getPixels()[g.getWidth() * texY + texX];
 
-						if (color != -16747777) // TODO REMOVE
-							continue; // texture
+						if (color == -16711936)
+							continue;
+
 						color = ColorUtils.darken(color, map.getEnvironment().getDarkness(),
 								cam.getPosition().distance(m.getPosition()));
 
 						int drawY = y + player.getCamera().getMotionOffset();
+						drawY += m.getzOffset() / transformY;
 						pix.fillRect(color, stripe, drawY, BLOCKINESS, 1);
 					}
 			}

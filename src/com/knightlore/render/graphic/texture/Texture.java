@@ -1,4 +1,7 @@
-package com.knightlore.render.graphic;
+package com.knightlore.render.graphic.texture;
+
+import com.knightlore.render.graphic.Graphic;
+import com.knightlore.render.graphic.GraphicSheet;
 
 public class Texture {
 	
