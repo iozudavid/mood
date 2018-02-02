@@ -12,30 +12,19 @@ import java.util.Random;
 public class RoomGenerator extends ProceduralGenerator {
     private static final int MIN_SIZE = 4;
     private static final int MAX_SIZE = 16;
-    private static final float MEAN_SIZE = (MAX_SIZE + MIN_SIZE) / 2;
-    private static final float STD_DEV = (MEAN_SIZE - MIN_SIZE) / 2;
     private static final int MIN_ENTRANCES_NUM = 2;
     private static final int MAX_ENTRANCES_NUM = 6;
 
     public Room createRoom(long seed) {
         rand = new Random(seed);
 
-        int width = getRandomSize();
-        int height = getRandomSize();
+        int width = getGaussianNum(MIN_SIZE, MAX_SIZE);
+        int height = getGaussianNum(MIN_SIZE, MAX_SIZE);
         grid = new Tile[width][height];
 
         resetGrid();
         fillGrid();
         return new Room(grid);
-    }
-
-    private int getRandomSize() {
-        double gaussSize = -1;
-        while (gaussSize < MIN_SIZE || gaussSize > MAX_SIZE) {
-            gaussSize = (rand.nextGaussian() * STD_DEV) + MEAN_SIZE;
-        }
-
-        return (int) Math.round(gaussSize);
     }
 
     @Override
@@ -44,17 +33,6 @@ public class RoomGenerator extends ProceduralGenerator {
         addWalls();
         addEntrances();
         fillUndecidedTiles();
-    }
-
-    @Override
-    protected void fillUndecidedTiles() {
-        for (int x = 0; x < grid.length; x++) {
-            for (int y = 0; y < grid[0].length; y++) {
-                if(grid[x][y] == UndecidedTile.getInstance()) {
-                    grid[x][y] = AirTile.getInstance();
-                }
-            }
-        }
     }
 
     private void addWalls() {
@@ -72,7 +50,7 @@ public class RoomGenerator extends ProceduralGenerator {
     }
 
     private void addEntrances() {
-        int entrancesNum = MIN_ENTRANCES_NUM + rand.nextInt(MAX_ENTRANCES_NUM - MIN_ENTRANCES_NUM);
+        int entrancesNum = getGaussianNum(MIN_ENTRANCES_NUM, MAX_ENTRANCES_NUM);
         for (int i = 0; i < entrancesNum; i++) {
             addEntrance();
         }
@@ -100,5 +78,27 @@ public class RoomGenerator extends ProceduralGenerator {
         // TODO remember somehow where entrances occur?
         // TODO make it possible to decied what tile is at entrance
         grid[xPos][yPos] = AirTile.getInstance();
+    }
+
+    @Override
+    protected void fillUndecidedTiles() {
+        for (int x = 0; x < grid.length; x++) {
+            for (int y = 0; y < grid[0].length; y++) {
+                if(grid[x][y] == UndecidedTile.getInstance()) {
+                    grid[x][y] = AirTile.getInstance();
+                }
+            }
+        }
+    }
+
+    private int getGaussianNum(int min, int max) {
+        int mean = (min - max) / 2;
+        int std_dev = (mean - min) / 2;
+        double gaussSize = min - 1;
+        while (gaussSize < min || gaussSize > max) {
+            gaussSize = (rand.nextGaussian() * std_dev) + mean;
+        }
+
+        return (int) Math.round(gaussSize);
     }
 }
