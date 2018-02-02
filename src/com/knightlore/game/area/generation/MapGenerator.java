@@ -244,6 +244,7 @@ public class MapGenerator extends ProceduralGenerator {
     	genr.createMap(9 , 4, Environment.LIGHT_OUTDOORS);
     	System.out.println("Width: " + genr.width());
     	System.out.println("Height: " + genr.height());
+    	double min = 1;
     	double max = -1;
     	
     	double[][] p = genr.perlinNoise;
@@ -251,11 +252,12 @@ public class MapGenerator extends ProceduralGenerator {
     		System.out.print(i + "::: ");
     		for(int j=0; j < p[0].length; j++) {
     			if (p[i][j] > max) max = p[i][j];
+    			if (p[i][j] < min) min = p[i][j];
     			System.out.print(j + ": " + p[i][j]);
     		}
     		System.out.println();
     	}
-    	
+    	System.out.println("MIN: " + min);
     	System.out.println("MAX: " + max);
     }
     
