@@ -4,7 +4,7 @@ import java.awt.image.BufferedImage;
 
 public class Graphic {
 
-	public static final Graphic EMPTY = null;
+	public static final Graphic EMPTY = GraphicSheet.TEXTURES.graphicAt(3, 3);
 
 	protected int width, height;
 	protected int[] pixels;

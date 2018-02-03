@@ -4,6 +4,9 @@ import com.knightlore.render.graphic.Graphic;
 
 public class PixelBuffer {
 
+	// Pure green chroma key.
+	public static final int CHROMA_KEY = -16711936;
+
 	private final int WIDTH, HEIGHT;
 	private int[] pixels;
 
@@ -14,13 +17,18 @@ public class PixelBuffer {
 	}
 
 	public void drawGraphic(Graphic graphic, int x, int y) {
-		for (int yy = 0; yy < graphic.getHeight(); yy++) {
-			for (int xx = 0; xx < graphic.getWidth(); xx++) {
+		drawGraphic(graphic, x, y, 1, 1);
+	}
+	
+	public void drawGraphic(Graphic graphic, int x, int y, int scaleX, int scaleY) {
+		for (int yy = 0; yy < graphic.getHeight() * scaleY; yy++) {
+			for (int xx = 0; xx < graphic.getWidth() * scaleX; xx++) {
 				int drawX = x + xx;
 				int drawY = y + yy;
 				if (drawX < 0 || drawX >= WIDTH || drawY < 0 || drawY >= HEIGHT)
 					continue;
-				pixels[drawX + drawY * WIDTH] = graphic.getPixels()[xx + yy * graphic.getWidth()];
+				int color = graphic.getPixels()[xx / scaleX + (yy / scaleY) * graphic.getWidth()];
+				fillPixel(color, drawX, drawY);
 			}
 		}
 	}
@@ -32,13 +40,15 @@ public class PixelBuffer {
 	}
 
 	public void fillPixel(int color, int x, int y) {
+		if (color == CHROMA_KEY)
+			return;
 		fillRect(color, x, y, 1, 1);
 	}
 
 	public void fillRect(int color, int x, int y, int w, int h) {
 		for (int yy = y; yy < y + h; yy++) {
 			for (int xx = x; xx < x + w; xx++) {
-				if (xx < 0 || xx >= WIDTH || yy < 0 || yy >= HEIGHT)
+				if (color == CHROMA_KEY || xx < 0 || xx >= WIDTH || yy < 0 || yy >= HEIGHT)
 					continue;
 				pixels[xx + yy * WIDTH] = color;
 			}

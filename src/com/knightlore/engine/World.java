@@ -9,7 +9,7 @@ import java.util.Stack;
 import com.knightlore.game.Player;
 import com.knightlore.game.area.Map;
 import com.knightlore.game.entity.Mob;
-import com.knightlore.game.entity.ShotgunPickup;
+import com.knightlore.game.entity.pickup.ShotgunPickup;
 import com.knightlore.game.tile.AirTile;
 import com.knightlore.game.tile.Tile;
 import com.knightlore.render.Camera;
@@ -34,8 +34,9 @@ public class World implements IRenderable {
 		Camera camera = new Camera(4.5, 4.5, 1, 0, 0, Camera.FIELD_OF_VIEW, map);
 		player = new Player(camera);
 
-		mobs.add(new ShotgunPickup(new Vector2D(20, 20)));
-		mobs.add(new ShotgunPickup(new Vector2D(21, 20)));
+		for (int i = 0; i < 20; i++) {
+			mobs.add(new ShotgunPickup(new Vector2D(i, 3)));
+		}
 	}
 
 	@Override
@@ -145,9 +146,6 @@ public class World implements IRenderable {
 					double wallX = getWallHitPosition(camera, rayX, rayY, mapX, mapY, side, stepX, stepY);
 
 					Graphic texture = map.getTile(mapX, mapY).getTexture();
-					if (texture == Graphic.EMPTY) {
-						continue;
-					}
 
 					// What pixel did we hit the texture on?
 					int texX = (int) (wallX * (texture.getSize()));
@@ -242,7 +240,7 @@ public class World implements IRenderable {
 						int texY = ((d * g.getHeight()) / spriteHeight) / 256;
 						int color = g.getPixels()[g.getWidth() * texY + texX];
 
-						if (color == -16711936)
+						if (color == PixelBuffer.CHROMA_KEY)
 							continue;
 
 						color = ColorUtils.darken(color, map.getEnvironment().getDarkness(),
@@ -314,6 +312,9 @@ public class World implements IRenderable {
 		final int w = pix.getWidth() / 2, h = pix.getHeight() / 2;
 		pix.fillRect(CROSSHAIR_COLOR, w - CROSSHAIR_SIZE, h - CROSSHAIR_WIDTH / 2, CROSSHAIR_SIZE * 2, CROSSHAIR_WIDTH);
 		pix.fillRect(CROSSHAIR_COLOR, w - CROSSHAIR_WIDTH / 2, h - CROSSHAIR_SIZE, CROSSHAIR_WIDTH, CROSSHAIR_SIZE * 2);
+
+		Graphic g = player.getCurrentWeapon().getGraphic();
+		pix.drawGraphic(g, pix.getWidth() - 700, pix.getHeight() - 600, 8, 8);
 	}
 
 	public void tick() {

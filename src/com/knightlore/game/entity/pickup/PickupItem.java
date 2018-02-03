@@ -1,11 +1,13 @@
-package com.knightlore.game.entity;
+package com.knightlore.game.entity.pickup;
 
 import com.knightlore.engine.GameEngine;
+import com.knightlore.game.entity.Mob;
 import com.knightlore.render.graphic.sprite.DirectionalSprite;
 import com.knightlore.utils.Vector2D;
 
 public abstract class PickupItem extends Mob {
 
+	private static final double ROTATION_SPEED = 0.1D;
 	private static final double PICKUP_SIZE = 0.25D;
 	private static final double FLOAT_BOB_AMOUNT = 50.0;
 	private static final double FLOAT_BOB_SPEED = 0.10;
@@ -20,7 +22,13 @@ public abstract class PickupItem extends Mob {
 
 	@Override
 	public void onUpdate() {
-		zOffset = FLOOR_OFFSET + (int) (Math.sin(GameEngine.ticker.getTime() * FLOAT_BOB_SPEED) * FLOAT_BOB_AMOUNT);
+		// Make the item bob up and down.
+		long t = GameEngine.ticker.getTime();
+		zOffset = FLOOR_OFFSET + (int) (Math.sin(t * FLOAT_BOB_SPEED) * FLOAT_BOB_AMOUNT);
+
+		double xprime = direction.getX() * Math.cos(ROTATION_SPEED) - direction.getY() * Math.sin(ROTATION_SPEED);
+		double yprime = direction.getX() * Math.sin(ROTATION_SPEED) + direction.getY() * Math.cos(ROTATION_SPEED);
+		direction = new Vector2D(xprime, yprime);
 	}
 
 }
