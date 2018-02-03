@@ -14,11 +14,15 @@ public abstract class Tile {
 	public double getSolidity() {
 		return 1D;
 	}
+	
+	public int getMinimapColor() {
+		return 0;
+	}
 
 	public abstract void onShot();
 
 	public abstract void onEntered(Player player);
-
+	
 	public char toChar() {
 		return ' ';
 	}

@@ -18,6 +18,7 @@ import com.knightlore.render.IRenderable;
 import com.knightlore.render.PerspectiveRenderItem;
 import com.knightlore.render.PixelBuffer;
 import com.knightlore.render.graphic.Graphic;
+import com.knightlore.render.minimap.Minimap;
 import com.knightlore.utils.Vector2D;
 
 public class World implements IRenderable {
@@ -25,6 +26,7 @@ public class World implements IRenderable {
 	private final List<Mob> mobs;
 
 	private final Map map;
+	private Minimap minimap;
 	private Player player;
 
 	public World(Map map) {
@@ -33,8 +35,9 @@ public class World implements IRenderable {
 
 		Camera camera = new Camera(4.5, 4.5, 1, 0, 0, Camera.FIELD_OF_VIEW, map);
 		player = new Player(camera);
+		this.minimap = new Minimap(player, map);
 
-		for (int i = 0; i < 20; i++) {
+		for (int i = 0; i < 5; i++) {
 			mobs.add(new ShotgunPickup(new Vector2D(i, 3)));
 		}
 	}
@@ -44,6 +47,7 @@ public class World implements IRenderable {
 		map.getEnvironment().renderEnvironment(pix);
 		drawPerspective(pix);
 		drawCrosshair(pix);
+		minimap.render(pix, 0, 0);
 	}
 
 	private final int BLOCKINESS = 6; // how 'old school' you want to look.

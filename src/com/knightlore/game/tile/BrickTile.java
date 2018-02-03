@@ -5,7 +5,7 @@ import com.knightlore.render.graphic.Graphic;
 import com.knightlore.render.graphic.texture.Texture;
 
 public class BrickTile extends Tile {
-	
+
 	public BrickTile() {
 	}
 
@@ -17,6 +17,11 @@ public class BrickTile extends Tile {
 	@Override
 	public double getSolidity() {
 		return 1D;
+	}
+
+	@Override
+	public int getMinimapColor() {
+		return 0x8C4100;
 	}
 
 	@Override
