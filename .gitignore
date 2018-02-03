@@ -89,3 +89,6 @@ local.properties
 
 .idea/
 *.iml
+
+# macOS files
+.DS_Store
