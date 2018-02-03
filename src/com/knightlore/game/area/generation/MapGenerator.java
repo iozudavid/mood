@@ -8,6 +8,8 @@ import com.knightlore.game.tile.Tile;
 import com.knightlore.game.tile.UndecidedTile;
 import com.knightlore.render.Environment;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
@@ -60,6 +62,11 @@ public class MapGenerator extends ProceduralGenerator {
     	// pseudo-random vector for tile "corner"
     	// store some random values into an array
     	// that can be referenced at will
+    	
+    	// I think there might be a better way to produce
+    	// gradient vectors
+    	// (ie. permutation, to prevent things averaging out
+    	// kinda samey)
     	gradVectors = new PerlinVector[width() + 1][height() + 1];
     	for(int i=0; i < gradVectors.length; i++){
     		for(int j=0; j < gradVectors[0].length; j++){
@@ -71,14 +78,23 @@ public class MapGenerator extends ProceduralGenerator {
     	
     	// populate perlinNoise grid
     	perlinNoise = new double[width()][height()];
-    	for(int i=0; i < perlinNoise.length; i++) {
-    		for(int j=0; j< perlinNoise[0].length; j++) {
-    			double x = i + rand.nextDouble();
-    			double y = j + rand.nextDouble();
-    			perlinNoise[i][j] = perlin(x,y);
-    		}
-    	}
     	
+    	// perform multiple times
+    	// taking a biased average on each increment
+    	for(int k=0; k < 5; k++) {
+	    	
+	    	for(int i=0; i < perlinNoise.length; i++) {
+	    		for(int j=0; j< perlinNoise[0].length; j++) {
+	    			double x = i + rand.nextDouble();
+	    			double y = j + rand.nextDouble();
+	    			if(k==0)
+	    				perlinNoise[i][j] = perlin(x,y);
+	    			else
+	    				perlinNoise[i][j] = ( perlinNoise[i][j] + perlin(x,y) ) / 2;
+	    		}
+	    	}
+	    	
+    	}
     }
 
     private double perlin(double x, double y) {
@@ -194,8 +210,51 @@ public class MapGenerator extends ProceduralGenerator {
 
     private void generatePaths() {
         // TODO implement
+    	
+    	// test
+    	addPath(new Position(1,1), new Position(width()-2,height()-2));
     }
 
+    private boolean addPath(Position start, Position end) {
+    	// perform A* search
+    	SearchState state = new SearchState(start,end,grid,perlinNoise);
+    	if(! (state.isValid(start) && state.isValid(end)) )
+    		return false;
+    	
+    	// set influence of perlin noise with g-weight
+    	// (4.5 is my favourite value)
+    	// if zero we just get A*
+    	SearchState.setGWeight(4.5);
+    	
+    	ArrayList<SearchState> states = new ArrayList<SearchState>();
+    	states.add(state);
+    	// loop until return
+    	while(true) {
+    		//System.out.println(state.getPosition().toString());
+    		state = states.get(0);
+    		if(state.isGoal()) {
+    			// modify grid
+    			while(state != null) {
+    				int x = state.getPosition().getX();
+    				int y = state.getPosition().getY();
+    				grid[x][y] = AirTile.getInstance();
+    				state = state.getPred();
+    			}
+    			// then return
+    			return true;
+    		}else {
+    			// add successors to list
+    			states.addAll(state.getSuccessors());
+    			// remove current state
+    			states.remove(0);
+    			// order list
+    			Collections.sort(states);
+    		}
+    		
+    	}
+    	
+    }
+    
     @Override
     protected void fillUndecidedTiles() {
         for (int x = 0; x < grid.length; x++) {
@@ -239,11 +298,11 @@ public class MapGenerator extends ProceduralGenerator {
     }
 
     // TODO delete
+    /*
     public static void main(String[] args) {
     	MapGenerator genr = new MapGenerator();
-    	genr.createMap(9 , 4, Environment.LIGHT_OUTDOORS);
-    	System.out.println("Width: " + genr.width());
-    	System.out.println("Height: " + genr.height());
+    	Map map = genr.createMap(64 , 64, Environment.LIGHT_OUTDOORS);
+    	
     	double min = 1;
     	double max = -1;
     	
@@ -259,6 +318,12 @@ public class MapGenerator extends ProceduralGenerator {
     	}
     	System.out.println("MIN: " + min);
     	System.out.println("MAX: " + max);
+    	
+    	System.out.println("--------------");
+    	System.out.println(map.toString());
+    	
+    	
     }
+	*/
     
 }
