@@ -9,6 +9,7 @@ import com.knightlore.game.Player;
 import com.knightlore.game.area.Map;
 import com.knightlore.game.tile.AirTile;
 import com.knightlore.game.tile.Tile;
+import com.knightlore.network.NetworkObjectManager;
 import com.knightlore.render.Camera;
 import com.knightlore.render.IRenderable;
 import com.knightlore.render.Screen;
@@ -24,6 +25,7 @@ public class World implements IRenderable {
 	public World(Map map) {
 		this.map = map;
 		entities = new ArrayList<>();
+		new NetworkObjectManager();
 	}
 
 	@Override

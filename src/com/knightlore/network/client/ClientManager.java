@@ -53,8 +53,4 @@ public class ClientManager implements Runnable {
 
     }
 
-    public static void main(String[] args) {
-        (new ClientManager()).run();
-    }
-
 }

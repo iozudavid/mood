@@ -1,7 +1,6 @@
 package com.knightlore.game;
 
 import java.io.IOException;
-import java.nio.ByteBuffer;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -19,24 +18,31 @@ import com.knightlore.utils.Vector2D;
 public class Player extends NetworkObject implements IRenderable {
 
     private Camera camera;
-    private final Map<ServerControl, CameraCommunicatingInterface> mapCorespondantFields;
+    private final Map<ServerControl, CameraGetterInterface> controlGettersMap;
+    private final Map<ServerControl, CameraSetterInterface> controlSettersMap;
 
     public Player(UUID uuid, Camera camera) {
         super(uuid);
         this.camera = camera;
-        this.mapCorespondantFields = new HashMap<>();
-        this.mapCorespondantFields.put(ServerControl.XPOS,
-                this.camera::getxPos);
-        this.mapCorespondantFields.put(ServerControl.YPOS,
-                this.camera::getyPos);
-        this.mapCorespondantFields.put(ServerControl.XDIR,
-                this.camera::getxDir);
-        this.mapCorespondantFields.put(ServerControl.YDIR,
-                this.camera::getyDir);
-        this.mapCorespondantFields.put(ServerControl.XPLANE,
+        this.controlGettersMap = new HashMap<>();
+        this.controlGettersMap.put(ServerControl.XPOS, this.camera::getxPos);
+        this.controlGettersMap.put(ServerControl.YPOS, this.camera::getyPos);
+        this.controlGettersMap.put(ServerControl.XDIR, this.camera::getxDir);
+        this.controlGettersMap.put(ServerControl.YDIR, this.camera::getyDir);
+        this.controlGettersMap.put(ServerControl.XPLANE,
                 this.camera::getxPlane);
-        this.mapCorespondantFields.put(ServerControl.YPLANE,
+        this.controlGettersMap.put(ServerControl.YPLANE,
                 this.camera::getyPlane);
+
+        this.controlSettersMap = new HashMap<>();
+        this.controlSettersMap.put(ServerControl.XPOS, this.camera::setxPos);
+        this.controlSettersMap.put(ServerControl.YPOS, this.camera::setyPos);
+        this.controlSettersMap.put(ServerControl.XDIR, this.camera::setxDir);
+        this.controlSettersMap.put(ServerControl.YDIR, this.camera::setyDir);
+        this.controlSettersMap.put(ServerControl.XPLANE,
+                this.camera::setxPlane);
+        this.controlSettersMap.put(ServerControl.YPLANE,
+                this.camera::setyPlane);
     }
 
     public Vector2D getPosition() {
@@ -73,9 +79,9 @@ public class Player extends NetworkObject implements IRenderable {
     public void onUpdate() {
         if (camera != null) {
             camera.update();
-        //    System.out.println("camera not null");
+            // System.out.println("camera not null");
         }
-          //  System.out.println("camera was null");
+        // System.out.println("camera was null");
     }
 
     @Override
@@ -96,7 +102,7 @@ public class Player extends NetworkObject implements IRenderable {
         byte[] playerID = ServerProtocol.uuidAsBytes(super.objectUniqueID);
         // add player id to the packet
         for (int i = ServerProtocol.METADATA_LENGTH; i < ServerProtocol.METADATA_LENGTH
-                + ServerProtocol.PLAYERID_LENGTH; i++) {
+                + ServerProtocol.OBJECTID_LENGTH; i++) {
             thisState[i] = playerID[i - ServerProtocol.METADATA_LENGTH];
         }
 
@@ -111,7 +117,7 @@ public class Player extends NetworkObject implements IRenderable {
                 Integer[] indexes = ServerProtocol
                         .getIndexesByControl(currentControl);
 
-                CameraCommunicatingInterface cameraReference = this.mapCorespondantFields
+                CameraGetterInterface cameraReference = this.controlGettersMap
                         .get(currentControl);
                 double cameraResult = cameraReference.accessDataFromCamera();
                 int startingIndex = indexes[0];
@@ -138,45 +144,22 @@ public class Player extends NetworkObject implements IRenderable {
     }
 
     @Override
-    public ServerCommand deserialize(byte[] packet) {
-        try {
-            // creating the initial map
-            Map<ServerControl, Double> objectStats = new HashMap<ServerControl, Double>();
+    public void deserialize(ServerCommand command) {
+        // TODO: only deserialise if the command's timestamp is recent enough.
+        Double val;
+        for (ServerControl c : ServerControl.values())
+            if ((val = command.getValueByControl(c)) != null)
+                this.controlSettersMap.get(c).setDataOnCamera(val);
 
-            // Metadata processing.
-            ByteBuffer buf = ByteBuffer.wrap(packet);
-            long timeSent = buf.getLong();
-
-            // set the new position in order to read objectid
-            buf.position(ServerProtocol.METADATA_LENGTH);
-            byte[] objectIdByte = new byte[ServerProtocol.PLAYERID_LENGTH];
-            buf.get(objectIdByte, 0, ServerProtocol.PLAYERID_LENGTH);
-
-            UUID playerID = ServerProtocol.bytesAsUuid(objectIdByte);
-
-            buf.position(ServerProtocol.MESSAGE_STARTING_POINT);
-
-            int position = 0;
-            while (buf.hasRemaining()) {
-                ServerControl currentControl = ServerProtocol
-                        .getControlByPosition(position);
-                double valueOfCurrentControl = buf.getDouble(buf.position());
-                objectStats.put(currentControl, valueOfCurrentControl);
-                buf.position(
-                        buf.position() + ServerProtocol.DOUBLE_TO_BYTES_LENGTH);
-                position++;
-            }
-            return new ServerCommand(timeSent, playerID, objectStats);
-
-        } catch (IOException e) {
-            System.err.println("Bad index...");
-        }
-        return null;
     }
 
     @FunctionalInterface
-    public static interface CameraCommunicatingInterface {
+    public static interface CameraGetterInterface {
         double accessDataFromCamera();
     }
 
+    @FunctionalInterface
+    public static interface CameraSetterInterface {
+        void setDataOnCamera(double val);
+    }
 }

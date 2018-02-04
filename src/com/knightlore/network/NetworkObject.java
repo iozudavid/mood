@@ -16,12 +16,16 @@ public abstract class NetworkObject extends GameObject{
 	
 	public abstract byte[] serialize();
 	
-	public abstract ServerCommand deserialize(byte[] packet);
+	public abstract void deserialize(ServerCommand packet);
 	
 	public synchronized UUID getObjectId(){
 		return this.objectUniqueID;
 	}
 	
+	@Override
+	public void onCreate() {
+	    NetworkObjectManager.getSingleton().registerNetworkObject(this);
+	}
 	
 	
 }

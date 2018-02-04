@@ -147,6 +147,18 @@ public class Camera {
     		return yPos;
     	}
     }
+    
+    public void setxPos(double xPos) {
+        synchronized (this.lock) {
+            this.xPos = xPos;
+        }
+    }
+
+    public void setyPos(double yPos) {
+        synchronized(this.lock){
+            this.yPos = yPos;
+        }
+    }
 
     public double getxDir() {
     	synchronized(this.lock){

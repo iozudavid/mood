@@ -11,11 +11,11 @@ public final class ServerProtocol {
 	 // The number of bytes taken up at the start of each packet with metadata.
     public static final int METADATA_LENGTH = 8;
     
-    // The number of bytes taken up after metadata of each packet with playerid.
-    public static final int PLAYERID_LENGTH = 16;
+    // The number of bytes taken up after metadata of each packet with objectid.
+    public static final int OBJECTID_LENGTH = 16;
     
     //where actual stats are written
-    public static final int MESSAGE_STARTING_POINT = METADATA_LENGTH + PLAYERID_LENGTH;
+    public static final int MESSAGE_STARTING_POINT = METADATA_LENGTH + OBJECTID_LENGTH;
     
     // double will have exactly 8 entries in array
     //when serialize it
@@ -58,7 +58,7 @@ public final class ServerProtocol {
     }
     
     
-    public static final int TOTAL_LENGTH = METADATA_LENGTH + PLAYERID_LENGTH + (indexAction.size()) * ServerProtocol.DOUBLE_TO_BYTES_LENGTH;
+    public static final int TOTAL_LENGTH = METADATA_LENGTH + OBJECTID_LENGTH + (indexAction.size()) * ServerProtocol.DOUBLE_TO_BYTES_LENGTH;
     
     
 
