@@ -12,6 +12,8 @@ public abstract class NetworkObject extends GameObject{
 	public NetworkObject(UUID uuid){
 		super();
 		this.objectUniqueID = uuid;
+        NetworkObjectManager.getSingleton().registerNetworkObject(this);
+        System.out.println("netobject uuid " + objectUniqueID + " registered with manager");
 	}
 	
 	public abstract byte[] serialize();
@@ -24,7 +26,6 @@ public abstract class NetworkObject extends GameObject{
 	
 	@Override
 	public void onCreate() {
-	    NetworkObjectManager.getSingleton().registerNetworkObject(this);
 	}
 	
 	

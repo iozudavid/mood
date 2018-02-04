@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.ListIterator;
 
-import com.knightlore.game.Player;
 import com.knightlore.game.area.Map;
 import com.knightlore.game.tile.AirTile;
 import com.knightlore.game.tile.Tile;
@@ -16,265 +15,290 @@ import com.knightlore.render.Screen;
 import com.knightlore.render.sprite.Texture;
 
 public class World implements IRenderable {
-	
-	private final List<GameObject> entities;
-	private long ticker;
 
-	private final Map map;
+    private final List<GameObject> entities;
+    private long ticker;
 
-	public World(Map map) {
-		this.map = map;
-		entities = new ArrayList<>();
-		new NetworkObjectManager();
-	}
+    private final Map map;
 
-	@Override
-	public void render(Screen screen, int x, int y) {
-		map.getEnvironment().renderEnvironment(screen);
-		//drawPerspective(screen);
-		//drawCrosshair(screen);
+    Camera camera = null;
 
-	}
+    public World(Map map) {
+        this.map = map;
+        entities = new ArrayList<>();
+        new NetworkObjectManager();
+    }
 
-	private final int BLOCKINESS = 1; // how 'old school' you want to look.
+    @Override
+    public void render(Screen screen, int x, int y) {
+        // We don't know what perspective to draw from until we know the
+        // identity of the current player, provided by the network. Stall until this is
+        // provided.
+        if (this.camera != null) {
+            map.getEnvironment().renderEnvironment(screen);
+            drawPerspective(screen);
+            drawCrosshair(screen);
+        }
 
-	/*
-	 * NOTE: THIS ONLY AFFECTS THE RENDERING SIZE OF A TILE. If you change this
-	 * variable, tiles will be drawn differently but the player will still move
-	 * at their usual speed over a single tile. You might want to compensate a
-	 * change here with a change in player move speed.
-	 */
-	private final float TILE_SIZE = 1F;
+    }
 
-	private void drawPerspective(Screen screen) {
+    // FIXME: Provide this in the constructor when we refactor this class.
+    public void setCamera(Camera camera) {
+        this.camera = camera;
+    }
 
-		final int width = screen.getWidth(), height = screen.getHeight();
-		//Camera camera = player.getCamera();
-		Camera camera = null;
+    private final int BLOCKINESS = 1; // how 'old school' you want to look.
 
-		// Buffer used to draw transparent objects for later mixing...
-		int[] transBuffer = new int[width * height];
+    /*
+     * NOTE: THIS ONLY AFFECTS THE RENDERING SIZE OF A TILE. If you change this
+     * variable, tiles will be drawn differently but the player will still move
+     * at their usual speed over a single tile. You might want to compensate a
+     * change here with a change in player move speed.
+     */
+    private final float TILE_SIZE = 1F;
 
-		double opacity = 1D;
+    private void drawPerspective(Screen screen) {
 
-		for (int xx = 0; xx < width; xx += BLOCKINESS) {
+        final int width = screen.getWidth(), height = screen.getHeight();
+        // Buffer used to draw transparent objects for later mixing...
+        int[] transBuffer = new int[width * height];
 
-			// Calculate direction of the ray based on camera direction.
-			double cameraX = 2 * xx / (double) (width) - 1;
-			double rayX = camera.getxDir() + camera.getxPlane() * cameraX;
-			double rayY = camera.getyDir() + camera.getyPlane() * cameraX;
+        double opacity = 1D;
 
-			// Round the camera position to the nearest map cell.
-			int mapX = (int) camera.getxPos();
-			int mapY = (int) camera.getyPos();
+        for (int xx = 0; xx < width; xx += BLOCKINESS) {
 
-			double sideDistX;
-			double sideDistY;
+            // Calculate direction of the ray based on camera direction.
+            double cameraX = 2 * xx / (double) (width) - 1;
+            double rayX = camera.getxDir() + camera.getxPlane() * cameraX;
+            double rayY = camera.getyDir() + camera.getyPlane() * cameraX;
 
-			// Length of ray from one side to next in map
-			double deltaDistX = Math.sqrt(1 + (rayY * rayY) / (rayX * rayX));
-			double deltaDistY = Math.sqrt(1 + (rayX * rayX) / (rayY * rayY));
+            // Round the camera position to the nearest map cell.
+            int mapX = (int) camera.getxPos();
+            int mapY = (int) camera.getyPos();
 
-			double distanceToWall;
+            double sideDistX;
+            double sideDistY;
 
-			boolean hit = false;
-			boolean side = false; // wall facing x-direction vs y-direction?
+            // Length of ray from one side to next in map
+            double deltaDistX = Math.sqrt(1 + (rayY * rayY) / (rayX * rayX));
+            double deltaDistY = Math.sqrt(1 + (rayX * rayX) / (rayY * rayY));
 
-			// find x and y components of the ray vector.
-			int stepX, stepY;
-			if (rayX < 0) {
-				stepX = -1;
-				sideDistX = (camera.getxPos() - mapX) * deltaDistX;
-			} else {
-				stepX = 1;
-				sideDistX = (mapX + 1.0 - camera.getxPos()) * deltaDistX;
-			}
+            double distanceToWall;
 
-			if (rayY < 0) {
-				stepY = -1;
-				sideDistY = (camera.getyPos() - mapY) * deltaDistY;
-			} else {
-				stepY = 1;
-				sideDistY = (mapY + 1.0 - camera.getyPos()) * deltaDistY;
-			}
+            boolean hit = false;
+            boolean side = false; // wall facing x-direction vs y-direction?
 
-			// Loop to find where the ray hits a wall
-			while (!hit) {
+            // find x and y components of the ray vector.
+            int stepX, stepY;
+            if (rayX < 0) {
+                stepX = -1;
+                sideDistX = (camera.getxPos() - mapX) * deltaDistX;
+            } else {
+                stepX = 1;
+                sideDistX = (mapX + 1.0 - camera.getxPos()) * deltaDistX;
+            }
 
-				// Next cell
-				if (sideDistX < sideDistY) {
-					sideDistX += deltaDistX;
-					mapX += stepX;
-					side = false;
-				} else {
-					sideDistY += deltaDistY;
-					mapY += stepY;
-					side = true;
-				}
+            if (rayY < 0) {
+                stepY = -1;
+                sideDistY = (camera.getyPos() - mapY) * deltaDistY;
+            } else {
+                stepY = 1;
+                sideDistY = (mapY + 1.0 - camera.getyPos()) * deltaDistY;
+            }
 
-				Tile tile = map.getTile(mapX, mapY);
+            // Loop to find where the ray hits a wall
+            while (!hit) {
 
-				// If this is anything but an empty cell, we've hit a tile
-				if (tile != AirTile.getInstance()) {
-					if (opacity < 1 && tile.getOpacity() < 1)
-						continue;
-					hit = true;
-					opacity = tile.getOpacity();
-				}
-			}
+                // Next cell
+                if (sideDistX < sideDistY) {
+                    sideDistX += deltaDistX;
+                    mapX += stepX;
+                    side = false;
+                } else {
+                    sideDistY += deltaDistY;
+                    mapY += stepY;
+                    side = true;
+                }
 
-			distanceToWall = getImpactDistance(camera, rayX, rayY, mapX, mapY, side, stepX, stepY);
-			int lineHeight = getDrawHeight(height, distanceToWall);
+                Tile tile = map.getTile(mapX, mapY);
 
-			// calculate lowest and highest pixel to fill in current strip
-			int drawStart = -lineHeight / 2 + height / 2;
-			if (drawStart < 0) {
-				drawStart = 0;
-			}
+                // If this is anything but an empty cell, we've hit a tile
+                if (tile != AirTile.getInstance()) {
+                    if (opacity < 1 && tile.getOpacity() < 1)
+                        continue;
+                    hit = true;
+                    opacity = tile.getOpacity();
+                }
+            }
 
-			int drawEnd = lineHeight / 2 + height / 2;
-			if (drawEnd >= height) {
-				drawEnd = height - 1;
-			}
+            distanceToWall = getImpactDistance(camera, rayX, rayY, mapX, mapY,
+                    side, stepX, stepY);
+            int lineHeight = getDrawHeight(height, distanceToWall);
 
-			double wallX = getWallHitPosition(camera, rayX, rayY, mapX, mapY, side, stepX, stepY);
+            // calculate lowest and highest pixel to fill in current strip
+            int drawStart = -lineHeight / 2 + height / 2;
+            if (drawStart < 0) {
+                drawStart = 0;
+            }
 
-			Texture texture = map.getTile(mapX, mapY).getTexture();
-			if (texture == Texture.EMPTY) {
-				continue;
-			}
+            int drawEnd = lineHeight / 2 + height / 2;
+            if (drawEnd >= height) {
+                drawEnd = height - 1;
+            }
 
-			// What pixel did we hit the texture on?
-			int texX = (int) (wallX * (texture.getSize()));
-			if (side && rayY < 0) {
-				texX = texture.getSize() - texX - 1;
-			}
+            double wallX = getWallHitPosition(camera, rayX, rayY, mapX, mapY,
+                    side, stepX, stepY);
 
-			if (!side && rayX > 0) {
-				texX = texture.getSize() - texX - 1;
-			}
+            Texture texture = map.getTile(mapX, mapY).getTexture();
+            if (texture == Texture.EMPTY) {
+                continue;
+            }
 
-			// calculate y coordinate on texture
-			for (int yy = drawStart; yy < drawEnd; yy++) {
+            // What pixel did we hit the texture on?
+            int texX = (int) (wallX * (texture.getSize()));
+            if (side && rayY < 0) {
+                texX = texture.getSize() - texX - 1;
+            }
 
-				// TODO: only compensates for 16x16 textures here, maybe change?
-				int texY = (((yy * 2 - height + lineHeight) << 4) / lineHeight) / 2;
+            if (!side && rayX > 0) {
+                texX = texture.getSize() - texX - 1;
+            }
 
-				int color = texture.getPixels()[texX + (texY * texture.getSize())];
+            // calculate y coordinate on texture
+            for (int yy = drawStart; yy < drawEnd; yy++) {
 
-				// If the block our ray hit is NOT COMPLETELY OPAQUE,
-				// we write it to the transBuffer.
-				if (opacity < 1) {
-					color += ((int) (opacity * 127)) << 24;
-					transBuffer[xx + yy * width] = color;
-				} else {
-					screen.fillRect(darken(color, distanceToWall), xx, yy, BLOCKINESS, 1);
-				}
-			}
+                // TODO: only compensates for 16x16 textures here, maybe change?
+                int texY = (((yy * 2 - height + lineHeight) << 4) / lineHeight)
+                        / 2;
 
-			if (opacity < 1) {
-				xx -= BLOCKINESS;
-			}
+                int color = texture.getPixels()[texX
+                        + (texY * texture.getSize())];
 
-		}
+                // If the block our ray hit is NOT COMPLETELY OPAQUE,
+                // we write it to the transBuffer.
+                if (opacity < 1) {
+                    color += ((int) (opacity * 127)) << 24;
+                    transBuffer[xx + yy * width] = color;
+                } else {
+                    screen.fillRect(darken(color, distanceToWall), xx, yy,
+                            BLOCKINESS, 1);
+                }
+            }
 
-		// TODO: fix illumination of transparent blocks...
+            if (opacity < 1) {
+                xx -= BLOCKINESS;
+            }
 
-		// Now mix with the transparency buffer to render transparent tiles.
-		for (int yy = 0; yy < height; yy++) {
-			for (int xx = 0; xx < width; xx++) {
-				if (transBuffer[xx + yy * width] != 0) {
-					int transColor = transBuffer[xx + yy * width];
-					double transOpacity = ((transColor & 0xFF000000) >> 24) / 127D;
-					int color = screen.mixColor(screen.getPixels()[xx + yy * width], transColor, transOpacity);
-					screen.fillRect(color, xx, yy, BLOCKINESS, 1);
-				}
-			}
-		}
+        }
 
-	}
+        // TODO: fix illumination of transparent blocks...
 
-	private double getWallHitPosition(Camera camera, double rayX, double rayY, int mapX, int mapY, boolean side,
-			int stepX, int stepY) {
-		// add a texture
-		double wallX;// Exact position of where wall was hit
-		if (side) {// If its a y-axis wall
-			wallX = (camera.getxPos() + ((mapY - camera.getyPos() + (1 - stepY) / 2) / rayY) * rayX);
-		} else {// X-axis wall
-			wallX = (camera.getyPos() + ((mapX - camera.getxPos() + (1 - stepX) / 2) / rayX) * rayY);
-		}
-		wallX -= Math.floor(wallX);
-		return wallX;
-	}
+        // Now mix with the transparency buffer to render transparent tiles.
+        for (int yy = 0; yy < height; yy++) {
+            for (int xx = 0; xx < width; xx++) {
+                if (transBuffer[xx + yy * width] != 0) {
+                    int transColor = transBuffer[xx + yy * width];
+                    double transOpacity = ((transColor & 0xFF000000) >> 24)
+                            / 127D;
+                    int color = screen.mixColor(
+                            screen.getPixels()[xx + yy * width], transColor,
+                            transOpacity);
+                    screen.fillRect(color, xx, yy, BLOCKINESS, 1);
+                }
+            }
+        }
 
-	private int getDrawHeight(final int screenHeight, double distanceToWall) {
-		int lineHeight;
-		if (distanceToWall > 0) {
-			lineHeight = Math.abs((int) (screenHeight / distanceToWall));
-		} else {
-			lineHeight = screenHeight;
-		}
-		return lineHeight;
-	}
+    }
 
-	private double getImpactDistance(Camera camera, double rayX, double rayY, int mapX, int mapY, boolean side,
-			int stepX, int stepY) {
-		double distanceToWall;
-		// Calculate distance to the point of impact
-		if (!side) {
-			distanceToWall = Math.abs((mapX - camera.getxPos() + (1 - stepX) / 2) / (rayX / TILE_SIZE));
-		} else {
-			distanceToWall = Math.abs((mapY - camera.getyPos() + (1 - stepY) / 2) / (rayY / TILE_SIZE));
-		}
-		return distanceToWall;
-	}
+    private double getWallHitPosition(Camera camera, double rayX, double rayY,
+            int mapX, int mapY, boolean side, int stepX, int stepY) {
+        // add a texture
+        double wallX;// Exact position of where wall was hit
+        if (side) {// If its a y-axis wall
+            wallX = (camera.getxPos()
+                    + ((mapY - camera.getyPos() + (1 - stepY) / 2) / rayY)
+                            * rayX);
+        } else {// X-axis wall
+            wallX = (camera.getyPos()
+                    + ((mapX - camera.getxPos() + (1 - stepX) / 2) / rayX)
+                            * rayY);
+        }
+        wallX -= Math.floor(wallX);
+        return wallX;
+    }
 
-	private void drawCrosshair(Screen screen) {
-		final int CROSSHAIR_SIZE = 10;
-		final int CROSSHAIR_WIDTH = 2;
-		final int CROSSHAIR_COLOR = 0xFFFFFF;
-		final int w = screen.getWidth() / 2, h = screen.getHeight() / 2;
-		screen.fillRect(CROSSHAIR_COLOR, w - CROSSHAIR_SIZE, h - CROSSHAIR_WIDTH / 2, CROSSHAIR_SIZE * 2,
-				CROSSHAIR_WIDTH);
-		screen.fillRect(CROSSHAIR_COLOR, w - CROSSHAIR_WIDTH / 2, h - CROSSHAIR_SIZE, CROSSHAIR_WIDTH,
-				CROSSHAIR_SIZE * 2);
-	}
+    private int getDrawHeight(final int screenHeight, double distanceToWall) {
+        int lineHeight;
+        if (distanceToWall > 0) {
+            lineHeight = Math.abs((int) (screenHeight / distanceToWall));
+        } else {
+            lineHeight = screenHeight;
+        }
+        return lineHeight;
+    }
 
-	public void tick() {
-		garbageCollect();
-		//player.tick(ticker);
+    private double getImpactDistance(Camera camera, double rayX, double rayY,
+            int mapX, int mapY, boolean side, int stepX, int stepY) {
+        double distanceToWall;
+        // Calculate distance to the point of impact
+        if (!side) {
+            distanceToWall = Math
+                    .abs((mapX - camera.getxPos() + (1 - stepX) / 2)
+                            / (rayX / TILE_SIZE));
+        } else {
+            distanceToWall = Math
+                    .abs((mapY - camera.getyPos() + (1 - stepY) / 2)
+                            / (rayY / TILE_SIZE));
+        }
+        return distanceToWall;
+    }
 
-		ticker++;
-	}
+    private void drawCrosshair(Screen screen) {
+        final int CROSSHAIR_SIZE = 10;
+        final int CROSSHAIR_WIDTH = 2;
+        final int CROSSHAIR_COLOR = 0xFFFFFF;
+        final int w = screen.getWidth() / 2, h = screen.getHeight() / 2;
+        screen.fillRect(CROSSHAIR_COLOR, w - CROSSHAIR_SIZE,
+                h - CROSSHAIR_WIDTH / 2, CROSSHAIR_SIZE * 2, CROSSHAIR_WIDTH);
+        screen.fillRect(CROSSHAIR_COLOR, w - CROSSHAIR_WIDTH / 2,
+                h - CROSSHAIR_SIZE, CROSSHAIR_WIDTH, CROSSHAIR_SIZE * 2);
+    }
 
-	private int darken(int color, double distance) {
-		Color c = new Color(color);
-		double fogFactor = distance * map.getEnvironment().getDarkness();
-		int red = (int) (Math.max(0, c.getRed() - fogFactor));
-		int green = (int) (Math.max(0, c.getGreen() - fogFactor));
-		int blue = (int) (Math.max(0, c.getBlue() - fogFactor));
-		return new Color(red, green, blue).getRGB();
-	}
+    public void tick() {
+        garbageCollect();
+        // player.tick(ticker);
 
-	/**
-	 * Deletes any entities that don't exist any more.
-	 */
-	private void garbageCollect() {
-		ListIterator<GameObject> itr = entities.listIterator();
-		while (itr.hasNext()) {
-			GameObject e = itr.next();
-			if (!e.exists()) {
-				itr.remove();
-			}
-		}
-	}
+        ticker++;
+    }
 
-	public List<GameObject> getEntities() {
-		return entities;
-	}
+    private int darken(int color, double distance) {
+        Color c = new Color(color);
+        double fogFactor = distance * map.getEnvironment().getDarkness();
+        int red = (int) (Math.max(0, c.getRed() - fogFactor));
+        int green = (int) (Math.max(0, c.getGreen() - fogFactor));
+        int blue = (int) (Math.max(0, c.getBlue() - fogFactor));
+        return new Color(red, green, blue).getRGB();
+    }
 
-	public Map getMap() {
-		return map;
-	}
+    /**
+     * Deletes any entities that don't exist any more.
+     */
+    private void garbageCollect() {
+        ListIterator<GameObject> itr = entities.listIterator();
+        while (itr.hasNext()) {
+            GameObject e = itr.next();
+            if (!e.exists()) {
+                itr.remove();
+            }
+        }
+    }
+
+    public List<GameObject> getEntities() {
+        return entities;
+    }
+
+    public Map getMap() {
+        return map;
+    }
 
 }

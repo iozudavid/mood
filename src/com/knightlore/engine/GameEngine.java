@@ -3,14 +3,11 @@ package com.knightlore.engine;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedList;
-import java.util.UUID;
 
 import com.knightlore.MainWindow;
 import com.knightlore.engine.input.InputManager;
 import com.knightlore.engine.input.Mouse;
-import com.knightlore.game.Player;
 import com.knightlore.game.area.AreaFactory;
-import com.knightlore.render.Camera;
 import com.knightlore.render.Environment;
 import com.knightlore.render.Screen;
 
@@ -18,162 +15,162 @@ import com.knightlore.render.Screen;
  * Game engine acting as sort of a 'hub' for each of the individual game
  * components.
  * 
- * @authors Joe Ellis, James Adey 
+ * @authors Joe Ellis, James Adey
  *
  */
 public class GameEngine implements Runnable {
-	
-	private static GameEngine singleton;
 
-	private static final double UPDATES_PER_SECOND = 60D;
+    private static GameEngine singleton;
 
-	private final Screen screen;
-	private final MainWindow window;
-	private final World world;
-	private final ArrayList<GameObject> objects;
-	private Thread thread;
-	private volatile boolean running = false;
-	
-	private LinkedList<GameObject> notifyToCreate;
-	private LinkedList<GameObject> notifyToDestroy;
+    private static final double UPDATES_PER_SECOND = 60D;
 
-	public GameEngine() {
-		objects = new ArrayList<>();
-		notifyToCreate = new LinkedList<GameObject>();
-		notifyToDestroy = new LinkedList<GameObject>();
+    private final Screen screen;
+    private final MainWindow window;
+    private final World world;
+
+    private final ArrayList<GameObject> objects;
+    private Thread thread;
+    private volatile boolean running = false;
+
+    private LinkedList<GameObject> notifyToCreate;
+    private LinkedList<GameObject> notifyToDestroy;
+
+    public GameEngine() {
+        objects = new ArrayList<>();
+        notifyToCreate = new LinkedList<GameObject>();
+        notifyToDestroy = new LinkedList<GameObject>();
 
         singleton = this;
         world = new World(AreaFactory.createRandomMap(Environment.LIGHT_OUTDOORS));
-		
-		final int w = MainWindow.WIDTH, h = MainWindow.HEIGHT;
-		screen = new Screen(w, h);
-		window = new MainWindow(screen, MainWindow.TITLE, w, h);
-		initEngine();
-	}
-	
-	static GameEngine getSingleton(){
-		return singleton;
-	}
-	
-	void addGameObject(GameObject g){
-		// delay adding until next loop
-		notifyToCreate.add(g);
-	}
-	
-	void removeGameObject(GameObject g){
-		// delay deleting until next loop
-		notifyToDestroy.add(g);
-	}
-	
-	public Player createPlayer(double xPos, double yPos, double xDir, double yDir,
-            double xPlane, double yPlane, UUID uuid) {
-	    Camera camera = new Camera(xPos, yPos, xDir, yDir, xPlane, yPlane, world.getMap());
-	    return new Player(uuid, camera);
-	}
 
-	private void initEngine() {
-		System.out.println("Initialising Engine...");
-		InputManager.init();
-		setupKeyboard();
-		setupMouse();
-		System.out.println("Engine Initialised Successfully.");
-	}
+        final int w = MainWindow.WIDTH, h = MainWindow.HEIGHT;
+        screen = new Screen(w, h);
+        window = new MainWindow(screen, MainWindow.TITLE, w, h);
+        initEngine();
+    }
 
-	public void start(boolean visible) {
-		running = true;
-		thread = new Thread(this);
-		thread.start();
-		window.setVisible(visible);
-	}
+    // FIXME: Refactor World and remove this
+    public World getWorld() {
+        return world;
+    }
 
-	public void stop() {
-		running = false;
-		try {
-			thread.join();
-		} catch (InterruptedException e) {
-			// should't happen as the thread shouldn't be interrupted
-			e.printStackTrace();
-		}
-	}
+    // FIXME: As above, regarding public modifier
+    public static GameEngine getSingleton() {
+        return singleton;
+    }
 
-	@Override
-	public void run() {
-		/*
-		 * This piece of code limits the number of game updates per second to
-		 * whatever it is set to in the variable updatesPerSecond.
-		 */
-		long lastTime = System.nanoTime();
-		double delta = 0D;
-		double ns = 1E9D / UPDATES_PER_SECOND;
-		while (running) {
-			long now = System.nanoTime();
-			delta += (now - lastTime) / ns;
-			lastTime = now;
+    void addGameObject(GameObject g) {
+        // delay adding until next loop
+        notifyToCreate.add(g);
+    }
 
-			while (delta >= 1) {
-				updateObjects();
-				world.tick();
-				screen.render(0, 0, world);
-				delta -= 1;
-			}
-		}
-	}
+    void removeGameObject(GameObject g) {
+        // delay deleting until next loop
+        notifyToDestroy.add(g);
+    }
 
-	private void updateObjects() {
-		// perform internal list management before updating.
-		// as modifying a list whilst iterating over it is a very bad idea.
-		
-		Iterator<GameObject> it = notifyToCreate.iterator();
-		while(it.hasNext()){
-			GameObject obj = it.next();
-			// add the object to the update list
-			objects.add(obj);
-			obj.setExists(true);
-			// notify the object it has been created
-			obj.onCreate();
-		}
-		notifyToCreate.clear();
-		
-		// remove any objects that need deleting		
-		it = notifyToDestroy.iterator();
-		while(it.hasNext()){
-			GameObject obj = it.next();
-			// remove the object from the update list
-			objects.remove(obj);
-			obj.setExists(false);
-			// notify the object it has been effectively destroyed
-			obj.onDestroy();
-		}
-		notifyToDestroy.clear();
-		
-		// update all objects
-		for (GameObject obj: objects) {
-			obj.onUpdate();
-		}
-		
+    private void initEngine() {
+        System.out.println("Initialising Engine...");
+        InputManager.init();
+        setupKeyboard();
+        setupMouse();
+        System.out.println("Engine Initialised Successfully.");
+    }
 
-	}
+    public void start(boolean visible) {
+        running = true;
+        thread = new Thread(this);
+        thread.start();
+        window.setVisible(visible);
+    }
 
-	/**
-	 * Add the singleton keyboard instance to the canvas and request focus.
-	 */
-	private void setupKeyboard() {
-		screen.addKeyListener(InputManager.getKeyboard());
-		screen.requestFocus();
-	}
+    public void stop() {
+        running = false;
+        try {
+            thread.join();
+        } catch (InterruptedException e) {
+            // should't happen as the thread shouldn't be interrupted
+            e.printStackTrace();
+        }
+    }
 
-	/**
-	 * Add the singleton mouse instance to the canvas and request focus.
-	 */
-	private void setupMouse() {
-		Mouse mouse = InputManager.getMouse();
-		screen.addMouseListener(mouse);
-		screen.addMouseMotionListener(mouse);
-		screen.addMouseWheelListener(mouse);
-		screen.requestFocus();
-	}
+    @Override
+    public void run() {
+        /*
+         * This piece of code limits the number of game updates per second to
+         * whatever it is set to in the variable updatesPerSecond.
+         */
+        long lastTime = System.nanoTime();
+        double delta = 0D;
+        double ns = 1E9D / UPDATES_PER_SECOND;
+        while (running) {
+            long now = System.nanoTime();
+            delta += (now - lastTime) / ns;
+            lastTime = now;
 
-	public static void main(String[] args) {
-	}
-	
+            while (delta >= 1) {
+                updateObjects();
+                world.tick();
+                screen.render(0, 0, world);
+                delta -= 1;
+            }
+        }
+    }
+
+    private void updateObjects() {
+        // perform internal list management before updating.
+        // as modifying a list whilst iterating over it is a very bad idea.
+
+        Iterator<GameObject> it = notifyToCreate.iterator();
+        while (it.hasNext()) {
+            GameObject obj = it.next();
+            // add the object to the update list
+            objects.add(obj);
+            obj.setExists(true);
+            // notify the object it has been created
+            obj.onCreate();
+        }
+        notifyToCreate.clear();
+
+        // remove any objects that need deleting
+        it = notifyToDestroy.iterator();
+        while (it.hasNext()) {
+            GameObject obj = it.next();
+            // remove the object from the update list
+            objects.remove(obj);
+            obj.setExists(false);
+            // notify the object it has been effectively destroyed
+            obj.onDestroy();
+        }
+        notifyToDestroy.clear();
+
+        // update all objects
+        for (GameObject obj : objects) {
+            obj.onUpdate();
+        }
+
+    }
+
+    /**
+     * Add the singleton keyboard instance to the canvas and request focus.
+     */
+    private void setupKeyboard() {
+        screen.addKeyListener(InputManager.getKeyboard());
+        screen.requestFocus();
+    }
+
+    /**
+     * Add the singleton mouse instance to the canvas and request focus.
+     */
+    private void setupMouse() {
+        Mouse mouse = InputManager.getMouse();
+        screen.addMouseListener(mouse);
+        screen.addMouseMotionListener(mouse);
+        screen.addMouseWheelListener(mouse);
+        screen.requestFocus();
+    }
+
+    public static void main(String[] args) {
+    }
+
 }

@@ -22,11 +22,6 @@ import com.knightlore.render.Camera;
 public class ServerManager implements Runnable {
     private ConcurrentHashMap<UUID, Connection> connections = new ConcurrentHashMap<UUID, Connection>();
     private ServerSocket serverSocket = null;
-    private GameEngine engine;
-
-    public ServerManager(GameEngine engine) {
-        this.engine = engine;
-    }
 
     @Override
     public void run() {
@@ -58,17 +53,20 @@ public class ServerManager implements Runnable {
             try {
                 Socket socket = serverSocket.accept();
                 // TODO: decide how to choose player location
-                Player player = engine.createPlayer(4.5, 4.5, 1, 0, 0,
-                        Camera.FIELD_OF_VIEW, nextUUID);
+                //       fix this hack
+                Camera camera = new Camera(4.5, 4.5, 1, 0, 0,
+                        Camera.FIELD_OF_VIEW,
+                        GameEngine.getSingleton().getWorld().getMap());
+                Player player = new Player(nextUUID, camera);
                 System.out.println("created player");
                 Connection conn = new TCPConnection(socket);
                 new Thread(conn).start();
                 System.out.println("started conn thread");
 
                 new Thread(new ReceiveFromClient(conn, player)).start();
-                new Thread(new SendToClient(conn)).start();
+                new Thread(new SendToClient(conn, nextUUID)).start();
 
-                this.connections.put(player.getObjectId(), conn);
+                this.connections.put(nextUUID, conn);
             } catch (IOException e) {
                 System.err.println("Couldn't create the connection...");
                 System.exit(1);

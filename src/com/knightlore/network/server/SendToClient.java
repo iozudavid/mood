@@ -1,24 +1,29 @@
 package com.knightlore.network.server;
 
+import java.util.UUID;
 import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
 
 import com.knightlore.network.Connection;
 import com.knightlore.network.NetworkObjectManager;
 
 public class SendToClient implements Runnable {
-    
+
     private Connection conn;
-    private BlockingQueue<byte[]> commandQueue;
+    private BlockingQueue<byte[]> commandQueue = new LinkedBlockingQueue<>();
+    private UUID uuid;
 
-    public SendToClient(Connection conn) {
+    public SendToClient(Connection conn, UUID uuid) {
         this.conn = conn;
-
-        NetworkObjectManager.getSingleton().registerClientSender(this);
+        this.uuid = uuid;
     }
 
     @Override
     public void run() {
-
+        NetworkObjectManager.getSingleton().registerClientSender(this);
+        // Firstly, send the player's own state to inform them of their own identity.
+        conn.send(NetworkObjectManager.getSingleton().getNetworkObject(uuid)
+                .serialize());
         while (!conn.terminated) {
             byte[] nextState;
             try {
