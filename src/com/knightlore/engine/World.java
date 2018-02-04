@@ -35,7 +35,7 @@ public class World implements IRenderable {
 
 		Camera camera = new Camera(4.5, 4.5, 1, 0, 0, Camera.FIELD_OF_VIEW, map);
 		player = new Player(camera);
-		this.minimap = new Minimap(player, map);
+		this.minimap = new Minimap(player, map, 128);
 
 		for (int i = 0; i < 5; i++) {
 			mobs.add(new ShotgunPickup(new Vector2D(i, 3)));
@@ -47,7 +47,7 @@ public class World implements IRenderable {
 		map.getEnvironment().renderEnvironment(pix);
 		drawPerspective(pix);
 		drawCrosshair(pix);
-		minimap.render(pix, 0, 0);
+		minimap.render(pix, pix.getWidth() - minimap.getSize(), 0);
 	}
 
 	private final int BLOCKINESS = 6; // how 'old school' you want to look.
