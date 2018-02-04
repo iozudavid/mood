@@ -41,7 +41,9 @@ public class SendToClient implements Runnable{
 	}
 	
 	public void run() {
-		
+	    //send first state
+	    //to let the client know his id
+		conn.send(this.currentState);
 		while (!conn.terminated) {
 			byte[] nextState;
 			try {

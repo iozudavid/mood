@@ -73,9 +73,9 @@ public class Player extends NetworkObject implements IRenderable {
     public void onUpdate() {
         if (camera != null) {
             camera.update();
-        //    System.out.println("camera not null");
+            // System.out.println("camera not null");
         }
-          //  System.out.println("camera was null");
+        // System.out.println("camera was null");
     }
 
     @Override
