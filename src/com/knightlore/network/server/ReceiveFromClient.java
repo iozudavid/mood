@@ -31,9 +31,10 @@ public class ReceiveFromClient implements Runnable {
         } catch (Exception e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
-        }
-
+        } 
+        
         System.out.println("Got null packet, exiting");
+        conn.terminated = true;
     }
 
     public ClientCommand getPacketDecoded(byte[] packet) {

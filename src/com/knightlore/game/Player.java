@@ -91,6 +91,9 @@ public class Player extends NetworkObject implements IRenderable {
     }
 
     public byte[] serialize() {
+        if(camera == null)
+            return null;
+        
         byte[] thisState = new byte[ServerProtocol.TOTAL_LENGTH];
 
         // Prepend metadata to the state array.

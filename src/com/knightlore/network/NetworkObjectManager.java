@@ -2,6 +2,7 @@ package com.knightlore.network;
 
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -9,9 +10,12 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.CopyOnWriteArrayList;
 
+import com.knightlore.engine.GameEngine;
 import com.knightlore.engine.GameObject;
+import com.knightlore.game.Player;
 import com.knightlore.network.protocol.ServerProtocol;
 import com.knightlore.network.server.SendToClient;
+import com.knightlore.render.Camera;
 import com.knightlore.utils.Tuple;
 
 public class NetworkObjectManager extends GameObject {
@@ -31,15 +35,24 @@ public class NetworkObjectManager extends GameObject {
     }
 
     public void removeNetworkObject(NetworkObject obj) {
-        Set<Entry<UUID, Tuple<NetworkObject, byte[]>>> set = networkObjects
-                .entrySet();
-        for (Entry<UUID, Tuple<NetworkObject, byte[]>> e : set)
-            if (e.getValue().x == obj)
-                set.remove(e);
+        Iterator<Entry<UUID, Tuple<NetworkObject, byte[]>>> it = this.networkObjects.entrySet().iterator();
+        Entry<UUID, Tuple<NetworkObject, byte[]>> next = null;
+        while (it.hasNext()){
+            next = it.next();
+            if(next.getValue().x == obj){
+                it.remove();
+            }
+        }
     }
 
     public NetworkObject getNetworkObject(UUID uuid) {
-        return networkObjects.get(uuid).x;
+        if(networkObjects.containsKey(uuid))
+            return networkObjects.get(uuid).x;
+        Camera camera = new Camera(4.5, 4.5, 1, 0, 0,
+                Camera.FIELD_OF_VIEW,
+                GameEngine.getSingleton().getWorld().getMap());
+        networkObjects.put(uuid, new Tuple<NetworkObject, byte[]>(new Player(uuid, camera), null));
+        return getNetworkObject(uuid);
     }
 
     public void registerClientSender(SendToClient obj) {
@@ -94,7 +107,7 @@ public class NetworkObjectManager extends GameObject {
 
     }
 
-    public static NetworkObjectManager getSingleton() {
+    public synchronized static NetworkObjectManager getSingleton() {
         return singleton;
     }
 

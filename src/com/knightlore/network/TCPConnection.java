@@ -70,8 +70,10 @@ public class TCPConnection extends Connection {
             }
         } catch (SocketTimeoutException e) {
             System.err.println("Timed out while waiting to receive a packet.");
+            this.terminated = true;
         } catch (IOException e) {
             System.err.println("Communication broke...");
+            this.terminated = true;
         }
         return data;
     }

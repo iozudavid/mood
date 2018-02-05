@@ -10,7 +10,7 @@ public abstract class Connection implements Runnable {
     // Wait 5 seconds without receiving packets before disconnecting.
     //protected static int TIMEOUT_MILLIS = 5 * 1000;
     protected static int TIMEOUT_MILLIS = 30 * 1000;
-
+    
     public volatile boolean terminated;
     // Stores the most recently received packet.
     private BlockingQueue<byte[]> packets;
@@ -41,12 +41,14 @@ public abstract class Connection implements Runnable {
         while (true) {
             byte[] packet = Connection.this.receiveBlocking();
             if (packet == null) {
+                this.terminated = true;
                 System.err.println("Received a null packet.");
                 break;
             }
             try {
                 packets.put(packet);
             } catch (InterruptedException e) {
+                this.terminated = true;
                 System.err
                         .println("Thread interrupted while receiving packet: ");
                 break;

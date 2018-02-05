@@ -4,7 +4,11 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.UUID;
 
+import com.knightlore.game.Player;
 import com.knightlore.network.Connection;
+import com.knightlore.network.NetworkObject;
+import com.knightlore.network.NetworkObjectManager;
+import com.knightlore.utils.Tuple;
 
 /**
  * Constantly checks for inactive client connections, and removes them from the
@@ -15,18 +19,24 @@ import com.knightlore.network.Connection;
 public class Pruner implements Runnable {
     // The time to wait, in milliseconds, between checks for terminated threads.
     private static int PERIOD_MILLIS = 1000;
-    private Map<UUID, Connection> conns;
+    private Map<UUID, Tuple<Connection,NetworkObject>> conns;
 
-    public Pruner(Map<UUID, Connection> conns) {
+    public Pruner(Map<UUID, Tuple<Connection,NetworkObject>> conns) {
         this.conns = conns;
     }
 
     public void run() {
         while (true) {
-            Iterator<Connection> i = conns.values().iterator();
-            while (i.hasNext())
-                if (i.next().getTerminated())
+            Iterator<Tuple<Connection, NetworkObject>> i = conns.values().iterator();
+            Tuple<Connection, NetworkObject> next = null;
+            while (i.hasNext()){
+                next = i.next();
+                if (next.x.getTerminated()){
+                    NetworkObjectManager.getSingleton().removeNetworkObject(next.y);
+                    next.y.destroy();
                     i.remove();
+                }
+            }
             try {
                 // Reduce CPU usage by only checking periodically.
                 Thread.sleep(PERIOD_MILLIS);

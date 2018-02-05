@@ -9,9 +9,11 @@ import java.util.concurrent.ConcurrentHashMap;
 import com.knightlore.engine.GameEngine;
 import com.knightlore.game.Player;
 import com.knightlore.network.Connection;
+import com.knightlore.network.NetworkObject;
 import com.knightlore.network.Port;
 import com.knightlore.network.TCPConnection;
 import com.knightlore.render.Camera;
+import com.knightlore.utils.Tuple;
 
 /**
  * A network connection manager that runs server-side and deals with all
@@ -20,7 +22,7 @@ import com.knightlore.render.Camera;
  * @author Will
  */
 public class ServerManager implements Runnable {
-    private ConcurrentHashMap<UUID, Connection> connections = new ConcurrentHashMap<UUID, Connection>();
+    private ConcurrentHashMap<UUID, Tuple<Connection, NetworkObject>> connections = new ConcurrentHashMap<UUID, Tuple<Connection, NetworkObject>>();
     private ServerSocket serverSocket = null;
 
     @Override
@@ -66,7 +68,7 @@ public class ServerManager implements Runnable {
                 new Thread(new ReceiveFromClient(conn, player)).start();
                 new Thread(new SendToClient(conn, nextUUID)).start();
 
-                this.connections.put(nextUUID, conn);
+                this.connections.put(nextUUID, new Tuple<Connection, NetworkObject>(conn, player));
             } catch (IOException e) {
                 System.err.println("Couldn't create the connection...");
                 System.exit(1);

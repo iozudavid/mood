@@ -41,7 +41,7 @@ public abstract class GameObject {
 	// Called when the attached gameObject is being removed from the game
 	public abstract void onDestroy();
 	
-	protected void destroy(){
+	public void destroy(){
 		GameEngine.getSingleton().removeGameObject(this);
 	}
 
