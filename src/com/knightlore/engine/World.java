@@ -50,7 +50,7 @@ public class World implements IRenderable {
 		minimap.render(pix, pix.getWidth() - minimap.getSize(), 0);
 	}
 
-	private final int BLOCKINESS = 6; // how 'old school' you want to look.
+	private final int BLOCKINESS = 1; // how 'old school' you want to look.
 
 	/*
 	 * NOTE: THIS ONLY AFFECTS THE RENDERING SIZE OF A TILE. If you change this
