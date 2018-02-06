@@ -6,12 +6,8 @@ import java.util.Map.Entry;
 import com.knightlore.engine.GameEngine;
 import com.knightlore.engine.GameObject;
 import com.knightlore.engine.TickListener;
-import com.knightlore.engine.input.Controller;
-import com.knightlore.engine.input.InputManager;
-import com.knightlore.engine.input.Keyboard;
 import com.knightlore.game.area.Map;
 import com.knightlore.game.tile.Tile;
-import com.knightlore.input.BasicController;
 import com.knightlore.network.protocol.ClientControl;
 
 public class Camera extends GameObject implements TickListener {
@@ -86,15 +82,6 @@ public class Camera extends GameObject implements TickListener {
 		synchronized (this.inputState) {
 			this.inputState = inputState;
 		}
-	}
-
-	public boolean isMoving() {
-		Keyboard keyboard = InputManager.getKeyboard();
-		Controller controller = new BasicController();
-		return keyboard.isPressed(controller.moveForward())
-				|| keyboard.isPressed(controller.moveBackward())
-				|| keyboard.isPressed(controller.moveLeft())
-				|| keyboard.isPressed(controller.moveRight());
 	}
 
 	private void updateMotionOffset() {

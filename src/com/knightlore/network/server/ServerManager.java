@@ -43,14 +43,6 @@ public class ServerManager implements Runnable {
         }
 
         while (true) {
-            // TODO: listen for connections, create and start a Connection
-            // object for each
-            // infinite loop to listen for incoming loop
-            // here will be the verification of the convention for 4 bytes for
-            // example
-            // then create an entry in map
-            // and also start a new connection thread
-            // new Client();
             UUID nextUUID = UUID.randomUUID();
             try {
                 Socket socket = serverSocket.accept();
@@ -60,10 +52,8 @@ public class ServerManager implements Runnable {
                         Camera.FIELD_OF_VIEW,
                         GameEngine.getSingleton().getWorld().getMap());
                 Player player = new Player(nextUUID, camera);
-                System.out.println("created player");
                 Connection conn = new TCPConnection(socket);
                 new Thread(conn).start();
-                System.out.println("started conn thread");
 
                 new Thread(new ReceiveFromClient(conn, player)).start();
                 new Thread(new SendToClient(conn, nextUUID)).start();
