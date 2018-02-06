@@ -23,7 +23,7 @@ public class SendToClient implements Runnable {
         NetworkObjectManager.getSingleton().registerClientSender(this);
         // Firstly, send the player's own state to inform them of their own identity.
         conn.send(NetworkObjectManager.getSingleton().getNetworkObject(uuid)
-                .serialize());
+                .serialize(false));
         while (!conn.terminated) {
             byte[] nextState;
             try {

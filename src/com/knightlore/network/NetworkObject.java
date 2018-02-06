@@ -16,17 +16,18 @@ public abstract class NetworkObject extends GameObject{
         System.out.println("netobject uuid " + objectUniqueID + " registered with manager");
 	}
 	
-	public abstract byte[] serialize();
+	//the boolean variable will be used to know which type of state
+	//we want to obtain
+	//state = the resulted byte array
+	//if disconnect == true  : the state will be a disconnect state for this network object
+	//                         the protocol for disconnect state will be found in server protocols
+	//if disconnect == false : the state will be the actual state of the client
+	public abstract byte[] serialize(boolean disconnect);
 	
 	public abstract void deserialize(ServerCommand packet);
 	
 	public synchronized UUID getObjectId(){
 		return this.objectUniqueID;
 	}
-	
-	@Override
-	public void onCreate() {
-	}
-	
 	
 }

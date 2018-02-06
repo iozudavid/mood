@@ -9,6 +9,7 @@ import com.knightlore.network.Connection;
 import com.knightlore.network.NetworkObjectManager;
 import com.knightlore.network.protocol.ServerCommand;
 import com.knightlore.network.protocol.ServerControl;
+import com.knightlore.network.protocol.ServerProtocol;
 import com.knightlore.render.Camera;
 
 public class ReceiveFromServer implements Runnable {
@@ -41,8 +42,20 @@ public class ReceiveFromServer implements Runnable {
 
             while (!conn.terminated && (packet = conn.receive()) != null) {
                 ServerCommand command = ServerCommand.decodePacket(packet);
-                packet = conn.receive();
-
+             
+                // don't know why this is here, 
+                // i will keep it as a comment til i clarify with will (david)
+                //   packet = conn.receive();
+                
+                //if we receive the disconnect packet
+                //then remove object from game engine
+                //and from network manager
+                if(ServerProtocol.isDisconnectedState(packet)){
+                    NetworkObjectManager.getSingleton().getNetworkObject(command.getObjectId()).destroy();
+                    NetworkObjectManager.getSingleton().disconnectClient(command.getObjectId());
+                    continue;
+                }
+                
                 // Update the object with the received information.
                 NetworkObjectManager.getSingleton()
                         .getNetworkObject(command.getObjectId())

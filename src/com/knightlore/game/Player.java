@@ -90,7 +90,8 @@ public class Player extends NetworkObject implements IRenderable {
 
     }
 
-    public byte[] serialize() {
+    @Override
+    public byte[] serialize(boolean disconnect) {
         if(camera == null)
             return null;
         
@@ -109,6 +110,14 @@ public class Player extends NetworkObject implements IRenderable {
             thisState[i] = playerID[i - ServerProtocol.METADATA_LENGTH];
         }
 
+        if(disconnect){
+            for (int i = ServerProtocol.MESSAGE_STARTING_POINT; i < ServerProtocol.TOTAL_LENGTH; i++) {
+                thisState[i] = ServerProtocol.disconnectedState[i - ServerProtocol.MESSAGE_STARTING_POINT];
+            }
+            //if disconnect then end it here with return statement
+            return thisState;
+        }
+        
         // adding player stats from camera class
         int loopsNumber = 0;
         try {
@@ -119,12 +128,12 @@ public class Player extends NetworkObject implements IRenderable {
                         .getControlByPosition(positionCurrentCommand);
                 Integer[] indexes = ServerProtocol
                         .getIndexesByControl(currentControl);
+                int startingIndex = indexes[0];
+                int endingIndex = indexes[1];
 
                 CameraGetterInterface cameraReference = this.controlGettersMap
                         .get(currentControl);
                 double cameraResult = cameraReference.accessDataFromCamera();
-                int startingIndex = indexes[0];
-                int endingIndex = indexes[1];
                 byte[] convertedCameraValue = ServerProtocol
                         .doubleToByteArray(cameraResult);
 

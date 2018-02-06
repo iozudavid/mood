@@ -2,6 +2,7 @@ package com.knightlore.network.server;
 
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.UUID;
 
 import com.knightlore.game.Player;
@@ -27,13 +28,16 @@ public class Pruner implements Runnable {
 
     public void run() {
         while (true) {
-            Iterator<Tuple<Connection, NetworkObject>> i = conns.values().iterator();
-            Tuple<Connection, NetworkObject> next = null;
+            Iterator<Entry<UUID, Tuple<Connection, NetworkObject>>> i = conns.entrySet().iterator();
+            Entry<UUID, Tuple<Connection, NetworkObject>> next = null;
             while (i.hasNext()){
                 next = i.next();
-                if (next.x.getTerminated()){
-                    NetworkObjectManager.getSingleton().removeNetworkObject(next.y);
-                    next.y.destroy();
+                if (next.getValue().x.getTerminated()){
+                    //if connection lost then remove the network object
+                    //remove from connection list
+                    //and inform other clients
+                    NetworkObjectManager.getSingleton().disconnectClient(next.getKey());
+                    next.getValue().y.destroy();
                     i.remove();
                 }
             }
