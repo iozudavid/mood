@@ -11,7 +11,7 @@ import com.knightlore.utils.Vector2D;
 
 public class Minimap implements IRenderable, TickListener {
 
-	public static final int RESOLUTION = 3;
+	public static final int RESOLUTION = 8;
 	public static final int SCALE = 8;
 	public static final int DRAW_SIZE = SCALE / RESOLUTION;
 
@@ -70,7 +70,7 @@ public class Minimap implements IRenderable, TickListener {
 				if (drawX < x || drawY < y || drawX >= x + size || drawY >= y + size)
 					continue;
 
-				pix.fillRect(pixelMap[xx + yy * width], (int) drawX, (int) drawY, DRAW_SIZE, DRAW_SIZE);
+				pix.fillRect(pixelMap[xx + yy * width], (int) drawX, (int) drawY, DRAW_SIZE + 1, DRAW_SIZE + 1);
 			}
 		}
 
@@ -87,10 +87,12 @@ public class Minimap implements IRenderable, TickListener {
 	}
 
 	private void recreatePixelMap() {
+		final int base = map.getEnvironment().getMinimapBaseColor();
 		for (int y = 0; y < height; y++) {
 			for (int x = 0; x < width; x++) {
 				Tile t = map.getTile(x / RESOLUTION, y / RESOLUTION);
-				pixelMap[x + y * width] = t.getMinimapColor();
+				int tileColor = t.getMinimapColor();
+				pixelMap[x + y * width] = tileColor != 0 ? tileColor : base;
 			}
 		}
 	}
