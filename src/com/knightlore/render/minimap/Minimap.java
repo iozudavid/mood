@@ -7,11 +7,14 @@ import com.knightlore.game.area.Map;
 import com.knightlore.game.tile.Tile;
 import com.knightlore.render.IRenderable;
 import com.knightlore.render.PixelBuffer;
+import com.knightlore.utils.Vector2D;
 
 public class Minimap implements IRenderable, TickListener {
 
-	public static final int RESOLUTION = 1;
-	public static final int SCALE = 6;
+	public static final int RESOLUTION = 3;
+	public static final int SCALE = 8;
+	public static final int DRAW_SIZE = SCALE / RESOLUTION;
+
 	private int size;
 
 	private Player player;
@@ -38,9 +41,12 @@ public class Minimap implements IRenderable, TickListener {
 	public void render(PixelBuffer pix, int x, int y) {
 		pix.fillRect(0x000000, x, y, size + 1, size + 1);
 
+		Vector2D dir = player.getDirection();
+		double theta = -Math.atan2(dir.getX(), dir.getY());
+
 		for (int yy = 0; yy < height; yy++) {
 			for (int xx = 0; xx < width; xx++) {
-				double drawX = xx * SCALE, drawY = yy * SCALE;
+				double drawX = xx * DRAW_SIZE, drawY = yy * DRAW_SIZE;
 				drawX -= player.getPosition().getX() * SCALE;
 				drawY -= player.getPosition().getY() * SCALE;
 
@@ -50,22 +56,33 @@ public class Minimap implements IRenderable, TickListener {
 
 				drawX += x;
 				drawY += y;
+
+				drawX -= x + size / 2;
+				drawY -= y + size / 2;
+
+				double oldDrawX = drawX;
+				drawX = drawX * Math.cos(theta) - drawY * Math.sin(theta);
+				drawY = oldDrawX * Math.sin(theta) + drawY * Math.cos(theta);
+
+				drawX += x + size / 2;
+				drawY += y + size / 2;
+
 				if (drawX < x || drawY < y || drawX >= x + size || drawY >= y + size)
 					continue;
-				
-				pix.fillRect(pixelMap[xx + yy * width], (int) drawX, (int) drawY, SCALE, SCALE);
+
+				pix.fillRect(pixelMap[xx + yy * width], (int) drawX, (int) drawY, DRAW_SIZE, DRAW_SIZE);
 			}
 		}
 
 		final int PLAYER_COLOR = 0xFF00FF;
-		pix.fillRect(PLAYER_COLOR, x + size / 2 - SCALE / 2, y + size / 2 - SCALE / 2, SCALE, SCALE);
+		pix.fillRect(PLAYER_COLOR, x + size / 2, y + size / 2, SCALE / 2, SCALE / 2);
 
 		// Draw a border to prevent clipping whilst rendering.
 		final int BORDER_COLOR = 0xFEFEFE;
-		pix.fillRect(BORDER_COLOR, x, y, SCALE, size);
-		pix.fillRect(BORDER_COLOR, x, y + size, size + SCALE, SCALE);
-		pix.fillRect(BORDER_COLOR, x, y, size, SCALE);
-		pix.fillRect(BORDER_COLOR, x + size, y, SCALE, size);
+		pix.fillRect(BORDER_COLOR, x, y, DRAW_SIZE, size);
+		pix.fillRect(BORDER_COLOR, x, y + size, size + DRAW_SIZE, DRAW_SIZE);
+		pix.fillRect(BORDER_COLOR, x, y, size, DRAW_SIZE);
+		pix.fillRect(BORDER_COLOR, x + size, y, DRAW_SIZE, size);
 
 	}
 
