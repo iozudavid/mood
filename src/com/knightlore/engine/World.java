@@ -3,7 +3,6 @@ package com.knightlore.engine;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
-import java.util.ListIterator;
 import java.util.Stack;
 
 import com.knightlore.game.Player;
@@ -342,28 +341,12 @@ public class World implements IRenderable {
 	}
 
 	public void tick() {
-		garbageCollect();
-		player.onUpdate();
-
 		// Handle player touching tile.
 		Vector2D pos = player.getPosition();
 		Tile t = map.getTile((int) pos.getX(), (int) pos.getY());
 		t.onEntered(player);
 	}
-
-	/**
-	 * Deletes any entities that don't exist any more.
-	 */
-	private void garbageCollect() {
-		ListIterator<Mob> itr = mobs.listIterator();
-		while (itr.hasNext()) {
-			GameObject e = itr.next();
-			if (!e.exists()) {
-				itr.remove();
-			}
-		}
-	}
-
+	
 	public List<Mob> getMobs() {
 		return mobs;
 	}

@@ -40,7 +40,6 @@ public class Player extends GameObject {
 
 	@Override
 	public void onUpdate() {
-		camera.onUpdate();
 	}
 
 	@Override
