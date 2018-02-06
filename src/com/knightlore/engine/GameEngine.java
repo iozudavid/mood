@@ -39,6 +39,7 @@ public class GameEngine implements Runnable {
 		singleton = this;
 		
 		objects = new ArrayList<GameObject>();
+		
 		notifyToCreate = new LinkedList<GameObject>();
 		notifyToDestroy = new LinkedList<GameObject>();
 		

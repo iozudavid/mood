@@ -23,6 +23,14 @@ public abstract class Area {
     public Tile getTile(int x, int y) {
         return grid[x][y];
     }
+    
+    public int getWidth() {
+		return width;
+	}
+    
+    public int getHeight() {
+		return height;
+	}
 
 	public String toString() {
         StringBuilder sBuilder = new StringBuilder("AREA\n" + "WIDTH = " + width + "\n" + "HEIGHT = " + height + "\n");
@@ -35,4 +43,5 @@ public abstract class Area {
 
         return sBuilder.toString();
     }
+	
 }

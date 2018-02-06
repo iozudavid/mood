@@ -28,6 +28,11 @@ public class PlayerSpawnTile extends Tile {
 	public double getSolidity() {
 		return 0.1D;
 	}
+	
+	@Override
+	public int getMinimapColor() {
+		return 0x00FF00;
+	}
 
 	@Override
 	public void onShot() {

@@ -6,6 +6,7 @@ import com.knightlore.render.graphic.texture.Texture;
 
 // it's a singleton to avoid having multiple copies of air
 public class AirTile extends Tile {
+	
 	private static AirTile instance = new AirTile();
 
 	private AirTile() {
@@ -24,7 +25,7 @@ public class AirTile extends Tile {
 	public double getSolidity() {
 		return 0D;
 	}
-
+	
 	@Override
 	public void onShot() {
 	}

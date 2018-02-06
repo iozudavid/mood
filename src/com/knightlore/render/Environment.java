@@ -15,6 +15,11 @@ public enum Environment {
 				}
 			}
 		}
+
+		@Override
+		public int getMinimapBaseColor() {
+			return 0x33333;
+		}
 	},
 	LIGHT_OUTDOORS(3) {
 		@Override
@@ -32,11 +37,21 @@ public enum Environment {
 				}
 			}
 		}
+
+		@Override
+		public int getMinimapBaseColor() {
+			return 0x074A00;
+		}
 	},
 	DUNGEON(20) {
 		@Override
 		public void renderEnvironment(PixelBuffer pix) {
 			pix.fillRect(0x000000, 0, 0, pix.getWidth(), pix.getHeight());
+		}
+
+		@Override
+		public int getMinimapBaseColor() {
+			return 0x000000;
 		}
 	};
 
@@ -47,6 +62,8 @@ public enum Environment {
 	}
 
 	public abstract void renderEnvironment(PixelBuffer pix);
+
+	public abstract int getMinimapBaseColor();
 
 	public int getDarkness() {
 		return darkness;

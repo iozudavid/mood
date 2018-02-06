@@ -9,8 +9,8 @@ import java.util.Stack;
 import com.knightlore.game.Player;
 import com.knightlore.game.area.Map;
 import com.knightlore.game.entity.Mob;
-import com.knightlore.game.entity.ShotgunPickup;
 import com.knightlore.game.entity.Zombie;
+import com.knightlore.game.entity.pickup.ShotgunPickup;
 import com.knightlore.game.tile.AirTile;
 import com.knightlore.game.tile.Tile;
 import com.knightlore.gui.Button;
@@ -21,6 +21,7 @@ import com.knightlore.render.IRenderable;
 import com.knightlore.render.PerspectiveRenderItem;
 import com.knightlore.render.PixelBuffer;
 import com.knightlore.render.graphic.Graphic;
+import com.knightlore.render.minimap.Minimap;
 import com.knightlore.utils.Vector2D;
 
 public class World implements IRenderable {
@@ -28,6 +29,7 @@ public class World implements IRenderable {
 	private final List<Mob> mobs;
 
 	private final Map map;
+	private Minimap minimap;
 	private Player player;
 	private GUICanvas gui;
 
@@ -43,11 +45,16 @@ public class World implements IRenderable {
 		
 		// setup testing ui
 		gui = new GUICanvas();
-		Button b = new Button(5,5,0);
+		Button b = new Button(5, 5, 0);
 		b.rect.width = 100;
 		b.rect.height = 30;
 		gui.addGUIObject(b);
 
+		this.minimap = new Minimap(player, map, 128);
+
+		for (int i = 1; i < 5; i += 2) {
+			mobs.add(new ShotgunPickup(new Vector2D(i, 3)));
+		}
 	}
 
 	@Override
@@ -56,9 +63,14 @@ public class World implements IRenderable {
 		drawPerspective(pix);
 		drawCrosshair(pix);
 		gui.render(pix, x, y);
+		
+		minimap.render();
+		
+		PixelBuffer minimapBuffer = minimap.getPixelBuffer();
+		pix.composite(minimapBuffer, pix.getWidth() - minimapBuffer.getWidth() - 10, 5);
 	}
 
-	private final int BLOCKINESS = 6; // how 'old school' you want to look.
+	private final int BLOCKINESS = 1; // how 'old school' you want to look.
 
 	/*
 	 * NOTE: THIS ONLY AFFECTS THE RENDERING SIZE OF A TILE. If you change this
@@ -158,9 +170,6 @@ public class World implements IRenderable {
 					double wallX = getWallHitPosition(camera, rayX, rayY, mapX, mapY, side, stepX, stepY);
 
 					Graphic texture = map.getTile(mapX, mapY).getTexture();
-					if (texture == Graphic.EMPTY) {
-						continue;
-					}
 
 					// What pixel did we hit the texture on?
 					int texX = (int) (wallX * (texture.getSize()));
@@ -255,7 +264,7 @@ public class World implements IRenderable {
 						int texY = ((d * g.getHeight()) / spriteHeight) / 256;
 						int color = g.getPixels()[g.getWidth() * texY + texX];
 
-						if (color == -16711936)
+						if (color == PixelBuffer.CHROMA_KEY)
 							continue;
 
 						color = ColorUtils.darken(color, map.getEnvironment().getDarkness(),
@@ -327,6 +336,9 @@ public class World implements IRenderable {
 		final int w = pix.getWidth() / 2, h = pix.getHeight() / 2;
 		pix.fillRect(CROSSHAIR_COLOR, w - CROSSHAIR_SIZE, h - CROSSHAIR_WIDTH / 2, CROSSHAIR_SIZE * 2, CROSSHAIR_WIDTH);
 		pix.fillRect(CROSSHAIR_COLOR, w - CROSSHAIR_WIDTH / 2, h - CROSSHAIR_SIZE, CROSSHAIR_WIDTH, CROSSHAIR_SIZE * 2);
+
+		Graphic g = player.getCurrentWeapon().getGraphic();
+		pix.drawGraphic(g, pix.getWidth() - 700, pix.getHeight() - 600, 8, 8);
 	}
 
 	public void tick() {
