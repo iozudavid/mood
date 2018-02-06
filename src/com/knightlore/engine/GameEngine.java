@@ -35,18 +35,27 @@ public class GameEngine implements Runnable {
     private LinkedList<GameObject> notifyToCreate;
     private LinkedList<GameObject> notifyToDestroy;
 
-    public GameEngine() {
+    private boolean headless;
+
+    public GameEngine(boolean headless) {
+        this.headless = headless;
+        if (this.headless) {
+            screen = null;
+            window = null;
+        } else {
+            final int w = MainWindow.WIDTH, h = MainWindow.HEIGHT;
+            screen = new Screen(w, h);
+            window = new MainWindow(screen, MainWindow.TITLE, w, h);
+            initInputs();
+        }
+
         objects = new ArrayList<>();
         notifyToCreate = new LinkedList<GameObject>();
         notifyToDestroy = new LinkedList<GameObject>();
 
         singleton = this;
-        world = new World(AreaFactory.createRandomMap(Environment.LIGHT_OUTDOORS));
-
-        final int w = MainWindow.WIDTH, h = MainWindow.HEIGHT;
-        screen = new Screen(w, h);
-        window = new MainWindow(screen, MainWindow.TITLE, w, h);
-        initEngine();
+        world = new World(
+                AreaFactory.createRandomMap(Environment.LIGHT_OUTDOORS));
     }
 
     // FIXME: Refactor World and remove this
@@ -69,7 +78,7 @@ public class GameEngine implements Runnable {
         notifyToDestroy.add(g);
     }
 
-    private void initEngine() {
+    private void initInputs() {
         System.out.println("Initialising Engine...");
         InputManager.init();
         setupKeyboard();
@@ -77,11 +86,12 @@ public class GameEngine implements Runnable {
         System.out.println("Engine Initialised Successfully.");
     }
 
-    public void start(boolean visible) {
+    public void start() {
         running = true;
         thread = new Thread(this);
         thread.start();
-        window.setVisible(visible);
+        if (!headless)
+            window.setVisible(true);
     }
 
     public void stop() {
@@ -111,7 +121,8 @@ public class GameEngine implements Runnable {
             while (delta >= 1) {
                 updateObjects();
                 world.tick();
-                screen.render(0, 0, world);
+                if (!headless)
+                    screen.render(0, 0, world);
                 delta -= 1;
             }
         }
@@ -169,8 +180,4 @@ public class GameEngine implements Runnable {
         screen.addMouseWheelListener(mouse);
         screen.requestFocus();
     }
-
-    public static void main(String[] args) {
-    }
-
 }

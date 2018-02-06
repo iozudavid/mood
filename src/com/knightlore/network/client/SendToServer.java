@@ -10,6 +10,10 @@ import com.knightlore.network.protocol.ClientControl;
 import com.knightlore.network.protocol.ClientProtocol;
 
 public class SendToServer implements Runnable {
+    // How often to send an update of controls, rather than just if the
+    // control state has changed. A value of 100 means that in every 100 loops,
+    // at *least* one update will be sent.
+    private static final int REGULAR_UPDATE_FREQ = 100;
 
     private Connection conn;
     private BufferedReader user;
@@ -24,15 +28,11 @@ public class SendToServer implements Runnable {
         this.currentState = this.getCurentStateByteArray();
         new Thread() {
             public void run() {
-                while (!conn.terminated) {
-                    byte[] current = getCurentStateByteArray();
-
+                while (!conn.terminated)
                     synchronized (lock) {
-                        if (isLastStateDifferent(current)) {
-                            currentState = current;
-                        }
+                        currentState = getCurentStateByteArray();
+
                     }
-                }
             }
         }.start();
 
@@ -68,22 +68,15 @@ public class SendToServer implements Runnable {
         return thisState;
     }
 
-    private synchronized boolean isLastStateDifferent(byte[] currentState) {
-        for (int i = ClientProtocol.METADATA_LENGTH; i < this.lastState.length; i++) {
-            if (this.lastState[i] == currentState[i])
-                continue;
-            return true;
-        }
-        return false;
-    }
-    // DEBUG
-    // return true;
-    // }
-
     public void run() {
-        while (conn.terminated == false) {
+        while (!conn.terminated) {
             synchronized (lock) {
-                if (this.lastState != this.currentState) {
+                int updateCounter = 1;
+                // Send a controls update if either the controls have changed or
+                // a regular update is due.
+                if (updateCounter++ >= REGULAR_UPDATE_FREQ
+                        || this.lastState != this.currentState) {
+                    updateCounter = 1;
                     conn.send(this.currentState);
                     this.lastState = this.currentState;
                 }

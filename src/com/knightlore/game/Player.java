@@ -92,9 +92,10 @@ public class Player extends NetworkObject implements IRenderable {
 
     @Override
     public byte[] serialize(boolean disconnect) {
-        if(camera == null)
+        if (camera == null) {
+            System.out.println("Camera started null");
             return null;
-        
+        }
         byte[] thisState = new byte[ServerProtocol.TOTAL_LENGTH];
 
         // Prepend metadata to the state array.
@@ -133,6 +134,8 @@ public class Player extends NetworkObject implements IRenderable {
 
                 CameraGetterInterface cameraReference = this.controlGettersMap
                         .get(currentControl);
+                if (cameraReference == null)
+                    return null;
                 double cameraResult = cameraReference.accessDataFromCamera();
                 byte[] convertedCameraValue = ServerProtocol
                         .doubleToByteArray(cameraResult);

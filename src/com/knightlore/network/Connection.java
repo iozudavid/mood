@@ -8,8 +8,8 @@ import java.util.concurrent.LinkedBlockingQueue;
 public abstract class Connection implements Runnable {
     public static final Charset CHARSET = StandardCharsets.UTF_8;
     // Wait 5 seconds without receiving packets before disconnecting.
-    //protected static int TIMEOUT_MILLIS = 5 * 1000;
-    protected static int TIMEOUT_MILLIS = 30 * 1000;
+    protected static int TIMEOUT_MILLIS = 5 * 1000;
+    //protected static int TIMEOUT_MILLIS = 30 * 1000;
     
     public volatile boolean terminated;
     // Stores the most recently received packet.

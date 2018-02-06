@@ -4,11 +4,9 @@ import java.util.UUID;
 
 import com.knightlore.engine.GameEngine;
 import com.knightlore.game.Player;
-import com.knightlore.game.area.Map;
 import com.knightlore.network.Connection;
 import com.knightlore.network.NetworkObjectManager;
 import com.knightlore.network.protocol.ServerCommand;
-import com.knightlore.network.protocol.ServerControl;
 import com.knightlore.network.protocol.ServerProtocol;
 import com.knightlore.render.Camera;
 
@@ -60,14 +58,6 @@ public class ReceiveFromServer implements Runnable {
                 NetworkObjectManager.getSingleton()
                         .getNetworkObject(command.getObjectId())
                         .deserialize(command);
-                // System.out.println("=====NEW PACKET=====");
-                // System.out.println("Received time: " +
-                // command.getTimeSent());
-                // System.out.println("Client ID: " + command.getObjectId());
-                // for (ServerControl c : ServerControl.values()) {
-                // System.out.println(c + ": " + command.getValueByControl(c));
-                // }
-                // System.out.println("=====END OF PACKET=====");
 
             }
             if (!conn.terminated)

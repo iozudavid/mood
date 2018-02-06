@@ -7,8 +7,8 @@ public class KnightLoreServer {
 
     public static void main(String[] args) {
         System.out.println("Starting Server...");
-        GameEngine engine = new GameEngine();
-        engine.start(false);
+        GameEngine engine = new GameEngine(true);
+        engine.start();
         ServerManager networkManager = new ServerManager();
         new Thread(networkManager).start();
         // TODO setup the server here
