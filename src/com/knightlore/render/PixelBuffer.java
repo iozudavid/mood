@@ -15,11 +15,24 @@ public class PixelBuffer {
 		HEIGHT = height;
 		pixels = new int[WIDTH * HEIGHT];
 	}
+	
+	public void flood(int color) {
+		fillRect(color, 0, 0, getWidth(), getHeight());
+	}
+
+	public void composite(PixelBuffer pix, int x, int y) {
+		for (int yy = 0; yy < pix.getHeight(); yy++) {
+			for (int xx = 0; xx < pix.getWidth(); xx++) {
+				int myX = x + xx, myY = y + yy;
+				fillPixel(pix.pixelAt(xx, yy), myX, myY);
+			}
+		}
+	}
 
 	public void drawGraphic(Graphic graphic, int x, int y) {
 		drawGraphic(graphic, x, y, 1, 1);
 	}
-	
+
 	public void drawGraphic(Graphic graphic, int x, int y, int scaleX, int scaleY) {
 		for (int yy = 0; yy < graphic.getHeight() * scaleY; yy++) {
 			for (int xx = 0; xx < graphic.getWidth() * scaleX; xx++) {

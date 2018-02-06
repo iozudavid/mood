@@ -47,7 +47,10 @@ public class World implements IRenderable {
 		map.getEnvironment().renderEnvironment(pix);
 		drawPerspective(pix);
 		drawCrosshair(pix);
-		minimap.render(pix, pix.getWidth() - minimap.getSize() - 10, 5); // TODO
+		minimap.render();
+		
+		PixelBuffer minimapBuffer = minimap.getPixelBuffer();
+		pix.composite(minimapBuffer, pix.getWidth() - minimapBuffer.getWidth() - 10, 5);
 	}
 
 	private final int BLOCKINESS = 1; // how 'old school' you want to look.
