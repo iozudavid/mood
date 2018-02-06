@@ -36,9 +36,6 @@ public final class AreaFactory {
 		grid = makeSymX(grid);
 		// m.makeSymY();
 		addWalls(grid);
-		grid[1][1] = new PlayerSpawnTile(0);
-		grid[2][2] = new PlayerSpawnTile(0);
-		grid[3][3] = new PlayerSpawnTile(0);
 		return new Map(grid, environment);
 	}
 
