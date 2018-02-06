@@ -89,3 +89,9 @@ local.properties
 
 .idea/
 *.iml
+
+# BLENDER STUFF
+*.blend1
+
+# macOS files
+.DS_Store

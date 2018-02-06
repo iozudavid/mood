@@ -3,220 +3,244 @@ package com.knightlore.render;
 import java.util.HashMap;
 import java.util.Map.Entry;
 
+import com.knightlore.engine.GameEngine;
+import com.knightlore.engine.GameObject;
+import com.knightlore.engine.TickListener;
+import com.knightlore.engine.input.Controller;
+import com.knightlore.engine.input.InputManager;
+import com.knightlore.engine.input.Keyboard;
 import com.knightlore.game.area.Map;
 import com.knightlore.game.tile.Tile;
+import com.knightlore.input.BasicController;
 import com.knightlore.network.protocol.ClientControl;
 
-public class Camera {
+public class Camera extends GameObject implements TickListener {
 
-    public static final double FIELD_OF_VIEW = -0.66;
-    private static final double MOVE_SPEED = .084;
-    private static final double STRAFE_SPEED = .04;
-    private static final double ROTATION_SPEED = .045;
+	private static final double MOTION_BOB_AMOUNT = 7.0;
+	private static final double MOTION_BOB_SPEED = 0.15;
+	private int motionOffset;
+	private long moveTicks;
 
-    private final Map map;
-    private double xPos, yPos, xDir, yDir, xPlane, yPlane;
-    // Maps all inputs that the player could be making to their values.
-    private java.util.Map<ClientControl, Byte> inputState = new HashMap<>();
-    private java.util.Map<ClientControl, Runnable> ACTION_MAPPINGS = new HashMap<>();
-    private Object lock;
+	public static final double FIELD_OF_VIEW = -.66;
+	private static final double MOVE_SPEED = .100;
+	private static final double STRAFE_SPEED = .04;
+	private static final double ROTATION_SPEED = .045;
 
-    // TODO constructor takes a lot of parameters, maybe use Builder Pattern
-    // instead?
-    public Camera(double xPos, double yPos, double xDir, double yDir,
-            double xPlane, double yPlane, Map map) {
-        super();
-        this.xPos = xPos;
-        this.yPos = yPos;
-        this.xDir = xDir;
-        this.yDir = yDir;
-        this.xPlane = xPlane;
-        this.yPlane = yPlane;
-        this.map = map;
-        this.lock = new Object();
-        // Map possible inputs to the methods that handle them. Avoids long
-        // if-statement chain.
-        ACTION_MAPPINGS.put(ClientControl.FORWARD, Camera.this::moveForward);
-        ACTION_MAPPINGS.put(ClientControl.ROTATE_ANTI_CLOCKWISE,
-                Camera.this::rotateAntiClockwise);
-        ACTION_MAPPINGS.put(ClientControl.BACKWARD, Camera.this::moveBackward);
-        ACTION_MAPPINGS.put(ClientControl.ROTATE_CLOCKWISE,
-                Camera.this::rotateClockwise);
-        ACTION_MAPPINGS.put(ClientControl.LEFT, Camera.this::strafeLeft);
-        ACTION_MAPPINGS.put(ClientControl.RIGHT, Camera.this::strafeRight);
-    }
+	private final Map map;
+	private double xPos, yPos, xDir, yDir, xPlane, yPlane;
+	// Maps all inputs that the player could be making to their values.
+	private java.util.Map<ClientControl, Byte> inputState = new HashMap<>();
+	private java.util.Map<ClientControl, Runnable> ACTION_MAPPINGS = new HashMap<>();
 
-    public void update() {
-        synchronized (inputState) {
-            // Check whether each input is triggered - if it is, execute the
-            // respective method.
-            // DEBUG
-            for (Entry<ClientControl, Byte> entry : inputState.entrySet())
-                // For boolean inputs (i.e. all current inputs), 0 represents
-                // false.
-                if (entry.getValue() != 0)
-                    ACTION_MAPPINGS.get(entry.getKey()).run();
-        }
-    }
+	// TODO constructor takes a lot of parameters, maybe use Builder Pattern
+	// instead?
+	public Camera(double xPos, double yPos, double xDir, double yDir,
+			double xPlane, double yPlane, Map map) {
+		super();
 
-    public void setInputState(java.util.Map<ClientControl, Byte> inputState) {
-        synchronized (this.inputState) {
-            this.inputState = inputState;
-        }
-    }
+		// Map possible inputs to the methods that handle them. Avoids long
+		// if-statement chain.
+		ACTION_MAPPINGS.put(ClientControl.FORWARD, Camera.this::moveForward);
+		ACTION_MAPPINGS.put(ClientControl.ROTATE_ANTI_CLOCKWISE,
+				Camera.this::rotateAntiClockwise);
+		ACTION_MAPPINGS.put(ClientControl.BACKWARD, Camera.this::moveBackward);
+		ACTION_MAPPINGS.put(ClientControl.ROTATE_CLOCKWISE,
+				Camera.this::rotateClockwise);
+		ACTION_MAPPINGS.put(ClientControl.LEFT, Camera.this::strafeLeft);
+		ACTION_MAPPINGS.put(ClientControl.RIGHT, Camera.this::strafeRight);
 
-    private void moveForward() {
-        synchronized (this.lock) {
-            Tile xTile = map.getTile((int) (xPos + xDir * MOVE_SPEED),
-                    (int) yPos);
-            Tile yTile = map.getTile((int) xPos,
-                    (int) (yPos + yDir * MOVE_SPEED));
-            xPos += xDir * MOVE_SPEED * (1 - xTile.getSolidity());
-            yPos += yDir * MOVE_SPEED * (1 - yTile.getSolidity());
-        }
-    }
+		this.xPos = xPos;
+		this.yPos = yPos;
+		this.xDir = xDir;
+		this.yDir = yDir;
+		this.xPlane = xPlane;
+		this.yPlane = yPlane;
+		this.map = map;
 
-    private void moveBackward() {
-        synchronized (this.lock) {
-            Tile xTile = map.getTile((int) (xPos - xDir * MOVE_SPEED),
-                    (int) yPos);
-            Tile yTile = map.getTile((int) xPos,
-                    (int) (yPos - yDir * MOVE_SPEED));
-            xPos -= xDir * MOVE_SPEED * (1 - xTile.getSolidity());
-            yPos -= yDir * MOVE_SPEED * (1 - yTile.getSolidity());
-        }
-    }
+		this.motionOffset = 0;
+		this.moveTicks = 0;
 
-    private void strafeLeft() {
-        synchronized (this.lock) {
-            Tile xTile = map.getTile((int) (xPos - yDir * STRAFE_SPEED),
-                    (int) (yPos));
-            Tile yTile = map.getTile((int) (xPos),
-                    (int) (yPos + xDir * STRAFE_SPEED));
-            xPos -= yDir * STRAFE_SPEED * (1 - xTile.getSolidity());
-            yPos -= -xDir * STRAFE_SPEED * (1 - yTile.getSolidity());
-        }
-    }
+		GameEngine.ticker.addTickListener(this);
+	}
 
-    private void strafeRight() {
-        synchronized (this.lock) {
-            Tile xTile = map.getTile((int) (xPos + yDir * STRAFE_SPEED),
-                    (int) (yPos));
-            Tile yTile = map.getTile((int) (xPos),
-                    (int) (yPos + -xDir * STRAFE_SPEED));
-            xPos += yDir * STRAFE_SPEED * (1 - xTile.getSolidity());
-            yPos += -xDir * STRAFE_SPEED * (1 - yTile.getSolidity());
-        }
-    }
+	@Override
+	public void onUpdate() {
+		synchronized (inputState) {
+			// Check whether each input is triggered - if it is, execute the
+			// respective method.
+			// DEBUG
+			boolean updated = false;
+			for (Entry<ClientControl, Byte> entry : inputState.entrySet())
+				// For boolean inputs (i.e. all current inputs), 0 represents
+				// false.
+				if (entry.getValue() != 0) {
+					ACTION_MAPPINGS.get(entry.getKey()).run();
+					updated = true;
+				}
+			if (updated)
+				updateMotionOffset();
+		}
+	}
 
-    /**
-     * Rotation is simply multiplication by the rotation matrix. We take the
-     * position and plane vectors, then multiply them by the rotation matrix
-     * (whose parameter is ROTATION_SPEED). This lets us rotate.
-     */
-    private void rotateAntiClockwise() {
-        synchronized (this.lock) {
-            double oldxDir = xDir;
-            xDir = xDir * Math.cos(ROTATION_SPEED)
-                    - yDir * Math.sin(ROTATION_SPEED);
-            yDir = oldxDir * Math.sin(ROTATION_SPEED)
-                    + yDir * Math.cos(ROTATION_SPEED);
-            double oldxPlane = xPlane;
-            xPlane = xPlane * Math.cos(ROTATION_SPEED)
-                    - yPlane * Math.sin(ROTATION_SPEED);
-            yPlane = oldxPlane * Math.sin(ROTATION_SPEED)
-                    + yPlane * Math.cos(ROTATION_SPEED);
-        }
-    }
+	public void setInputState(java.util.Map<ClientControl, Byte> inputState) {
+		synchronized (this.inputState) {
+			this.inputState = inputState;
+		}
+	}
 
-    /**
-     * Same as rotating left but clockwise this time.
-     */
-    private void rotateClockwise() {
-        synchronized (this.lock) {
-            double oldxDir = xDir;
-            xDir = xDir * Math.cos(-ROTATION_SPEED)
-                    - yDir * Math.sin(-ROTATION_SPEED);
-            yDir = oldxDir * Math.sin(-ROTATION_SPEED)
-                    + yDir * Math.cos(-ROTATION_SPEED);
-            double oldxPlane = xPlane;
-            xPlane = xPlane * Math.cos(-ROTATION_SPEED)
-                    - yPlane * Math.sin(-ROTATION_SPEED);
-            yPlane = oldxPlane * Math.sin(-ROTATION_SPEED)
-                    + yPlane * Math.cos(-ROTATION_SPEED);
-        }
-    }
+	public boolean isMoving() {
+		Keyboard keyboard = InputManager.getKeyboard();
+		Controller controller = new BasicController();
+		return keyboard.isPressed(controller.moveForward())
+				|| keyboard.isPressed(controller.moveBackward())
+				|| keyboard.isPressed(controller.moveLeft())
+				|| keyboard.isPressed(controller.moveRight());
+	}
 
-    public double getxPos() {
-        synchronized (this.lock) {
-            return xPos;
-        }
-    }
+	private void updateMotionOffset() {
+		moveTicks++;
+		this.motionOffset = (int) (Math.abs(
+				Math.sin(moveTicks * MOTION_BOB_SPEED) * MOTION_BOB_AMOUNT));
+	}
 
-    public double getyPos() {
-        synchronized (this.lock) {
-            return yPos;
-        }
-    }
+	public int getMotionOffset() {
+		return motionOffset;
+	}
 
-    public void setxPos(double xPos) {
-        synchronized (this.lock) {
-            this.xPos = xPos;
-        }
-    }
+	private synchronized void moveForward() {
+		Tile xTile = map.getTile((int) (xPos + xDir * MOVE_SPEED), (int) yPos);
+		Tile yTile = map.getTile((int) xPos, (int) (yPos + yDir * MOVE_SPEED));
+		xPos += xDir * MOVE_SPEED * (1 - xTile.getSolidity());
+		yPos += yDir * MOVE_SPEED * (1 - yTile.getSolidity());
+	}
 
-    public void setyPos(double yPos) {
-        synchronized (this.lock) {
-            this.yPos = yPos;
-        }
-    }
+	private synchronized void moveBackward() {
+		Tile xTile = map.getTile((int) (xPos - xDir * MOVE_SPEED), (int) yPos);
+		Tile yTile = map.getTile((int) xPos, (int) (yPos - yDir * MOVE_SPEED));
+		xPos -= xDir * MOVE_SPEED * (1 - xTile.getSolidity());
+		yPos -= yDir * MOVE_SPEED * (1 - yTile.getSolidity());
+	}
 
-    public double getxDir() {
-        synchronized (this.lock) {
-            return xDir;
-        }
-    }
+	private synchronized void strafeLeft() {
+		Tile xTile = map.getTile((int) (xPos - yDir * STRAFE_SPEED),
+				(int) (yPos));
+		Tile yTile = map.getTile((int) (xPos),
+				(int) (yPos + xDir * STRAFE_SPEED));
+		xPos -= yDir * STRAFE_SPEED * (1 - xTile.getSolidity());
+		yPos -= -xDir * STRAFE_SPEED * (1 - yTile.getSolidity());
+	}
 
-    public void setxDir(double xDir) {
-        synchronized (this.lock) {
-            this.xDir = xDir;
-        }
-    }
+	private synchronized void strafeRight() {
+		Tile xTile = map.getTile((int) (xPos + yDir * STRAFE_SPEED),
+				(int) (yPos));
+		Tile yTile = map.getTile((int) (xPos),
+				(int) (yPos + -xDir * STRAFE_SPEED));
+		xPos += yDir * STRAFE_SPEED * (1 - xTile.getSolidity());
+		yPos += -xDir * STRAFE_SPEED * (1 - yTile.getSolidity());
+	}
 
-    public double getyDir() {
-        synchronized (this.lock) {
-            return yDir;
-        }
-    }
+	/**
+	 * Rotation is simply multiplication by the rotation matrix. We take the
+	 * position and plane vectors, then multiply them by the rotation matrix
+	 * (whose parameter is ROTATION_SPEED). This lets us rotate.
+	 */
+	private synchronized void rotateAntiClockwise() {
+		double oldxDir = xDir;
+		xDir = xDir * Math.cos(ROTATION_SPEED)
+				- yDir * Math.sin(ROTATION_SPEED);
+		yDir = oldxDir * Math.sin(ROTATION_SPEED)
+				+ yDir * Math.cos(ROTATION_SPEED);
+		double oldxPlane = xPlane;
+		xPlane = xPlane * Math.cos(ROTATION_SPEED)
+				- yPlane * Math.sin(ROTATION_SPEED);
+		yPlane = oldxPlane * Math.sin(ROTATION_SPEED)
+				+ yPlane * Math.cos(ROTATION_SPEED);
+	}
 
-    public void setyDir(double yDir) {
-        synchronized (this.lock) {
-            this.yDir = yDir;
-        }
-    }
+	/**
+	 * Same as rotating left but clockwise this time.
+	 */
+	private synchronized void rotateClockwise() {
+		double oldxDir = xDir;
+		xDir = xDir * Math.cos(-ROTATION_SPEED)
+				- yDir * Math.sin(-ROTATION_SPEED);
+		yDir = oldxDir * Math.sin(-ROTATION_SPEED)
+				+ yDir * Math.cos(-ROTATION_SPEED);
+		double oldxPlane = xPlane;
+		xPlane = xPlane * Math.cos(-ROTATION_SPEED)
+				- yPlane * Math.sin(-ROTATION_SPEED);
+		yPlane = oldxPlane * Math.sin(-ROTATION_SPEED)
+				+ yPlane * Math.cos(-ROTATION_SPEED);
+	}
 
-    public double getxPlane() {
-        synchronized (this.lock) {
-            return xPlane;
-        }
-    }
+	public synchronized double getxPos() {
+		return xPos;
+	}
 
-    public void setxPlane(double xPlane) {
-        synchronized (this.lock) {
-            this.xPlane = xPlane;
-        }
-    }
+	public synchronized double getyPos() {
+		return yPos;
+	}
 
-    public double getyPlane() {
-        synchronized (this.lock) {
-            return yPlane;
-        }
-    }
+	public synchronized void setxPos(double xPos) {
+		this.xPos = xPos;
+	}
 
-    public void setyPlane(double yPlane) {
-        synchronized (this.lock) {
-            this.yPlane = yPlane;
-        }
-    }
+	public synchronized void setyPos(double yPos) {
+		this.yPos = yPos;
+	}
+
+	public synchronized double getxDir() {
+		return xDir;
+	}
+
+	public synchronized void setxDir(double xDir) {
+		this.xDir = xDir;
+	}
+
+	public synchronized double getyDir() {
+		return yDir;
+	}
+
+	public synchronized void setyDir(double yDir) {
+		this.yDir = yDir;
+	}
+
+	public synchronized double getxPlane() {
+		return xPlane;
+	}
+
+	public synchronized void setxPlane(double xPlane) {
+		this.xPlane = xPlane;
+	}
+
+	public synchronized double getyPlane() {
+		return yPlane;
+	}
+
+	public synchronized void setyPlane(double yPlane) {
+		this.yPlane = yPlane;
+	}
+
+	@Override
+	public void onTick() {
+		System.out.println(xPos + " " + yPos);
+	}
+
+	@Override
+	public long interval() {
+		return 60;
+	}
+
+	@Override
+	public void onCreate() {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void onDestroy() {
+		// TODO Auto-generated method stub
+
+	}
 
 }

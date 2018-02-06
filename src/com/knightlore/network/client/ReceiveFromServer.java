@@ -36,7 +36,7 @@ public class ReceiveFromServer implements Runnable {
             player.deserialize(serverCommand);
             // FIXME: interface better with World to provide the camera during
             // its constructor.
-            GameEngine.getSingleton().getWorld().setCamera(player.getCamera());
+            GameEngine.getSingleton().getWorld().setPlayer(player);
 
             while (!conn.terminated && (packet = conn.receive()) != null) {
                 ServerCommand command = ServerCommand.decodePacket(packet);

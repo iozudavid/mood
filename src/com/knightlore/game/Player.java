@@ -5,6 +5,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
+import com.knightlore.game.entity.weapon.Shotgun;
+import com.knightlore.game.entity.weapon.Weapon;
 import com.knightlore.network.NetworkObject;
 import com.knightlore.network.protocol.ClientControl;
 import com.knightlore.network.protocol.ServerCommand;
@@ -12,18 +14,22 @@ import com.knightlore.network.protocol.ServerControl;
 import com.knightlore.network.protocol.ServerProtocol;
 import com.knightlore.render.Camera;
 import com.knightlore.render.IRenderable;
-import com.knightlore.render.Screen;
+import com.knightlore.render.PixelBuffer;
 import com.knightlore.utils.Vector2D;
 
 public class Player extends NetworkObject implements IRenderable {
 
     private Camera camera;
+    private Weapon currentWeapon;
+    
     private final Map<ServerControl, CameraGetterInterface> controlGettersMap;
     private final Map<ServerControl, CameraSetterInterface> controlSettersMap;
 
     public Player(UUID uuid, Camera camera) {
         super(uuid);
         this.camera = camera;
+        this.currentWeapon = new Shotgun();
+        
         this.controlGettersMap = new HashMap<>();
         this.controlGettersMap.put(ServerControl.XPOS, this.camera::getxPos);
         this.controlGettersMap.put(ServerControl.YPOS, this.camera::getyPos);
@@ -43,6 +49,8 @@ public class Player extends NetworkObject implements IRenderable {
                 this.camera::setxPlane);
         this.controlSettersMap.put(ServerControl.YPLANE,
                 this.camera::setyPlane);
+        
+        
     }
 
     public Vector2D getPosition() {
@@ -55,40 +63,21 @@ public class Player extends NetworkObject implements IRenderable {
         return dir;
     }
 
-    public Camera getCamera() {
-        return camera;
-    }
-
     public void setInputState(Map<ClientControl, Byte> inputState) {
         camera.setInputState(inputState);
     }
 
     @Override
-    public void render(Screen s, int x, int y) {
-        s.fillRect(0x000000, (int) this.position.getX(),
+    public void render(PixelBuffer pix, int x, int y) {
+        pix.fillRect(0x000000, (int) this.position.getX(),
                 (int) this.position.getY(), 10, 50);
     }
 
-    @Override
-    public void onCreate() {
-        // TODO Auto-generated method stub
-
-    }
 
     @Override
     public void onUpdate() {
-        if (camera != null) {
-            camera.update();
-            // System.out.println("camera not null");
-        }
-        // System.out.println("camera was null");
     }
 
-    @Override
-    public void onDestroy() {
-        // TODO Auto-generated method stub
-
-    }
 
     @Override
     public byte[] serialize(boolean disconnect) {
@@ -172,9 +161,27 @@ public class Player extends NetworkObject implements IRenderable {
     public static interface CameraGetterInterface {
         double accessDataFromCamera();
     }
+	public Camera getCamera() {
+		return camera;
+	}
+	
+	public Weapon getCurrentWeapon() {
+		return currentWeapon;
+	}
 
     @FunctionalInterface
     public static interface CameraSetterInterface {
         void setDataOnCamera(double val);
+    }
+    @Override
+    public void onCreate() {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    public void onDestroy() {
+        // TODO Auto-generated method stub
+        
     }
 }
