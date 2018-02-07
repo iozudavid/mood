@@ -2,9 +2,19 @@ package com.knightlore.render;
 
 import com.knightlore.render.graphic.Graphic;
 
+/**
+ * A pixel buffer is a 2D array of pixels that can be drawn to the screen. The
+ * game has a main pixel buffer, which all of the game content is rendered to.
+ * Additionally, pixel buffers can be composited on top of one another.
+ * 
+ * @author Joe Ellis
+ *
+ */
 public class PixelBuffer {
 
-	// Pure green chroma key.
+	/**
+	 * Pure green chroma key. Pixels rendered with this colour will be ignored.
+	 */
 	public static final int CHROMA_KEY = -16711936;
 
 	private final int WIDTH, HEIGHT;
@@ -15,7 +25,11 @@ public class PixelBuffer {
 		HEIGHT = height;
 		pixels = new int[WIDTH * HEIGHT];
 	}
-	
+
+	/**
+	 * Fill the pixel buffer with a single colour.
+	 * @param color the color to fill the pixel buffer with.
+	 */
 	public void flood(int color) {
 		fillRect(color, 0, 0, getWidth(), getHeight());
 	}

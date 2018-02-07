@@ -214,7 +214,6 @@ public class World implements IRenderable {
 		});
 
 		for (Mob m : mobs) {
-			m.onUpdate();
 			double spriteX = m.getPosition().getX() - cam.getxPos();
 			double spriteY = m.getPosition().getY() - cam.getyPos();
 
