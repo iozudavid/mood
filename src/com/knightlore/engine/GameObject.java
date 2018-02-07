@@ -33,18 +33,25 @@ public abstract class GameObject {
 		exists = b;
 	}
 
-	// Called when the component is first added to the gameObject, before it is first updated
-	// Use this to subscribe to listeners
+	/**
+	 * Called when the component is first added to the GameObject, before it is
+	 * first updated. Use this to subscribe to listeners.
+	 */
 	public abstract void onCreate();
 
-	// Called every game-frame to update it
+	/**
+	 * Called every game frame.
+	 */
 	public abstract void onUpdate();
 
-	// Called when the attached gameObject is being removed from the game, it will no longer receive updates
-	// Use this to unsubscribe from event listeners
+	/**
+	 * Called when the attached GameObject is being removed from the game, it
+	 * will no longer receive updates. Use this to unsubscribe from event
+	 * listeners.
+	 */
 	public abstract void onDestroy();
-	
-	public void destroy(){
+
+	public void destroy() {
 		GameEngine.getSingleton().removeGameObject(this);
 	}
 

@@ -32,15 +32,39 @@ public class Minimap implements TickListener {
 	 * the composite() method.
 	 */
 
+	/**
+	 * How zoomed in the minimap should appear. The higher this value, the more
+	 * zoomed in.
+	 */
 	public static final int SCALE = 10;
+
+	/**
+	 * The resolution of the minimap. This is the size to draw a single pixel. A
+	 * larger number will give you better performance, but 'poorer quality'.
+	 */
+	public static final int RESOLUTION = 5;
+
+	/**
+	 * The scope of the minimap. This range forms a box around the player.
+	 * Pixels beyond this range are not transformed/rendered, so the lower the
+	 * number the better the performance.
+	 * 
+	 * NOTE: you WILL need to change this value if you modify SCALE.
+	 */
+	public static final int SCOPE = 90;
+
+	private PixelBuffer display;
+	private int width, height;
+	private int[] pixelMap;
 
 	private Player player;
 	private Map map;
 
-	private int width, height;
-	private int[] pixelMap;
-
-	private PixelBuffer display;
+	/**
+	 * We keep track of the previous position and direction so we know not to
+	 * re-render the minimap if nothing changes.
+	 */
+	private Vector2D prevPos, prevDir;
 
 	public Minimap(Player player, Map map, int size) {
 		this.player = player;
@@ -64,14 +88,33 @@ public class Minimap implements TickListener {
 	    //FIXME
 	    if (player == null)
 	        return;
+		Vector2D pos = player.getPosition();
+		Vector2D dir = player.getDirection();
+		if (pos.isEqualTo(prevPos) && dir.isEqualTo(prevDir))
+			return;
+
+		prevPos = pos;
+		prevDir = dir;
+
+
 		final int size = display.getWidth();
 		display.flood(0x000000);
 
-		Vector2D dir = player.getDirection();
 		double theta = -Math.atan2(dir.getX(), dir.getY());
 
-		for (int yy = 0; yy < height; yy++) {
-			for (int xx = 0; xx < width; xx++) {
+		// Find the positions to start rendering based on SCOPE.
+		int startX = (int) Math.max(0, pos.getX() * SCALE - SCOPE),
+				endX = (int) Math.min(width, pos.getX() * SCALE + SCOPE);
+		int startY = (int) Math.max(0, pos.getY() * SCALE - SCOPE),
+				endY = (int) Math.min(height, pos.getY() * SCALE + SCOPE);
+
+		// make sure we always start on a multiple of resolution to avoid weird
+		// stuttering.
+		startX -= startX % RESOLUTION;
+		startY -= startY % RESOLUTION;
+
+		for (int yy = startY; yy < endY; yy += RESOLUTION) {
+			for (int xx = startX; xx < endX; xx += RESOLUTION) {
 				double drawX = xx, drawY = yy;
 				drawX -= player.getPosition().getX() * SCALE;
 				drawY -= player.getPosition().getY() * SCALE;
@@ -81,7 +124,8 @@ public class Minimap implements TickListener {
 
 				drawY = size - drawY; // flip the map in the y-direction.
 
-				// Now, rotate the image according to the 2D rotation matrix.
+				// Now, rotate the image relative to the player position
+				// according to the 2D rotation matrix.
 				drawX -= size / 2;
 				drawY -= size / 2;
 
@@ -97,14 +141,16 @@ public class Minimap implements TickListener {
 				 * rectangle of size 2 as a really basic form of interpolation
 				 * (so we don't get 'holes' in the minimap).
 				 */
-				display.fillRect(pixelMap[xx + yy * width], (int) drawX, (int) drawY, 2, 2);
+				final int INTERPOLATION_CONSTANT = 3;
+				display.fillSquare(pixelMap[xx + yy * width], (int) drawX, (int) drawY,
+						RESOLUTION + INTERPOLATION_CONSTANT);
 			}
 		}
 
 		// draw the player.
 		final int PLAYER_COLOR = 0xFF00FF;
-		display.fillRect(PLAYER_COLOR, size / 2, size / 2, SCALE / 2, SCALE / 2);
-		
+		display.fillSquare(PLAYER_COLOR, size / 2, size / 2, SCALE / 2);
+
 	}
 
 	/**

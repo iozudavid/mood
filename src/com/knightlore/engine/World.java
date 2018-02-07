@@ -242,6 +242,7 @@ public class World implements IRenderable {
 	private void drawSprites(PixelBuffer pix, double[] zbuffer) {
 		Camera cam = player.getCamera();
 		synchronized (this.mobs) {
+
 			mobs.sort(new Comparator<Mob>() {
 
 				@Override
@@ -254,7 +255,6 @@ public class World implements IRenderable {
 			});
 
 			for (Mob m : mobs) {
-				m.onUpdate();
 				double spriteX = m.getPosition().getX() - cam.getxPos();
 				double spriteY = m.getPosition().getY() - cam.getyPos();
 
@@ -315,8 +315,8 @@ public class World implements IRenderable {
 						}
 				}
 			}
-		}
 
+		}
 	}
 
 	private void draw(PixelBuffer pix, PerspectiveRenderItem p) {

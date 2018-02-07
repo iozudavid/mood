@@ -2,13 +2,20 @@ package com.knightlore.render;
 
 import com.knightlore.render.graphic.Graphic;
 
+/**
+ * This class is a data holder. It stores information related to rendering items
+ * with the right perspective.
+ * 
+ * @author Joe Ellis
+ *
+ */
 public class PerspectiveRenderItem {
 
 	public double opacity;
 	public int drawStart;
 	public int drawEnd;
 	public int lineHeight;
-	
+
 	public Graphic texture;
 
 	public int texX;
