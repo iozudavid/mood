@@ -44,9 +44,9 @@ public class GameEngine implements Runnable {
 		final int w = MainWindow.WIDTH, h = MainWindow.HEIGHT;
 		screen = new Screen(w, h);
 		if (headless)
-		    window = null;
+			window = null;
 		else
-		    window = new MainWindow(screen, MainWindow.TITLE, w, h);
+			window = new MainWindow(screen, MainWindow.TITLE, w, h);
 
 		initInputs();
 
@@ -72,12 +72,16 @@ public class GameEngine implements Runnable {
 
 	void addGameObject(GameObject g) {
 		// delay adding until next loop
-		notifyToCreate.add(g);
+		synchronized (notifyToCreate) {
+			notifyToCreate.add(g);
+		}
 	}
 
 	void removeGameObject(GameObject g) {
 		// delay deleting until next loop
-		notifyToDestroy.add(g);
+		synchronized (notifyToDestroy) {
+			notifyToDestroy.add(g);
+		}
 	}
 
 	private void initInputs() {
@@ -136,29 +140,31 @@ public class GameEngine implements Runnable {
 		// perform internal list management before updating.
 		// as modifying a list whilst iterating over it is a very bad idea.
 
-		Iterator<GameObject> it = notifyToCreate.iterator();
-		while (it.hasNext()) {
-			GameObject obj = it.next();
-			// add the object to the update list
-			objects.add(obj);
-			obj.setExists(true);
-			// notify the object it has been created
-			obj.onCreate();
+		synchronized (notifyToCreate) {
+			Iterator<GameObject> it = notifyToCreate.iterator();
+			while (it.hasNext()) {
+				GameObject obj = it.next();
+				// add the object to the update list
+				objects.add(obj);
+				obj.setExists(true);
+				// notify the object it has been created
+				obj.onCreate();
+			}
+			notifyToCreate.clear();
 		}
-		notifyToCreate.clear();
-
-		// remove any objects that need deleting
-		it = notifyToDestroy.iterator();
-		while (it.hasNext()) {
-			GameObject obj = it.next();
-			// remove the object from the update list
-			objects.remove(obj);
-			obj.setExists(false);
-			// notify the object it has been effectively destroyed
-			obj.onDestroy();
+		synchronized (notifyToDestroy) {
+			// remove any objects that need deleting
+			Iterator<GameObject> it = notifyToDestroy.iterator();
+			while (it.hasNext()) {
+				GameObject obj = it.next();
+				// remove the object from the update list
+				objects.remove(obj);
+				obj.setExists(false);
+				// notify the object it has been effectively destroyed
+				obj.onDestroy();
+			}
+			notifyToDestroy.clear();
 		}
-		notifyToDestroy.clear();
-
 		// update all objects
 		for (GameObject obj : objects) {
 			obj.onUpdate();
