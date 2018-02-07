@@ -71,6 +71,10 @@ public class PixelBuffer {
 			return;
 		fillRect(color, x, y, 1, 1);
 	}
+	
+	public void fillSquare(int color, int x, int y, int size) {
+		fillRect(color, x, y, size, size);
+	}
 
 	public void fillRect(int color, int x, int y, int w, int h) {
 		for (int yy = y; yy < y + h; yy++) {
