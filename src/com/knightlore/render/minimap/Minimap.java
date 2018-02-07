@@ -104,6 +104,7 @@ public class Minimap implements TickListener {
 		// draw the player.
 		final int PLAYER_COLOR = 0xFF00FF;
 		display.fillRect(PLAYER_COLOR, size / 2, size / 2, SCALE / 2, SCALE / 2);
+		
 	}
 
 	/**

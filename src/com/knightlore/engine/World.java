@@ -3,6 +3,7 @@ package com.knightlore.engine;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Stack;
 
@@ -251,8 +252,24 @@ public class World implements IRenderable {
 				}
 
 			});
+			
+			Iterator<Mob> it = mobs.iterator();
+			Mob auxMob = null;
+			ArrayList<Mob> renderingMobs = new ArrayList<>();
+			if(it.hasNext()){
+				auxMob = it.next();
+			}
+			while(it.hasNext()){
+				Mob nextMob = it.next();
+				if(auxMob.getPosition().getX() != nextMob.getPosition().getX() ||
+						auxMob.getPosition().getY() != nextMob.getPosition().getY()){
+					renderingMobs.add(auxMob);
+				}
+				auxMob=nextMob;
+				
+			}
 
-			for (Mob m : mobs) {
+			for (Mob m : renderingMobs) {
 				m.onUpdate();
 				double spriteX = m.getPosition().getX() - cam.getxPos();
 				double spriteY = m.getPosition().getY() - cam.getyPos();
