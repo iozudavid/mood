@@ -27,6 +27,8 @@ public class Player extends NetworkObject implements IRenderable {
 
 	public Player(UUID uuid, Camera camera) {
 		super(uuid);
+		assert(camera != null);
+		
 		this.camera = camera;
 		this.currentWeapon = new Shotgun();
 		
