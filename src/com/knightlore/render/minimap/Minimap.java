@@ -87,7 +87,7 @@ public class Minimap implements TickListener {
 	public void render() {
 		Vector2D pos = camera.getPosition();
 		Vector2D dir = camera.getDirection();
-		if (pos.isEqual(prevPos) && dir.isEqual(prevDir))
+		if (pos.isEqualTo(prevPos) && dir.isEqualTo(prevDir))
 			return;
 
 		prevPos = pos;
