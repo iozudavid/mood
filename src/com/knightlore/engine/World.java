@@ -2,17 +2,20 @@ package com.knightlore.engine;
 
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Stack;
 
 import com.knightlore.game.Player;
 import com.knightlore.game.area.Map;
 import com.knightlore.game.entity.Mob;
+import com.knightlore.game.entity.Zombie;
 import com.knightlore.game.entity.pickup.ShotgunPickup;
 import com.knightlore.game.tile.AirTile;
 import com.knightlore.game.tile.Tile;
 import com.knightlore.gui.Button;
 import com.knightlore.gui.GUICanvas;
+import com.knightlore.network.NetworkObject;
 import com.knightlore.network.NetworkObjectManager;
 import com.knightlore.render.Camera;
 import com.knightlore.render.ColorUtils;
@@ -31,11 +34,17 @@ public class World implements IRenderable {
 	Player player = null;
 	private Minimap minimap;
 	private GUICanvas gui;
+	private java.util.Map<NetworkObject, Vector2D> networkObjPos;
+	//consider other players as mobs for now
+	//in order to render them
+	private java.util.Map<NetworkObject, Mob> networkObjMobs;
 
 	public World(Map map) {
 		this.map = map;
-		entities = new ArrayList<>();
-
+		this.entities = new ArrayList<>();
+		this.networkObjPos = new HashMap<>();
+		this.networkObjMobs = new HashMap<>();
+		
 		// setup testing ui
 		gui = new GUICanvas();
 		Button b = new Button(5, 5, 0);
@@ -70,8 +79,30 @@ public class World implements IRenderable {
 		PixelBuffer minimapBuffer = minimap.getPixelBuffer();
 		pix.composite(minimapBuffer,
 				pix.getWidth() - minimapBuffer.getWidth() - 10, 5);
-
+		
 	}
+	
+    public void updateNetworkObjectPos(NetworkObject obj, Vector2D vec){
+    	synchronized(this.mobs){
+    	if(vec==null){
+    		this.networkObjPos.remove(obj);
+    		this.mobs.remove(this.networkObjMobs.get(obj));
+    		this.networkObjMobs.remove(obj);
+    	}
+    	else if(networkObjPos.containsKey(obj)){
+        	this.networkObjPos.put(obj, vec);
+        	this.mobs.remove(this.networkObjMobs.get(obj));
+        	Zombie z = new Zombie(1D, vec);
+        	this.networkObjMobs.put(obj, z);
+        	this.mobs.add(z);
+        }else{
+        	this.networkObjPos.put(obj, vec);
+        	Zombie z = new Zombie(1D, vec);
+        	this.networkObjMobs.put(obj, z);
+        	this.mobs.add(z);
+        }
+    	}
+    }
 
 	// FIXME: Provide this in the constructor when we refactor this class.
 	public void setPlayer(Player player) {
@@ -214,7 +245,7 @@ public class World implements IRenderable {
 
 	private void drawSprites(PixelBuffer pix, double[] zbuffer) {
 		Camera cam = player.getCamera();
-
+		synchronized(this.mobs){
 		mobs.sort(new Comparator<Mob>() {
 
 			@Override
@@ -297,7 +328,79 @@ public class World implements IRenderable {
 						pix.fillRect(color, stripe, drawY, BLOCKINESS, 1);
 					}
 			}
+			}
 		}
+		
+//		for (NetworkObject n : this.networkObjPos.keySet()) {
+//			double spriteX = n.getPosition().getX() - cam.getxPos();
+//			double spriteY = n.getPosition().getY() - cam.getyPos();
+//
+//			double invDet = 1.0 / (cam.getxPlane() * cam.getyDir()
+//					- cam.getxDir() * cam.getyPlane());
+//
+//			double transformX = invDet
+//					* (cam.getyDir() * spriteX - cam.getxDir() * spriteY);
+//			double transformY = invDet
+//					* (-cam.getyPlane() * spriteX + cam.getxPlane() * spriteY);
+//
+//			int spriteScreenX = (int) ((pix.getWidth() / 2)
+//					* (1 + transformX / transformY));
+//			int spriteHeight = Math.abs((int) (pix.getHeight() / transformY));
+//
+//			// calculate lowest and highest pixel to fill in current stripe
+//			int drawStartY = -spriteHeight / 2 + pix.getHeight() / 2;
+//			if (drawStartY < 0)
+//				drawStartY = 0;
+//			int drawEndY = spriteHeight / 2 + pix.getHeight() / 2;
+//			if (drawEndY >= pix.getHeight())
+//				drawEndY = pix.getHeight() - 1;
+//
+//			// calculate width of the sprite
+//			int spriteWidth = Math.abs((int) (pix.getHeight() / transformY));
+//			int drawStartX = -spriteWidth / 2 + spriteScreenX;
+//			if (drawStartX < 0)
+//				drawStartX = 0;
+//			int drawEndX = spriteWidth / 2 + spriteScreenX;
+//			if (drawEndX >= pix.getWidth())
+//				drawEndX = pix.getWidth() - 1;
+//
+//			// loop through every vertical stripe of the sprite on screen
+//			for (int stripe = drawStartX; stripe < drawEndX; stripe++) {
+//				Graphic g = GraphicSheet.GENERAL_SPRITES.graphicAt((int)n.getPosition().getX(), (int)n.getPosition().getY());
+//
+//				int texX = (int) (256
+//						* (stripe - (-spriteWidth / 2 + spriteScreenX))
+//						* g.getWidth() / spriteWidth) / 256;
+//
+//				// the conditions in the if are:
+//				// 1) it's in front of camera plane so you don't see things
+//				// behind you
+//				// 2) it's on the screen (left)
+//				// 3) it's on the screen (right)
+//				// 4) ZBuffer, with perpendicular distance
+//				if (transformY > 0 && stripe > 0 && stripe < pix.getWidth()
+//						&& transformY < zbuffer[stripe])
+//					for (int y = drawStartY; y < drawEndY; y++) {
+//						// here, 256 and 128 are factors to avoid floats.
+//						int d = y * 256 - pix.getHeight() * 128
+//								+ spriteHeight * 128;
+//						int texY = ((d * g.getHeight()) / spriteHeight) / 256;
+//						int color = g.getPixels()[g.getWidth() * texY + texX];
+//
+//						if (color == PixelBuffer.CHROMA_KEY)
+//							continue;
+//
+//						color = ColorUtils.darken(color,
+//								map.getEnvironment().getDarkness(),
+//								cam.getPosition().distance(n.getPosition()));
+//
+//						int drawY = y + player.getCamera().getMotionOffset();
+//						//drawY += m.getzOffset() / transformY;
+//						pix.fillRect(color, stripe, drawY, BLOCKINESS, 1);
+//					}
+//			}
+//			}
+			
 	}
 
 	private void draw(PixelBuffer pix, PerspectiveRenderItem p) {

@@ -7,8 +7,10 @@ import com.knightlore.game.Player;
 import com.knightlore.network.Connection;
 import com.knightlore.network.NetworkObjectManager;
 import com.knightlore.network.protocol.ServerCommand;
+import com.knightlore.network.protocol.ServerControl;
 import com.knightlore.network.protocol.ServerProtocol;
 import com.knightlore.render.Camera;
+import com.knightlore.utils.Vector2D;
 
 public class ReceiveFromServer implements Runnable {
 
@@ -50,7 +52,9 @@ public class ReceiveFromServer implements Runnable {
                 //and from network manager
                 if(ServerProtocol.isDisconnectedState(packet)){
                     NetworkObjectManager.getSingleton().getNetworkObject(command.getObjectId()).destroy();
-                    NetworkObjectManager.getSingleton().disconnectClient(command.getObjectId());
+					NetworkObjectManager.getSingleton().disconnectClient(command.getObjectId());
+					GameEngine.getSingleton().getWorld().updateNetworkObjectPos(
+							NetworkObjectManager.getSingleton().getNetworkObject(command.getObjectId()), null);
                     continue;
                 }
                 
@@ -58,6 +62,13 @@ public class ReceiveFromServer implements Runnable {
                 NetworkObjectManager.getSingleton()
                         .getNetworkObject(command.getObjectId())
                         .deserialize(command);
+                
+                GameEngine.getSingleton().getWorld().updateNetworkObjectPos(
+                        NetworkObjectManager.getSingleton()
+                                .getNetworkObject(command.getObjectId()),
+                        new Vector2D(
+                                command.getValueByControl(ServerControl.XPOS),
+                                command.getValueByControl(ServerControl.YPOS)));
 
             }
             if (!conn.terminated)
