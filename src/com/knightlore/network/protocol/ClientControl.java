@@ -1,8 +1,7 @@
 package com.knightlore.network.protocol;
 
+import java.awt.event.KeyEvent;
 import java.io.IOException;
-
-import com.sun.glass.events.KeyEvent;
 
 public enum ClientControl {
 	FORWARD,
