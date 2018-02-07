@@ -1,7 +1,6 @@
 package com.knightlore.network;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -13,7 +12,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import com.knightlore.engine.GameEngine;
 import com.knightlore.engine.GameObject;
 import com.knightlore.game.Player;
-import com.knightlore.network.protocol.ServerProtocol;
+import com.knightlore.network.protocol.NetworkUtils;
 import com.knightlore.network.server.SendToClient;
 import com.knightlore.render.Camera;
 import com.knightlore.utils.Tuple;
@@ -114,7 +113,7 @@ public class NetworkObjectManager extends GameObject {
             // Send state either if we're due a regular update, or if the state
             // has changed.
             if (updateCount >= REGULAR_UPDATE_FREQ
-                    || areStatesDifferent(newState, t.getValue().y)) {
+                    || NetworkUtils.areStatesDifferent(newState, t.getValue().y)) {
                 for (SendToClient s : clientSenders)
                     s.sendState(newState);
                 if (!disconnect) {
@@ -137,24 +136,6 @@ public class NetworkObjectManager extends GameObject {
     @Override
     public void onDestroy() {
         // TODO Auto-generated method stub
-
-    }
-
-    public boolean areStatesDifferent(byte[] x, byte[] currentState) {
-        if (x == null || currentState == null)
-            return true;
-        byte[] lastStateWithoutTimeToCompare = Arrays.copyOfRange(x,
-                ServerProtocol.METADATA_LENGTH, ServerProtocol.TOTAL_LENGTH);
-        byte[] currentStateWithoutTimeToCompare = Arrays.copyOfRange(
-                currentState, ServerProtocol.METADATA_LENGTH,
-                ServerProtocol.TOTAL_LENGTH);
-        if (lastStateWithoutTimeToCompare.length != currentStateWithoutTimeToCompare.length)
-            return true;
-        for (int i = 0; i < lastStateWithoutTimeToCompare.length; i++) {
-            if (lastStateWithoutTimeToCompare[i] != currentStateWithoutTimeToCompare[i])
-                return true;
-        }
-        return false;
 
     }
 

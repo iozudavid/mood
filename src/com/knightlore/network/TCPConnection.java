@@ -51,6 +51,7 @@ public class TCPConnection extends Connection {
             infoSend.flush();
         } catch (IOException e) {
             System.err.println("Communication broke...");
+            this.terminated = true;
         }
 
     }

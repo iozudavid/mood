@@ -8,6 +8,7 @@ import com.knightlore.engine.input.InputManager;
 import com.knightlore.network.Connection;
 import com.knightlore.network.protocol.ClientControl;
 import com.knightlore.network.protocol.ClientProtocol;
+import com.knightlore.network.protocol.NetworkUtils;
 
 public class SendToServer implements Runnable {
     // How often to send an update of controls, rather than just if the
@@ -69,13 +70,14 @@ public class SendToServer implements Runnable {
     }
 
     public void run() {
+        int updateCounter = 1;
         while (!conn.terminated) {
             synchronized (lock) {
-                int updateCounter = 1;
                 // Send a controls update if either the controls have changed or
                 // a regular update is due.
                 if (updateCounter++ >= REGULAR_UPDATE_FREQ
-                        || this.lastState != this.currentState) {
+                        || NetworkUtils.areStatesDifferent(this.lastState,
+                                this.currentState)) {
                     updateCounter = 1;
                     conn.send(this.currentState);
                     this.lastState = this.currentState;
