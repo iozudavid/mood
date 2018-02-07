@@ -2,17 +2,20 @@ package com.knightlore.engine;
 
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Stack;
 
 import com.knightlore.game.Player;
 import com.knightlore.game.area.Map;
 import com.knightlore.game.entity.Mob;
+import com.knightlore.game.entity.Zombie;
 import com.knightlore.game.entity.pickup.ShotgunPickup;
 import com.knightlore.game.tile.AirTile;
 import com.knightlore.game.tile.Tile;
 import com.knightlore.gui.Button;
 import com.knightlore.gui.GUICanvas;
+import com.knightlore.network.NetworkObject;
 import com.knightlore.network.NetworkObjectManager;
 import com.knightlore.render.Camera;
 import com.knightlore.render.ColorUtils;
@@ -31,10 +34,16 @@ public class World implements IRenderable {
 	Player player = null;
 	private Minimap minimap;
 	private GUICanvas gui;
+	private java.util.Map<NetworkObject, Vector2D> networkObjPos;
+	// consider other players as mobs for now
+	// in order to render them
+	private java.util.Map<NetworkObject, Mob> networkObjMobs;
 
 	public World(Map map) {
 		this.map = map;
-		entities = new ArrayList<>();
+		this.entities = new ArrayList<>();
+		this.networkObjPos = new HashMap<>();
+		this.networkObjMobs = new HashMap<>();
 
 		// setup testing ui
 		gui = new GUICanvas();
@@ -53,9 +62,9 @@ public class World implements IRenderable {
 
 	@Override
 	public void render(PixelBuffer pix, int x, int y) {
-		//FIXME
+		// FIXME
 		if (player == null)
-			return; 
+			return;
 		// We don't know what perspective to draw from until we know the
 		// identity of the current player, provided by the network. Stall until
 		// this is
@@ -68,15 +77,35 @@ public class World implements IRenderable {
 		minimap.render();
 
 		PixelBuffer minimapBuffer = minimap.getPixelBuffer();
-		pix.composite(minimapBuffer,
-				pix.getWidth() - minimapBuffer.getWidth() - 10, 5);
+		pix.composite(minimapBuffer, pix.getWidth() - minimapBuffer.getWidth() - 10, 5);
 
+	}
+
+	public void updateNetworkObjectPos(NetworkObject obj, Vector2D vec) {
+		synchronized (this.mobs) {
+			if (vec == null) {
+				this.networkObjPos.remove(obj);
+				this.mobs.remove(this.networkObjMobs.get(obj));
+				this.networkObjMobs.remove(obj);
+			} else if (networkObjPos.containsKey(obj)) {
+				this.networkObjPos.put(obj, vec);
+				this.mobs.remove(this.networkObjMobs.get(obj));
+				Zombie z = new Zombie(1D, vec);
+				this.networkObjMobs.put(obj, z);
+				this.mobs.add(z);
+			} else {
+				this.networkObjPos.put(obj, vec);
+				Zombie z = new Zombie(1D, vec);
+				this.networkObjMobs.put(obj, z);
+				this.mobs.add(z);
+			}
+		}
 	}
 
 	// FIXME: Provide this in the constructor when we refactor this class.
 	public void setPlayer(Player player) {
 		this.player = player;
-        this.minimap = new Minimap(player, map, 128);
+		this.minimap = new Minimap(player, map, 128);
 	}
 
 	private final int BLOCKINESS = 1; // how 'old school' you want to look.
@@ -161,8 +190,7 @@ public class World implements IRenderable {
 					if (opacity >= 1)
 						hit = true;
 
-					distanceToWall = getImpactDistance(camera, rayX, rayY, mapX,
-							mapY, side, stepX, stepY);
+					distanceToWall = getImpactDistance(camera, rayX, rayY, mapX, mapY, side, stepX, stepY);
 					int lineHeight = getDrawHeight(height, distanceToWall);
 
 					// calculate lowest and highest pixel to fill in current
@@ -177,8 +205,7 @@ public class World implements IRenderable {
 						drawEnd = height - 1;
 					}
 
-					double wallX = getWallHitPosition(camera, rayX, rayY, mapX,
-							mapY, side, stepX, stepY);
+					double wallX = getWallHitPosition(camera, rayX, rayY, mapX, mapY, side, stepX, stepY);
 
 					Graphic texture = map.getTile(mapX, mapY).getTexture();
 
@@ -192,9 +219,8 @@ public class World implements IRenderable {
 						texX = texture.getSize() - texX - 1;
 					}
 
-					PerspectiveRenderItem p = new PerspectiveRenderItem(opacity,
-							drawStart, drawEnd, lineHeight, texture, texX,
-							distanceToWall, xx);
+					PerspectiveRenderItem p = new PerspectiveRenderItem(opacity, drawStart, drawEnd, lineHeight,
+							texture, texX, distanceToWall, xx);
 					renderStack.push(p);
 					zbuffer[xx] = p.distanceToWall;
 
@@ -214,124 +240,108 @@ public class World implements IRenderable {
 
 	private void drawSprites(PixelBuffer pix, double[] zbuffer) {
 		Camera cam = player.getCamera();
+		synchronized (this.mobs) {
+			mobs.sort(new Comparator<Mob>() {
 
-		mobs.sort(new Comparator<Mob>() {
+				@Override
+				public int compare(Mob o1, Mob o2) {
+					final double distance1 = cam.getPosition().distance(o1.position);
+					final double distance2 = cam.getPosition().distance(o2.position);
+					return Double.compare(distance2, distance1);
+				}
 
-			@Override
-			public int compare(Mob o1, Mob o2) {
-				final double distance1 = cam.getPosition()
-						.distance(o1.position);
-				final double distance2 = cam.getPosition()
-						.distance(o2.position);
-				return Double.compare(distance2, distance1);
-			}
+			});
 
-		});
+			for (Mob m : mobs) {
+				m.onUpdate();
+				double spriteX = m.getPosition().getX() - cam.getxPos();
+				double spriteY = m.getPosition().getY() - cam.getyPos();
 
-		for (Mob m : mobs) {
-			m.onUpdate();
-			double spriteX = m.getPosition().getX() - cam.getxPos();
-			double spriteY = m.getPosition().getY() - cam.getyPos();
+				double invDet = 1.0 / (cam.getxPlane() * cam.getyDir() - cam.getxDir() * cam.getyPlane());
 
-			double invDet = 1.0 / (cam.getxPlane() * cam.getyDir()
-					- cam.getxDir() * cam.getyPlane());
+				double transformX = invDet * (cam.getyDir() * spriteX - cam.getxDir() * spriteY);
+				double transformY = invDet * (-cam.getyPlane() * spriteX + cam.getxPlane() * spriteY);
 
-			double transformX = invDet
-					* (cam.getyDir() * spriteX - cam.getxDir() * spriteY);
-			double transformY = invDet
-					* (-cam.getyPlane() * spriteX + cam.getxPlane() * spriteY);
+				int spriteScreenX = (int) ((pix.getWidth() / 2) * (1 + transformX / transformY));
+				int spriteHeight = Math.abs((int) (pix.getHeight() / transformY));
 
-			int spriteScreenX = (int) ((pix.getWidth() / 2)
-					* (1 + transformX / transformY));
-			int spriteHeight = Math.abs((int) (pix.getHeight() / transformY));
+				// calculate lowest and highest pixel to fill in current stripe
+				int drawStartY = -spriteHeight / 2 + pix.getHeight() / 2;
+				if (drawStartY < 0)
+					drawStartY = 0;
+				int drawEndY = spriteHeight / 2 + pix.getHeight() / 2;
+				if (drawEndY >= pix.getHeight())
+					drawEndY = pix.getHeight() - 1;
 
-			// calculate lowest and highest pixel to fill in current stripe
-			int drawStartY = -spriteHeight / 2 + pix.getHeight() / 2;
-			if (drawStartY < 0)
-				drawStartY = 0;
-			int drawEndY = spriteHeight / 2 + pix.getHeight() / 2;
-			if (drawEndY >= pix.getHeight())
-				drawEndY = pix.getHeight() - 1;
+				// calculate width of the sprite
+				int spriteWidth = Math.abs((int) (pix.getHeight() / transformY));
+				int drawStartX = -spriteWidth / 2 + spriteScreenX;
+				if (drawStartX < 0)
+					drawStartX = 0;
+				int drawEndX = spriteWidth / 2 + spriteScreenX;
+				if (drawEndX >= pix.getWidth())
+					drawEndX = pix.getWidth() - 1;
 
-			// calculate width of the sprite
-			int spriteWidth = Math.abs((int) (pix.getHeight() / transformY));
-			int drawStartX = -spriteWidth / 2 + spriteScreenX;
-			if (drawStartX < 0)
-				drawStartX = 0;
-			int drawEndX = spriteWidth / 2 + spriteScreenX;
-			if (drawEndX >= pix.getWidth())
-				drawEndX = pix.getWidth() - 1;
+				// loop through every vertical stripe of the sprite on screen
+				for (int stripe = drawStartX; stripe < drawEndX; stripe++) {
+					Graphic g = m.getGraphic(player.getPosition());
 
-			// loop through every vertical stripe of the sprite on screen
-			for (int stripe = drawStartX; stripe < drawEndX; stripe++) {
-				Graphic g = m.getGraphic(player.getPosition());
+					int texX = (int) (256 * (stripe - (-spriteWidth / 2 + spriteScreenX)) * g.getWidth() / spriteWidth)
+							/ 256;
 
-				int texX = (int) (256
-						* (stripe - (-spriteWidth / 2 + spriteScreenX))
-						* g.getWidth() / spriteWidth) / 256;
+					// the conditions in the if are:
+					// 1) it's in front of camera plane so you don't see things
+					// behind you
+					// 2) it's on the screen (left)
+					// 3) it's on the screen (right)
+					// 4) ZBuffer, with perpendicular distance
+					if (transformY > 0 && stripe > 0 && stripe < pix.getWidth() && transformY < zbuffer[stripe])
+						for (int y = drawStartY; y < drawEndY; y++) {
+							// here, 256 and 128 are factors to avoid floats.
+							int d = y * 256 - pix.getHeight() * 128 + spriteHeight * 128;
+							int texY = ((d * g.getHeight()) / spriteHeight) / 256;
+							int color = g.getPixels()[g.getWidth() * texY + texX];
 
-				// the conditions in the if are:
-				// 1) it's in front of camera plane so you don't see things
-				// behind you
-				// 2) it's on the screen (left)
-				// 3) it's on the screen (right)
-				// 4) ZBuffer, with perpendicular distance
-				if (transformY > 0 && stripe > 0 && stripe < pix.getWidth()
-						&& transformY < zbuffer[stripe])
-					for (int y = drawStartY; y < drawEndY; y++) {
-						// here, 256 and 128 are factors to avoid floats.
-						int d = y * 256 - pix.getHeight() * 128
-								+ spriteHeight * 128;
-						int texY = ((d * g.getHeight()) / spriteHeight) / 256;
-						int color = g.getPixels()[g.getWidth() * texY + texX];
+							if (color == PixelBuffer.CHROMA_KEY)
+								continue;
 
-						if (color == PixelBuffer.CHROMA_KEY)
-							continue;
+							color = ColorUtils.darken(color, map.getEnvironment().getDarkness(),
+									cam.getPosition().distance(m.getPosition()));
 
-						color = ColorUtils.darken(color,
-								map.getEnvironment().getDarkness(),
-								cam.getPosition().distance(m.getPosition()));
-
-						int drawY = y + player.getCamera().getMotionOffset();
-						drawY += m.getzOffset() / transformY;
-						pix.fillRect(color, stripe, drawY, BLOCKINESS, 1);
-					}
+							int drawY = y + player.getCamera().getMotionOffset();
+							drawY += m.getzOffset() / transformY;
+							pix.fillRect(color, stripe, drawY, BLOCKINESS, 1);
+						}
+				}
 			}
 		}
+
 	}
 
 	private void draw(PixelBuffer pix, PerspectiveRenderItem p) {
 		// calculate y coordinate on texture
 		for (int yy = p.drawStart; yy < p.drawEnd; yy++) {
 
-			int texY = (((yy * 2 - pix.getHeight() + p.lineHeight) << 4)
-					/ p.lineHeight) / 2;
+			int texY = (((yy * 2 - pix.getHeight() + p.lineHeight) << 4) / p.lineHeight) / 2;
 
-			int color = p.texture.getPixels()[p.texX
-					+ (texY * p.texture.getSize())];
+			int color = p.texture.getPixels()[p.texX + (texY * p.texture.getSize())];
 
 			int drawY = yy + player.getCamera().getMotionOffset();
-			color = ColorUtils.mixColor(pix.pixelAt(p.xx, drawY), color,
-					p.opacity);
+			color = ColorUtils.mixColor(pix.pixelAt(p.xx, drawY), color, p.opacity);
 
-			color = ColorUtils.darken(color, map.getEnvironment().getDarkness(),
-					p.distanceToWall);
+			color = ColorUtils.darken(color, map.getEnvironment().getDarkness(), p.distanceToWall);
 			pix.fillRect(color, p.xx, drawY, BLOCKINESS, 1);
 		}
 	}
 
-	private double getWallHitPosition(Camera camera, double rayX, double rayY,
-			int mapX, int mapY, boolean side, int stepX, int stepY) {
+	private double getWallHitPosition(Camera camera, double rayX, double rayY, int mapX, int mapY, boolean side,
+			int stepX, int stepY) {
 		// add a texture
 		double wallX;// Exact position of where wall was hit
 		if (side) {// If its a y-axis wall
-			wallX = (camera.getxPos()
-					+ ((mapY - camera.getyPos() + (1 - stepY) / 2) / rayY)
-							* rayX);
+			wallX = (camera.getxPos() + ((mapY - camera.getyPos() + (1 - stepY) / 2) / rayY) * rayX);
 		} else {// X-axis wall
-			wallX = (camera.getyPos()
-					+ ((mapX - camera.getxPos() + (1 - stepX) / 2) / rayX)
-							* rayY);
+			wallX = (camera.getyPos() + ((mapX - camera.getxPos() + (1 - stepX) / 2) / rayX) * rayY);
 		}
 		wallX -= Math.floor(wallX);
 		return wallX;
@@ -347,18 +357,14 @@ public class World implements IRenderable {
 		return lineHeight;
 	}
 
-	private double getImpactDistance(Camera camera, double rayX, double rayY,
-			int mapX, int mapY, boolean side, int stepX, int stepY) {
+	private double getImpactDistance(Camera camera, double rayX, double rayY, int mapX, int mapY, boolean side,
+			int stepX, int stepY) {
 		double distanceToWall;
 		// Calculate distance to the point of impact
 		if (!side) {
-			distanceToWall = Math
-					.abs((mapX - camera.getxPos() + (1 - stepX) / 2)
-							/ (rayX / TILE_SIZE));
+			distanceToWall = Math.abs((mapX - camera.getxPos() + (1 - stepX) / 2) / (rayX / TILE_SIZE));
 		} else {
-			distanceToWall = Math
-					.abs((mapY - camera.getyPos() + (1 - stepY) / 2)
-							/ (rayY / TILE_SIZE));
+			distanceToWall = Math.abs((mapY - camera.getyPos() + (1 - stepY) / 2) / (rayY / TILE_SIZE));
 		}
 		return distanceToWall;
 	}
@@ -372,10 +378,8 @@ public class World implements IRenderable {
 		final int CROSSHAIR_WIDTH = 2;
 		final int CROSSHAIR_COLOR = 0xFFFFFF;
 		final int w = pix.getWidth() / 2, h = pix.getHeight() / 2;
-		pix.fillRect(CROSSHAIR_COLOR, w - CROSSHAIR_SIZE,
-				h - CROSSHAIR_WIDTH / 2, CROSSHAIR_SIZE * 2, CROSSHAIR_WIDTH);
-		pix.fillRect(CROSSHAIR_COLOR, w - CROSSHAIR_WIDTH / 2,
-				h - CROSSHAIR_SIZE, CROSSHAIR_WIDTH, CROSSHAIR_SIZE * 2);
+		pix.fillRect(CROSSHAIR_COLOR, w - CROSSHAIR_SIZE, h - CROSSHAIR_WIDTH / 2, CROSSHAIR_SIZE * 2, CROSSHAIR_WIDTH);
+		pix.fillRect(CROSSHAIR_COLOR, w - CROSSHAIR_WIDTH / 2, h - CROSSHAIR_SIZE, CROSSHAIR_WIDTH, CROSSHAIR_SIZE * 2);
 
 		Graphic g = player.getCurrentWeapon().getGraphic();
 		pix.drawGraphic(g, pix.getWidth() - 700, pix.getHeight() - 600, 8, 8);

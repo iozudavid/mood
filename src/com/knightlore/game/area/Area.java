@@ -19,6 +19,13 @@ public abstract class Area {
 
         this.grid = grid;
     }
+    
+    //this is used to render other players
+    //added for prototype presentation
+    //as a quick solution
+    public void setTile(int x, int y, Tile t) {
+        grid[x][y] = t;
+    }
 
     public Tile getTile(int x, int y) {
         return grid[x][y];
