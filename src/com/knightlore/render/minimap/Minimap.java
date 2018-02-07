@@ -53,13 +53,18 @@ public class Minimap implements TickListener {
 	 */
 	public static final int SCOPE = 90;
 
-	private Player player;
-	private Map map;
-
+	private PixelBuffer display;
 	private int width, height;
 	private int[] pixelMap;
 
-	private PixelBuffer display;
+	private Player player;
+	private Map map;
+
+	/**
+	 * We keep track of the previous position and direction so we know not to
+	 * re-render the minimap if nothing changes.
+	 */
+	private Vector2D prevPos, prevDir;
 
 	public Minimap(Player player, Map map, int size) {
 		this.player = player;
@@ -80,11 +85,17 @@ public class Minimap implements TickListener {
 	 * minimap.
 	 */
 	public void render() {
+		Vector2D pos = player.getPosition();
+		Vector2D dir = player.getDirection();
+		if (pos.isEqual(prevPos) && dir.isEqual(prevDir))
+			return;
+
+		prevPos = pos;
+		prevDir = dir;
+
 		final int size = display.getWidth();
 		display.flood(0x000000);
 
-		Vector2D pos = player.getPosition();
-		Vector2D dir = player.getDirection();
 		double theta = -Math.atan2(dir.getX(), dir.getY());
 
 		// Find the positions to start rendering based on SCOPE.
