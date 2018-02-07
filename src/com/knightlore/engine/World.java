@@ -43,8 +43,6 @@ public class World implements IRenderable {
 		b.rect.height = 30;
 		gui.addGUIObject(b);
 
-		this.minimap = new Minimap(player, map, 128);
-
 		mobs = new ArrayList<>();
 		for (int i = 1; i < 5; i += 2) {
 			mobs.add(new ShotgunPickup(new Vector2D(i, 3)));
@@ -78,6 +76,7 @@ public class World implements IRenderable {
 	// FIXME: Provide this in the constructor when we refactor this class.
 	public void setPlayer(Player player) {
 		this.player = player;
+        this.minimap = new Minimap(player, map, 128);
 	}
 
 	private final int BLOCKINESS = 1; // how 'old school' you want to look.
