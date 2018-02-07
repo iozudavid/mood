@@ -18,9 +18,9 @@ public class Camera extends GameObject implements TickListener {
 	private long moveTicks;
 
 	public static final double FIELD_OF_VIEW = -.66;
-	private static final double MOVE_SPEED = .100;
-	private static final double STRAFE_SPEED = .04;
-	private static final double ROTATION_SPEED = .045;
+	private static final double MOVE_SPEED = .040;
+	private static final double STRAFE_SPEED = .01;
+	private static final double ROTATION_SPEED = .025;
 
 	private final Map map;
 	private double xPos, yPos, xDir, yDir, xPlane, yPlane;

@@ -17,9 +17,11 @@ public enum ClientControl {
 		switch(k){
 			//at this moment only this keys are provided
 			case FORWARD : return KeyEvent.VK_W;
-			case ROTATE_ANTI_CLOCKWISE : return KeyEvent.VK_A;
+			case LEFT : return KeyEvent.VK_A;
 			case BACKWARD : return KeyEvent.VK_S;
-			case ROTATE_CLOCKWISE : return KeyEvent.VK_D;
+			case RIGHT : return KeyEvent.VK_D;
+			case ROTATE_ANTI_CLOCKWISE: return KeyEvent.VK_LEFT;
+			case ROTATE_CLOCKWISE: return KeyEvent.VK_RIGHT;
 			default: throw new IOException();
 		}
 					
