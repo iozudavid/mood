@@ -2,9 +2,9 @@ package com.knightlore.render.minimap;
 
 import com.knightlore.engine.GameEngine;
 import com.knightlore.engine.TickListener;
-import com.knightlore.game.Player;
 import com.knightlore.game.area.Map;
 import com.knightlore.game.tile.Tile;
+import com.knightlore.render.Camera;
 import com.knightlore.render.PixelBuffer;
 import com.knightlore.utils.Vector2D;
 
@@ -36,13 +36,13 @@ public class Minimap implements TickListener {
 	 * How zoomed in the minimap should appear. The higher this value, the more
 	 * zoomed in.
 	 */
-	public static final int SCALE = 10;
+	public static final int SCALE = 8;
 
 	/**
 	 * The resolution of the minimap. This is the size to draw a single pixel. A
 	 * larger number will give you better performance, but 'poorer quality'.
 	 */
-	public static final int RESOLUTION = 5;
+	public static final int RESOLUTION = 6;
 
 	/**
 	 * The scope of the minimap. This range forms a box around the player.
@@ -57,7 +57,7 @@ public class Minimap implements TickListener {
 	private int width, height;
 	private int[] pixelMap;
 
-	private Player player;
+	private Camera camera;
 	private Map map;
 
 	/**
@@ -66,8 +66,8 @@ public class Minimap implements TickListener {
 	 */
 	private Vector2D prevPos, prevDir;
 
-	public Minimap(Player player, Map map, int size) {
-		this.player = player;
+	public Minimap(Camera camera, Map map, int size) {
+		this.camera = camera;
 		this.map = map;
 		this.width = map.getWidth() * SCALE;
 		this.height = map.getHeight() * SCALE;
@@ -85,8 +85,8 @@ public class Minimap implements TickListener {
 	 * minimap.
 	 */
 	public void render() {
-		Vector2D pos = player.getPosition();
-		Vector2D dir = player.getDirection();
+		Vector2D pos = camera.getPosition();
+		Vector2D dir = camera.getDirection();
 		if (pos.isEqual(prevPos) && dir.isEqual(prevDir))
 			return;
 
@@ -112,8 +112,8 @@ public class Minimap implements TickListener {
 		for (int yy = startY; yy < endY; yy += RESOLUTION) {
 			for (int xx = startX; xx < endX; xx += RESOLUTION) {
 				double drawX = xx, drawY = yy;
-				drawX -= player.getPosition().getX() * SCALE;
-				drawY -= player.getPosition().getY() * SCALE;
+				drawX -= camera.getxPos() * SCALE;
+				drawY -= camera.getyPos() * SCALE;
 
 				drawX += size / 2;
 				drawY += size / 2;
@@ -137,15 +137,31 @@ public class Minimap implements TickListener {
 				 * rectangle of size 2 as a really basic form of interpolation
 				 * (so we don't get 'holes' in the minimap).
 				 */
-				final int INTERPOLATION_CONSTANT = 3;
-				display.fillSquare(pixelMap[xx + yy * width], (int) drawX, (int) drawY,
-						RESOLUTION + INTERPOLATION_CONSTANT);
+				final int INTERPOLATION_CONSTANT = 10;
+				display.fillSquare(pixelMap[xx + yy * width], (int) drawX, (int) drawY, INTERPOLATION_CONSTANT);
 			}
 		}
 
+		drawPlayer();
+		drawBorder();
+	}
+
+	private void drawPlayer() {
 		// draw the player.
-		final int PLAYER_COLOR = 0xFF00FF;
-		display.fillSquare(PLAYER_COLOR, size / 2, size / 2, SCALE / 2);
+		final int PLAYER_COLOR = 0xFFFFFF;
+
+		display.fillSquare(PLAYER_COLOR, display.getWidth() / 2, display.getWidth() / 2, SCALE / 2);
+	}
+
+	private void drawBorder() {
+		final int BORDER_COLOR = 0xFFFFFF;
+		final int BORDER_WIDTH = 2;
+
+		int w = display.getWidth(), h = display.getHeight();
+		display.fillRect(BORDER_COLOR, 0, 0, w, BORDER_WIDTH);
+		display.fillRect(BORDER_COLOR, 0, 0, BORDER_WIDTH, h);
+		display.fillRect(BORDER_COLOR, 0, h - BORDER_WIDTH, w, BORDER_WIDTH);
+		display.fillRect(BORDER_COLOR, w - BORDER_WIDTH, 0, BORDER_WIDTH, h);
 	}
 
 	/**

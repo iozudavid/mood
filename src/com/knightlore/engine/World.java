@@ -49,7 +49,7 @@ public class World implements IRenderable {
 		b.rect.height = 30;
 		gui.addGUIObject(b);
 
-		this.minimap = new Minimap(player, map, 128);
+		this.minimap = new Minimap(camera, map, 128);
 
 		for (int i = 1; i < 5; i += 2) {
 			mobs.add(new ShotgunPickup(new Vector2D(i, 3)));
