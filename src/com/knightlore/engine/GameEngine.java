@@ -43,7 +43,10 @@ public class GameEngine implements Runnable {
 		this.headless = headless;
 		final int w = MainWindow.WIDTH, h = MainWindow.HEIGHT;
 		screen = new Screen(w, h);
-		window = new MainWindow(screen, MainWindow.TITLE, w, h);
+		if (headless)
+		    window = null;
+		else
+		    window = new MainWindow(screen, MainWindow.TITLE, w, h);
 
 		initInputs();
 
