@@ -8,7 +8,7 @@ import com.knightlore.network.Port;
 import com.knightlore.network.TCPConnection;
 
 public class ClientManager implements Runnable {
-    private String hostname = "localhost";
+    private String hostname = "192.168.1.154";
 
     @Override
     public void run() {
@@ -23,8 +23,8 @@ public class ClientManager implements Runnable {
             Thread sendToServer = new Thread(sender);
 
             // start threads
-            sendToServer.start();
             receiveFromServer.start();
+            sendToServer.start();
 
             // Wait for them to end and close sockets.
 

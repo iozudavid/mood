@@ -11,31 +11,30 @@ import com.knightlore.network.protocol.ClientProtocol;
 import com.knightlore.network.protocol.NetworkUtils;
 
 public class SendToServer implements Runnable {
+    // How many times PER SECOND to check for new state, and send it if
+    // necessary.
+    private static final int UPDATE_TICK_FREQ = 100;
     // How often to send an update of controls, rather than just if the
-    // control state has changed. A value of 100 means that in every 100 loops,
+    // control state has changed. A value of 100 means that in every 100 ticks,
     // at *least* one update will be sent.
     private static final int REGULAR_UPDATE_FREQ = 100;
 
     private Connection conn;
     private BufferedReader user;
     private byte[] lastState;
+    // private byte[] currentState;
+    // private Object lock;
+    private int updateCounter = 1;
+    // debug
+    private int l = 0;
+
     private byte[] currentState;
-    private Object lock;
 
     public SendToServer(Connection conn) {
         this.conn = conn;
-        this.lock = new Object();
+        // this.lock = new Object();
         this.lastState = this.getCurentStateByteArray();
-        this.currentState = this.getCurentStateByteArray();
-        new Thread() {
-            public void run() {
-                while (!conn.terminated)
-                    synchronized (lock) {
-                        currentState = getCurentStateByteArray();
-
-                    }
-            }
-        }.start();
+        this.currentState = getCurentStateByteArray();
 
     }
 
@@ -69,25 +68,6 @@ public class SendToServer implements Runnable {
         return thisState;
     }
 
-    public void run() {
-        int updateCounter = 1;
-        while (!conn.terminated) {
-            synchronized (lock) {
-                // Send a controls update if either the controls have changed or
-                // a regular update is due.
-                if (updateCounter++ >= REGULAR_UPDATE_FREQ
-                        || NetworkUtils.areStatesDifferent(this.lastState,
-                                this.currentState)) {
-                    updateCounter = 1;
-                    conn.send(this.currentState);
-                    this.lastState = this.currentState;
-                }
-            }
-            // if there is the same state
-            // don't send anything to the server
-        }
-    }
-
     // this should be use to close this thread
     // best way to do this as the thread will be blocked listening for the next
     // string
@@ -100,6 +80,41 @@ public class SendToServer implements Runnable {
             System.err.println("Unexpected error " + e.getMessage());
             System.exit(1);
         }
+    }
+
+    public void tick() {
+        // Send a controls update if either the controls have changed or
+        // a regular update is due.
+        synchronized (this.currentState) {
+            if (updateCounter++ >= REGULAR_UPDATE_FREQ || NetworkUtils
+                    .areStatesDifferent(this.lastState, currentState)) {
+                System.out.println("Packet " + l++);
+                updateCounter = 1;
+                conn.send(currentState);
+                this.lastState = currentState;
+            }
+        }
+
+    }
+
+    @Override
+    public void run() {
+        while (!conn.terminated) {
+            synchronized (this.currentState) {
+                this.currentState = getCurentStateByteArray();
+            }
+            this.tick();
+            try {
+                // To milliseconds
+                double freq = (UPDATE_TICK_FREQ / 1000d);
+                long delay = (long) (1 / freq);
+                Thread.sleep(delay);
+            } catch (InterruptedException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+        }
+
     }
 
 }
