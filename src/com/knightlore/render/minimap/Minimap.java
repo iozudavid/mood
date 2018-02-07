@@ -33,6 +33,7 @@ public class Minimap implements TickListener {
 	 */
 
 	public static final int SCALE = 10;
+	public static final int RESOLUTION = 5;
 
 	private Player player;
 	private Map map;
@@ -67,8 +68,8 @@ public class Minimap implements TickListener {
 		Vector2D dir = player.getDirection();
 		double theta = -Math.atan2(dir.getX(), dir.getY());
 
-		for (int yy = 0; yy < height; yy++) {
-			for (int xx = 0; xx < width; xx++) {
+		for (int yy = 0; yy < height; yy += RESOLUTION) {
+			for (int xx = 0; xx < width; xx += RESOLUTION) {
 				double drawX = xx, drawY = yy;
 				drawX -= player.getPosition().getX() * SCALE;
 				drawY -= player.getPosition().getY() * SCALE;
@@ -94,7 +95,7 @@ public class Minimap implements TickListener {
 				 * rectangle of size 2 as a really basic form of interpolation
 				 * (so we don't get 'holes' in the minimap).
 				 */
-				display.fillRect(pixelMap[xx + yy * width], (int) drawX, (int) drawY, 2, 2);
+				display.fillRect(pixelMap[xx + yy * width], (int) drawX, (int) drawY, RESOLUTION + 2, RESOLUTION + 2);
 			}
 		}
 
