@@ -2,25 +2,18 @@ package com.knightlore.game.area.generation;
 
 import com.knightlore.game.area.Map;
 import com.knightlore.game.area.Room;
-import com.knightlore.game.tile.AirTile;
-import com.knightlore.game.tile.BrickTile;
-import com.knightlore.game.tile.PathTile;
-import com.knightlore.game.tile.Tile;
-import com.knightlore.game.tile.UndecidedTile;
+import com.knightlore.game.tile.*;
 import com.knightlore.render.Environment;
+import com.knightlore.utils.Vector2D;
 
 import java.awt.*;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.LinkedList;
+import java.util.*;
 import java.util.List;
-import java.util.Random;
-import java.util.Vector;
 
 public class MapGenerator extends ProceduralGenerator {
     private double[][] perlinNoise;
     private final List<Room> rooms = new LinkedList<>();
-    private PerlinVector[][] gradVectors;
+    private Vector2D[][] gradVectors;
     
     public MapGenerator() {
     }
@@ -47,39 +40,23 @@ public class MapGenerator extends ProceduralGenerator {
         makeSymY();
         addWalls(); // TODO delete
     }
-
-    private int width() {
-    	return grid.length;
-    }
-    
-    private int height() {
-    	if(width() == 0)
-    		return 0;
-    	return grid[0].length;
-    }
     
     private void createPerliNoiseForGrid() {
+        int width = grid.length;
+        int height = grid[0].length;
+
     	System.out.println("Creating perlin noise");
-    	// need a predictable way of getting same
-    	// pseudo-random vector for tile "corner"
-    	// store some random values into an array
-    	// that can be referenced at will
-    	
-    	// I think there might be a better way to produce
-    	// gradient vectors
-    	// (ie. permutation, to prevent things averaging out
-    	// kinda samey)
-    	gradVectors = new PerlinVector[width() + 1][height() + 1];
+    	gradVectors = new Vector2D[width + 1][height + 1];
     	for(int i=0; i < gradVectors.length; i++){
     		for(int j=0; j < gradVectors[0].length; j++){
     			double r1 = rand.nextDouble();
     			double r2 = rand.nextDouble();
-    			gradVectors[i][j] = new PerlinVector(r1,r2);
+    			gradVectors[i][j] = new Vector2D(r1,r2);
     		}
     	}
     	
     	// populate perlinNoise grid
-    	perlinNoise = new double[width()][height()];
+    	perlinNoise = new double[width][height];
     	
     	// perform multiple times
     	// taking a biased average on each increment
@@ -108,54 +85,32 @@ public class MapGenerator extends ProceduralGenerator {
     	int y0 = (int) (y - ym); // x any y
     	int x1 = x0 + 1;
     	int y1 = y0 + 1;
-    	
-    	//  (x0,y1)------(x1,y1)
-    	//      |           |
-    	//      |  (mx,ym)  |
-    	//      |           |
-    	//  (x0,y0)------(x1,y0)
-    	
-    	// get pseudo-random gradient vectors
-    	// should be predictable given x0, y0, x1, y1
-    	PerlinVector g1,g2,g3,g4;
-    	// 1 (x0,y1) -->
-    	g1 = gradVectors[x0][y1];
-    	// 2 (x1,y1) -->
-    	g2 = gradVectors[x1][y1];
-    	// 3 (x0,y0) -->
-    	g3 = gradVectors[x0][y0];
-    	// 4 (x1,y0) -->
-    	g4 = gradVectors[x1][y0];
-    	
-    	// generate distance vectors
-    	PerlinVector d1,d2,d3,d4;
-    	// 1 (x0,y1) --> (x,y)
-    	d1 = new PerlinVector(xm, ym - 1);
-    	// 2 (x1,y1) --> (x,y)
-    	d2 = new PerlinVector(xm - 1,ym - 1);
-    	// 3 (x0,y0) --> (x,y)
-    	d3 = new PerlinVector(xm, ym);
-    	// 4 (x1,y0) --> (x,y)
-    	d4 = new PerlinVector(xm - 1, ym);
+
+    	Vector2D gradientVector1 = gradVectors[x0][y1];
+    	Vector2D gradientVector2 = gradVectors[x1][y1];
+    	Vector2D gradientVector3 = gradVectors[x0][y0];
+    	Vector2D gradientVector4 = gradVectors[x1][y0];
+
+    	Vector2D distanceVector1 = new Vector2D(xm, ym - 1);
+    	Vector2D distanceVector2 = new Vector2D(xm - 1,ym - 1);
+    	Vector2D distanceVector3 = new Vector2D(xm, ym);
+    	Vector2D distanceVector4 = new Vector2D(xm - 1, ym);
     	
     	// dot product gradient vectors with corresponding
     	// distance vectors, generating the influence values
-    	double i1, i2, i3, i4;
-    	// 1
-    	i1 = PerlinVector.dotProduct(g1, d1);
-    	// 2
-    	i2 = PerlinVector.dotProduct(g2, d2);
-    	// 3
-    	i3 = PerlinVector.dotProduct(g3, d3);
-    	// 4
-    	i4 = PerlinVector.dotProduct(g4, d4);
+    	double influenceValue1 = gradientVector1.dotInPlace(distanceVector1);
+    	double influenceValue2 = gradientVector2.dotInPlace(distanceVector2);
+    	double influenceValue3 = gradientVector3.dotInPlace(distanceVector3);
+    	double influenceValue4 = gradientVector4.dotInPlace(distanceVector4);
     	
     	// apply fade function (ease curve) on x and y
     	x = fade(xm);
     	y = fade(ym);
     	
     	// return "interpolation" of influence vectors
-    	return ( (i1 + i2)/2 + (i3 + i4)/2 )/2;
+        double interpolation12 = (influenceValue1 + influenceValue2) / 2;
+        double interpolation34 = (influenceValue3 + influenceValue4) / 2;
+    	return (interpolation12 + interpolation34) / 2;
     }
 
     private double fade(double t) {
