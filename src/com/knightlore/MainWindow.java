@@ -18,11 +18,9 @@ public class MainWindow extends JFrame {
 
 	/* Only used if !fullscreen */
 	public static final int WIDTH = 1000;
-	public static final int HEIGHT = WIDTH / 16 * 9;
+	public static final int HEIGHT = WIDTH / 16 * 9; // 16:9 aspect ratio
 
 	private boolean fullscreen;
-
-	private Canvas canvas;
 
 	public MainWindow(Canvas canvas, String title) {
 		this(canvas, title, -1, -1);
@@ -48,7 +46,6 @@ public class MainWindow extends JFrame {
 	}
 
 	private void setCanvas(Canvas canvas) {
-		this.canvas = canvas;
 		canvas.setPreferredSize(new Dimension(getWidth(), getHeight()));
 		add(canvas, BorderLayout.CENTER);
 		pack();

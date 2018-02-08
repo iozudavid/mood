@@ -23,7 +23,11 @@ public final class Vector2D {
 		x = _x;
 		y = _y;
 	}
-
+	
+	// EQUALITY
+	public boolean isEqualTo(Vector2D v) {
+		return v != null && x == v.x && y == v.y;
+	}
 	
 	// ADDITION
 	

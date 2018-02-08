@@ -1,8 +1,6 @@
 package com.knightlore.render;
 
-import com.knightlore.engine.GameEngine;
 import com.knightlore.engine.GameObject;
-import com.knightlore.engine.TickListener;
 import com.knightlore.engine.input.Controller;
 import com.knightlore.engine.input.InputManager;
 import com.knightlore.engine.input.Keyboard;
@@ -11,7 +9,7 @@ import com.knightlore.game.tile.Tile;
 import com.knightlore.input.BasicController;
 import com.knightlore.utils.Vector2D;
 
-public class Camera extends GameObject implements TickListener {
+public class Camera extends GameObject {
 
 	private static final double MOTION_BOB_AMOUNT = 7.0;
 	private static final double MOTION_BOB_SPEED = 0.15;
@@ -20,11 +18,15 @@ public class Camera extends GameObject implements TickListener {
 
 	public static final double FIELD_OF_VIEW = -.66;
 	private static final double MOVE_SPEED = .100;
+	private static final double SPRINT_MULTIPLIER = 1.5D;
 	private static final double STRAFE_SPEED = .04;
 	private static final double ROTATION_SPEED = .045;
 
 	private final Map map;
 	private double xPos, yPos, xDir, yDir, xPlane, yPlane;
+
+	private Keyboard keyboard;
+	private Controller controller;
 
 	// TODO constructor takes a lot of parameters, maybe use Builder Pattern
 	// instead?
@@ -41,7 +43,8 @@ public class Camera extends GameObject implements TickListener {
 		this.motionOffset = 0;
 		this.moveTicks = 0;
 
-		GameEngine.ticker.addTickListener(this);
+		this.keyboard = InputManager.getKeyboard();
+		this.controller = new BasicController();
 	}
 
 	@Override
@@ -49,10 +52,12 @@ public class Camera extends GameObject implements TickListener {
 		return new Vector2D(xPos, yPos);
 	}
 
+	public Vector2D getDirection() {
+		return new Vector2D(xDir, yDir);
+	}
+
 	@Override
 	public void onUpdate() {
-		Keyboard keyboard = InputManager.getKeyboard();
-		Controller controller = new BasicController();
 		double oX = xPos, oY = yPos;
 
 		if (keyboard.isPressed(controller.moveForward())) {
@@ -94,15 +99,19 @@ public class Camera extends GameObject implements TickListener {
 	}
 
 	public boolean isMoving() {
-		Keyboard keyboard = InputManager.getKeyboard();
-		Controller controller = new BasicController();
 		return keyboard.isPressed(controller.moveForward()) || keyboard.isPressed(controller.moveBackward())
 				|| keyboard.isPressed(controller.moveLeft()) || keyboard.isPressed(controller.moveRight());
 	}
 
 	private void updateMotionOffset() {
 		moveTicks++;
-		this.motionOffset = (int) (Math.abs(Math.sin(moveTicks * MOTION_BOB_SPEED) * MOTION_BOB_AMOUNT));
+
+		double speed = MOTION_BOB_SPEED, amount = MOTION_BOB_AMOUNT;
+		if (keyboard.isPressed(controller.sprint())) {
+			amount *= SPRINT_MULTIPLIER * 1.1;
+		}
+
+		this.motionOffset = (int) (Math.abs(Math.sin(moveTicks * speed) * amount));
 	}
 
 	public int getMotionOffset() {
@@ -110,10 +119,13 @@ public class Camera extends GameObject implements TickListener {
 	}
 
 	private void moveForward() {
-		Tile xTile = map.getTile((int) (xPos + xDir * MOVE_SPEED), (int) yPos);
-		Tile yTile = map.getTile((int) xPos, (int) (yPos + yDir * MOVE_SPEED));
-		xPos += xDir * MOVE_SPEED * (1 - xTile.getSolidity());
-		yPos += yDir * MOVE_SPEED * (1 - yTile.getSolidity());
+		// if we're sprinting, apply the speed multiplier.
+		double speed = MOVE_SPEED * (keyboard.isPressed(controller.sprint()) ? SPRINT_MULTIPLIER : 1);
+
+		Tile xTile = map.getTile((int) (xPos + xDir * speed), (int) yPos);
+		Tile yTile = map.getTile((int) xPos, (int) (yPos + yDir * speed));
+		xPos += xDir * speed * (1 - xTile.getSolidity());
+		yPos += yDir * speed * (1 - yTile.getSolidity());
 	}
 
 	private void moveBackward() {
@@ -201,16 +213,6 @@ public class Camera extends GameObject implements TickListener {
 
 	public void setyPlane(double yPlane) {
 		this.yPlane = yPlane;
-	}
-
-	@Override
-	public void onTick() {
-		System.out.println(xPos + " " + yPos);
-	}
-
-	@Override
-	public long interval() {
-		return 60;
 	}
 
 }

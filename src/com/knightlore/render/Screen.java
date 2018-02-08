@@ -31,10 +31,11 @@ public class Screen extends Canvas {
 	}
 
 	/**
-	 * Render the scene.
+	 * Render the game.
 	 */
 	public void render(int x, int y, IRenderable renderable) {
 
+		// Get the buffered strategy if it exists, otherwise create one.
 		BufferStrategy bs = getBufferStrategy();
 		if (bs == null) {
 			createBufferStrategy(3);
@@ -42,11 +43,15 @@ public class Screen extends Canvas {
 		}
 
 		Graphics2D g = (Graphics2D) bs.getDrawGraphics();
+
+		// we want antialiasing.
 		g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
-		g.fillRect(0, 0, getWidth(), getHeight());
+		// allow the renderable to render to the main pixel buffer.
 		renderable.render(mainPixelBuffer, x, y);
 
+		// copy over the main pixel buffer to our buffered image, then draw to
+		// screen.
 		mainPixelBuffer.copy(imagePixels);
 		g.drawImage(getImage(), x, y, width, height, null);
 		g.dispose();
@@ -54,10 +59,20 @@ public class Screen extends Canvas {
 		bs.show();
 	}
 
+	/**
+	 * Gets the currently visible scene as a buffered image.
+	 * 
+	 * @return what the user is currently seeing as a buffered image.
+	 */
 	public BufferedImage getImage() {
 		return img;
 	}
 
+	/**
+	 * Gets the main pixel buffer.
+	 * 
+	 * @return the main pixel buffer.
+	 */
 	public PixelBuffer getMainPixelBuffer() {
 		return mainPixelBuffer;
 	}
