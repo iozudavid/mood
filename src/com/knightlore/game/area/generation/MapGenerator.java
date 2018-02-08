@@ -95,75 +95,6 @@ public class MapGenerator extends ProceduralAreaGenerator {
             grid[p.x][p.y] = new PathTile();
         }
     }
-
-    private List<Point> findPath(Point start, Point goal, double[][] costGrid) {
-        if (!isInBounds(start, costGrid)) {
-            throw new IndexOutOfBoundsException("Starting point is out of bound of the costGrid");
-        }
-
-        if (!isInBounds(goal, costGrid)) {
-            throw new IndexOutOfBoundsException("Goal is out of bound of the costGrid");
-        }
-
-        Set<Point> checkedPoints = new HashSet<>();
-        Queue<SearchNode> nodesQueue = new PriorityQueue<>();
-    	nodesQueue.add(new SearchNode(start, goal));
-    	while (true) {
-    		SearchNode currNode = nodesQueue.poll();
-            System.out.println(currNode.getPosition());
-    		if (goal.equals(currNode.getPosition())) {
-                return extractBestPathTo(currNode);
-    		} else {
-    		    List<SearchNode> neighbours = getNeighbouringNodes(currNode, goal, costGrid, checkedPoints);
-                nodesQueue.addAll(neighbours);
-    		}
-    	}
-    }
-
-    private List<Point> extractBestPathTo(SearchNode node) {
-        LinkedList<Point> path = new LinkedList<>();
-        path.addFirst(node.getPosition());
-        while (node.getPredecessor().isPresent()) {
-            node = node.getPredecessor().get();
-            path.addFirst(node.getPosition());
-        }
-
-        return path;
-    }
-
-    private List<SearchNode> getNeighbouringNodes(SearchNode node, Point goal,
-                                                  double[][] costGrid, Set<Point> checkedPoints){
-        List<SearchNode> neighbours = new LinkedList<>();
-        Point up = new Point(node.getPosition().x, node.getPosition().y - 1);
-        if (isInBounds(up, costGrid) && !checkedPoints.contains(up)) {
-            checkedPoints.add(up);
-            neighbours.add(new SearchNode(up, goal, costGrid[up.x][up.y], node));
-        }
-
-        Point left = new Point(node.getPosition().x - 1, node.getPosition().y);
-        if (isInBounds(left, costGrid) && !checkedPoints.contains(left)) {
-            checkedPoints.add(left);
-            neighbours.add(new SearchNode(left, goal, costGrid[left.x][left.y], node));
-        }
-
-        Point down = new Point(node.getPosition().x, node.getPosition().y + 1);
-        if (isInBounds(down, costGrid) && !checkedPoints.contains(down)) {
-            checkedPoints.add(down);
-            neighbours.add(new SearchNode(down, goal, costGrid[down.x][down.y], node));
-        }
-
-        Point right = new Point(node.getPosition().x + 1, node.getPosition().y);
-        if (isInBounds(right, costGrid) && !checkedPoints.contains(right)) {
-            checkedPoints.add(right);
-            neighbours.add(new SearchNode(right, goal, costGrid[right.x][right.y], node));
-        }
-
-        return neighbours;
-    }
-
-    private boolean isInBounds(Point p, double[][] grid) {
-        return p.x >= 0 && p.x < grid.length && p.y >= 0 && p.y < grid[0].length;
-    }
     
     @Override
     protected void fillUndecidedTiles() {
@@ -179,7 +110,6 @@ public class MapGenerator extends ProceduralAreaGenerator {
         }
     }
 
-    // reflection in y-axis
     private void makeSymY() {
         int width = grid.length;
         int height = grid[0].length;
@@ -211,7 +141,6 @@ public class MapGenerator extends ProceduralAreaGenerator {
     }
 
     // TODO delete
-    
     public static void main(String[] args) {
     	MapGenerator genr = new MapGenerator();
     	Map map = genr.createMap(48 , 32, Environment.LIGHT_OUTDOORS);

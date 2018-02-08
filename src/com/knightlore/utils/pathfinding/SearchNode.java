@@ -1,4 +1,4 @@
-package com.knightlore.game.area.generation;
+package com.knightlore.utils.pathfinding;
 
 import java.awt.Point;
 import java.util.Optional;
