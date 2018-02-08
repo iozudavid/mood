@@ -68,7 +68,8 @@ public class SearchState implements Comparable<SearchState>{
 		gWeight = Math.abs(w);
 	}
 	
-	// try and weight g more???
+	// TODO: Change to allow paths through rooms
+	// but at high cost
 	private double calcG() {
 		double predG = pred.getG();
 		Point predPos = pred.getPosition();
@@ -78,8 +79,7 @@ public class SearchState implements Comparable<SearchState>{
 		return predG + gWeight * Math.abs( (thisPerl - predPerl) );
 	}
 	
-	public boolean isValid(Point p) {
-		
+	public boolean isValid(Point p) {		
 		// ensure is within confines of grid
 		if(p.getX() >= grid.length || p.getY() >= grid[0].length ||
 				p.getX() < 0 || p.getY() < 0)

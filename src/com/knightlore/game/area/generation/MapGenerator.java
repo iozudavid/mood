@@ -89,6 +89,30 @@ public class MapGenerator extends ProceduralAreaGenerator {
 
     private void generatePaths() {
         // TODO implement
+    	
+    	ArrayList<RoomConnection> candidates = new ArrayList<RoomConnection>();
+    	//add connections (excluding redundant connections)
+    	for(int i=0; i< rooms.size(); i++) {
+    		Room r1 = rooms.get(i);
+    		for(int j=i; j< rooms.size(); j++) {
+    			Room r2 = rooms.get(j);
+    			candidates.add(new RoomConnection(r1,r2));
+    		}
+    	}
+    	
+    	Collections.sort(candidates);
+    	Collections.reverse(candidates);
+    	boolean[][] connected = new boolean[rooms.size()][rooms.size()];
+    	for(int i=0; i<rooms.size(); i++) {
+    		for(int j=0; j<rooms.size(); j++) {
+    			connected[i][j] = true;
+    		}
+    	}
+    	
+    	for(int i=0; i<candidates.size(); i++) {
+    		
+    	}
+    	
     }
 
     private boolean addPath(Point start, Point end) {
