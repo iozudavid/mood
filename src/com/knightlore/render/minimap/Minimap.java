@@ -78,7 +78,7 @@ public class Minimap implements TickListener {
 
 		this.pixelMap = new int[width * height];
 		recreatePixelMap();
-		
+
 		this.minimapObjects = new ArrayList<IMinimapObject>();
 
 		this.display = new PixelBuffer(size, size);
@@ -132,7 +132,7 @@ public class Minimap implements TickListener {
 				 * rectangle of size 2 as a really basic form of interpolation
 				 * (so we don't get 'holes' in the minimap).
 				 */
-				final int INTERPOLATION_CONSTANT = 10;
+				final int INTERPOLATION_CONSTANT = 4;
 				display.fillSquare(pixelMap[xx + yy * width], (int) drawPos.getX(), (int) drawPos.getY(),
 						INTERPOLATION_CONSTANT);
 			}
@@ -213,7 +213,7 @@ public class Minimap implements TickListener {
 	public PixelBuffer getPixelBuffer() {
 		return display;
 	}
-	
+
 	public void addMinimapObject(IMinimapObject mo) {
 		this.minimapObjects.add(mo);
 	}
