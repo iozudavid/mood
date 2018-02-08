@@ -27,7 +27,7 @@ public class Camera extends GameObject {
 
 	private Keyboard keyboard;
 	private Controller controller;
-	private static Camera mainCamera = null;
+	private static Camera mainCam = null;
 	
 	// TODO constructor takes a lot of parameters, maybe use Builder Pattern
 	// instead?
@@ -46,8 +46,8 @@ public class Camera extends GameObject {
 
 		this.keyboard = InputManager.getKeyboard();
 		this.controller = new BasicController();
-		if(mainCamera == null){
-			mainCamera = this;
+		if(mainCam == null){
+			mainCam = this;
 		}
 	}
 	
@@ -55,8 +55,8 @@ public class Camera extends GameObject {
 	 * 
 	 * Returns the main camera. Note: This may be null if the main camera is destroyed.
 	 */
-	public static Camera main(){
-		return mainCamera;
+	public static Camera mainCamera(){
+		return mainCam;
 	}
 	
 	@Override
@@ -108,9 +108,9 @@ public class Camera extends GameObject {
 
 	@Override
 	public void onDestroy() {
-		if(mainCamera == this){
+		if(mainCam == this){
 			// TODO give us a new main camera
-			mainCamera = null;
+			mainCam = null;
 		}
 	}
 
