@@ -14,15 +14,12 @@ import com.knightlore.gui.Button;
 import com.knightlore.gui.GUICanvas;
 import com.knightlore.render.Camera;
 import com.knightlore.render.Environment;
-import com.knightlore.render.minimap.Minimap;
 import com.knightlore.utils.Vector2D;
 
 public class TestWorld extends GameWorld {
 
 	private List<Mob> mobs;
 
-	private Map map;
-	private Minimap minimap;
 	private Player player;
 	private Camera mainCamera;
 	private GUICanvas gui;
@@ -54,10 +51,6 @@ public class TestWorld extends GameWorld {
 		b.rect.width = 100;
 		b.rect.height = 30;
 		gui.addGUIObject(b);
-
-		// add a minimap
-		// TODO perhaps this should be part of the UI?
-		minimap = new Minimap(player, map, 128);
 
 		// add pickups
 		for (int i = 1; i < 5; i += 2) {

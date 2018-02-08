@@ -10,7 +10,7 @@ import com.knightlore.input.BasicController;
 import com.knightlore.utils.Vector2D;
 
 public class Camera extends GameObject {
-
+	
 	private static final double MOTION_BOB_AMOUNT = 7.0;
 	private static final double MOTION_BOB_SPEED = 0.15;
 	private int motionOffset;
@@ -27,7 +27,8 @@ public class Camera extends GameObject {
 
 	private Keyboard keyboard;
 	private Controller controller;
-
+	private static Camera mainCamera = null;
+	
 	// TODO constructor takes a lot of parameters, maybe use Builder Pattern
 	// instead?
 	public Camera(double xPos, double yPos, double xDir, double yDir, double xPlane, double yPlane, Map map) {
@@ -45,8 +46,19 @@ public class Camera extends GameObject {
 
 		this.keyboard = InputManager.getKeyboard();
 		this.controller = new BasicController();
+		if(mainCamera == null){
+			mainCamera = this;
+		}
 	}
-
+	
+	/**
+	 * 
+	 * Returns the main camera. Note: This may be null if the main camera is destroyed.
+	 */
+	public static Camera main(){
+		return mainCamera;
+	}
+	
 	@Override
 	public Vector2D getPosition() {
 		return new Vector2D(xPos, yPos);
@@ -96,6 +108,10 @@ public class Camera extends GameObject {
 
 	@Override
 	public void onDestroy() {
+		if(mainCamera == this){
+			// TODO give us a new main camera
+			mainCamera = null;
+		}
 	}
 
 	public boolean isMoving() {

@@ -85,7 +85,11 @@ public class Minimap implements TickListener {
 
 		GameEngine.ticker.addTickListener(this);
 	}
-
+	
+	public void setCamera(Camera camera){
+		this.camera = camera;
+	}
+	
 	/**
 	 * Updates the pixelbuffer 'display' to be the current appearance of the
 	 * minimap.

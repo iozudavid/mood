@@ -39,6 +39,19 @@ public class Renderer implements IRenderable {
 		mobsToRender.add(p);
 	}
 
+	/**
+	 * Here for changing rendering cameras at runtime. possibly useful for spectator.
+	 */
+	public void setCamera(Camera camera){
+		this.camera = camera;
+		// propagate to minimap
+		minimap.setCamera(camera);
+	}
+	
+	public void setMap(Map m){
+		this.map = m;
+	}
+
 	private final int BLOCKINESS = 1; // how 'old school' you want to look.
 
 	@Override

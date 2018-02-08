@@ -7,6 +7,7 @@ import java.util.LinkedList;
 import com.knightlore.MainWindow;
 import com.knightlore.engine.input.InputManager;
 import com.knightlore.engine.input.Mouse;
+import com.knightlore.render.Camera;
 import com.knightlore.render.Screen;
 import com.knightlore.world.TestWorld;
 
@@ -68,10 +69,17 @@ public class GameEngine implements Runnable {
 		InputManager.init();
 		setupKeyboard();
 		setupMouse();
-		world = new TestWorld();
-		renderer = new Renderer();
-		
 		System.out.println("Engine Initialised Successfully.");
+		// TODO maybe refactor this into a make world method
+		// ALSO TODO, UNHOOK TEST WORLD
+		System.out.println("Initialising World...");
+		world = new TestWorld();
+		System.out.println("initialising...");
+		world.initWorld();
+		System.out.println("populating...");
+		world.populateWorld();
+		System.out.println("World Initialised Successfully.");
+		renderer = new Renderer(Camera.main(),world.map);
 	}
 	
 	public void start() {
