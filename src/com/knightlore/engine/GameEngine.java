@@ -10,6 +10,7 @@ import com.knightlore.engine.input.Mouse;
 import com.knightlore.game.area.AreaFactory;
 import com.knightlore.render.Environment;
 import com.knightlore.render.Screen;
+import com.knightlore.world.TestWorld;
 
 /**
  * Game engine acting as sort of a 'hub' for each of the individual game
@@ -27,7 +28,7 @@ public class GameEngine implements Runnable {
 
 	private final Screen screen;
 	private final MainWindow window;
-	private World world;
+	private GameWorld world;
 	private final ArrayList<GameObject> objects;
 	private Thread thread;
 	private volatile boolean running = false;
@@ -68,7 +69,7 @@ public class GameEngine implements Runnable {
 		InputManager.init();
 		setupKeyboard();
 		setupMouse();
-		world = new World(AreaFactory.createRandomMap(Environment.LIGHT_OUTDOORS));
+		world = new TestWorld();
 		System.out.println("Engine Initialised Successfully.");
 	}
 

@@ -30,7 +30,9 @@ public abstract class GameObject {
 		return exists;
 	}
 
-	public void setExists(boolean b) {
+	// is internal to the package, should not be accessible elsewhere
+	// only the game engine should call this
+	void setExists(boolean b) {
 		exists = b;
 	}
 
