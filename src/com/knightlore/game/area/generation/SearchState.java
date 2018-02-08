@@ -92,7 +92,7 @@ public class SearchState implements Comparable<SearchState>{
 		
 		// ensure is undecided tile
 		Tile tile = grid[p.getX()][p.getY()];
-		if(tile.toChar() != '?')
+		if(tile.toChar() != '?' && tile.toChar() != 'P')
 			return false;
 		
 		return true;

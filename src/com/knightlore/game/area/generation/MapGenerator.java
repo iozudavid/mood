@@ -4,6 +4,7 @@ import com.knightlore.game.area.Map;
 import com.knightlore.game.area.Room;
 import com.knightlore.game.tile.AirTile;
 import com.knightlore.game.tile.BrickTile;
+import com.knightlore.game.tile.PathTile;
 import com.knightlore.game.tile.Tile;
 import com.knightlore.game.tile.UndecidedTile;
 import com.knightlore.render.Environment;
@@ -210,9 +211,6 @@ public class MapGenerator extends ProceduralGenerator {
 
     private void generatePaths() {
         // TODO implement
-    	
-    	// test
-    	addPath(new Position(1,1), new Position(width()-2,height()-2));
     }
 
     private boolean addPath(Position start, Position end) {
@@ -237,7 +235,7 @@ public class MapGenerator extends ProceduralGenerator {
     			while(state != null) {
     				int x = state.getPosition().getX();
     				int y = state.getPosition().getY();
-    				grid[x][y] = AirTile.getInstance();
+    				grid[x][y] = new PathTile();
     				state = state.getPred();
     			}
     			// then return
@@ -261,6 +259,9 @@ public class MapGenerator extends ProceduralGenerator {
             for (int y = 0; y < grid[0].length; y++) {
                 if(grid[x][y] == UndecidedTile.getInstance()) {
                     grid[x][y] = AirTile.getInstance();
+                }
+                if(grid[x][y].toChar() == 'P') {
+                	//grid[x][y] = AirTile.getInstance();
                 }
             }
         }
@@ -298,24 +299,24 @@ public class MapGenerator extends ProceduralGenerator {
     }
 
     // TODO delete
-    /*
+    
     public static void main(String[] args) {
     	MapGenerator genr = new MapGenerator();
-    	Map map = genr.createMap(64 , 64, Environment.LIGHT_OUTDOORS);
+    	Map map = genr.createMap(48 , 32, Environment.LIGHT_OUTDOORS);
     	
     	double min = 1;
     	double max = -1;
     	
-    	double[][] p = genr.perlinNoise;
-    	for(int i=0; i< p.length; i++) {
-    		System.out.print(i + "::: ");
-    		for(int j=0; j < p[0].length; j++) {
-    			if (p[i][j] > max) max = p[i][j];
-    			if (p[i][j] < min) min = p[i][j];
-    			System.out.print(j + ": " + p[i][j]);
-    		}
-    		System.out.println();
-    	}
+    	//double[][] p = genr.perlinNoise;
+    	//for(int i=0; i< p.length; i++) {
+    	//	System.out.print(i + "::: ");
+    	//	for(int j=0; j < p[0].length; j++) {
+    	//		if (p[i][j] > max) max = p[i][j];
+    	//		if (p[i][j] < min) min = p[i][j];
+    	//		System.out.print(j + ": " + p[i][j]);
+    	//	}
+    	//	System.out.println();
+    	//}
     	System.out.println("MIN: " + min);
     	System.out.println("MAX: " + max);
     	
@@ -324,6 +325,6 @@ public class MapGenerator extends ProceduralGenerator {
     	
     	
     }
-	*/
+	
     
 }
