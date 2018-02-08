@@ -5,9 +5,8 @@ import com.knightlore.game.area.Room;
 import com.knightlore.game.tile.*;
 import com.knightlore.render.Environment;
 
-import java.awt.*;
+import java.awt.Point;
 import java.util.*;
-import java.util.List;
 
 public class MapGenerator extends ProceduralAreaGenerator {
     private double[][] perlinNoise;
@@ -91,44 +90,79 @@ public class MapGenerator extends ProceduralAreaGenerator {
         // TODO implement
     }
 
-    private boolean addPath(Point start, Point end) {
-    	// perform A* search
-    	SearchState state = new SearchState(start,end,grid,perlinNoise);
-    	if(! (state.isValid(start) && state.isValid(end)) )
-    		return false;
-    	
-    	// set influence of perlin noise with g-weight
-    	// (4.5 is my favourite value)
-    	// if zero we just get A*
-    	SearchState.setGWeight(4.5);
-    	
-    	ArrayList<SearchState> states = new ArrayList<SearchState>();
-    	states.add(state);
-    	// loop until return
-    	while(true) {
-    		//System.out.println(state.getPosition().toString());
-    		state = states.get(0);
-    		if(state.isGoal()) {
-    			// modify grid
-    			while(state != null) {
-    				int x = state.getPosition().x;
-    				int y = state.getPosition().y;
-    				grid[x][y] = new PathTile();
-    				state = state.getPred();
-    			}
-    			// then return
-    			return true;
-    		}else {
-    			// add successors to list
-    			states.addAll(state.getSuccessors());
-    			// remove current state
-    			states.remove(0);
-    			// order list
-    			Collections.sort(states);
+    private void placePath(List<Point> path) {
+        for (Point p: path) {
+            grid[p.x][p.y] = new PathTile();
+        }
+    }
+
+    private List<Point> findPath(Point start, Point goal, double[][] costGrid) {
+        if (!isInBounds(start, costGrid)) {
+            throw new IndexOutOfBoundsException("Starting point is out of bound of the costGrid");
+        }
+
+        if (!isInBounds(goal, costGrid)) {
+            throw new IndexOutOfBoundsException("Goal is out of bound of the costGrid");
+        }
+
+        Set<Point> checkedPoints = new HashSet<>();
+        Queue<SearchNode> nodesQueue = new PriorityQueue<>();
+    	nodesQueue.add(new SearchNode(start, goal));
+    	while (true) {
+    		SearchNode currNode = nodesQueue.poll();
+            System.out.println(currNode.getPosition());
+    		if (goal.equals(currNode.getPosition())) {
+                return extractBestPathTo(currNode);
+    		} else {
+    		    List<SearchNode> neighbours = getNeighbouringNodes(currNode, goal, costGrid, checkedPoints);
+                nodesQueue.addAll(neighbours);
     		}
-    		
     	}
-    	
+    }
+
+    private List<Point> extractBestPathTo(SearchNode node) {
+        LinkedList<Point> path = new LinkedList<>();
+        path.addFirst(node.getPosition());
+        while (node.getPredecessor().isPresent()) {
+            node = node.getPredecessor().get();
+            path.addFirst(node.getPosition());
+        }
+
+        return path;
+    }
+
+    private List<SearchNode> getNeighbouringNodes(SearchNode node, Point goal,
+                                                  double[][] costGrid, Set<Point> checkedPoints){
+        List<SearchNode> neighbours = new LinkedList<>();
+        Point up = new Point(node.getPosition().x, node.getPosition().y - 1);
+        if (isInBounds(up, costGrid) && !checkedPoints.contains(up)) {
+            checkedPoints.add(up);
+            neighbours.add(new SearchNode(up, goal, costGrid[up.x][up.y], node));
+        }
+
+        Point left = new Point(node.getPosition().x - 1, node.getPosition().y);
+        if (isInBounds(left, costGrid) && !checkedPoints.contains(left)) {
+            checkedPoints.add(left);
+            neighbours.add(new SearchNode(left, goal, costGrid[left.x][left.y], node));
+        }
+
+        Point down = new Point(node.getPosition().x, node.getPosition().y + 1);
+        if (isInBounds(down, costGrid) && !checkedPoints.contains(down)) {
+            checkedPoints.add(down);
+            neighbours.add(new SearchNode(down, goal, costGrid[down.x][down.y], node));
+        }
+
+        Point right = new Point(node.getPosition().x + 1, node.getPosition().y);
+        if (isInBounds(right, costGrid) && !checkedPoints.contains(right)) {
+            checkedPoints.add(right);
+            neighbours.add(new SearchNode(right, goal, costGrid[right.x][right.y], node));
+        }
+
+        return neighbours;
+    }
+
+    private boolean isInBounds(Point p, double[][] grid) {
+        return p.x >= 0 && p.x < grid.length && p.y >= 0 && p.y < grid[0].length;
     }
     
     @Override
