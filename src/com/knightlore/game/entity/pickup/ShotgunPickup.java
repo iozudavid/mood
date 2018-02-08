@@ -17,4 +17,14 @@ public class ShotgunPickup extends PickupItem {
 	public void onDestroy() {
 	}
 
+	@Override
+	public int getDrawSize() {
+		return 5;
+	}
+
+	@Override
+	public int getMinimapColor() {
+		return 0xFF00FF;
+	}
+
 }
