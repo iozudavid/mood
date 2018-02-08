@@ -8,6 +8,8 @@ import com.knightlore.MainWindow;
 import com.knightlore.engine.input.InputManager;
 import com.knightlore.engine.input.Mouse;
 import com.knightlore.game.area.AreaFactory;
+import com.knightlore.game.area.Map;
+import com.knightlore.render.Camera;
 import com.knightlore.render.Environment;
 import com.knightlore.render.Screen;
 
@@ -21,13 +23,13 @@ import com.knightlore.render.Screen;
 public class GameEngine implements Runnable {
 
 	private static GameEngine singleton = null;
-	
+
 	private static final double UPDATES_PER_SECOND = 60D;
 	public static final Ticker ticker = new Ticker();
 
 	private final Screen screen;
 	private final MainWindow window;
-	private World world;
+	private Renderer renderer;
 	private final ArrayList<GameObject> objects;
 	private Thread thread;
 	private volatile boolean running = false;
@@ -37,19 +39,19 @@ public class GameEngine implements Runnable {
 
 	public GameEngine() {
 		singleton = this;
-		
+
 		objects = new ArrayList<GameObject>();
-		
+
 		notifyToCreate = new LinkedList<GameObject>();
 		notifyToDestroy = new LinkedList<GameObject>();
-		
+
 		final int w = MainWindow.WIDTH, h = MainWindow.HEIGHT;
 		screen = new Screen(w, h);
 		window = new MainWindow(screen, MainWindow.TITLE, w, h);
 		initEngine();
 	}
-	
-	static GameEngine getSingleton(){
+
+	static GameEngine getSingleton() {
 		return singleton;
 	}
 
@@ -68,7 +70,10 @@ public class GameEngine implements Runnable {
 		InputManager.init();
 		setupKeyboard();
 		setupMouse();
-		world = new World(AreaFactory.createRandomMap(Environment.LIGHT_OUTDOORS));
+
+		Map map = AreaFactory.createRandomMap(Environment.LIGHT_OUTDOORS);
+		Camera camera = new Camera(4.5, 4.5, 1, 0, 0, Camera.FIELD_OF_VIEW, map);
+		renderer = new Renderer(camera, map);
 		System.out.println("Engine Initialised Successfully.");
 	}
 
@@ -105,8 +110,7 @@ public class GameEngine implements Runnable {
 
 			while (delta >= 1) {
 				updateObjects();
-				world.tick();
-				screen.render(0, 0, world);
+				screen.render(0, 0, renderer);
 				delta -= 1;
 
 				ticker.tick();
@@ -145,7 +149,6 @@ public class GameEngine implements Runnable {
 		for (GameObject obj : objects) {
 			obj.onUpdate();
 		}
-
 	}
 
 	/**
