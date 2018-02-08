@@ -8,7 +8,7 @@ import com.knightlore.game.tile.UndecidedTile;
 
 import java.util.Random;
 
-public class RoomGenerator extends ProceduralGenerator {
+public class RoomGenerator extends ProceduralAreaGenerator {
     private static final int MIN_SIZE = 4;
     private static final int MAX_SIZE = 16;
 

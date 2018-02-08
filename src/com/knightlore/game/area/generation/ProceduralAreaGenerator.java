@@ -5,7 +5,7 @@ import com.knightlore.game.tile.UndecidedTile;
 
 import java.util.Random;
 
-abstract class ProceduralGenerator {
+abstract class ProceduralAreaGenerator {
     protected Random rand;
     protected Tile[][] grid;
 
