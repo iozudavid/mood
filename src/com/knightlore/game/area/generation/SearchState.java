@@ -1,13 +1,14 @@
 package com.knightlore.game.area.generation;
 
+import java.awt.*;
 import java.util.ArrayList;
 
 import com.knightlore.game.tile.Tile;
 
 public class SearchState implements Comparable<SearchState>{
 
-	private Position pos;
-	private Position goal;
+	private Point pos;
+	private Point goal;
 	private Tile[][] grid;
 	private double[][] perlinNoise;
 	
@@ -18,7 +19,7 @@ public class SearchState implements Comparable<SearchState>{
 	
 	private static double gWeight = 4.5f;
 	
-	public SearchState(Position pos, Position goal, Tile[][] grid, 
+	public SearchState(Point pos, Point goal, Tile[][] grid,
 			double[][] perlinNoise) {
 		this.pos = pos;
 		this.goal = goal;
@@ -29,7 +30,7 @@ public class SearchState implements Comparable<SearchState>{
 		f = g + h;
 	}
 	
-	private SearchState(Position pos, Position goal, Tile[][] grid,
+	private SearchState(Point pos, Point goal, Tile[][] grid,
 			double[][] perlinNoise, SearchState pred) {
 		this.pos = pos;
 		this.goal = goal;
@@ -48,20 +49,14 @@ public class SearchState implements Comparable<SearchState>{
 	}
 	
 	private double calcH() {
-		int xDiff = pos.getX() - goal.getX();
-		int yDiff = pos.getY() - goal.getY();
-		// Euclidean distance
-		return Math.sqrt(xDiff*xDiff + yDiff*yDiff);
-		
-		//Manhattan distance
-		//return Math.abs(xDiff) + Math.abs(yDiff);
+		return pos.distance(goal);
 	}
 	
 	public double getG() {
 		return g;
 	}
 	
-	public Position getPosition() {
+	public Point getPosition() {
 		return pos;
 	}
 	
@@ -76,14 +71,14 @@ public class SearchState implements Comparable<SearchState>{
 	// try and weight g more???
 	private double calcG() {
 		double predG = pred.getG();
-		Position predPos = pred.getPosition();
-		double predPerl = perlinNoise[predPos.getX()][ predPos.getY()];
-		double thisPerl = perlinNoise[pos.getX()][ pos.getY()];
+		Point predPos = pred.getPosition();
+		double predPerl = perlinNoise[predPos.x][ predPos.y];
+		double thisPerl = perlinNoise[pos.x][ pos.y];
 		//return predG + (thisPerl = predPerl);
 		return predG + gWeight * Math.abs( (thisPerl - predPerl) );
 	}
 	
-	public boolean isValid(Position p) {
+	public boolean isValid(Point p) {
 		
 		// ensure is within confines of grid
 		if(p.getX() >= grid.length || p.getY() >= grid[0].length ||
@@ -91,7 +86,7 @@ public class SearchState implements Comparable<SearchState>{
 			return false;
 		
 		// ensure is undecided tile
-		Tile tile = grid[p.getX()][p.getY()];
+		Tile tile = grid[p.x][p.y];
 		if(tile.toChar() != '?' && tile.toChar() != 'P')
 			return false;
 		
@@ -104,12 +99,25 @@ public class SearchState implements Comparable<SearchState>{
 	
 	public ArrayList<SearchState> getSuccessors(){
 		ArrayList<SearchState> successors = new ArrayList<SearchState>();
-		Position[] neighbours = {pos.up(), pos.down(), pos.right(), pos.left()};
-		
-		for(int i=0; i<4; i++) {
-			Position nextPos = neighbours[i];
-			if(isValid(nextPos))
-				successors.add(new SearchState(nextPos, goal, grid, perlinNoise, this));
+
+		Point up = new Point(pos.x, pos.y + 1);
+		if (isValid(up)) {
+			successors.add(new SearchState(up, goal, grid, perlinNoise, this));
+		}
+
+		Point left = new Point(pos.x - 1, pos.y);
+		if (isValid(left)) {
+			successors.add(new SearchState(left, goal, grid, perlinNoise, this));
+		}
+
+		Point down = new Point(pos.x, pos.y - 1);
+		if (isValid(down)) {
+			successors.add(new SearchState(down, goal, grid, perlinNoise, this));
+		}
+
+		Point right = new Point(pos.x + 1, pos.y);
+		if (isValid(right)) {
+			successors.add(new SearchState(right, goal, grid, perlinNoise, this));
 		}
 		
 		return successors;

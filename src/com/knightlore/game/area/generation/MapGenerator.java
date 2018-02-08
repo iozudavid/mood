@@ -9,6 +9,7 @@ import com.knightlore.game.tile.Tile;
 import com.knightlore.game.tile.UndecidedTile;
 import com.knightlore.render.Environment;
 
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedList;
@@ -177,7 +178,7 @@ public class MapGenerator extends ProceduralGenerator {
         // TODO make something like x += rand and y += rand instead of x++ and y++?
         for (int x = 0; x < grid.length - room.getWidth(); x++) {
             for (int y = 0; y < grid[0].length - room.getHeight(); y++) {
-                room.setRoomPosition(x, y);
+                room.setRoomPosition(new Point(x, y));
                 if (canBePlaced(room)) {
                     placeRoom(room);
                     return true;
@@ -189,10 +190,10 @@ public class MapGenerator extends ProceduralGenerator {
     }
 
     private boolean canBePlaced(Room room) {
-        int leftWallX = room.getXPosition();
-        int rightWallX = room.getXPosition() + room.getWidth();
-        int topWallY = room.getYPosition();
-        int bottomWallY = room.getYPosition() + room.getHeight();
+        int leftWallX = room.getPosition().x;
+        int rightWallX = leftWallX + room.getWidth();
+        int topWallY = room.getPosition().y;
+        int bottomWallY = topWallY + room.getHeight();
         return grid[leftWallX][topWallY] == UndecidedTile.getInstance()
             && grid[leftWallX][bottomWallY] == UndecidedTile.getInstance()
             && grid[rightWallX][topWallY] == UndecidedTile.getInstance()
@@ -200,8 +201,8 @@ public class MapGenerator extends ProceduralGenerator {
     }
 
     private void placeRoom(Room r) {
-        int xPos = r.getXPosition();
-        int yPos = r.getYPosition();
+        int xPos = r.getPosition().x;
+        int yPos = r.getPosition().y;
         for (int x = xPos; x < xPos + r.getWidth(); x++) {
             for (int y = yPos; y < yPos + r.getHeight(); y++) {
                 grid[x][y] = r.getTile(x - xPos, y - yPos);
@@ -213,7 +214,7 @@ public class MapGenerator extends ProceduralGenerator {
         // TODO implement
     }
 
-    private boolean addPath(Position start, Position end) {
+    private boolean addPath(Point start, Point end) {
     	// perform A* search
     	SearchState state = new SearchState(start,end,grid,perlinNoise);
     	if(! (state.isValid(start) && state.isValid(end)) )
@@ -233,8 +234,8 @@ public class MapGenerator extends ProceduralGenerator {
     		if(state.isGoal()) {
     			// modify grid
     			while(state != null) {
-    				int x = state.getPosition().getX();
-    				int y = state.getPosition().getY();
+    				int x = state.getPosition().x;
+    				int y = state.getPosition().y;
     				grid[x][y] = new PathTile();
     				state = state.getPred();
     			}
