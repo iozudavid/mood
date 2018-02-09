@@ -8,6 +8,7 @@ import com.knightlore.engine.TickListener;
 import com.knightlore.game.area.Map;
 import com.knightlore.game.tile.Tile;
 import com.knightlore.render.Camera;
+import com.knightlore.render.ColorUtils;
 import com.knightlore.render.PixelBuffer;
 import com.knightlore.utils.Vector2D;
 
@@ -57,6 +58,7 @@ public class Minimap implements TickListener {
 	public static final int SCOPE = 90;
 
 	private PixelBuffer display;
+	
 	private int width, height;
 	private int[] pixelMap;
 
@@ -124,8 +126,13 @@ public class Minimap implements TickListener {
 
 		for (int yy = startY; yy < endY; yy += RESOLUTION) {
 			for (int xx = startX; xx < endX; xx += RESOLUTION) {
-
 				Vector2D drawPos = transform(xx, yy, theta);
+				
+				int color = pixelMap[xx + yy * width];
+				final int size = display.getWidth();
+				
+				double proportionalDistance = Math.pow(drawPos.getX() - size / 2, 2) + Math.pow(drawPos.getY() - size / 2, 2);
+				color = ColorUtils.mixColor(color, 0x000000, proportionalDistance / 5000);
 
 				/*
 				 * Finally, draw the pixel at the correct position. We draw a
@@ -133,7 +140,7 @@ public class Minimap implements TickListener {
 				 * (so we don't get 'holes' in the minimap).
 				 */
 				final int INTERPOLATION_CONSTANT = 4;
-				display.fillSquare(pixelMap[xx + yy * width], (int) drawPos.getX(), (int) drawPos.getY(),
+				display.fillSquare(color, (int) drawPos.getX(), (int) drawPos.getY(),
 						INTERPOLATION_CONSTANT);
 			}
 		}
