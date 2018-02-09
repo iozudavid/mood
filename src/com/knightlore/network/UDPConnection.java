@@ -29,7 +29,7 @@ public class UDPConnection extends Connection {
         lastPacketDate = new Date(System.currentTimeMillis());
         this.address = address;
         try {
-            this.socket = new DatagramSocket(Port.number);
+            this.socket = new DatagramSocket(ConnectionDetails.PORT);
         } catch (SocketException e) {
             e.printStackTrace();
         }
@@ -52,7 +52,7 @@ public class UDPConnection extends Connection {
         // TODO
         try {
             this.packet = new DatagramPacket(data, data.length, this.address,
-                    Port.number);
+                    ConnectionDetails.PORT);
             socket.send(packet);
         } catch (IOException e) {
             e.printStackTrace();

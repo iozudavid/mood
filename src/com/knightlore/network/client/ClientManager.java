@@ -4,7 +4,7 @@ import java.io.IOException;
 import java.net.Socket;
 import java.net.UnknownHostException;
 
-import com.knightlore.network.Port;
+import com.knightlore.network.ConnectionDetails;
 import com.knightlore.network.TCPConnection;
 
 public class ClientManager implements Runnable {
@@ -13,7 +13,7 @@ public class ClientManager implements Runnable {
     @Override
     public void run() {
         try {
-            Socket server = new Socket(hostname, Port.number);
+            Socket server = new Socket(hostname, ConnectionDetails.PORT);
             System.out.println("Connected to server " + hostname);
             TCPConnection conn = new TCPConnection(server);
             new Thread(conn).start();

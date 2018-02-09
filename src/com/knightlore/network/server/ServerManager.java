@@ -10,7 +10,7 @@ import com.knightlore.engine.GameEngine;
 import com.knightlore.game.Player;
 import com.knightlore.network.Connection;
 import com.knightlore.network.NetworkObject;
-import com.knightlore.network.Port;
+import com.knightlore.network.ConnectionDetails;
 import com.knightlore.network.TCPConnection;
 import com.knightlore.render.Camera;
 import com.knightlore.utils.Tuple;
@@ -36,9 +36,9 @@ public class ServerManager implements Runnable {
         // commandQueue);
 
         try {
-            serverSocket = new ServerSocket(Port.number);
+            serverSocket = new ServerSocket(ConnectionDetails.PORT);
         } catch (IOException e) {
-            System.err.println("Couldn't listen on port " + Port.number);
+            System.err.println("Couldn't listen on port " + ConnectionDetails.PORT);
             System.exit(1);
         }
 
