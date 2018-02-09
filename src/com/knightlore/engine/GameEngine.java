@@ -71,8 +71,9 @@ public class GameEngine implements Runnable {
 		setupKeyboard();
 		setupMouse();
 
-		Map map = AreaFactory.createRandomMap(Environment.LIGHT_OUTDOORS);
-		Camera camera = new Camera(4.5, 4.5, 1, 0, 0, Camera.FIELD_OF_VIEW, map);
+		Map map = AreaFactory.createRandomMap(Environment.DARK_OUTDOORS);
+		Camera camera = new Camera(4.5, 4.5, 1, 0, 0, Camera.FIELD_OF_VIEW,
+				map);
 		renderer = new Renderer(camera, map);
 		System.out.println("Engine Initialised Successfully.");
 	}
