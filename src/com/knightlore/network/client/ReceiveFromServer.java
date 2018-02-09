@@ -52,7 +52,7 @@ public class ReceiveFromServer implements Runnable {
                     NetworkObjectManager.getSingleton().getNetworkObject(command.getObjectId()).destroy();
 					NetworkObjectManager.getSingleton().disconnectClient(command.getObjectId());
 					rend.updateNetworkObjectPos(
-							NetworkObjectManager.getSingleton().getNetworkObject(command.getObjectId()), null);
+							NetworkObjectManager.getSingleton().getNetworkObject(command.getObjectId()), null, null);
                     continue;
                 }
                 
@@ -66,7 +66,10 @@ public class ReceiveFromServer implements Runnable {
                                 .getNetworkObject(command.getObjectId()),
                         new Vector2D(
                                 command.getValueByControl(ServerControl.XPOS),
-                                command.getValueByControl(ServerControl.YPOS)));
+                                command.getValueByControl(ServerControl.YPOS)),
+                        new Vector2D(
+                        		command.getValueByControl(ServerControl.XDIR),
+                        		command.getValueByControl(ServerControl.YDIR)));
 
             }
             if (!conn.terminated)

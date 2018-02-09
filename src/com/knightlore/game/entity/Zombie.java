@@ -9,6 +9,10 @@ public class Zombie extends Mob {
 	public Zombie(double size, Vector2D position) {
 		super(size, DirectionalSprite.SHOTGUN_DIRECTIONAL_SPRITE, position, Vector2D.UP);
 	}
+	
+	public Zombie(double size, Vector2D position, Vector2D direction){
+		super(size, DirectionalSprite.SHOTGUN_DIRECTIONAL_SPRITE, position, direction);
+	}
 
 	@Override
 	public void onCreate() {

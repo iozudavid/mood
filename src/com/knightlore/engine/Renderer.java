@@ -65,26 +65,26 @@ public class Renderer implements IRenderable {
 		pix.composite(minimapBuffer, pix.getWidth() - minimapBuffer.getWidth() - 10, 5);
 	}
 
-	public void updateNetworkObjectPos(NetworkObject obj, Vector2D vec) {
+	public void updateNetworkObjectPos(NetworkObject obj, Vector2D position, Vector2D direction) {
 		if (camera == null)
 			return;
 		synchronized (this.mobsToRender) {
-			if (vec == null) {
+			if (position == null) {
 				this.networkObjPos.remove(obj);
 				this.mobsToRender.remove(this.networkObjMobs.get(obj));
 				this.minimap.removeMinimapObject(this.networkObjMobs.get(obj));
 				this.networkObjMobs.remove(obj);
 			} else if (networkObjPos.containsKey(obj)) {
 				this.minimap.removeMinimapObject(this.networkObjMobs.get(obj));
-				this.networkObjPos.put(obj, vec);
+				this.networkObjPos.put(obj, position);
 				this.mobsToRender.remove(this.networkObjMobs.get(obj));
-				Zombie z = new Zombie(1D, vec);
+				Zombie z = new Zombie(1D, position, direction);
 				this.networkObjMobs.put(obj, z);
 				this.mobsToRender.add(z);
 				this.minimap.addMinimapObject(this.networkObjMobs.get(obj));
 			} else {
-				this.networkObjPos.put(obj, vec);
-				Zombie z = new Zombie(1D, vec);
+				this.networkObjPos.put(obj, position);
+				Zombie z = new Zombie(1D, position, direction);
 				this.networkObjMobs.put(obj, z);
 				this.mobsToRender.add(z);
 				this.minimap.addMinimapObject(this.networkObjMobs.get(obj));
