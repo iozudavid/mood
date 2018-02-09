@@ -1,9 +1,5 @@
 # KnightLore-specific stuff
 
-# Don't track the port/hostname details, since we may want to change them on
-# our own machine without committing the changes.
-src/com/knightlore/network/ConnectionDetails.java
-
 # JAVA STUFF
 
 
