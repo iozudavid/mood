@@ -8,7 +8,7 @@ import com.knightlore.network.Port;
 import com.knightlore.network.TCPConnection;
 
 public class ClientManager implements Runnable {
-    private String hostname = "localhost";
+    private String hostname = "35.178.59.237";
 
     @Override
     public void run() {

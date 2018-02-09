@@ -98,6 +98,9 @@ public class Renderer implements IRenderable {
 	private final float TILE_SIZE = 1F;
 
 	private void drawPerspective(PixelBuffer pix) {
+	    
+	    if (camera == null)
+	        return;
 
 		final int width = pix.getWidth(), height = pix.getHeight();
 		double[] zbuffer = new double[width];
@@ -325,14 +328,14 @@ public class Renderer implements IRenderable {
 	}
 
 	public void setCamera(Camera cam) {
-		this.camera = cam;
-
-		// FIXME: put all this in the constructor when we get a camera on objet
-		// creation.
+        this.mobsToRender = new ArrayList<Mob>();
+        this.camera = cam;
+        
+        // FIXME: put all this in the constructor when we get a camera on objet
+        // creation.
+        ShotgunPickup p = new ShotgunPickup(new Vector2D(10, 5));
+        mobsToRender.add(p);
 		this.minimap = new Minimap(camera, map, 128);
-		ShotgunPickup p = new ShotgunPickup(new Vector2D(10, 5));
 		this.minimap.addMinimapObject(p);
-		this.mobsToRender = new ArrayList<Mob>();
-		mobsToRender.add(p);
 	}
 }
