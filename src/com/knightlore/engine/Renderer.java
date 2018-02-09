@@ -44,7 +44,6 @@ public class Renderer implements IRenderable {
 
 		this.networkObjPos = new HashMap<>();
 		this.networkObjMobs = new HashMap<>();
-
 		// FIXME: create this elsewhere.....
 		new NetworkObjectManager();
 	}
@@ -73,18 +72,22 @@ public class Renderer implements IRenderable {
 			if (vec == null) {
 				this.networkObjPos.remove(obj);
 				this.mobsToRender.remove(this.networkObjMobs.get(obj));
+				this.minimap.removeMinimapObject(this.networkObjMobs.get(obj));
 				this.networkObjMobs.remove(obj);
 			} else if (networkObjPos.containsKey(obj)) {
+				this.minimap.removeMinimapObject(this.networkObjMobs.get(obj));
 				this.networkObjPos.put(obj, vec);
 				this.mobsToRender.remove(this.networkObjMobs.get(obj));
 				Zombie z = new Zombie(1D, vec);
 				this.networkObjMobs.put(obj, z);
 				this.mobsToRender.add(z);
+				this.minimap.addMinimapObject(this.networkObjMobs.get(obj));
 			} else {
 				this.networkObjPos.put(obj, vec);
 				Zombie z = new Zombie(1D, vec);
 				this.networkObjMobs.put(obj, z);
 				this.mobsToRender.add(z);
+				this.minimap.addMinimapObject(this.networkObjMobs.get(obj));
 			}
 		}
 	}

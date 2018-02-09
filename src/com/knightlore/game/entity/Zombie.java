@@ -1,6 +1,7 @@
 package com.knightlore.game.entity;
 
 import com.knightlore.render.graphic.sprite.DirectionalSprite;
+import com.knightlore.render.minimap.Minimap;
 import com.knightlore.utils.Vector2D;
 
 public class Zombie extends Mob {
@@ -23,14 +24,13 @@ public class Zombie extends Mob {
 
 	@Override
 	public int getDrawSize() {
-		// TODO Auto-generated method stub
-		return 0;
+		return Minimap.SCALE/2;
 	}
 
 	@Override
 	public int getMinimapColor() {
-		// TODO Auto-generated method stub
-		return 0;
+		//make it white
+		return 0xFFFFFFFF;
 	}
 
 }
