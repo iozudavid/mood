@@ -1,10 +1,13 @@
 package com.knightlore.render.minimap;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.knightlore.engine.GameEngine;
 import com.knightlore.engine.TickListener;
-import com.knightlore.game.Player;
 import com.knightlore.game.area.Map;
 import com.knightlore.game.tile.Tile;
+import com.knightlore.render.Camera;
 import com.knightlore.render.PixelBuffer;
 import com.knightlore.utils.Vector2D;
 
@@ -36,13 +39,13 @@ public class Minimap implements TickListener {
 	 * How zoomed in the minimap should appear. The higher this value, the more
 	 * zoomed in.
 	 */
-	public static final int SCALE = 10;
+	public static final int SCALE = 8;
 
 	/**
 	 * The resolution of the minimap. This is the size to draw a single pixel. A
 	 * larger number will give you better performance, but 'poorer quality'.
 	 */
-	public static final int RESOLUTION = 5;
+	public static final int RESOLUTION = 3;
 
 	/**
 	 * The scope of the minimap. This range forms a box around the player.
@@ -57,8 +60,9 @@ public class Minimap implements TickListener {
 	private int width, height;
 	private int[] pixelMap;
 
-	private Player player;
+	private Camera camera;
 	private Map map;
+	private List<IMinimapObject> minimapObjects;
 
 	/**
 	 * We keep track of the previous position and direction so we know not to
@@ -66,14 +70,16 @@ public class Minimap implements TickListener {
 	 */
 	private Vector2D prevPos, prevDir;
 
-	public Minimap(Player player, Map map, int size) {
-		this.player = player;
+	public Minimap(Camera camera, Map map, int size) {
+		this.camera = camera;
 		this.map = map;
 		this.width = map.getWidth() * SCALE;
 		this.height = map.getHeight() * SCALE;
 
 		this.pixelMap = new int[width * height];
 		recreatePixelMap();
+
+		this.minimapObjects = new ArrayList<IMinimapObject>();
 
 		this.display = new PixelBuffer(size, size);
 
@@ -85,22 +91,25 @@ public class Minimap implements TickListener {
 	 * minimap.
 	 */
 	public void render() {
-	    //FIXME
-	    if (player == null)
-	        return;
-		Vector2D pos = player.getPosition();
-		Vector2D dir = player.getDirection();
-		if (pos.isEqualTo(prevPos) && dir.isEqualTo(prevDir))
+		Vector2D dir = camera.getDirection();
+		double theta = -Math.atan2(dir.getX(), dir.getY());
+		drawMap(theta);
+		drawMinimapObjects(theta);
+		drawPlayer();
+		drawBorder();
+	}
+
+	private void drawMap(double theta) {
+		Vector2D pos = camera.getPosition();
+		Vector2D dir = camera.getDirection();
+		if (pos.isEqualTo(prevPos) && dir.isEqualTo(prevDir)) {
 			return;
+		}
+
+		display.flood(0x000000);
 
 		prevPos = pos;
 		prevDir = dir;
-
-
-		final int size = display.getWidth();
-		display.flood(0x000000);
-
-		double theta = -Math.atan2(dir.getX(), dir.getY());
 
 		// Find the positions to start rendering based on SCOPE.
 		int startX = (int) Math.max(0, pos.getX() * SCALE - SCOPE),
@@ -115,42 +124,72 @@ public class Minimap implements TickListener {
 
 		for (int yy = startY; yy < endY; yy += RESOLUTION) {
 			for (int xx = startX; xx < endX; xx += RESOLUTION) {
-				double drawX = xx, drawY = yy;
-				drawX -= player.getPosition().getX() * SCALE;
-				drawY -= player.getPosition().getY() * SCALE;
 
-				drawX += size / 2;
-				drawY += size / 2;
-
-				drawY = size - drawY; // flip the map in the y-direction.
-
-				// Now, rotate the image relative to the player position
-				// according to the 2D rotation matrix.
-				drawX -= size / 2;
-				drawY -= size / 2;
-
-				double oldDrawX = drawX;
-				drawX = drawX * Math.cos(theta) - drawY * Math.sin(theta);
-				drawY = oldDrawX * Math.sin(theta) + drawY * Math.cos(theta);
-
-				drawX += size / 2;
-				drawY += size / 2;
+				Vector2D drawPos = transform(xx, yy, theta);
 
 				/*
 				 * Finally, draw the pixel at the correct position. We draw a
 				 * rectangle of size 2 as a really basic form of interpolation
 				 * (so we don't get 'holes' in the minimap).
 				 */
-				final int INTERPOLATION_CONSTANT = 3;
-				display.fillSquare(pixelMap[xx + yy * width], (int) drawX, (int) drawY,
-						RESOLUTION + INTERPOLATION_CONSTANT);
+				final int INTERPOLATION_CONSTANT = 4;
+				display.fillSquare(pixelMap[xx + yy * width], (int) drawPos.getX(), (int) drawPos.getY(),
+						INTERPOLATION_CONSTANT);
 			}
 		}
+	}
 
+	private void drawMinimapObjects(double theta) {
+		for (IMinimapObject obj : minimapObjects) {
+			Vector2D pos = obj.getPosition();
+			pos = transform((int) pos.getX() * SCALE, (int) pos.getY() * SCALE, theta);
+			display.fillSquare(obj.getMinimapColor(), (int) pos.getX(), (int) pos.getY(), obj.getDrawSize());
+		}
+	}
+
+	private Vector2D transform(int xx, int yy, double theta) {
+		final int size = display.getWidth();
+
+		double drawX = xx, drawY = yy;
+		drawX -= camera.getxPos() * SCALE;
+		drawY -= camera.getyPos() * SCALE;
+
+		drawX += size / 2;
+		drawY += size / 2;
+
+		drawY = size - drawY; // flip the map in the y-direction.
+
+		// Now, rotate the image relative to the player position
+		// according to the 2D rotation matrix.
+		drawX -= size / 2;
+		drawY -= size / 2;
+
+		double oldDrawX = drawX;
+		drawX = drawX * Math.cos(theta) - drawY * Math.sin(theta);
+		drawY = oldDrawX * Math.sin(theta) + drawY * Math.cos(theta);
+
+		drawX += size / 2;
+		drawY += size / 2;
+
+		return new Vector2D(drawX, drawY);
+	}
+
+	private void drawPlayer() {
 		// draw the player.
-		final int PLAYER_COLOR = 0xFF00FF;
-		display.fillSquare(PLAYER_COLOR, size / 2, size / 2, SCALE / 2);
 
+		final int PLAYER_COLOR = 0xFFFFFF;
+		display.fillSquare(PLAYER_COLOR, display.getWidth() / 2, display.getWidth() / 2, SCALE / 2);
+	}
+
+	private void drawBorder() {
+		final int BORDER_COLOR = 0xFFFFFF;
+		final int BORDER_WIDTH = 2;
+
+		int w = display.getWidth(), h = display.getHeight();
+		display.fillRect(BORDER_COLOR, 0, 0, w, BORDER_WIDTH);
+		display.fillRect(BORDER_COLOR, 0, 0, BORDER_WIDTH, h);
+		display.fillRect(BORDER_COLOR, 0, h - BORDER_WIDTH, w, BORDER_WIDTH);
+		display.fillRect(BORDER_COLOR, w - BORDER_WIDTH, 0, BORDER_WIDTH, h);
 	}
 
 	/**
@@ -173,6 +212,10 @@ public class Minimap implements TickListener {
 
 	public PixelBuffer getPixelBuffer() {
 		return display;
+	}
+
+	public void addMinimapObject(IMinimapObject mo) {
+		this.minimapObjects.add(mo);
 	}
 
 	// Every three seconds, we recreate our pixelmap representation of the map

@@ -83,7 +83,7 @@ public class NetworkObjectManager extends GameObject {
         if (networkObjects.containsKey(uuid))
             return networkObjects.get(uuid).x;
         Camera camera = new Camera(4.5, 4.5, 1, 0, 0, Camera.FIELD_OF_VIEW,
-                GameEngine.getSingleton().getWorld().getMap());
+                GameEngine.getSingleton().getRenderer().getMap());
         networkObjects.put(uuid, new Tuple<NetworkObject, byte[]>(
                 new Player(uuid, camera), null));
         return getNetworkObject(uuid);

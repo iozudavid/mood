@@ -1,5 +1,6 @@
 package com.knightlore.render;
 
+import com.knightlore.render.filter.IPixelBufferFilter;
 import com.knightlore.render.graphic.Graphic;
 
 /**
@@ -28,7 +29,9 @@ public class PixelBuffer {
 
 	/**
 	 * Fill the pixel buffer with a single colour.
-	 * @param color the color to fill the pixel buffer with.
+	 * 
+	 * @param color
+	 *            the color to fill the pixel buffer with.
 	 */
 	public void flood(int color) {
 		fillRect(color, 0, 0, getWidth(), getHeight());
@@ -71,7 +74,7 @@ public class PixelBuffer {
 			return;
 		fillRect(color, x, y, 1, 1);
 	}
-	
+
 	public void fillSquare(int color, int x, int y, int size) {
 		fillRect(color, x, y, size, size);
 	}
@@ -92,7 +95,7 @@ public class PixelBuffer {
 			return 0;
 		return pixels[x + y * WIDTH];
 	}
-
+	
 	public int[] getPixels() {
 		return pixels;
 	}

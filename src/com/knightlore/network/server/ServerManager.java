@@ -50,7 +50,7 @@ public class ServerManager implements Runnable {
                 //       fix this hack
                 Camera camera = new Camera(4.5, 4.5, 1, 0, 0,
                         Camera.FIELD_OF_VIEW,
-                        GameEngine.getSingleton().getWorld().getMap());
+                        GameEngine.getSingleton().getRenderer().getMap());
                 Player player = new Player(nextUUID, camera);
                 Connection conn = new TCPConnection(socket);
                 new Thread(conn).start();

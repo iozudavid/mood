@@ -3,6 +3,7 @@ package com.knightlore.network.client;
 import java.util.UUID;
 
 import com.knightlore.engine.GameEngine;
+import com.knightlore.engine.Renderer;
 import com.knightlore.game.Player;
 import com.knightlore.network.Connection;
 import com.knightlore.network.NetworkObjectManager;
@@ -33,19 +34,16 @@ public class ReceiveFromServer implements Runnable {
             this.clientID = serverCommand.getObjectId();
             // FIXME: Create Camera inside player, don't pass in dummy values to
             // initialise.
+            Renderer rend = GameEngine.getSingleton().getRenderer();
             Player player = new Player(this.clientID, new Camera(0, 0, 0, 0, 0,
-                    0, GameEngine.getSingleton().getWorld().getMap()));
+                    0, rend.getMap()));
             player.deserialize(serverCommand);
             // FIXME: interface better with World to provide the camera during
             // its constructor.
-            GameEngine.getSingleton().getWorld().setPlayer(player);
+            rend.setCamera(player.getCamera());
 
             while (!conn.terminated && (packet = conn.receive()) != null) {
                 ServerCommand command = ServerCommand.decodePacket(packet);
-             
-                // don't know why this is here, 
-                // i will keep it as a comment til i clarify with will (david)
-                //   packet = conn.receive();
                 
                 //if we receive the disconnect packet
                 //then remove object from game engine
@@ -53,7 +51,7 @@ public class ReceiveFromServer implements Runnable {
                 if(ServerProtocol.isDisconnectedState(packet)){
                     NetworkObjectManager.getSingleton().getNetworkObject(command.getObjectId()).destroy();
 					NetworkObjectManager.getSingleton().disconnectClient(command.getObjectId());
-					GameEngine.getSingleton().getWorld().updateNetworkObjectPos(
+					rend.updateNetworkObjectPos(
 							NetworkObjectManager.getSingleton().getNetworkObject(command.getObjectId()), null);
                     continue;
                 }
@@ -63,7 +61,7 @@ public class ReceiveFromServer implements Runnable {
                         .getNetworkObject(command.getObjectId())
                         .deserialize(command);
                 
-                GameEngine.getSingleton().getWorld().updateNetworkObjectPos(
+                rend.updateNetworkObjectPos(
                         NetworkObjectManager.getSingleton()
                                 .getNetworkObject(command.getObjectId()),
                         new Vector2D(

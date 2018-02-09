@@ -24,6 +24,7 @@ public class Player extends NetworkObject implements IRenderable {
 	
 	private final Map<ServerControl, CameraGetterInterface> controlGettersMap;
 	private final Map<ServerControl, CameraSetterInterface> controlSettersMap;
+	private static boolean finished = false;
 
 	public Player(UUID uuid, Camera camera) {
 		super(uuid);
@@ -51,7 +52,7 @@ public class Player extends NetworkObject implements IRenderable {
 				this.camera::setxPlane);
 		this.controlSettersMap.put(ServerControl.YPLANE,
 				this.camera::setyPlane);
-		
+		Player.this.finished = true;
 		
 	}
 
@@ -87,6 +88,11 @@ public class Player extends NetworkObject implements IRenderable {
 			System.out.println("Camera started null");
 			return null;
 		}
+		if(Player.this.finished==false){
+			System.out.println("Constructor didn't finish");
+			return null;
+		}
+		
 		byte[] thisState = new byte[ServerProtocol.TOTAL_LENGTH];
 
 		// Prepend metadata to the state array.

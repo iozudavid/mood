@@ -3,14 +3,13 @@ package com.knightlore.render;
 import java.util.HashMap;
 import java.util.Map.Entry;
 
-import com.knightlore.engine.GameEngine;
 import com.knightlore.engine.GameObject;
-import com.knightlore.engine.TickListener;
 import com.knightlore.game.area.Map;
 import com.knightlore.game.tile.Tile;
 import com.knightlore.network.protocol.ClientControl;
+import com.knightlore.utils.Vector2D;
 
-public class Camera extends GameObject implements TickListener {
+public class Camera extends GameObject {
 
 	private static final double MOTION_BOB_AMOUNT = 7.0;
 	private static final double MOTION_BOB_SPEED = 0.15;
@@ -19,6 +18,8 @@ public class Camera extends GameObject implements TickListener {
 
 	public static final double FIELD_OF_VIEW = -.66;
 	private static final double MOVE_SPEED = .040;
+	//will be implemented
+	private static final double SPRINT_MULTIPLIER = 1.5D;
 	private static final double STRAFE_SPEED = .01;
 	private static final double ROTATION_SPEED = .025;
 
@@ -55,8 +56,15 @@ public class Camera extends GameObject implements TickListener {
 
 		this.motionOffset = 0;
 		this.moveTicks = 0;
+	}
+	
+	@Override
+	public Vector2D getPosition() {
+		return new Vector2D(xPos, yPos);
+	}
 
-		GameEngine.ticker.addTickListener(this);
+	public Vector2D getDirection() {
+		return new Vector2D(xDir, yDir);
 	}
 
 	@Override
@@ -206,16 +214,6 @@ public class Camera extends GameObject implements TickListener {
 
 	public synchronized void setyPlane(double yPlane) {
 		this.yPlane = yPlane;
-	}
-
-	@Override
-	public void onTick() {
-		System.out.println(xPos + " " + yPos);
-	}
-
-	@Override
-	public long interval() {
-		return 60;
 	}
 
 	@Override

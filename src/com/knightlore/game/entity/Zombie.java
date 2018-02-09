@@ -21,4 +21,16 @@ public class Zombie extends Mob {
 	public void onDestroy() {
 	}
 
+	@Override
+	public int getDrawSize() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public int getMinimapColor() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
 }
