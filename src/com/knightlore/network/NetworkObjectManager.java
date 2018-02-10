@@ -39,99 +39,120 @@ public class NetworkObjectManager extends GameObject {
     }
 
     public void registerNetworkObject(NetworkObject obj) {
-        this.networkObjects.put(obj.objectUniqueID, new Tuple<>(obj, null));
-        // is alive at the register time
-        // so initialized it with false
-        this.disconnectedObjects.put(obj.objectUniqueID,
-                new Tuple<>(obj, false));
+		synchronized (this.networkObjects) {
+			this.networkObjects.put(obj.objectUniqueID, new Tuple<>(obj, null));
+		}
+			// is alive at the register time
+			// so initialized it with false
+		synchronized (this.disconnectedObjects) {
+			this.disconnectedObjects.put(obj.objectUniqueID, new Tuple<>(obj, false));
+		}
     }
 
     // call this function to disconnect client
     // with the given id
     // onUpdate will do the job
     public void disconnectClient(UUID uuid) {
-        Tuple<NetworkObject, Boolean> tuple = this.disconnectedObjects
-                .get(uuid);
-        tuple.y = true;
-        this.disconnectedObjects.replace(uuid, tuple);
+		synchronized (this.disconnectedObjects) {
+			Tuple<NetworkObject, Boolean> tuple = this.disconnectedObjects.get(uuid);
+			tuple.y = true;
+			this.disconnectedObjects.replace(uuid, tuple);
+		}
     }
 
     // remove it from both maps
     public void removeNetworkObject(NetworkObject obj) {
-        Iterator<Entry<UUID, Tuple<NetworkObject, byte[]>>> networkObjIt = this.networkObjects
-                .entrySet().iterator();
-        Entry<UUID, Tuple<NetworkObject, byte[]>> nextNetObj = null;
-        while (networkObjIt.hasNext()) {
-            nextNetObj = networkObjIt.next();
-            if (nextNetObj.getValue().x == obj) {
-                networkObjIt.remove();
-            }
-        }
-        Iterator<Entry<UUID, Tuple<NetworkObject, Boolean>>> networkDiscObjIt = this.disconnectedObjects
-                .entrySet().iterator();
-        Entry<UUID, Tuple<NetworkObject, Boolean>> nextDiscNetObj = null;
-        while (networkDiscObjIt.hasNext()) {
-            nextDiscNetObj = networkDiscObjIt.next();
-            if (nextDiscNetObj.getValue().x == obj) {
-                networkDiscObjIt.remove();
-            }
-        }
+		synchronized (this.networkObjects) {
+			Iterator<Entry<UUID, Tuple<NetworkObject, byte[]>>> networkObjIt = this.networkObjects.entrySet()
+					.iterator();
+			Entry<UUID, Tuple<NetworkObject, byte[]>> nextNetObj = null;
+			while (networkObjIt.hasNext()) {
+				nextNetObj = networkObjIt.next();
+				if (nextNetObj.getValue().x == obj) {
+					networkObjIt.remove();
+				}
+			}
+		}
+		synchronized (this.disconnectedObjects) {
+			Iterator<Entry<UUID, Tuple<NetworkObject, Boolean>>> networkDiscObjIt = this.disconnectedObjects.entrySet()
+					.iterator();
+			Entry<UUID, Tuple<NetworkObject, Boolean>> nextDiscNetObj = null;
+			while (networkDiscObjIt.hasNext()) {
+				nextDiscNetObj = networkDiscObjIt.next();
+				if (nextDiscNetObj.getValue().x == obj) {
+					networkDiscObjIt.remove();
+				}
+			}
+		}
 
     }
 
     public NetworkObject getNetworkObject(UUID uuid) {
-        if (networkObjects.containsKey(uuid))
-            return networkObjects.get(uuid).x;
-        Camera camera = new Camera(4.5, 4.5, 1, 0, 0, Camera.FIELD_OF_VIEW,
-                GameEngine.getSingleton().getRenderer().getMap());
-        networkObjects.put(uuid, new Tuple<NetworkObject, byte[]>(
-                new Player(uuid, camera), null));
-        return getNetworkObject(uuid);
+		synchronized (this.networkObjects) {
+			if (networkObjects.containsKey(uuid))
+				return networkObjects.get(uuid).x;
+			Camera camera = new Camera(4.5, 4.5, 1, 0, 0, Camera.FIELD_OF_VIEW,
+					GameEngine.getSingleton().getRenderer().getMap());
+			networkObjects.put(uuid, new Tuple<NetworkObject, byte[]>(new Player(uuid, camera), null));
+			return getNetworkObject(uuid);
+		}
     }
 
     public void registerClientSender(SendToClient obj) {
-        this.clientSenders.add(obj);
+		synchronized (this.clientSenders) {
+			this.clientSenders.add(obj);
+		}
     }
 
     public void removeClientSender(SendToClient obj) {
-        this.clientSenders.remove(obj);
+		synchronized (this.clientSenders) {
+			this.clientSenders.remove(obj);
+		}
     }
 
     @Override
     public void onCreate() {
     }
 
-    @Override
-    public void onUpdate() {
-        // Iterate through each serialisable network object. If its state has
-        // changed, send the new state to each client.
-        ArrayList<NetworkObject> toRemoveObjects = new ArrayList<>();
-        for (Entry<UUID, Tuple<NetworkObject, byte[]>> t : networkObjects
-                .entrySet()) {
-            boolean disconnect = this.disconnectedObjects.get(t.getKey()).y;
-            byte[] newState = t.getValue().x.serialize(disconnect);
-            // Send state either if we're due a regular update, or if the state
-            // has changed.
-            if (updateCount >= REGULAR_UPDATE_FREQ
-                    || NetworkUtils.areStatesDifferent(newState, t.getValue().y)) {
-                for (SendToClient s : clientSenders)
-                    s.sendState(newState);
-                if (!disconnect) {
-                    t.getValue().y = newState;
-                    continue;
-                }
-                // if the user is disconnected
-                // no point in keep it in memory, so add to remove list
-                toRemoveObjects.add(t.getValue().x);
-            }
-        }
-        for (NetworkObject o : toRemoveObjects)
-            this.removeNetworkObject(o);
-        if (updateCount >= REGULAR_UPDATE_FREQ)
-            updateCount = 1;
-        else
-            updateCount++;
-    }
+	@Override
+	public void onUpdate() {
+		synchronized (this.networkObjects) {
+			// Iterate through each serialisable network object. If its state
+			// has
+			// changed, send the new state to each client.
+			ArrayList<NetworkObject> toRemoveObjects = new ArrayList<>();
+			for (Entry<UUID, Tuple<NetworkObject, byte[]>> t : networkObjects.entrySet()) {
+				boolean disconnect;
+				synchronized (this.disconnectedObjects) {
+					disconnect = this.disconnectedObjects.get(t.getKey()).y;
+				}
+				byte[] newState = t.getValue().x.serialize(disconnect);
+				// Send state either if we're due a regular update, or if the
+				// state
+				// has changed.
+				synchronized (this.clientSenders) {
+					if (updateCount >= REGULAR_UPDATE_FREQ
+							|| NetworkUtils.areStatesDifferent(newState, t.getValue().y)) {
+						for (SendToClient s : clientSenders)
+							s.sendState(newState);
+						if (!disconnect) {
+							t.getValue().y = newState;
+							continue;
+						}
+						// if the user is disconnected
+						// no point in keep it in memory, so add to remove list
+						toRemoveObjects.add(t.getValue().x);
+					}
+				}
+			}
+			for (NetworkObject o : toRemoveObjects)
+				this.removeNetworkObject(o);
+			if (updateCount >= REGULAR_UPDATE_FREQ)
+				updateCount = 1;
+			else
+				updateCount++;
+		}
+	}
 
     @Override
     public void onDestroy() {

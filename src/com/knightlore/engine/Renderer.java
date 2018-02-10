@@ -52,8 +52,9 @@ public class Renderer implements IRenderable {
 
 	@Override
 	public void render(PixelBuffer pix, int x, int y) {
-		if (camera == null)
-			return;
+		while (camera == null || minimap==null){
+			//wait till minimap and camera not null
+		}
 		map.getEnvironment().renderEnvironment(pix);
 		drawPerspective(pix);
 		drawCrosshair(pix);

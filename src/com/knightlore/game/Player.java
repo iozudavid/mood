@@ -24,7 +24,7 @@ public class Player extends NetworkObject implements IRenderable {
 	
 	private final Map<ServerControl, CameraGetterInterface> controlGettersMap;
 	private final Map<ServerControl, CameraSetterInterface> controlSettersMap;
-	private static boolean finished = false;
+	private static volatile boolean finished = false;
 
 	public Player(UUID uuid, Camera camera) {
 		super(uuid);
