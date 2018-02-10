@@ -39,7 +39,7 @@ public class Renderer implements IRenderable {
 		mobsToRender.add(p);
 	}
 
-	private final int BLOCKINESS = 8; // how 'old school' you want to look.
+	private final int BLOCKINESS = 1; // how 'old school' you want to look.
 
 	@Override
 	public void render(PixelBuffer pix, int x, int y) {
@@ -239,11 +239,9 @@ public class Renderer implements IRenderable {
 
 			// calculate lowest and highest pixel
 			int drawStartY = -spriteHeight / 2 + pix.getHeight() / 2;
-			if (drawStartY < 0)
-				drawStartY = 0;
+			drawStartY = Math.max(0, drawStartY);
 			int drawEndY = spriteHeight / 2 + pix.getHeight() / 2;
-			if (drawEndY >= pix.getHeight())
-				drawEndY = pix.getHeight() - 1;
+			drawEndY = Math.min(drawEndY, pix.getHeight() - 1);
 
 			// calculate sprite width
 			int spriteWidth = Math.abs((int) (pix.getHeight() / transformY));
@@ -271,11 +269,11 @@ public class Renderer implements IRenderable {
 				if (transformY > 0 && stripe > 0 && stripe < pix.getWidth()
 						&& transformY < zbuffer[stripe])
 					for (int y = drawStartY; y < drawEndY; y++) {
-						// 256 and 128 are factors to avoid floats.
-						int d = y * 256 - pix.getHeight() * 128
-								+ spriteHeight * 128;
-						d = Math.max(0, d);
-						int texY = ((d * g.getHeight()) / spriteHeight) / 256;
+						// 16 and 8 are factors to avoid division and floats.
+						int d = 16 * y
+								- 8 * (pix.getHeight() - spriteHeight - 1);
+
+						int texY = ((d * g.getHeight()) / spriteHeight) / 16;
 
 						int color = g.getPixels()[texX + g.getWidth() * texY];
 
