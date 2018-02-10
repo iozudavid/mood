@@ -39,7 +39,7 @@ public class Renderer implements IRenderable {
 		mobsToRender.add(p);
 	}
 
-	private final int BLOCKINESS = 1; // how 'old school' you want to look.
+	private final int BLOCKINESS = 10; // how 'old school' you want to look.
 
 	@Override
 	public void render(PixelBuffer pix, int x, int y) {
