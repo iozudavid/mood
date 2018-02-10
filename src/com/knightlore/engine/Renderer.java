@@ -252,10 +252,10 @@ public class Renderer implements IRenderable {
 			if (drawEndX >= pix.getWidth())
 				drawEndX = pix.getWidth() - 1;
 
+			Graphic g = m.getGraphic(camera.getPosition());
+
 			// for each vertical stripe of the sprite, draw the right color
 			for (int stripe = drawStartX; stripe < drawEndX; stripe++) {
-				Graphic g = m.getGraphic(camera.getPosition());
-
 				int texX = (int) (256
 						* (stripe - (-spriteWidth / 2 + spriteScreenX))
 						* g.getWidth() / spriteWidth) / 256;
