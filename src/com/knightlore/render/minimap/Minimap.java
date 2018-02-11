@@ -57,8 +57,10 @@ public class Minimap implements TickListener {
 	public static final int SCOPE = 90;
 
 	private PixelBuffer display;
+
 	private int width, height;
 	private int[] pixelMap;
+	private MinimapLightingMask mask;
 
 	private Camera camera;
 	private Map map;
@@ -78,12 +80,14 @@ public class Minimap implements TickListener {
 
 		this.pixelMap = new int[width * height];
 		recreatePixelMap();
+		this.mask = new MinimapLightingMask(map.getEnvironment());
 
 		this.minimapObjects = new ArrayList<IMinimapObject>();
 
 		this.display = new PixelBuffer(size, size);
 
 		GameEngine.ticker.addTickListener(this);
+		System.out.println("minimap finished");
 	}
 
 	/**
@@ -130,8 +134,11 @@ public class Minimap implements TickListener {
 
 		for (int yy = startY; yy < endY; yy += RESOLUTION) {
 			for (int xx = startX; xx < endX; xx += RESOLUTION) {
-
 				Vector2D drawPos = transform(xx, yy, theta);
+
+				int color = pixelMap[xx + yy * width];
+				color = mask.adjustForLighting(display, color,
+						(int) drawPos.getX(), (int) drawPos.getY());
 
 				/*
 				 * Finally, draw the pixel at the correct position. We draw a
@@ -139,8 +146,8 @@ public class Minimap implements TickListener {
 				 * (so we don't get 'holes' in the minimap).
 				 */
 				final int INTERPOLATION_CONSTANT = 4;
-				display.fillSquare(pixelMap[xx + yy * width], (int) drawPos.getX(), (int) drawPos.getY(),
-						INTERPOLATION_CONSTANT);
+				display.fillSquare(color, (int) drawPos.getX(),
+						(int) drawPos.getY(), INTERPOLATION_CONSTANT);
 			}
 		}
 	}
@@ -149,9 +156,15 @@ public class Minimap implements TickListener {
 		synchronized (this.minimapObjects) {
 			System.out.println("Minimap size: " + minimapObjects.size());
 			for (IMinimapObject obj : minimapObjects) {
-				Vector2D pos = obj.getPosition();
-				pos = transform((int) pos.getX() * SCALE, (int) pos.getY() * SCALE, theta);
-				display.fillSquare(obj.getMinimapColor(), (int) pos.getX(), (int) pos.getY(), obj.getDrawSize());
+	            Vector2D pos = obj.getPosition();
+	            pos = transform((int) pos.getX() * SCALE, (int) pos.getY() * SCALE,
+	                    theta);
+
+	            int color = obj.getMinimapColor();
+	            color = mask.adjustForLighting(display, color, (int) pos.getX(),
+	                    (int) pos.getY());
+	            display.fillSquare(color, (int) pos.getX(), (int) pos.getY(),
+	                    obj.getDrawSize());
 			}
 		}
 	}
@@ -183,12 +196,13 @@ public class Minimap implements TickListener {
 		return new Vector2D(drawX, drawY);
 	}
 
-//	private void drawPlayer() {
-//		// draw the player.
-//
-//		final int PLAYER_COLOR = 0xFFFFFF;
-//		display.fillSquare(PLAYER_COLOR, display.getWidth() / 2, display.getWidth() / 2, SCALE / 2);
-//	}
+	private void drawPlayer() {
+		// draw the player.
+		final int PLAYER_COLOR = 0xFFFFFF;
+
+		display.fillSquare(PLAYER_COLOR, display.getWidth() / 2,
+				display.getWidth() / 2, SCALE / 2);
+	}
 
 	private void drawBorder() {
 		final int BORDER_COLOR = 0xFFFFFF;

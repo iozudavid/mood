@@ -64,7 +64,7 @@ public enum Environment {
 	public abstract void renderEnvironment(PixelBuffer pix);
 
 	public abstract int getMinimapBaseColor();
-
+	
 	public int getDarkness() {
 		return darkness;
 	}

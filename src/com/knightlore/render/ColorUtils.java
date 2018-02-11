@@ -9,6 +9,7 @@ public class ColorUtils {
 	}
 	
 	public static int mixColor(int color1, int color2, double mix) {
+		mix = Math.min(1, Math.max(0, mix));
 		Color c1 = new Color(color1);
 		Color c2 = new Color(color2);
 

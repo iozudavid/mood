@@ -48,12 +48,16 @@ public class Renderer implements IRenderable {
 		new NetworkObjectManager();
 	}
 
-	private final int BLOCKINESS = 1; // how 'old school' you want to look.
+	private final int BLOCKINESS = 10; // how 'old school' you want to look.
 
 	@Override
 	public void render(PixelBuffer pix, int x, int y) {
 		while (camera == null || minimap==null){
-			//wait till minimap and camera not null
+            //wait till minimap and camera not null
+		    // Sleep thread to allow references to update.
+		    try {
+                Thread.sleep(5);
+            } catch (InterruptedException e) {}
 		}
 		map.getEnvironment().renderEnvironment(pix);
 		drawPerspective(pix);
@@ -63,7 +67,8 @@ public class Renderer implements IRenderable {
 		minimap.render();
 
 		PixelBuffer minimapBuffer = minimap.getPixelBuffer();
-		pix.composite(minimapBuffer, pix.getWidth() - minimapBuffer.getWidth() - 10, 5);
+		pix.composite(minimapBuffer,
+				pix.getWidth() - minimapBuffer.getWidth() - 10, 5);
 	}
 
 	public void updateNetworkObjectPos(NetworkObject obj, Vector2D position, Vector2D direction) {
@@ -174,9 +179,11 @@ public class Renderer implements IRenderable {
 					if (opacity >= 1)
 						hit = true;
 
-					distanceToWall = RaycasterUtils.getImpactDistance(camera, rayX, rayY, mapX, mapY, side, stepX,
-							stepY, TILE_SIZE);
-					int lineHeight = RaycasterUtils.getDrawHeight(height, distanceToWall);
+					distanceToWall = RaycasterUtils.getImpactDistance(camera,
+							rayX, rayY, mapX, mapY, side, stepX, stepY,
+							TILE_SIZE);
+					int lineHeight = RaycasterUtils.getDrawHeight(height,
+							distanceToWall);
 
 					// calculate lowest and highest pixel to fill in current
 					// strip
@@ -190,8 +197,8 @@ public class Renderer implements IRenderable {
 						drawEnd = height - 1;
 					}
 
-					double wallX = RaycasterUtils.getWallHitPosition(camera, rayX, rayY, mapX, mapY, side, stepX,
-							stepY);
+					double wallX = RaycasterUtils.getWallHitPosition(camera,
+							rayX, rayY, mapX, mapY, side, stepX, stepY);
 
 					Graphic texture = map.getTile(mapX, mapY).getTexture();
 
@@ -205,8 +212,9 @@ public class Renderer implements IRenderable {
 						texX = texture.getSize() - texX - 1;
 					}
 
-					PerspectiveRenderItem p = new PerspectiveRenderItem(opacity, drawStart, drawEnd, lineHeight,
-							texture, texX, distanceToWall, xx);
+					PerspectiveRenderItem p = new PerspectiveRenderItem(opacity,
+							drawStart, drawEnd, lineHeight, texture, texX,
+							distanceToWall, xx);
 					renderStack.push(p);
 					zbuffer[xx] = p.distanceToWall;
 
@@ -228,14 +236,18 @@ public class Renderer implements IRenderable {
 		// calculate y coordinate on texture
 		for (int yy = p.drawStart; yy < p.drawEnd; yy++) {
 
-			int texY = (((yy * 2 - pix.getHeight() + p.lineHeight) << 4) / p.lineHeight) / 2;
+			int texY = (((yy * 2 - pix.getHeight() + p.lineHeight) << 4)
+					/ p.lineHeight) / 2;
 
-			int color = p.texture.getPixels()[p.texX + (texY * p.texture.getSize())];
+			int color = p.texture.getPixels()[p.texX
+					+ (texY * p.texture.getSize())];
 
 			int drawY = yy + camera.getMotionOffset();
-			color = ColorUtils.mixColor(pix.pixelAt(p.xx, drawY), color, p.opacity);
+			color = ColorUtils.mixColor(pix.pixelAt(p.xx, drawY), color,
+					p.opacity);
 
-			color = ColorUtils.darken(color, map.getEnvironment().getDarkness(), p.distanceToWall);
+			color = ColorUtils.darken(color, map.getEnvironment().getDarkness(),
+					p.distanceToWall);
 			pix.fillRect(color, p.xx, drawY, BLOCKINESS, 1);
 		}
 	}
@@ -265,13 +277,11 @@ public class Renderer implements IRenderable {
 				int spriteScreenX = (int) ((pix.getWidth() / 2) * (1 + transformX / transformY));
 				int spriteHeight = Math.abs((int) (pix.getHeight() / transformY));
 
-				// calculate lowest and highest pixel to fill in current stripe
-				int drawStartY = -spriteHeight / 2 + pix.getHeight() / 2;
-				if (drawStartY < 0)
-					drawStartY = 0;
-				int drawEndY = spriteHeight / 2 + pix.getHeight() / 2;
-				if (drawEndY >= pix.getHeight())
-					drawEndY = pix.getHeight() - 1;
+		        // calculate lowest and highest pixel
+	            int drawStartY = -spriteHeight / 2 + pix.getHeight() / 2;
+	            drawStartY = Math.max(0, drawStartY);
+	            int drawEndY = spriteHeight / 2 + pix.getHeight() / 2;
+	            drawEndY = Math.min(drawEndY, pix.getHeight() - 1);
 
 				// calculate width of the sprite
 				int spriteWidth = Math.abs((int) (pix.getHeight() / transformY));
@@ -286,8 +296,8 @@ public class Renderer implements IRenderable {
 				for (int stripe = drawStartX; stripe < drawEndX; stripe++) {
 					Graphic g = m.getGraphic(camera.getPosition());
 
-					int texX = (int) (256 * (stripe - (-spriteWidth / 2 + spriteScreenX)) * g.getWidth() / spriteWidth)
-							/ 256;
+					int texX = (int) (256 * (stripe - (-spriteWidth / 2 + spriteScreenX))
+	                        * g.getWidth() / spriteWidth) / 256;
 
 					// the conditions in the if are:
 					// 1) it's in front of camera plane so you don't see things
@@ -297,11 +307,15 @@ public class Renderer implements IRenderable {
 					// 4) ZBuffer, with perpendicular distance
 					if (transformY > 0 && stripe > 0 && stripe < pix.getWidth() && transformY < zbuffer[stripe])
 						for (int y = drawStartY; y < drawEndY; y++) {
-							// here, 256 and 128 are factors to avoid floats.
-							int d = y * 256 - pix.getHeight() * 128 + spriteHeight * 128;
-							int texY = ((d * g.getHeight()) / spriteHeight) / 256;
-							int color = g.getPixels()[g.getWidth() * texY + texX];
+	                        // 16 and 8 are factors to avoid division and floats.
+	                        int d = 16 * y
+	                                - 8 * (pix.getHeight() - spriteHeight - 1);
 
+	                        int texY = ((d * g.getHeight()) / spriteHeight) / 16;
+
+	                        int color = g.getPixels()[texX + g.getWidth() * texY];
+
+	                        // dont draw transparent pixels.
 							if (color == PixelBuffer.CHROMA_KEY)
 								continue;
 
@@ -313,6 +327,7 @@ public class Renderer implements IRenderable {
 							pix.fillRect(color, stripe, drawY, BLOCKINESS, 1);
 						}
 				}
+
 			}
 		}
 	}
@@ -322,8 +337,10 @@ public class Renderer implements IRenderable {
 		final int CROSSHAIR_WIDTH = 2;
 		final int CROSSHAIR_COLOR = 0xFFFFFF;
 		final int w = pix.getWidth() / 2, h = pix.getHeight() / 2;
-		pix.fillRect(CROSSHAIR_COLOR, w - CROSSHAIR_SIZE, h - CROSSHAIR_WIDTH / 2, CROSSHAIR_SIZE * 2, CROSSHAIR_WIDTH);
-		pix.fillRect(CROSSHAIR_COLOR, w - CROSSHAIR_WIDTH / 2, h - CROSSHAIR_SIZE, CROSSHAIR_WIDTH, CROSSHAIR_SIZE * 2);
+		pix.fillRect(CROSSHAIR_COLOR, w - CROSSHAIR_SIZE,
+				h - CROSSHAIR_WIDTH / 2, CROSSHAIR_SIZE * 2, CROSSHAIR_WIDTH);
+		pix.fillRect(CROSSHAIR_COLOR, w - CROSSHAIR_WIDTH / 2,
+				h - CROSSHAIR_SIZE, CROSSHAIR_WIDTH, CROSSHAIR_SIZE * 2);
 	}
 
 	// FIXME

@@ -9,7 +9,6 @@ import com.knightlore.engine.input.InputManager;
 import com.knightlore.engine.input.Mouse;
 import com.knightlore.game.area.AreaFactory;
 import com.knightlore.game.area.Map;
-import com.knightlore.render.Camera;
 import com.knightlore.render.Environment;
 import com.knightlore.render.Screen;
 
@@ -27,7 +26,7 @@ public class GameEngine implements Runnable {
 	private static final double UPDATES_PER_SECOND = 60D;
 	public static final Ticker ticker = new Ticker();
 
-	private final Screen screen;
+	private Screen screen;
 	private final MainWindow window;
 
 	private Renderer renderer;
@@ -49,14 +48,15 @@ public class GameEngine implements Runnable {
 		notifyToCreate = new LinkedList<GameObject>();
 		notifyToDestroy = new LinkedList<GameObject>();
 
-		final int w = MainWindow.WIDTH, h = MainWindow.HEIGHT;
-		screen = new Screen(w, h);
 		if (headless)
 			window = null;
-		else
-			window = new MainWindow(screen, MainWindow.TITLE, w, h);
-
-		initInputs();
+		else {
+	        final int w = MainWindow.WIDTH, h = MainWindow.HEIGHT;
+			window = new MainWindow(MainWindow.TITLE, w, h);
+			window.finalise();
+			this.screen = window.getScreen();
+		}
+		initEngine();
 	}
 
 
@@ -83,14 +83,16 @@ public class GameEngine implements Runnable {
 		return this.renderer;
 	}
 
-	private void initInputs() {
+	private void initEngine() {
 		System.out.println("Initialising Engine...");
-		InputManager.init();
-		setupKeyboard();
-		setupMouse();
-
-		Map map = AreaFactory.createRandomMap(Environment.LIGHT_OUTDOORS);
-		//Camera camera = new Camera(4.5, 4.5, 1, 0, 0, Camera.FIELD_OF_VIEW, map);
+		if (!headless) {
+		    InputManager.init();
+		    setupKeyboard();
+		    setupMouse();
+		}
+		Map map = AreaFactory.createRandomMap(Environment.DARK_OUTDOORS);
+		//Camera camera = new Camera(4.5, 4.5, 1, 0, 0, Camera.FIELD_OF_VIEW,
+		//		map);
 		renderer = new Renderer(null, map);
 		System.out.println("Engine Initialised Successfully.");
 	}
@@ -129,12 +131,12 @@ public class GameEngine implements Runnable {
 
 			while (delta >= 1) {
 				updateObjects();
-				if (!headless)
-					screen.render(0, 0, renderer);
 				delta -= 1;
 
 				ticker.tick();
 			}
+            if (!headless)
+                screen.render(0, 0, renderer);
 		}
 	}
 

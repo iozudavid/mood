@@ -39,7 +39,8 @@ public class SendToClient implements Runnable {
     }
 
     public void sendState(byte[] state) {
-        commandQueue.offer(state);
+        if (state != null)
+            commandQueue.offer(state);
     }
 
 }
