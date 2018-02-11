@@ -10,8 +10,10 @@ public abstract class GUIObject {
 	
 	GUIObject(int x, int y, int depth){
 		this.depth = depth;
-		rect = new Rectangle(x,y);
-	}
+		rect = new Rectangle();
+		rect.x = x;
+		rect.y = y;
+				}
 	
 	abstract void Draw(Graphics g);
 	
@@ -27,19 +29,27 @@ public abstract class GUIObject {
 		
 	}
 	
-	void OnMouseEnter(){
+	void onMouseEnter(){
 		
 	}
 	
-	void OnMouseOver(){
+	void onMouseOver(){
 		
 	}
 	
-	void OnMouseUp(){
+	void onMouseUp(){
 		
 	}
 	
-	void OnMouseDown(){
+	void onMouseDown(){
+		
+	}
+
+	void onGainedFocus() {
+		
+	}
+
+	void onLostFocus() {
 		
 	}
 }

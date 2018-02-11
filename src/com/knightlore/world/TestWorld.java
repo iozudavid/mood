@@ -13,6 +13,7 @@ import com.knightlore.game.entity.Zombie;
 import com.knightlore.game.entity.pickup.ShotgunPickup;
 import com.knightlore.gui.Button;
 import com.knightlore.gui.GUICanvas;
+import com.knightlore.gui.TextField;
 import com.knightlore.render.Camera;
 import com.knightlore.render.Environment;
 import com.knightlore.utils.Vector2D;
@@ -51,6 +52,10 @@ public class TestWorld extends GameWorld {
 		Button b = new Button(5, 5, 0);
 		b.rect.width = 100;
 		b.rect.height = 30;
+		TextField tf = new TextField(100,100,0,"Sample Text");
+		tf.rect.width = 150;
+		tf.rect.height = 30;
+		gui.addGUIObject(tf);
 		gui.addGUIObject(b);
 		Renderer.setGUI(gui);
 

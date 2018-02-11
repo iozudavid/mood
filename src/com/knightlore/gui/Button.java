@@ -9,7 +9,7 @@ public class Button extends GUIObject {
 	
 	Graphic activeGraphic = null;
 	
-	private ButtonState state = ButtonState.UP;
+	private SelectState state = SelectState.UP;
 	
 	public Color upColour = Color.LIGHT_GRAY;
 	public Color downColour = Color.DARK_GRAY;
@@ -53,29 +53,29 @@ public class Button extends GUIObject {
 	}
 	
 	@Override
-	void OnMouseEnter(){
-		state = ButtonState.HOVER;
+	void onMouseEnter(){
+		state = SelectState.HOVER;
 	}
 	
-	void OnMouseOver(){
-		if(state == ButtonState.UP){
-			state = ButtonState.HOVER;
+	void onMouseOver(){
+		if(state == SelectState.UP){
+			state = SelectState.HOVER;
 		}
 	}
 	
 	@Override
 	void OnMouseExit(){
-		state = ButtonState.UP;
+		state = SelectState.UP;
 	}
 	
 	@Override
-	void OnMouseDown(){
-		state = ButtonState.DOWN;
+	void onMouseDown(){
+		state = SelectState.DOWN;
 	}
 	
 	@Override
-	void OnMouseUp(){
-		state = ButtonState.UP;
+	void onMouseUp(){
+		state = SelectState.UP;
 	}
 	
 	@Override
