@@ -3,8 +3,12 @@ package com.knightlore;
 import java.awt.BorderLayout;
 import java.awt.Canvas;
 import java.awt.Dimension;
+import java.awt.GraphicsDevice;
+import java.awt.GraphicsEnvironment;
 
 import javax.swing.JFrame;
+
+import com.knightlore.render.Screen;
 
 /**
  * Main window for the game.
@@ -20,29 +24,24 @@ public class MainWindow extends JFrame {
 	public static final int WIDTH = 1000;
 	public static final int HEIGHT = WIDTH / 16 * 9; // 16:9 aspect ratio
 
+	private Screen screen;
 	private boolean fullscreen;
 
-	public MainWindow(Canvas canvas, String title) {
-		this(canvas, title, -1, -1);
+	public MainWindow(String title) {
+		this(title, -1, -1);
 	}
 
-	public MainWindow(Canvas canvas, String title, int width, int height) {
+	public MainWindow(String title, int width, int height) {
 		super(TITLE);
 		fullscreen = width <= 0 || height <= 0;
 
-		if (fullscreen) {
-			goFullscreen();
-		} else {
-			setSize(width, height);
-		}
-
+		setSize(width, height);
 		setResizable(false);
 
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setLayout(new BorderLayout());
 
 		setLocationRelativeTo(null);
-		setCanvas(canvas);
 	}
 
 	private void setCanvas(Canvas canvas) {
@@ -51,9 +50,28 @@ public class MainWindow extends JFrame {
 		pack();
 	}
 
-	private void goFullscreen() {
-		setExtendedState(JFrame.MAXIMIZED_BOTH);
-		setUndecorated(true);
+	public void finalise() {
+		int w = WIDTH, h = HEIGHT;
+		if (fullscreen) {
+			goFullscreen();
+			Dimension resolution = Screen.getScreenResolution();
+			w = resolution.width;
+			h = resolution.height;
+		}
+
+		this.screen = new Screen(w, h);
+		setCanvas(this.screen);
+	}
+
+	public Screen getScreen() {
+		return screen;
+	}
+
+	public void goFullscreen() {
+		GraphicsEnvironment gd = GraphicsEnvironment
+				.getLocalGraphicsEnvironment();
+		GraphicsDevice device = gd.getDefaultScreenDevice();
+		device.setFullScreenWindow(this);
 	}
 
 }

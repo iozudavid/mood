@@ -24,8 +24,7 @@ public class GameEngine implements Runnable {
 	
 	private static final double UPDATES_PER_SECOND = 60D;
 	public static final Ticker ticker = new Ticker();
-	
-	private final Screen screen;
+	private Screen screen;
 	private final MainWindow window;
 	private GameWorld world;
 	private Renderer renderer;
@@ -43,10 +42,11 @@ public class GameEngine implements Runnable {
 		
 		notifyToCreate = new LinkedList<GameObject>();
 		notifyToDestroy = new LinkedList<GameObject>();
-		
-		final int w = MainWindow.WIDTH, h = MainWindow.HEIGHT;
-		screen = new Screen(w, h);
-		window = new MainWindow(screen, MainWindow.TITLE, w, h);
+
+		window = new MainWindow(MainWindow.TITLE);
+		window.finalise();
+		this.screen = window.getScreen();
+
 		initEngine();
 	}
 	

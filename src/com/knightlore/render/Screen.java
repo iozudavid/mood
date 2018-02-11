@@ -1,8 +1,10 @@
 package com.knightlore.render;
 
 import java.awt.Canvas;
+import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
+import java.awt.Toolkit;
 import java.awt.image.BufferStrategy;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferInt;
@@ -75,6 +77,11 @@ public class Screen extends Canvas {
 	 */
 	public PixelBuffer getMainPixelBuffer() {
 		return mainPixelBuffer;
+	}
+	
+	public static Dimension getScreenResolution() {
+		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+		return screenSize;
 	}
 
 }

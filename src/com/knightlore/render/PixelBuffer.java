@@ -1,6 +1,5 @@
 package com.knightlore.render;
 
-import com.knightlore.render.filter.IPixelBufferFilter;
 import com.knightlore.render.graphic.Graphic;
 
 /**
@@ -50,14 +49,16 @@ public class PixelBuffer {
 		drawGraphic(graphic, x, y, 1, 1);
 	}
 
-	public void drawGraphic(Graphic graphic, int x, int y, int scaleX, int scaleY) {
+	public void drawGraphic(Graphic graphic, int x, int y, int scaleX,
+			int scaleY) {
 		for (int yy = 0; yy < graphic.getHeight() * scaleY; yy++) {
 			for (int xx = 0; xx < graphic.getWidth() * scaleX; xx++) {
 				int drawX = x + xx;
 				int drawY = y + yy;
 				if (drawX < 0 || drawX >= WIDTH || drawY < 0 || drawY >= HEIGHT)
 					continue;
-				int color = graphic.getPixels()[xx / scaleX + (yy / scaleY) * graphic.getWidth()];
+				int color = graphic.getPixels()[xx / scaleX
+						+ (yy / scaleY) * graphic.getWidth()];
 				fillPixel(color, drawX, drawY);
 			}
 		}
@@ -82,10 +83,25 @@ public class PixelBuffer {
 	public void fillRect(int color, int x, int y, int w, int h) {
 		for (int yy = y; yy < y + h; yy++) {
 			for (int xx = x; xx < x + w; xx++) {
-				if (color == CHROMA_KEY || xx < 0 || xx >= WIDTH || yy < 0 || yy >= HEIGHT)
+				if (color == CHROMA_KEY || xx < 0 || xx >= WIDTH || yy < 0
+						|| yy >= HEIGHT)
 					continue;
 				pixels[xx + yy * WIDTH] = color;
 			}
+		}
+	}
+
+	public void fillOval(int color, int x, int y, int w, int h) {
+		for (double i = 0; i < Math.PI; i += 0.01) {
+			double xx = -Math.sin(i);
+			double yy = Math.cos(i);
+
+			int startX = (int) (w / 2 * (xx + 1));
+			int startY = (int) (h / 2 * (yy + 1));
+			int len = 2 * (w / 2 - startX);
+			System.out.println(len);
+
+			fillRect(color, x + startX, y + startY, len, 1);
 		}
 	}
 
@@ -95,7 +111,7 @@ public class PixelBuffer {
 			return 0;
 		return pixels[x + y * WIDTH];
 	}
-	
+
 	public int[] getPixels() {
 		return pixels;
 	}
