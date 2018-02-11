@@ -8,13 +8,11 @@ import com.knightlore.network.ConnectionDetails;
 import com.knightlore.network.TCPConnection;
 
 public class ClientManager implements Runnable {
-    private String hostname = "localhost";
-
     @Override
     public void run() {
         try {
-            Socket server = new Socket(hostname, ConnectionDetails.PORT);
-            System.out.println("Connected to server " + hostname);
+            Socket server = new Socket(ConnectionDetails.SERVER_HOSTNAME, ConnectionDetails.PORT);
+            System.out.println("Connected to server " + ConnectionDetails.SERVER_HOSTNAME);
             TCPConnection conn = new TCPConnection(server);
             new Thread(conn).start();
             SendToServer sender = new SendToServer(conn);
@@ -42,7 +40,7 @@ public class ClientManager implements Runnable {
             System.out.println("End");
 
         } catch (UnknownHostException e) {
-            System.err.println("Unknown host: " + hostname);
+            System.err.println("Unknown host: " + ConnectionDetails.SERVER_HOSTNAME);
         } catch (IOException e) {
             System.err.println(
                     "The server doesn't seem to be running " + e.getMessage());

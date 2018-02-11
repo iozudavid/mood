@@ -87,7 +87,6 @@ public class Minimap implements TickListener {
 		this.display = new PixelBuffer(size, size);
 
 		GameEngine.ticker.addTickListener(this);
-		System.out.println("minimap finished");
 	}
 
 	/**
@@ -154,7 +153,6 @@ public class Minimap implements TickListener {
 
 	private void drawMinimapObjects(double theta) {
 		synchronized (this.minimapObjects) {
-			System.out.println("Minimap size: " + minimapObjects.size());
 			for (IMinimapObject obj : minimapObjects) {
 	            Vector2D pos = obj.getPosition();
 	            pos = transform((int) pos.getX() * SCALE, (int) pos.getY() * SCALE,
