@@ -27,7 +27,6 @@ public final class Mouse implements MouseListener, MouseMotionListener, MouseWhe
 	public void mouseDragged(MouseEvent e) {
 		x = e.getX();
 		y = e.getY();
-		System.out.println("DRAGGED");
 		leftHeld = SwingUtilities.isLeftMouseButton(e);
 		rightHeld = SwingUtilities.isRightMouseButton(e);
 	}
@@ -40,7 +39,6 @@ public final class Mouse implements MouseListener, MouseMotionListener, MouseWhe
 	public void mouseClicked(MouseEvent e) {
 		x = e.getX();
 		y = e.getY();
-		System.out.println("CLICKED");
 		leftClick = SwingUtilities.isLeftMouseButton(e);
 		rightClick = SwingUtilities.isRightMouseButton(e);
 	}
@@ -54,25 +52,11 @@ public final class Mouse implements MouseListener, MouseMotionListener, MouseWhe
 		} else {
 			rightHeld = false;
 		}
-		System.out.println("RELEASED");
 	}
 	
 	public void clearButtons(){
-		if(lastLeftHeld && !leftHeld){
-			leftClick = true;
-		}
-		else{
-			leftClick = false;
-		}
-		
-		if(lastRightHeld && !rightHeld){
-			rightClick = true;
-		}
-		else{
-			rightClick = false;
-		}
-		lastLeftHeld = leftHeld;
-		lastRightHeld = rightHeld;
+		leftClick = false;
+		rightClick = false;
 	}
 
 	public void mouseWheelMoved(MouseWheelEvent e) {
@@ -151,7 +135,6 @@ public final class Mouse implements MouseListener, MouseMotionListener, MouseWhe
 		if(SwingUtilities.isRightMouseButton(e)){
 			rightHeld = true;
 		}
-		System.out.println("PRESSED");
 	}
 
 }

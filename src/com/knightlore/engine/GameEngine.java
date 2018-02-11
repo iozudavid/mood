@@ -120,7 +120,7 @@ public class GameEngine implements Runnable {
 			}
 			
 			screen.render(0, 0, renderer);
-			//InputManager.clearMouse();
+			InputManager.clearMouse();
 		}
 	}
 	

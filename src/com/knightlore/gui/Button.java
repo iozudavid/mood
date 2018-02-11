@@ -37,7 +37,6 @@ public class Button extends GUIObject {
 	@Override
 	void Draw(Graphics g) {
 		
-		System.out.println(state);
 		if(activeGraphic != null){
 			
 		}
