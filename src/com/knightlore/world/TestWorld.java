@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.knightlore.engine.GameWorld;
+import com.knightlore.engine.Renderer;
 import com.knightlore.game.Player;
 import com.knightlore.game.area.AreaFactory;
 import com.knightlore.game.area.Map;
@@ -51,11 +52,17 @@ public class TestWorld extends GameWorld {
 		b.rect.width = 100;
 		b.rect.height = 30;
 		gui.addGUIObject(b);
+		Renderer.setGUI(gui);
 
 		// add pickups
 		for (int i = 1; i < 5; i += 2) {
 			mobs.add(new ShotgunPickup(new Vector2D(i, 3)));
 		}
+	}
+	
+	@Override
+	public void updateWorld(){
+		
 	}
 
 	@Override
