@@ -10,6 +10,7 @@ import com.knightlore.game.entity.Mob;
 import com.knightlore.game.entity.pickup.ShotgunPickup;
 import com.knightlore.game.tile.AirTile;
 import com.knightlore.game.tile.Tile;
+import com.knightlore.gui.GUICanvas;
 import com.knightlore.render.Camera;
 import com.knightlore.render.ColorUtils;
 import com.knightlore.render.IRenderable;
@@ -25,7 +26,8 @@ public class Renderer implements IRenderable {
 	private Camera camera;
 	private Map map;
 	private Minimap minimap;
-
+	private static GUICanvas gui = null;
+	
 	private List<Mob> mobsToRender;
 
 	public Renderer(Camera camera, Map map) {
@@ -51,6 +53,10 @@ public class Renderer implements IRenderable {
 	public void setMap(Map m){
 		this.map = m;
 	}
+	
+	public static void setGUI(GUICanvas g){
+		gui = g;
+	}
 
 	private final int BLOCKINESS = 10; // how 'old school' you want to look.
 
@@ -60,7 +66,9 @@ public class Renderer implements IRenderable {
 		map.getEnvironment().renderEnvironment(pix);
 		drawPerspective(pix);
 		drawCrosshair(pix);
-		// gui.render(pix, x, y);
+		if(gui != null){
+			gui.render(pix, x, y);
+		}
 
 		minimap.render();
 

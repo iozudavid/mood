@@ -19,9 +19,17 @@ public abstract class GameWorld {
 	 */
 	public abstract void populateWorld();
 	
+	/**
+	 * Called every time the game updates.
+	 * This should be used to update non gameObject parts of the world.
+	 * GameObjects will be updated separately.
+	 */
+	public abstract void updateWorld();
+	
 	public abstract GameWorld loadFromFile(String fileName);
 	
 	public abstract boolean saveToFile(String fileName);
+
 
 	
 	

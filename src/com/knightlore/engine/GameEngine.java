@@ -115,11 +115,13 @@ public class GameEngine implements Runnable {
 			
 			while (delta >= 1) {
 				updateObjects();
-				screen.render(0, 0, renderer);
 				delta -= 1;
-				
 				ticker.tick();
 			}
+			InputManager.clearMouse();
+			
+			screen.render(0, 0, renderer);
+			
 		}
 	}
 	
@@ -149,6 +151,8 @@ public class GameEngine implements Runnable {
 			obj.onDestroy();
 		}
 		notifyToDestroy.clear();
+		
+		world.updateWorld();
 		
 		// update all objects
 		for (GameObject obj : objects) {
