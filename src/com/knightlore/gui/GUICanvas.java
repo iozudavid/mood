@@ -14,6 +14,7 @@ import com.knightlore.render.graphic.Graphic;
 import com.knightlore.utils.Physics;
 import com.knightlore.utils.Vector2D;
 
+
 public class GUICanvas extends GameObject implements IRenderable {
 
 	private ArrayList<GUIObject> guis;
@@ -23,6 +24,8 @@ public class GUICanvas extends GameObject implements IRenderable {
 	private Graphics2D canvasG2D;
 	private int[] drawPixels;
 	
+	// the object that was selected when the mouse was pressed down
+	private GUIObject downSelected;
 	private boolean lastHeld;
 	
 	// TODO remove this and make it screen size
@@ -83,22 +86,39 @@ public class GUICanvas extends GameObject implements IRenderable {
 		// notify previous gui of mouse exit
 		if(lastSelected != selected){
 			if(lastSelected != null){
+				if(downSelected == lastSelected){
+					lastSelected.OnMouseUp();
+				}
 				lastSelected.OnMouseExit();
 			}
-			lastSelected = selected;
 		}
 		
 		// notify new gui of mouse enter
 		if(selected != null){
-			selected.OnMouseEnter();
+			// send mouse entered event
+			if(selected != lastSelected){
+				selected.OnMouseEnter();
+			}
 			
-			// TODO finish input
-			if(lastHeld && !InputManager.getMouse().isLeftHeld()){
-				selected.OnClick();
+			selected.OnMouseOver();
+			
+			// mouse held and we 
+			if(InputManager.getMouse().isLeftHeld() && !lastHeld){
+				// send mouse down event
+				selected.OnMouseDown();
+				downSelected = selected;
+			}
+			else if(!InputManager.getMouse().isLeftHeld() && lastHeld){
+				// did we click down over the same object
+				if(downSelected == selected){
+					selected.OnClick();
+				}
+				// send mouse up event
+				selected.OnMouseUp();
 			}
 		}
-		
 		lastHeld = InputManager.getMouse().isLeftHeld();
+		lastSelected = selected;		
 	}
 
 	@Override

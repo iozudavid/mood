@@ -118,10 +118,9 @@ public class GameEngine implements Runnable {
 				delta -= 1;
 				ticker.tick();
 			}
-			InputManager.clearMouse();
 			
 			screen.render(0, 0, renderer);
-			
+			//InputManager.clearMouse();
 		}
 	}
 	

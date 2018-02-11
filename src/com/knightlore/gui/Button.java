@@ -32,12 +32,12 @@ public class Button extends GUIObject {
 	
 	public Button(int x, int y, int depth) {
 		super(x, y, depth);
-		// TODO Auto-generated constructor stub
 	}
 	
 	@Override
 	void Draw(Graphics g) {
-		// TODO Auto-generated method stub
+		
+		System.out.println(state);
 		if(activeGraphic != null){
 			
 		}
@@ -50,7 +50,6 @@ public class Button extends GUIObject {
 	
 	@Override
 	void OnClick(){
-		state = ButtonState.DOWN;
 		System.out.println("Button clicked");
 	}
 	
@@ -59,8 +58,24 @@ public class Button extends GUIObject {
 		state = ButtonState.HOVER;
 	}
 	
+	void OnMouseOver(){
+		if(state == ButtonState.UP){
+			state = ButtonState.HOVER;
+		}
+	}
+	
 	@Override
 	void OnMouseExit(){
+		state = ButtonState.UP;
+	}
+	
+	@Override
+	void OnMouseDown(){
+		state = ButtonState.DOWN;
+	}
+	
+	@Override
+	void OnMouseUp(){
 		state = ButtonState.UP;
 	}
 	

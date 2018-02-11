@@ -30,4 +30,16 @@ public abstract class GUIObject {
 	void OnMouseEnter(){
 		
 	}
+	
+	void OnMouseOver(){
+		
+	}
+	
+	void OnMouseUp(){
+		
+	}
+	
+	void OnMouseDown(){
+		
+	}
 }
