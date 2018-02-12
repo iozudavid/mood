@@ -38,7 +38,6 @@ public class MapGenerator extends ProceduralAreaGenerator {
         generatePaths();
         fillUndecidedTiles();
         makeSymY();
-        addWalls(); // TODO delete
     }
     
     private void generateRooms() {
@@ -285,21 +284,6 @@ public class MapGenerator extends ProceduralAreaGenerator {
         }
 
         grid = symMap;
-    }
-
-    // TODO delete
-    private void addWalls() {
-        int width = grid.length;
-        int height = grid[0].length;
-        for (int i = 0; i < width; i++) {
-            grid[i][0] = new BrickTile();
-            grid[i][height - 1] = new BrickTile();
-        }
-
-        for (int j = 0; j < height; j++) {
-            grid[0][j] = new BrickTile();
-            grid[width - 1][j] = new BrickTile();
-        }
     }
 
     // TODO delete
