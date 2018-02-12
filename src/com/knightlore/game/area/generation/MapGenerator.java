@@ -9,8 +9,8 @@ import java.awt.Point;
 import java.util.*;
 
 public class MapGenerator extends ProceduralAreaGenerator {
-    private double[][] perlinNoise;
     private final List<Room> rooms = new LinkedList<>();
+    private double[][] costGrid;
     
     public MapGenerator() {
     }
@@ -24,7 +24,8 @@ public class MapGenerator extends ProceduralAreaGenerator {
         rand = new Random(seed);
         grid = new Tile[width][height];
         PerlinNoiseGenerator perlinGenerator = new PerlinNoiseGenerator(width, height, seed);
-        perlinNoise = perlinGenerator.createPerlinNoise();
+        // initialize costGrid with perlin noise to make generated paths less optimal
+        costGrid = perlinGenerator.createPerlinNoise();
         fillGrid();
         return new Map(grid, env, seed);
     }
@@ -82,6 +83,7 @@ public class MapGenerator extends ProceduralAreaGenerator {
         for (int x = xPos; x < xPos + r.getWidth(); x++) {
             for (int y = yPos; y < yPos + r.getHeight(); y++) {
                 grid[x][y] = r.getTile(x - xPos, y - yPos);
+                costGrid[x][y] = Double.MAX_VALUE;
             }
         }
     }
