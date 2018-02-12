@@ -34,11 +34,11 @@ public abstract class GameObject {
     }
     
     public void setxPos(double xPos) {
-        position.setX(xPos);
+        position = new Vector2D(xPos, position.getY());
     }
     
     public void setyPos(double yPos) {
-        position.setY(yPos);
+        position = new Vector2D(position.getX(), yPos);
     }
     
 	public boolean exists() {

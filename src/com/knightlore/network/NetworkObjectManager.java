@@ -39,6 +39,7 @@ public class NetworkObjectManager extends GameObject {
     }
 
     public void registerNetworkObject(NetworkObject obj) {
+        System.out.println("registering net obj");
         synchronized (this.networkObjects) {
             this.networkObjects.put(obj.getObjectId(), new Tuple<>(obj, null));
         }

@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.UUID;
 
 import com.knightlore.game.entity.Entity;
 import com.knightlore.game.entity.weapon.Shotgun;
@@ -28,9 +29,9 @@ public class Player extends Entity implements IRenderable {
     private final Map<ServerControl, CameraGetterInterface> controlGettersMap;
     private final Map<ServerControl, CameraSetterInterface> controlSettersMap;
     private static volatile boolean finished = false;
-
-    public Player(com.knightlore.game.area.Map map, Vector2D pos, Vector2D dir) {
-        super(map, 0.33D, DirectionalSprite.SHOTGUN_DIRECTIONAL_SPRITE, pos, dir);
+    
+    public Player(UUID uuid, com.knightlore.game.area.Map map, Vector2D pos, Vector2D dir) {
+        super(uuid, map, 0.33D, DirectionalSprite.SHOTGUN_DIRECTIONAL_SPRITE, pos, dir);
         this.currentWeapon = new Shotgun();
         
         // Map possible inputs to the methods that handle them. Avoids long
@@ -58,10 +59,14 @@ public class Player extends Entity implements IRenderable {
         this.controlSettersMap.put(ServerControl.XPLANE, this::setxPlane);
         this.controlSettersMap.put(ServerControl.YPLANE, this::setyPlane);
         Player.this.finished = true;
+    }
 
+    public Player(com.knightlore.game.area.Map map, Vector2D pos, Vector2D dir) {
+        this(UUID.randomUUID(), map, pos, dir);
     }
 
     public void setInputState(Map<ClientControl, Byte> inputState) {
+        System.out.println("setting new input state");
         this.inputState = inputState;
     }
 
@@ -92,10 +97,8 @@ public class Player extends Entity implements IRenderable {
 
     @Override
     public byte[] serialize(boolean disconnect) {
-        if (Player.this.finished == false) {
-            System.out.println("Constructor didn't finish");
+        if (Player.this.finished == false) 
             return null;
-        }
 
         byte[] thisState = new byte[ServerProtocol.TOTAL_LENGTH];
 
@@ -156,11 +159,13 @@ public class Player extends Entity implements IRenderable {
     @Override
     public void deserialize(ServerCommand command) {
         // TODO: only deserialise if the command's timestamp is recent enough.
+        System.out.println("deserialising player");
         Double val;
         for (ServerControl c : ServerControl.values())
             if ((val = command.getValueByControl(c)) != null)
                 this.controlSettersMap.get(c).setDataOnCamera(val);
-
+        System.out.println("new location: " + this.getxPos() + this.getyPos());
+        
     }
 
     @FunctionalInterface

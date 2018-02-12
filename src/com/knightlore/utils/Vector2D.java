@@ -28,24 +28,9 @@ public final class Vector2D {
 	public boolean isEqualTo(Vector2D v) {
 		return v != null && x == v.x && y == v.y;
 	}
-	
-	// ADDITION
-	
-	public void addInPlace(Vector2D v) {
-		x = x + v.x;
-		y = y + v.y;
-	}
-	
 	// allocates a new vector, does not modify the original
 	public Vector2D add(Vector2D v){
 		return new Vector2D(x+v.x,y+v.y);
-	}
-	
-	// SUBTRACTION
-	
-	public void subtractInPlace(Vector2D v){
-		x = x - v.x;
-		y = y - v.y;
 	}
 	
 	// allocates a new vector, does not modify the original
@@ -76,14 +61,6 @@ public final class Vector2D {
 	public double getY() {
 		return y;
 	}
-	
-	public void setX(double x) {
-        this.x = x;
-    }
-
-    public void setY(double y) {
-        this.y = y;
-    }
 
     public double sqrMagnitude(){
 		return (x*x) + (y*y);

@@ -34,7 +34,7 @@ public class ReceiveFromServer implements Runnable {
             this.clientID = serverCommand.getObjectId();
             
             Renderer rend = GameEngine.getSingleton().getRenderer();
-            Player player = new Player(GameEngine.getSingleton().getRenderer().getMap(), new Vector2D(4.5, 4.5),
+            Player player = new Player(serverCommand.getObjectId(), GameEngine.getSingleton().getRenderer().getMap(), new Vector2D(4.5, 4.5),
                     Vector2D.UP);
             player.deserialize(serverCommand);
             

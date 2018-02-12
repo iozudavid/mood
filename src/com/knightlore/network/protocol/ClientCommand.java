@@ -1,6 +1,7 @@
 package com.knightlore.network.protocol;
 
 import java.util.Map;
+import java.util.Map.Entry;
 
 import com.knightlore.game.Player;
 

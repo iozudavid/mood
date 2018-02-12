@@ -1,11 +1,10 @@
 package com.knightlore.render;
 
-import com.knightlore.engine.GameObject;
 import com.knightlore.game.area.Map;
 import com.knightlore.game.entity.Entity;
 import com.knightlore.utils.Vector2D;
 
-public class Camera extends GameObject {
+public class Camera {
 
     public static final double FIELD_OF_VIEW = -.66;
     private static final double MOTION_BOB_AMOUNT = 7.0;
@@ -25,17 +24,12 @@ public class Camera extends GameObject {
         this.moveTicks = 0;
     }
 
-    @Override
     public Vector2D getPosition() {
         return subject.getPosition();
     }
 
     public Vector2D getDirection() {
         return subject.getDirection();
-    }
-
-    @Override
-    public void onUpdate() {
     }
 
     private void updateMotionOffset() {
@@ -81,17 +75,6 @@ public class Camera extends GameObject {
     
     public void setSubject(Entity subject) {
         this.subject = subject;
-    }
-
-    @Override
-    public void onCreate() {
-        // TODO Auto-generated method stub
-
-    }
-
-    @Override
-    public void onDestroy() {
-        // TODO Auto-generated method stub
     }
 
 }

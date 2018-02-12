@@ -8,7 +8,7 @@ import com.knightlore.utils.Vector2D;
 
 public abstract class NetworkObject extends GameObject{
 	
-	private UUID objectUniqueID;
+	protected UUID objectUniqueID;
 	
 	public NetworkObject(UUID uuid) {
 	    this(uuid, Vector2D.ZERO);

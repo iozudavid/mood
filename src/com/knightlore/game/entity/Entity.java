@@ -24,9 +24,10 @@ public abstract class Entity extends NetworkObject implements IMinimapObject {
     protected Vector2D plane;
 
     protected int zOffset;
-
-    protected Entity(Map map, double size, DirectionalSprite dSprite, Vector2D position, Vector2D direction) {
-        super(UUID.randomUUID(), position);
+    
+    // Allow you to create an entity with a specified UUID. Useful for creating "synchronised" objects on the client-side.
+    protected Entity(UUID uuid, Map map, double size, DirectionalSprite dSprite, Vector2D position, Vector2D direction) {
+        super(uuid, position);
         this.map = map;
         this.size = size;
         this.dSprite = dSprite;
@@ -34,6 +35,11 @@ public abstract class Entity extends NetworkObject implements IMinimapObject {
         this.zOffset = 0;
 
         plane = Vector2D.RIGHT;
+    }
+
+    // Use a random UUID.
+    protected Entity(Map map, double size, DirectionalSprite dSprite, Vector2D position, Vector2D direction) {
+        this(UUID.randomUUID(), map, size, dSprite, position, direction);
     }
 
     public Graphic getGraphic(Vector2D playerPos) {
@@ -57,11 +63,11 @@ public abstract class Entity extends NetworkObject implements IMinimapObject {
     }
 
     public void setxDir(double xDir) {
-        direction.setX(xDir);
+        direction = new Vector2D(xDir, direction.getY());
     }
 
     public void setyDir(double yDir) {
-        direction.setY(yDir);
+        direction = new Vector2D(direction.getX(), yDir);
     }
 
     public Vector2D getPlane() {
@@ -77,11 +83,11 @@ public abstract class Entity extends NetworkObject implements IMinimapObject {
     }
 
     public void setxPlane(double xPlane) {
-        plane.setX(xPlane);
+        plane = new Vector2D(xPlane, plane.getY());
     }
 
     public void setyPlane(double yPlane) {
-        plane.setY(yPlane);
+        plane = new Vector2D(plane.getX(), yPlane);
     }
 
     public int getzOffset() {
@@ -89,12 +95,14 @@ public abstract class Entity extends NetworkObject implements IMinimapObject {
     }
 
     public synchronized void moveForward() {
+        System.out.println("forward called");
         double xPos = position.getX(), yPos = position.getY();
         double xDir = direction.getX(), yDir = position.getY();
         Tile xTile = map.getTile((int) (xPos + xDir * moveSpeed), (int) yPos);
         Tile yTile = map.getTile((int) xPos, (int) (yPos + yDir * moveSpeed));
         xPos += xDir * moveSpeed * (1 - xTile.getSolidity());
         yPos += yDir * moveSpeed * (1 - yTile.getSolidity());
+        position = new Vector2D(xPos, yPos);
     }
 
     public synchronized void moveBackward() {
@@ -104,6 +112,7 @@ public abstract class Entity extends NetworkObject implements IMinimapObject {
         Tile yTile = map.getTile((int) xPos, (int) (yPos - yDir * moveSpeed));
         xPos -= xDir * moveSpeed * (1 - xTile.getSolidity());
         yPos -= yDir * moveSpeed * (1 - yTile.getSolidity());
+        position = new Vector2D(xPos, yPos);
     }
 
     public synchronized void strafeLeft() {
@@ -113,6 +122,7 @@ public abstract class Entity extends NetworkObject implements IMinimapObject {
         Tile yTile = map.getTile((int) (xPos), (int) (yPos + xDir * strafeSpeed));
         xPos -= yDir * strafeSpeed * (1 - xTile.getSolidity());
         yPos -= -xDir * strafeSpeed * (1 - yTile.getSolidity());
+        position = new Vector2D(xPos, yPos);
     }
 
     public synchronized void strafeRight() {
@@ -122,6 +132,7 @@ public abstract class Entity extends NetworkObject implements IMinimapObject {
         Tile yTile = map.getTile((int) (xPos), (int) (yPos + -xDir * strafeSpeed));
         xPos += yDir * strafeSpeed * (1 - xTile.getSolidity());
         yPos += -xDir * strafeSpeed * (1 - yTile.getSolidity());
+        position = new Vector2D(xPos, yPos);
     }
 
     /**
@@ -138,6 +149,8 @@ public abstract class Entity extends NetworkObject implements IMinimapObject {
         double oldxPlane = xPlane;
         xPlane = xPlane * Math.cos(rotationSpeed) - yPlane * Math.sin(rotationSpeed);
         yPlane = oldxPlane * Math.sin(rotationSpeed) + yPlane * Math.cos(rotationSpeed);
+        direction = new Vector2D(xDir, yDir);
+        plane = new Vector2D(xPlane, yPlane);
     }
 
     /**
@@ -152,6 +165,8 @@ public abstract class Entity extends NetworkObject implements IMinimapObject {
         double oldxPlane = xPlane;
         xPlane = xPlane * Math.cos(-rotationSpeed) - yPlane * Math.sin(-rotationSpeed);
         yPlane = oldxPlane * Math.sin(-rotationSpeed) + yPlane * Math.cos(-rotationSpeed);
+        direction = new Vector2D(xDir, yDir);
+        plane = new Vector2D(xPlane, yPlane);
     }
 
 }
