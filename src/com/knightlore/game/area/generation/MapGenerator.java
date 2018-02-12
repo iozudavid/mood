@@ -45,6 +45,7 @@ public class MapGenerator extends ProceduralAreaGenerator {
     private void generateRooms() {
         RoomGenerator roomGenerator = new RoomGenerator();
         Room room = roomGenerator.createRoom(rand.nextLong());
+
         while (rooms.size() < MAX_ROOMS && setRoomPosition(room)) {
             rooms.add(room);
             room = roomGenerator.createRoom(rand.nextLong());
