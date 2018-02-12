@@ -6,10 +6,8 @@ import java.util.List;
 import com.knightlore.GameSettings;
 import com.knightlore.engine.GameWorld;
 import com.knightlore.engine.Renderer;
-import com.knightlore.game.Player;
-import com.knightlore.game.area.AreaFactory;
-import com.knightlore.game.area.Map;
-import com.knightlore.game.entity.Mob;
+import com.knightlore.game.area.generation.MapGenerator;
+import com.knightlore.game.entity.Entity;
 import com.knightlore.game.entity.Zombie;
 import com.knightlore.game.entity.pickup.ShotgunPickup;
 import com.knightlore.gui.Button;
@@ -21,20 +19,22 @@ import com.knightlore.utils.Vector2D;
 
 public class TestWorld extends GameWorld {
 
-	private List<Mob> mobs;
+	private List<Entity> mobs;
 
 	private Camera mainCamera;
 	private GUICanvas gui;
 
 	public TestWorld() {
 		// init all the variables
-		mobs = new ArrayList<Mob>();
+		mobs = new ArrayList<Entity>();
 	}
 
 	@Override
 	public void initWorld() {
 		// First create the map
-		map = AreaFactory.createRandomMap(Environment.LIGHT_OUTDOORS);
+		MapGenerator generator  = new MapGenerator();
+		// FIXME don't hardcode the seed...
+		map = generator.createMap(64, 64, Environment.LIGHT_OUTDOORS,161803398875L);
 
 		// now populate the world
 		mainCamera = new Camera(4.5, 4.5, 1, 0, 0, Camera.FIELD_OF_VIEW, map);
@@ -83,7 +83,7 @@ public class TestWorld extends GameWorld {
 		return false;
 	}
 
-	public List<Mob> getMobs() {
+	public List<Entity> getMobs() {
 		return mobs;
 	}
 

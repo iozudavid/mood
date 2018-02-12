@@ -5,21 +5,21 @@ import java.util.List;
 import java.util.ListIterator;
 
 import com.knightlore.engine.GameObject;
-import com.knightlore.game.entity.Mob;
+import com.knightlore.game.entity.Entity;
 
 public class MobManager extends GameObject {
 
-	private List<Mob> mobs;
+	private List<Entity> mobs;
 
 	public MobManager() {
-		mobs = new ArrayList<Mob>();
+		mobs = new ArrayList<Entity>();
 	}
 
-	public void addMob(Mob m) {
+	public void addMob(Entity m) {
 		mobs.add(m);
 	}
 
-	public void delMob(Mob m) {
+	public void delMob(Entity m) {
 		mobs.remove(m);
 	}
 
@@ -29,9 +29,9 @@ public class MobManager extends GameObject {
 
 	@Override
 	public void onUpdate() {
-		ListIterator<Mob> itr = mobs.listIterator();
+		ListIterator<Entity> itr = mobs.listIterator();
 		while (itr.hasNext()) {
-			Mob m = itr.next();
+			Entity m = itr.next();
 			if (!m.exists())
 				itr.remove();
 		}

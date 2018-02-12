@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Stack;
 
 import com.knightlore.game.area.Map;
-import com.knightlore.game.entity.Mob;
+import com.knightlore.game.entity.Entity;
 import com.knightlore.game.entity.Zombie;
 import com.knightlore.game.entity.pickup.ShotgunPickup;
 import com.knightlore.game.tile.AirTile;
@@ -35,9 +35,9 @@ public class Renderer implements IRenderable {
 	private java.util.Map<NetworkObject, Vector2D> networkObjPos;
 	// consider other players as mobs for now
 	// in order to render them
-	private java.util.Map<NetworkObject, Mob> networkObjMobs;
+	private java.util.Map<NetworkObject, Entity> networkObjMobs;
 
-	private List<Mob> mobsToRender;
+	private List<Entity> mobsToRender;
 
 	public Renderer(Camera camera, Map map) {
 		this.camera = camera;
@@ -266,10 +266,10 @@ public class Renderer implements IRenderable {
 
 	private void drawSprites(PixelBuffer pix, double[] zbuffer) {
 		synchronized (mobsToRender) {
-			mobsToRender.sort(new Comparator<Mob>() {
+			mobsToRender.sort(new Comparator<Entity>() {
 
 				@Override
-				public int compare(Mob o1, Mob o2) {
+				public int compare(Entity o1, Entity o2) {
 					final double distance1 = camera.getPosition().distance(o1.position);
 					final double distance2 = camera.getPosition().distance(o2.position);
 					return Double.compare(distance2, distance1);
@@ -277,7 +277,7 @@ public class Renderer implements IRenderable {
 
 			});
 
-			for (Mob m : mobsToRender) {
+			for (Entity m : mobsToRender) {
 				double spriteX = m.getPosition().getX() - camera.getxPos();
 				double spriteY = m.getPosition().getY() - camera.getyPos();
 
@@ -361,7 +361,7 @@ public class Renderer implements IRenderable {
 	}
 
 	public void setCamera(Camera cam) {
-        this.mobsToRender = new ArrayList<Mob>();
+        this.mobsToRender = new ArrayList<Entity>();
         this.camera = cam;
         // FIXME: put all this in the constructor when we get a camera on objet
         // creation.

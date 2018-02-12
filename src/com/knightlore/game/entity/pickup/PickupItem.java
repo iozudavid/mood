@@ -1,11 +1,11 @@
 package com.knightlore.game.entity.pickup;
 
 import com.knightlore.engine.GameEngine;
-import com.knightlore.game.entity.Mob;
+import com.knightlore.game.entity.Entity;
 import com.knightlore.render.graphic.sprite.DirectionalSprite;
 import com.knightlore.utils.Vector2D;
 
-public abstract class PickupItem extends Mob {
+public abstract class PickupItem extends Entity {
 
 	private static final double ROTATION_SPEED = 0.1D;
 	private static final double PICKUP_SIZE = 0.25D;

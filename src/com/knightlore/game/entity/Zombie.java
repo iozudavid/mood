@@ -4,7 +4,7 @@ import com.knightlore.render.graphic.sprite.DirectionalSprite;
 import com.knightlore.render.minimap.Minimap;
 import com.knightlore.utils.Vector2D;
 
-public class Zombie extends Mob {
+public class Zombie extends Entity {
 
 	public Zombie(double size, Vector2D position) {
 		super(size, DirectionalSprite.SHOTGUN_DIRECTIONAL_SPRITE, position, Vector2D.UP);
