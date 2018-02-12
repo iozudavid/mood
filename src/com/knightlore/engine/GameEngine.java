@@ -7,8 +7,8 @@ import java.util.LinkedList;
 import com.knightlore.MainWindow;
 import com.knightlore.engine.input.InputManager;
 import com.knightlore.engine.input.Mouse;
-import com.knightlore.game.area.AreaFactory;
 import com.knightlore.game.area.Map;
+import com.knightlore.game.area.generation.MapGenerator;
 import com.knightlore.render.Environment;
 import com.knightlore.render.Screen;
 
@@ -90,7 +90,8 @@ public class GameEngine implements Runnable {
 		    setupKeyboard();
 		    setupMouse();
 		}
-		Map map = AreaFactory.createRandomMap(Environment.DARK_OUTDOORS);
+		MapGenerator generator  = new MapGenerator();
+		Map map = generator.createMap(64, 64, Environment.LIGHT_OUTDOORS);
 		//Camera camera = new Camera(4.5, 4.5, 1, 0, 0, Camera.FIELD_OF_VIEW,
 		//		map);
 		renderer = new Renderer(null, map);

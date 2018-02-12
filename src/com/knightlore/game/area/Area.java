@@ -4,7 +4,7 @@ import com.knightlore.game.tile.Tile;
 
 public abstract class Area {
     protected final int width, height;
-    protected final Tile[][] grid;
+    private final Tile[][] grid;
 
     public Area(Tile[][] grid) {
         this.width = grid.length;
