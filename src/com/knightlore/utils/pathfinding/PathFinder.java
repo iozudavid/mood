@@ -24,7 +24,6 @@ public class PathFinder {
         nodesQueue.add(new SearchNode(start, goal));
         while (true) {
             SearchNode currNode = nodesQueue.poll();
-            System.out.println(currNode.getPosition());
             if (goal.equals(currNode.getPosition())) {
                 return extractBestPathTo(currNode);
             } else {
