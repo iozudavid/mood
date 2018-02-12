@@ -31,6 +31,10 @@ import com.knightlore.utils.Vector2D;
  */
 public class Minimap implements TickListener {
 
+	
+	public void setCamera(Camera camera){
+		this.camera = camera;
+	}
     /*
      * NOTE: to render this, first call render(), then use getPixelBuffer() to
      * get the pixel buffer. Composite this onto any other pixel buffer using
