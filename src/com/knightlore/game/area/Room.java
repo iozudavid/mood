@@ -18,24 +18,24 @@ public class Room extends Area {
         super(grid);
     }
 
-    public void setRoomPosition(Point position) {
-        this.position = position;
+    public static boolean addConnection(RoomConnection connection) {
+        Room source = connection.getSource();
+        Room target = connection.getTarget();
+        return addConnection(source,target);
     }
 
-    public static boolean addConnection(RoomConnection con) {
-    	Room source = con.source;
-    	Room target = con.target;
-    	return addConnection(source,target);
-    }
-    
     public static boolean addConnection(Room r1, Room r2) {
-    	if (r1.connections.size() < MAX_CONNECTIONS &&
-        	r2.connections.size() < MAX_CONNECTIONS) {
+        if (r1.connections.size() < MAX_CONNECTIONS && r2.connections.size() < MAX_CONNECTIONS) {
             r1.connections.add(r2);
             r2.connections.add(r1);
             return true;
         }
+
         return false;
+    }
+
+    public void setRoomPosition(Point position) {
+        this.position = position;
     }
 
     public int getNumConnections() {
@@ -53,7 +53,7 @@ public class Room extends Area {
     public Point getCentre() {
     	return new Point(position.x + width/2, position.y + height/2);
     }
-    
+
     @Override
     public boolean equals(Object o) {
     	if (this == o) {

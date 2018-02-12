@@ -93,17 +93,20 @@ public class Minimap implements TickListener {
      * minimap.
      */
     public void render() {
+        
+        Vector2D pos = camera.getPosition(), dir = camera.getDirection();
+        double theta = -Math.atan2(dir.getX(), dir.getY());
+        
         if (InputManager.getKeyboard().isPressed(KeyEvent.VK_Q)) {
             scale -= scale * 0.1;
             recreatePixelMap();
+            drawMap(theta);
         }
         if (InputManager.getKeyboard().isPressed(KeyEvent.VK_E)) {
             scale += scale * 0.1;
             recreatePixelMap();
+            drawMap(theta);
         }
-        
-        Vector2D pos = camera.getPosition(), dir = camera.getDirection();
-        double theta = -Math.atan2(dir.getX(), dir.getY());
         if (!(pos.isEqualTo(prevPos) && dir.isEqualTo(prevDir)))
             drawMap(theta);
         drawMinimapObjects(theta);
