@@ -7,7 +7,6 @@ import com.knightlore.engine.GameObject;
 import com.knightlore.game.Player;
 import com.knightlore.game.area.Map;
 import com.knightlore.game.tile.Tile;
-import com.knightlore.input.BasicController;
 import com.knightlore.network.protocol.ClientControl;
 import com.knightlore.utils.Vector2D;
 

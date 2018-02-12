@@ -35,9 +35,12 @@ public class TestWorld extends GameWorld {
 		MapGenerator generator  = new MapGenerator();
 		// FIXME don't hardcode the seed...
 		map = generator.createMap(64, 64, Environment.LIGHT_OUTDOORS,161803398875L);
-
+		// FIXME hack hack hack, this is just for the demo
+		GameSettings.spawnPos = generator.getDemoSpawnPos();
+		
 		// now populate the world
-		mainCamera = new Camera(4.5, 4.5, 1, 0, 0, Camera.FIELD_OF_VIEW, map);
+		Vector2D pos = GameSettings.spawnPos;
+		mainCamera = new Camera(pos.getX(), pos.getY(), 1, 0, 0, Camera.FIELD_OF_VIEW, map);
 	}
 
 	@Override
