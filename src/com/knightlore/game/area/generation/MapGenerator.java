@@ -170,9 +170,6 @@ public class MapGenerator extends ProceduralAreaGenerator {
     }
 
     private void makeSymY() {
-    	
-    	//draw path from rightmost room to
-    	//the map's right edge
     	Room rightmost = rooms.get(0);
     	Room secondRightmost = rooms.get(0);
     	for(Room room : rooms) {
@@ -187,9 +184,7 @@ public class MapGenerator extends ProceduralAreaGenerator {
     			}
     		}
     	}
-    	
-    	
-    	
+
         int width = grid.length;
         int height = grid[0].length;
     	
