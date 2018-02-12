@@ -242,8 +242,39 @@ public class MapGenerator extends ProceduralAreaGenerator {
     }
 
     private void makeSymY() {
+    	
+    	//draw path from rightmost room to
+    	//the map's right edge
+    	Room rightmost = rooms.get(0);
+    	Room secondRightmost = rooms.get(0);
+    	for(Room room : rooms) {
+    		if(room.getCentre().getY()>rightmost.getCentre().getY()) {
+    			rightmost = room;
+    		}
+    	}
+    	for(Room room : rooms) {
+    		if(!room.equals(rightmost)) {
+    			if(room.getCentre().getY()>secondRightmost.getCentre().getY()) {
+    				secondRightmost = room;
+    			}
+    		}
+    	}
+    	
+    	
+    	
         int width = grid.length;
         int height = grid[0].length;
+    	
+    	PathFinder pathFinder = new PathFinder(costGrid);
+    	Point start = rightmost.getCentre();
+    	Point goal  = new Point(width-1, rand.nextInt(height));
+    	List<Point> path = pathFinder.findPath(start,goal);
+    	placePath(path);
+    	start = secondRightmost.getCentre();
+    	goal = new Point(width-1, rand.nextInt(height));
+    	path = pathFinder.findPath(start, goal);
+    	placePath(path);
+    	
         Tile[][] symMap = new Tile[width * 2][height];
         for (int i = 0; i < width; i++) {
             for (int j = 0; j < height; j++) {
