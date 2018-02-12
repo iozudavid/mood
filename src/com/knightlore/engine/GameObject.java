@@ -24,7 +24,23 @@ public abstract class GameObject {
 	public Vector2D getPosition() {
 		return position;
 	}
-
+	
+	public double getxPos() {
+	    return getPosition().getX();
+	}
+	
+    public double getyPos() {
+        return getPosition().getY();
+    }
+    
+    public void setxPos(double xPos) {
+        position.setX(xPos);
+    }
+    
+    public void setyPos(double yPos) {
+        position.setY(yPos);
+    }
+    
 	public boolean exists() {
 		return exists;
 	}

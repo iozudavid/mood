@@ -77,7 +77,15 @@ public final class Vector2D {
 		return y;
 	}
 	
-	public double sqrMagnitude(){
+	public void setX(double x) {
+        this.x = x;
+    }
+
+    public void setY(double y) {
+        this.y = y;
+    }
+
+    public double sqrMagnitude(){
 		return (x*x) + (y*y);
 	}
 	

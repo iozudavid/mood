@@ -1,40 +1,58 @@
 package com.knightlore.game.entity;
 
+import com.knightlore.game.area.Map;
+import com.knightlore.network.protocol.ServerCommand;
 import com.knightlore.render.graphic.sprite.DirectionalSprite;
 import com.knightlore.render.minimap.Minimap;
 import com.knightlore.utils.Vector2D;
 
 public class Zombie extends Entity {
 
-	public Zombie(double size, Vector2D position) {
-		super(size, DirectionalSprite.SHOTGUN_DIRECTIONAL_SPRITE, position, Vector2D.UP);
-	}
-	
-	public Zombie(double size, Vector2D position, Vector2D direction){
-		super(size, DirectionalSprite.SHOTGUN_DIRECTIONAL_SPRITE, position, direction);
-	}
+    public Zombie(Map map, double size, Vector2D position) {
+        super(map, size, DirectionalSprite.SHOTGUN_DIRECTIONAL_SPRITE, position, Vector2D.UP);
+    }
 
-	@Override
-	public void onCreate() {
-	}
+    public Zombie(Map map, double size, Vector2D position, Vector2D direction) {
+        super(map, size, DirectionalSprite.SHOTGUN_DIRECTIONAL_SPRITE, position, direction);
+    }
 
-	@Override
-	public void onUpdate() {
-	}
+    @Override
+    public void onCreate() {
+    }
 
-	@Override
-	public void onDestroy() {
-	}
+    @Override
+    public void onUpdate() {
+    }
 
-	@Override
-	public int getDrawSize() {
-		return Minimap.SCALE/2;
-	}
+    @Override
+    public void onDestroy() {
+    }
 
-	@Override
-	public int getMinimapColor() {
-		//make it white
-		return 0xFFFFFFFF;
-	}
+    @Override
+    public int getDrawSize() {
+        return Minimap.SCALE / 2;
+    }
+
+    @Override
+    public int getMinimapColor() {
+        // make it white
+        return 0xFFFFFF;
+    }
+
+    // TODO TODO TODO
+    // TODO TODO TODO // TODO TODO TODO // TODO TODO TODO // TODO TODO TODO //
+    // TODO TODO TODO
+
+    @Override
+    public byte[] serialize(boolean disconnect) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public void deserialize(ServerCommand packet) {
+        // TODO Auto-generated method stub
+
+    }
 
 }

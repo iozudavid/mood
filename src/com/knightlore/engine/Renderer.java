@@ -84,13 +84,13 @@ public class Renderer implements IRenderable {
 				this.minimap.removeMinimapObject(this.networkObjMobs.get(obj));
 				this.networkObjPos.put(obj, position);
 				this.mobsToRender.remove(this.networkObjMobs.get(obj));
-				Zombie z = new Zombie(1D, position, direction);
+				Zombie z = new Zombie(map, 1D, position, direction);
 				this.networkObjMobs.put(obj, z);
 				this.mobsToRender.add(z);
 				this.minimap.addMinimapObject(this.networkObjMobs.get(obj));
 			} else {
 				this.networkObjPos.put(obj, position);
-				Zombie z = new Zombie(1D, position, direction);
+				Zombie z = new Zombie(map, 1D, position, direction);
 				this.networkObjMobs.put(obj, z);
 				this.mobsToRender.add(z);
 				this.minimap.addMinimapObject(this.networkObjMobs.get(obj));
@@ -354,7 +354,7 @@ public class Renderer implements IRenderable {
         
         // FIXME: put all this in the constructor when we get a camera on objet
         // creation.
-        ShotgunPickup p = new ShotgunPickup(new Vector2D(10, 5));
+        ShotgunPickup p = new ShotgunPickup(map, new Vector2D(10, 5));
         mobsToRender.add(p);
 		this.minimap = new Minimap(camera, map, 128);
 		this.minimap.addMinimapObject(p);
