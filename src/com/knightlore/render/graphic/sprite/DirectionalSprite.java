@@ -32,6 +32,12 @@ public class DirectionalSprite {
 		double c = (2 * Math.PI) / angles.size();
 		int i = (int) (Math.floor(theta / c));
 
+		//FIXME
+		//quick fix
+		//must be REMOVED
+		if(i>=angles.size())
+			return angles.get(angles.size()-1);
+		
 		return angles.get(i);
 	}
 

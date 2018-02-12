@@ -102,16 +102,22 @@ public class Minimap implements TickListener {
 		double theta = -Math.atan2(dir.getX(), dir.getY());
 		drawMap(theta);
 		drawMinimapObjects(theta);
-		drawPlayer();
+		
+		//this will be commented because current client
+		//will be rendered 2 times
+		//	drawPlayer();
 		drawBorder();
 	}
 
 	private void drawMap(double theta) {
 		Vector2D pos = camera.getPosition();
 		Vector2D dir = camera.getDirection();
-		if (pos.isEqualTo(prevPos) && dir.isEqualTo(prevDir)) {
-			return;
-		}
+		
+		//comment this for now
+		//to rerender when other clients move 
+		//if (pos.isEqualTo(prevPos) && dir.isEqualTo(prevDir)) {
+			//return;
+		//}
 
 		display.flood(0x000000);
 
@@ -150,16 +156,18 @@ public class Minimap implements TickListener {
 	}
 
 	private void drawMinimapObjects(double theta) {
-		for (IMinimapObject obj : minimapObjects) {
-			Vector2D pos = obj.getPosition();
-			pos = transform((int) pos.getX() * SCALE, (int) pos.getY() * SCALE,
-					theta);
+		synchronized (this.minimapObjects) {
+			for (IMinimapObject obj : minimapObjects) {
+	            Vector2D pos = obj.getPosition();
+	            pos = transform((int) pos.getX() * SCALE, (int) pos.getY() * SCALE,
+	                    theta);
 
-			int color = obj.getMinimapColor();
-			color = mask.adjustForLighting(display, color, (int) pos.getX(),
-					(int) pos.getY());
-			display.fillSquare(color, (int) pos.getX(), (int) pos.getY(),
-					obj.getDrawSize());
+	            int color = obj.getMinimapColor();
+	            color = mask.adjustForLighting(display, color, (int) pos.getX(),
+	                    (int) pos.getY());
+	            display.fillSquare(color, (int) pos.getX(), (int) pos.getY(),
+	                    obj.getDrawSize());
+			}
 		}
 	}
 
@@ -232,7 +240,15 @@ public class Minimap implements TickListener {
 	}
 
 	public void addMinimapObject(IMinimapObject mo) {
-		this.minimapObjects.add(mo);
+		synchronized(this.minimapObjects){
+			this.minimapObjects.add(mo);
+		}
+	}
+	
+	public void removeMinimapObject(IMinimapObject mo){
+		synchronized(this.minimapObjects){
+			this.minimapObjects.remove(mo);
+		}
 	}
 
 	// Every three seconds, we recreate our pixelmap representation of the map

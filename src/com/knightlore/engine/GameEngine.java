@@ -27,6 +27,7 @@ public class GameEngine implements Runnable {
 	private Screen screen;
 	private final MainWindow window;
 	private GameWorld world;
+
 	private Renderer renderer;
 	private final ArrayList<GameObject> objects;
 	private Thread thread;
@@ -34,8 +35,12 @@ public class GameEngine implements Runnable {
 	
 	private LinkedList<GameObject> notifyToCreate;
 	private LinkedList<GameObject> notifyToDestroy;
-	
-	public GameEngine() {
+
+	private boolean headless;
+
+	public GameEngine(boolean headless) {
+		this.headless = headless;
+
 		singleton = this;
 		
 		objects = new ArrayList<GameObject>();
@@ -43,32 +48,47 @@ public class GameEngine implements Runnable {
 		notifyToCreate = new LinkedList<GameObject>();
 		notifyToDestroy = new LinkedList<GameObject>();
 
-		window = new MainWindow(MainWindow.TITLE);
-		window.finalise();
-		this.screen = window.getScreen();
-
+		if (headless)
+			window = null;
+		else {
+	        final int w = MainWindow.WIDTH, h = MainWindow.HEIGHT;
+			window = new MainWindow(MainWindow.TITLE, w, h);
+			window.finalise();
+			this.screen = window.getScreen();
+		}
 		initEngine();
 	}
-	
-	static GameEngine getSingleton() {
+
+	public static GameEngine getSingleton() {
 		return singleton;
 	}
 	
 	void addGameObject(GameObject g) {
 		// delay adding until next loop
-		notifyToCreate.add(g);
+		synchronized (notifyToCreate) {
+			notifyToCreate.add(g);
+		}
 	}
 	
 	void removeGameObject(GameObject g) {
 		// delay deleting until next loop
-		notifyToDestroy.add(g);
+		synchronized (notifyToDestroy) {
+			notifyToDestroy.add(g);
+		}
+	}
+	
+	// FIXME: remove this
+	public Renderer getRenderer() {
+		return this.renderer;
 	}
 	
 	private void initEngine() {
 		System.out.println("Initialising Engine...");
-		InputManager.init();
-		setupKeyboard();
-		setupMouse();
+		if (!headless) {
+		    InputManager.init();
+		    setupKeyboard();
+		    setupMouse();
+		}
 		System.out.println("Engine Initialised Successfully.");
 		// TODO maybe refactor this into a make world method
 		// ALSO TODO, UNHOOK TEST WORLD
@@ -86,7 +106,8 @@ public class GameEngine implements Runnable {
 		running = true;
 		thread = new Thread(this);
 		thread.start();
-		window.setVisible(true);
+		if (!headless)
+			window.setVisible(true);
 	}
 	
 	public void stop() {
@@ -119,40 +140,43 @@ public class GameEngine implements Runnable {
 				ticker.tick();
 			}
 			
-			screen.render(0, 0, renderer);
-			InputManager.clearMouse();
+            if (!headless){
+                screen.render(0, 0, renderer);
+        		InputManager.clearMouse();
+            }
+
 		}
 	}
 	
 	private void updateObjects() {
 		// perform internal list management before updating.
 		// as modifying a list whilst iterating over it is a very bad idea.
-		
-		Iterator<GameObject> it = notifyToCreate.iterator();
-		while (it.hasNext()) {
-			GameObject obj = it.next();
-			// add the object to the update list
-			objects.add(obj);
-			obj.setExists(true);
-			// notify the object it has been created
-			obj.onCreate();
+
+		synchronized (notifyToCreate) {
+			Iterator<GameObject> it = notifyToCreate.iterator();
+			while (it.hasNext()) {
+				GameObject obj = it.next();
+				// add the object to the update list
+				objects.add(obj);
+				obj.setExists(true);
+				// notify the object it has been created
+				obj.onCreate();
+			}
+			notifyToCreate.clear();
 		}
-		notifyToCreate.clear();
-		
-		// remove any objects that need deleting
-		it = notifyToDestroy.iterator();
-		while (it.hasNext()) {
-			GameObject obj = it.next();
-			// remove the object from the update list
-			objects.remove(obj);
-			obj.setExists(false);
-			// notify the object it has been effectively destroyed
-			obj.onDestroy();
+		synchronized (notifyToDestroy) {
+			// remove any objects that need deleting
+			Iterator<GameObject> it = notifyToDestroy.iterator();
+			while (it.hasNext()) {
+				GameObject obj = it.next();
+				// remove the object from the update list
+				objects.remove(obj);
+				obj.setExists(false);
+				// notify the object it has been effectively destroyed
+				obj.onDestroy();
+			}
+			notifyToDestroy.clear();
 		}
-		notifyToDestroy.clear();
-		
-		world.updateWorld();
-		
 		// update all objects
 		for (GameObject obj : objects) {
 			obj.onUpdate();

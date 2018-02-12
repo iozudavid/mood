@@ -3,6 +3,7 @@ package com.knightlore.world;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.knightlore.GameSettings;
 import com.knightlore.engine.GameWorld;
 import com.knightlore.engine.Renderer;
 import com.knightlore.game.Player;
@@ -22,7 +23,6 @@ public class TestWorld extends GameWorld {
 
 	private List<Mob> mobs;
 
-	private Player player;
 	private Camera mainCamera;
 	private GUICanvas gui;
 
@@ -43,10 +43,10 @@ public class TestWorld extends GameWorld {
 	@Override
 	public void populateWorld() {
 		// add the player and mobs
-		player = new Player(mainCamera);
 		mobs.add(new ShotgunPickup(new Vector2D(20, 20)));
 		mobs.add(new Zombie(1, new Vector2D(21, 20)));
 
+		if(GameSettings.isClient()){
 		// setup testing ui
 		gui = new GUICanvas();
 		Button b = new Button(5, 5, 0);
@@ -58,6 +58,7 @@ public class TestWorld extends GameWorld {
 		gui.addGUIObject(tf);
 		gui.addGUIObject(b);
 		Renderer.setGUI(gui);
+		}
 
 		// add pickups
 		for (int i = 1; i < 5; i += 2) {
