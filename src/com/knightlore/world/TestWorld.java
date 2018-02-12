@@ -36,7 +36,7 @@ public class TestWorld extends GameWorld {
 		// FIXME don't hardcode the seed...
 		map = generator.createMap(64, 64, Environment.LIGHT_OUTDOORS,161803398875L);
 		// FIXME hack hack hack, this is just for the demo
-		GameSettings.spawnPos = generator.getDemoSpawnPos();
+		GameSettings.spawnPos = map.getRandomSpawnPoint();
 		
 		// now populate the world
 		Vector2D pos = GameSettings.spawnPos;

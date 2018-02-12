@@ -222,9 +222,4 @@ public class MapGenerator extends ProceduralAreaGenerator {
         System.out.println("Num rooms: " + genr.rooms.size());
 
     }
-
-	public Vector2D getDemoSpawnPos() {
-		Point p = rooms.get(0).getCentre();
-		return new Vector2D(p.x,p.y);
-	}
 }
