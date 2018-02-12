@@ -25,6 +25,11 @@ public class BasicController implements Controller {
 	public int moveRight() {
 		return KeyEvent.VK_D;
 	}
+	
+	@Override
+	public int sprint() {
+		return KeyEvent.VK_SHIFT;
+	}
 
 	@Override
 	public int rotateClockwise() {

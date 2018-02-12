@@ -4,7 +4,7 @@ import com.knightlore.game.tile.Tile;
 
 public abstract class Area {
     protected final int width, height;
-    protected final Tile[][] grid;
+    private final Tile[][] grid;
 
     public Area(Tile[][] grid) {
         this.width = grid.length;
@@ -19,18 +19,25 @@ public abstract class Area {
 
         this.grid = grid;
     }
+    
+    //this is used to render other players
+    //added for prototype presentation
+    //as a quick solution
+    public void setTile(int x, int y, Tile t) {
+        grid[x][y] = t;
+    }
 
     public Tile getTile(int x, int y) {
         return grid[x][y];
     }
-
+    
     public int getWidth() {
-        return width;
-    }
-
+		return width;
+	}
+    
     public int getHeight() {
-        return height;
-    }
+		return height;
+	}
 
 	public String toString() {
         StringBuilder sBuilder = new StringBuilder("AREA\n" + "WIDTH = " + width + "\n" + "HEIGHT = " + height + "\n");
@@ -43,4 +50,5 @@ public abstract class Area {
 
         return sBuilder.toString();
     }
+	
 }

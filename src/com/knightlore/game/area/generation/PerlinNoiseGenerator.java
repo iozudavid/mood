@@ -64,10 +64,10 @@ public class PerlinNoiseGenerator {
 
         // dot product gradient vectors with corresponding
         // distance vectors, generating the influence values
-        double influenceValue1 = gradientVector1.dotInPlace(distanceVector1);
-        double influenceValue2 = gradientVector2.dotInPlace(distanceVector2);
-        double influenceValue3 = gradientVector3.dotInPlace(distanceVector3);
-        double influenceValue4 = gradientVector4.dotInPlace(distanceVector4);
+        double influenceValue1 = gradientVector1.dot(distanceVector1);
+        double influenceValue2 = gradientVector2.dot(distanceVector2);
+        double influenceValue3 = gradientVector3.dot(distanceVector3);
+        double influenceValue4 = gradientVector4.dot(distanceVector4);
 
         x = applyFade(xm);
         y = applyFade(ym);

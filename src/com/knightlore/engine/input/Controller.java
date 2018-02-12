@@ -9,6 +9,8 @@ public interface Controller {
 	public int moveLeft();
 
 	public int moveRight();
+	
+	public int sprint();
 
 	public int rotateClockwise();
 

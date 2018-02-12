@@ -1,3 +1,5 @@
+# KnightLore-specific stuff
+
 # JAVA STUFF
 
 
@@ -89,3 +91,9 @@ local.properties
 
 .idea/
 *.iml
+
+# BLENDER STUFF
+*.blend1
+
+# macOS files
+.DS_Store
