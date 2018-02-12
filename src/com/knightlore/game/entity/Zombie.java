@@ -6,35 +6,35 @@ import com.knightlore.utils.Vector2D;
 
 public class Zombie extends Entity {
 
-	public Zombie(double size, Vector2D position) {
-		super(size, DirectionalSprite.SHOTGUN_DIRECTIONAL_SPRITE, position, Vector2D.UP);
-	}
-	
-	public Zombie(double size, Vector2D position, Vector2D direction){
-		super(size, DirectionalSprite.SHOTGUN_DIRECTIONAL_SPRITE, position, direction);
-	}
+    public Zombie(double size, Vector2D position) {
+        super(size, DirectionalSprite.SHOTGUN_DIRECTIONAL_SPRITE, position, Vector2D.UP);
+    }
 
-	@Override
-	public void onCreate() {
-	}
+    public Zombie(double size, Vector2D position, Vector2D direction) {
+        super(size, DirectionalSprite.SHOTGUN_DIRECTIONAL_SPRITE, position, direction);
+    }
 
-	@Override
-	public void onUpdate() {
-	}
+    @Override
+    public void onCreate() {
+    }
 
-	@Override
-	public void onDestroy() {
-	}
+    @Override
+    public void onUpdate() {
+    }
 
-	@Override
-	public int getDrawSize() {
-		return Minimap.SCALE/2;
-	}
+    @Override
+    public void onDestroy() {
+    }
 
-	@Override
-	public int getMinimapColor() {
-		//make it white
-		return 0xFFFFFFFF;
-	}
+    @Override
+    public int getDrawSize() {
+        return 5;
+    }
+
+    @Override
+    public int getMinimapColor() {
+        // make it white
+        return 0xFFFFFFFF;
+    }
 
 }

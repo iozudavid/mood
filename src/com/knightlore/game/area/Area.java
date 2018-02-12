@@ -1,5 +1,6 @@
 package com.knightlore.game.area;
 
+import com.knightlore.game.tile.AirTile;
 import com.knightlore.game.tile.Tile;
 
 public abstract class Area {
@@ -28,6 +29,9 @@ public abstract class Area {
     }
 
     public Tile getTile(int x, int y) {
+        if(x < 0 || x >= width || y < 0 || y >= height) {
+            return AirTile.getInstance();
+        }
         return grid[x][y];
     }
     

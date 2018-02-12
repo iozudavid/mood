@@ -57,7 +57,7 @@ public class RoomGenerator extends ProceduralAreaGenerator {
     }
 
     private int getGaussianNum(int min, int max) {
-        int mean = (min - max) / 2;
+        int mean = (max + min) / 2;
         int std_dev = (mean - min) / 2;
         double gaussSize = min - 1;
         while (gaussSize < min || gaussSize > max) {
