@@ -10,6 +10,7 @@ import java.awt.Point;
 import java.util.*;
 
 public class MapGenerator extends ProceduralAreaGenerator {
+    private static final int MAX_ROOMS = 5;
     private final List<Room> rooms = new LinkedList<>();
     private double[][] costGrid;
     
@@ -43,35 +44,26 @@ public class MapGenerator extends ProceduralAreaGenerator {
     private void generateRooms() {
         RoomGenerator roomGenerator = new RoomGenerator();
         Room room = roomGenerator.createRoom(rand.nextLong());
-
-        int MAX_ROOM_NUM = 5;
-        
-        while (rooms.size() < MAX_ROOM_NUM && setRoomPosition(room)) {
+        while (rooms.size() < MAX_ROOMS && setRoomPosition(room)) {
             rooms.add(room);
             room = roomGenerator.createRoom(rand.nextLong());
         }
-        System.out.println("Number of rooms generated: " + rooms.size());
     }
 
     private boolean setRoomPosition(Room room) {
-        // TODO make something like x += rand and y += rand instead of x++ and y++?
-    	
-    	ArrayList<Point> candidates = new ArrayList<Point>();
-    	
+    	List<Point> candidates = new ArrayList<>();
     	for (int x = 0; x < grid.length - room.getWidth(); x++) {
             for (int y = 0; y < grid[0].length - room.getHeight(); y++) {
                 room.setRoomPosition(new Point(x, y));
                 if (canBePlaced(room)) {
                 	candidates.add(new Point(x,y));
-                    //placeRoom(room);
-                    //return true;
                 }
             }
         }
 		
-    	if(candidates.size() == 0) {
+    	if(candidates.isEmpty()) {
     		return false;
-    	}else {
+    	} else {
     		int index = rand.nextInt(candidates.size());
     		room.setRoomPosition(candidates.get(index));
     		placeRoom(room);
