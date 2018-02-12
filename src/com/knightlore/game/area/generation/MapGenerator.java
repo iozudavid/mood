@@ -102,124 +102,62 @@ public class MapGenerator extends ProceduralAreaGenerator {
     }
 
     private void generatePaths() {
-        // TODO implement
-    	
-    	// We'll do Prim's
-    	ArrayList<Room> toAdd = new ArrayList<Room>();
-    	ArrayList<RoomConnection> possibleConnections = new ArrayList<RoomConnection>();
+        generateMinimumSpanningTree();
 
-    	toAdd.addAll(rooms);
-    	for(int i=0; i< rooms.size(); i++) {
-    		toAdd.add(rooms.get(i));
-    	}
-    	
-    	Room lastAdded = rooms.get(0);
-    	
-    	while(toAdd.size() > 0) {
-    		//remove lastAdded to prevent cycles
-    		toAdd.remove(lastAdded);
-    		for(int i=0; i<toAdd.size(); i++) {
-    			Room target = toAdd.get(i);
-    			possibleConnections.add(new RoomConnection(lastAdded, target));
-    		}
-    		Collections.sort(possibleConnections);
-    		//attempt to add minimal path
-    		//while ensuring a room does not
-    		//exceed its maximum connections
-    		boolean success = false;
-    		while(!success) {
-    			RoomConnection connection = possibleConnections.get(0);
-    			if(Room.addConnection(connection)) {
-    				success = true;
-    				toAdd.remove(connection.target);
-    				lastAdded = connection.target;
-    			}else {
-    				possibleConnections.remove(0);
-    				if(possibleConnections.isEmpty()) {
-    					// out of options
-    					// now consider loops
-    					for(int i=0; i<rooms.size(); i++) {
-    						Room target = rooms.get(i);
-    						possibleConnections.add(new RoomConnection(lastAdded,target));
-    					}
-    					// sort them so our overhead isn't that bad
-    					Collections.sort(possibleConnections);
-    				}
-    			}
-    		}
-    		// remove possible connections
-    		// those whose target equals last added
-    		for(int i=0; i<possibleConnections.size(); i++) {
-    			RoomConnection connection = possibleConnections.get(i);
-    			if(connection.target.equals(lastAdded)) {
-    				possibleConnections.remove(i);
-    			}
-    		}
-    		
-    	}
-    	
-    	//minimal-ish spanning tree has been generated
-    	//all rooms should have a number of connections below
-    	//the allowed maximum
-    	//now we need to ensure they meet their minimum
-    	for(int i=0; i<rooms.size(); i++) {
-    		//clear all possibleConnections
-        	possibleConnections.clear();
-        	
-    		Room room = rooms.get(i);
-    		System.out.println("ROOM: " + room.getPosition());
-    		int numConnections = room.getNumConnections();
-    		System.out.println("CONNECTIONS: " + numConnections);
-    		if(numConnections < Room.MIN_CONNECTIONS) {
-    			// consider all candidate connections
-    			for(int j=0; j<rooms.size(); j++) {
-    				Room target = rooms.get(j);
-    				possibleConnections.add(new RoomConnection(room,target));
-    			}
-    			while(numConnections <Room.MIN_CONNECTIONS) {
-    				//DEBUG
-    				System.out.println(numConnections);
-	    			boolean success = false;
-	    			while(!success) {
-	    				RoomConnection connection = possibleConnections.get(0);
-	    				if(Room.addConnection(connection)) {
-	    					System.out.println(connection.toString());
-	    					numConnections++;
-	    					success = true;
-	    				}
-	    				possibleConnections.remove(0);
-	    			}
-    			}
-    		}
-    	}
-    	
-    	// do some debugging here
-    	for(int i=0; i<rooms.size(); i++) {
-    		Room room = rooms.get(i);
-    		System.out.println(room.getPosition());
-    		List<Room> neighbours = room.getConnections();
-    		for(int j=0; j<neighbours.size(); j++) {
-    			room = neighbours.get(j);
-    			System.out.println("--" + room.getPosition());
-    		}
-    	}
-    	
-    	// now actually place paths...
-    	PathFinder pathFinder = new PathFinder(costGrid);
-    	
-    	// generate all necessary roomConnections
-    	// (excluding reflexive connections)
-    	for(int i=0; i<rooms.size();i++) {
-    		Room source = rooms.get(i);
-    		for(int j=i; j<rooms.size();j++) {
-    			Room target = rooms.get(j);
-    			if (source.getConnections().contains(target)) {
-    				List<Point> path = pathFinder.findPath(source.getCentre(), target.getCentre());
-    				placePath(path);
-    			}
-    		}
-    	}
-    	
+        // satisfy minimum number of connections for each room
+        Queue<RoomConnection> possibleConnections = new PriorityQueue<>();
+        for (Room room: rooms) {
+            for (Room target: rooms) {
+                possibleConnections.add(new RoomConnection(room, target));
+            }
+
+            while (room.getNumConnections() < Room.MIN_CONNECTIONS) {
+                RoomConnection connection = possibleConnections.poll();
+                Room.addConnection(connection);
+            }
+
+            possibleConnections.clear();
+        }
+
+        PathFinder pathFinder = new PathFinder(costGrid);
+        for(int i=0; i<rooms.size();i++) {
+            Room source = rooms.get(i);
+            for(int j=i; j<rooms.size();j++) {
+                Room target = rooms.get(j);
+                if (source.getConnections().contains(target)) {
+                    List<Point> path = pathFinder.findPath(source.getCentre(), target.getCentre());
+                    placePath(path);
+                }
+            }
+        }
+
+    }
+
+    private void generateMinimumSpanningTree() {
+        Queue<Room> toAdd = new LinkedList<>(rooms);
+        Queue<RoomConnection> possibleConnections = new PriorityQueue<>();
+        // start with the first room as lastAdded
+        Room lastAdded = toAdd.poll();
+        while (!toAdd.isEmpty()) {
+            for (Room target: toAdd) {
+                possibleConnections.add(new RoomConnection(lastAdded, target));
+            }
+
+            RoomConnection connection = possibleConnections.poll();
+            // don't target lastAdded connection to avoid loops
+            while (connection.getTarget() == lastAdded || !Room.addConnection(connection)) {
+                if (possibleConnections.isEmpty()) {
+                    // consider loops if it's out of other viable options
+                    for (Room target: rooms) {
+                        possibleConnections.add(new RoomConnection(lastAdded, target));
+                    }
+                }
+
+                connection = possibleConnections.poll();
+            }
+            toAdd.remove(connection.getTarget());
+            lastAdded = connection.getTarget();
+        }
     }
     
     private void placePath(List<Point> path) {
