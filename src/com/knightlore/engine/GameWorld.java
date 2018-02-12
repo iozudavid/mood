@@ -5,7 +5,11 @@ import com.knightlore.game.area.Map;
 public abstract class GameWorld {
 
 	// all worlds need a map
-	protected Map map;
+	protected static Map map;
+	
+	public static Map getMap(){
+		return map;
+	}
 	
 	/**
 	 * Called by the engine to initialise the world.

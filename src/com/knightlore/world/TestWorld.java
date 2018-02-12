@@ -87,8 +87,4 @@ public class TestWorld extends GameWorld {
 		return mobs;
 	}
 
-	public Map getMap() {
-		return map;
-	}
-
 }
