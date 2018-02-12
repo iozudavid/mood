@@ -36,7 +36,6 @@ public class Screen extends Canvas {
 	 * Render the game.
 	 */
 	public void render(int x, int y, IRenderable renderable) {
-
 		// Get the buffered strategy if it exists, otherwise create one.
 		BufferStrategy bs = getBufferStrategy();
 		if (bs == null) {

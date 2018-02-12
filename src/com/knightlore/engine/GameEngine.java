@@ -9,7 +9,6 @@ import com.knightlore.engine.input.InputManager;
 import com.knightlore.engine.input.Mouse;
 import com.knightlore.game.area.AreaFactory;
 import com.knightlore.game.area.Map;
-import com.knightlore.render.Camera;
 import com.knightlore.render.Environment;
 import com.knightlore.render.Screen;
 
@@ -29,6 +28,7 @@ public class GameEngine implements Runnable {
 
 	private Screen screen;
 	private final MainWindow window;
+
 	private Renderer renderer;
 	private final ArrayList<GameObject> objects;
 	private Thread thread;
@@ -37,7 +37,10 @@ public class GameEngine implements Runnable {
 	private LinkedList<GameObject> notifyToCreate;
 	private LinkedList<GameObject> notifyToDestroy;
 
-	public GameEngine() {
+	private boolean headless;
+
+	public GameEngine(boolean headless) {
+		this.headless = headless;
 		singleton = this;
 
 		objects = new ArrayList<GameObject>();
@@ -45,37 +48,52 @@ public class GameEngine implements Runnable {
 		notifyToCreate = new LinkedList<GameObject>();
 		notifyToDestroy = new LinkedList<GameObject>();
 
-		window = new MainWindow(MainWindow.TITLE);
-		window.finalise();
-		this.screen = window.getScreen();
-
+		if (headless)
+			window = null;
+		else {
+	        final int w = MainWindow.WIDTH, h = MainWindow.HEIGHT;
+			window = new MainWindow(MainWindow.TITLE, w, h);
+			window.finalise();
+			this.screen = window.getScreen();
+		}
 		initEngine();
 	}
 
-	static GameEngine getSingleton() {
+
+	public static GameEngine getSingleton() {
 		return singleton;
 	}
 
 	void addGameObject(GameObject g) {
 		// delay adding until next loop
-		notifyToCreate.add(g);
+		synchronized (notifyToCreate) {
+			notifyToCreate.add(g);
+		}
 	}
 
 	void removeGameObject(GameObject g) {
 		// delay deleting until next loop
-		notifyToDestroy.add(g);
+		synchronized (notifyToDestroy) {
+			notifyToDestroy.add(g);
+		}
+	}
+	
+	// FIXME: remove this
+	public Renderer getRenderer() {
+		return this.renderer;
 	}
 
 	private void initEngine() {
 		System.out.println("Initialising Engine...");
-		InputManager.init();
-		setupKeyboard();
-		setupMouse();
-
+		if (!headless) {
+		    InputManager.init();
+		    setupKeyboard();
+		    setupMouse();
+		}
 		Map map = AreaFactory.createRandomMap(Environment.DARK_OUTDOORS);
-		Camera camera = new Camera(4.5, 4.5, 1, 0, 0, Camera.FIELD_OF_VIEW,
-				map);
-		renderer = new Renderer(camera, map);
+		//Camera camera = new Camera(4.5, 4.5, 1, 0, 0, Camera.FIELD_OF_VIEW,
+		//		map);
+		renderer = new Renderer(null, map);
 		System.out.println("Engine Initialised Successfully.");
 	}
 
@@ -83,7 +101,8 @@ public class GameEngine implements Runnable {
 		running = true;
 		thread = new Thread(this);
 		thread.start();
-		window.setVisible(true);
+		if (!headless)
+			window.setVisible(true);
 	}
 
 	public void stop() {
@@ -112,11 +131,12 @@ public class GameEngine implements Runnable {
 
 			while (delta >= 1) {
 				updateObjects();
-				screen.render(0, 0, renderer);
 				delta -= 1;
 
 				ticker.tick();
 			}
+            if (!headless)
+                screen.render(0, 0, renderer);
 		}
 	}
 
@@ -124,29 +144,31 @@ public class GameEngine implements Runnable {
 		// perform internal list management before updating.
 		// as modifying a list whilst iterating over it is a very bad idea.
 
-		Iterator<GameObject> it = notifyToCreate.iterator();
-		while (it.hasNext()) {
-			GameObject obj = it.next();
-			// add the object to the update list
-			objects.add(obj);
-			obj.setExists(true);
-			// notify the object it has been created
-			obj.onCreate();
+		synchronized (notifyToCreate) {
+			Iterator<GameObject> it = notifyToCreate.iterator();
+			while (it.hasNext()) {
+				GameObject obj = it.next();
+				// add the object to the update list
+				objects.add(obj);
+				obj.setExists(true);
+				// notify the object it has been created
+				obj.onCreate();
+			}
+			notifyToCreate.clear();
 		}
-		notifyToCreate.clear();
-
-		// remove any objects that need deleting
-		it = notifyToDestroy.iterator();
-		while (it.hasNext()) {
-			GameObject obj = it.next();
-			// remove the object from the update list
-			objects.remove(obj);
-			obj.setExists(false);
-			// notify the object it has been effectively destroyed
-			obj.onDestroy();
+		synchronized (notifyToDestroy) {
+			// remove any objects that need deleting
+			Iterator<GameObject> it = notifyToDestroy.iterator();
+			while (it.hasNext()) {
+				GameObject obj = it.next();
+				// remove the object from the update list
+				objects.remove(obj);
+				obj.setExists(false);
+				// notify the object it has been effectively destroyed
+				obj.onDestroy();
+			}
+			notifyToDestroy.clear();
 		}
-		notifyToDestroy.clear();
-
 		// update all objects
 		for (GameObject obj : objects) {
 			obj.onUpdate();

@@ -3,7 +3,6 @@ package com.knightlore.engine;
 import com.knightlore.utils.Vector2D;
 
 public abstract class GameObject {
-
 	protected Vector2D position;
 
 	/**
@@ -52,7 +51,7 @@ public abstract class GameObject {
 	 */
 	public abstract void onDestroy();
 
-	protected void destroy() {
+	public void destroy() {
 		GameEngine.getSingleton().removeGameObject(this);
 	}
 
