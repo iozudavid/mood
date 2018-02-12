@@ -6,7 +6,7 @@ import com.knightlore.render.graphic.sprite.DirectionalSprite;
 import com.knightlore.render.minimap.IMinimapObject;
 import com.knightlore.utils.Vector2D;
 
-public abstract class Mob extends GameObject implements IMinimapObject {
+public abstract class Entity extends GameObject implements IMinimapObject {
 
 	protected DirectionalSprite dSprite;
 	protected double size;
@@ -14,7 +14,7 @@ public abstract class Mob extends GameObject implements IMinimapObject {
 
 	protected int zOffset;
 
-	protected Mob(double size, DirectionalSprite dSprite, Vector2D position, Vector2D direction) {
+	protected Entity(double size, DirectionalSprite dSprite, Vector2D position, Vector2D direction) {
 		super(position);
 		this.size = size;
 		this.dSprite = dSprite;
