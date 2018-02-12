@@ -17,7 +17,7 @@ public class PathTile extends Tile{
 	}
 	
 	public char toChar() {
-		return 'P';
+		return '-';
 	}
 
 }

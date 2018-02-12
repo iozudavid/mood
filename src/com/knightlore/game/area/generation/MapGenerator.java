@@ -4,10 +4,10 @@ import com.knightlore.game.area.Map;
 import com.knightlore.game.area.Room;
 import com.knightlore.game.tile.*;
 import com.knightlore.render.Environment;
+import com.knightlore.utils.pathfinding.PathFinder;
 
-import java.awt.*;
+import java.awt.Point;
 import java.util.*;
-import java.util.List;
 
 public class MapGenerator extends ProceduralAreaGenerator {
     private double[][] perlinNoise;
@@ -43,27 +43,40 @@ public class MapGenerator extends ProceduralAreaGenerator {
     private void generateRooms() {
         RoomGenerator roomGenerator = new RoomGenerator();
         Room room = roomGenerator.createRoom(rand.nextLong());
-        while (setRoomPosition(room)) {
+
+        int MAX_ROOM_NUM = 5;
+        
+        while (setRoomPosition(room) && rooms.size() < MAX_ROOM_NUM) {
             rooms.add(room);
             room = roomGenerator.createRoom(rand.nextLong());
         }
-
         System.out.println("Number of rooms generated: " + rooms.size());
     }
 
     private boolean setRoomPosition(Room room) {
         // TODO make something like x += rand and y += rand instead of x++ and y++?
-        for (int x = 0; x < grid.length - room.getWidth(); x++) {
+    	
+    	ArrayList<Point> candidates = new ArrayList<Point>();
+    	
+    	for (int x = 0; x < grid.length - room.getWidth(); x++) {
             for (int y = 0; y < grid[0].length - room.getHeight(); y++) {
                 room.setRoomPosition(new Point(x, y));
                 if (canBePlaced(room)) {
-                    placeRoom(room);
-                    return true;
+                	candidates.add(new Point(x,y));
+                    //placeRoom(room);
+                    //return true;
                 }
             }
         }
-
-        return false;
+		
+    	if(candidates.size() == 0) {
+    		return false;
+    	}else {
+    		int index = rand.nextInt(candidates.size());
+    		room.setRoomPosition(candidates.get(index));
+    		placeRoom(room);
+    		return true;
+    	}
     }
 
     private boolean canBePlaced(Room room) {
@@ -90,69 +103,128 @@ public class MapGenerator extends ProceduralAreaGenerator {
     private void generatePaths() {
         // TODO implement
     	
-    	ArrayList<RoomConnection> candidates = new ArrayList<RoomConnection>();
-    	//add connections (excluding redundant connections)
+    	// We'll do Prim's
+    	ArrayList<Room> toAdd = new ArrayList<Room>();
+    	ArrayList<RoomConnection> possibleConnections = new ArrayList<RoomConnection>();
+    	
     	for(int i=0; i< rooms.size(); i++) {
-    		Room r1 = rooms.get(i);
-    		for(int j=i; j< rooms.size(); j++) {
-    			Room r2 = rooms.get(j);
-    			candidates.add(new RoomConnection(r1,r2));
-    		}
+    		toAdd.add(rooms.get(i));
     	}
     	
-    	Collections.sort(candidates);
-    	Collections.reverse(candidates);
-    	boolean[][] connected = new boolean[rooms.size()][rooms.size()];
-    	for(int i=0; i<rooms.size(); i++) {
-    		for(int j=0; j<rooms.size(); j++) {
-    			connected[i][j] = true;
-    		}
-    	}
+    	Room lastAdded = rooms.get(0);
     	
-    	for(int i=0; i<candidates.size(); i++) {
+    	while(toAdd.size() > 0) {
+    		//remove lastAdded to prevent cycles
+    		toAdd.remove(lastAdded);
+    		for(int i=0; i<toAdd.size(); i++) {
+    			Room target = toAdd.get(i);
+    			possibleConnections.add(new RoomConnection(lastAdded, target));
+    		}
+    		Collections.sort(possibleConnections);
+    		//attempt to add minimal path
+    		//while ensuring a room does not
+    		//exceed its maximum connections
+    		boolean success = false;
+    		while(!success) {
+    			RoomConnection connection = possibleConnections.get(0);
+    			if(Room.addConnection(connection)) {
+    				success = true;
+    				toAdd.remove(connection.target);
+    				lastAdded = connection.target;
+    			}else {
+    				possibleConnections.remove(0);
+    				if(possibleConnections.isEmpty()) {
+    					// out of options
+    					// now consider loops
+    					for(int i=0; i<rooms.size(); i++) {
+    						Room target = rooms.get(i);
+    						possibleConnections.add(new RoomConnection(lastAdded,target));
+    					}
+    					// sort them so our overhead isn't that bad
+    					Collections.sort(possibleConnections);
+    				}
+    			}
+    		}
+    		// remove possible connections
+    		// those whose target equals last added
+    		for(int i=0; i<possibleConnections.size(); i++) {
+    			RoomConnection connection = possibleConnections.get(i);
+    			if(connection.target.equals(lastAdded)) {
+    				possibleConnections.remove(i);
+    			}
+    		}
     		
+    	}
+    	
+    	//minimal-ish spanning tree has been generated
+    	//all rooms should have a number of connections below
+    	//the allowed maximum
+    	//now we need to ensure they meet their minimum
+    	for(int i=0; i<rooms.size(); i++) {
+    		//clear all possibleConnections
+        	possibleConnections.clear();
+        	
+    		Room room = rooms.get(i);
+    		System.out.println("ROOM: " + room.getPosition());
+    		int numConnections = room.getNumConnections();
+    		System.out.println("CONNECTIONS: " + numConnections);
+    		if(numConnections < Room.MIN_CONNECTIONS) {
+    			// consider all candidate connections
+    			for(int j=0; j<rooms.size(); j++) {
+    				Room target = rooms.get(j);
+    				possibleConnections.add(new RoomConnection(room,target));
+    			}
+    			while(numConnections <Room.MIN_CONNECTIONS) {
+    				//DEBUG
+    				System.out.println(numConnections);
+	    			boolean success = false;
+	    			while(!success) {
+	    				RoomConnection connection = possibleConnections.get(0);
+	    				if(Room.addConnection(connection)) {
+	    					System.out.println(connection.toString());
+	    					numConnections++;
+	    					success = true;
+	    				}
+	    				possibleConnections.remove(0);
+	    			}
+    			}
+    		}
+    	}
+    	
+    	// do some debugging here
+    	for(int i=0; i<rooms.size(); i++) {
+    		Room room = rooms.get(i);
+    		System.out.println(room.getPosition());
+    		List<Room> neighbours = room.getConnections();
+    		for(int j=0; j<neighbours.size(); j++) {
+    			room = neighbours.get(j);
+    			System.out.println("--" + room.getPosition());
+    		}
+    	}
+    	
+    	// now actually place paths...
+    	PathFinder pathFinder = new PathFinder(perlinNoise);
+    	
+    	// generate all necessary roomConnections
+    	// (excluding reflexive connections)
+    	for(int i=0; i<rooms.size();i++) {
+    		Room source = rooms.get(i);
+    		for(int j=i; j<rooms.size();j++) {
+    			Room target = rooms.get(j);
+    			if (source.getConnections().contains(target)) {
+    				List<Point> path = pathFinder.findPath(source.getCentre(), target.getCentre());
+    				placePath(path);
+    			}
+    		}
     	}
     	
     }
-
-    private boolean addPath(Point start, Point end) {
-    	// perform A* search
-    	SearchState state = new SearchState(start,end,grid,perlinNoise);
-    	if(! (state.isValid(start) && state.isValid(end)) )
-    		return false;
-    	
-    	// set influence of perlin noise with g-weight
-    	// (4.5 is my favourite value)
-    	// if zero we just get A*
-    	SearchState.setGWeight(4.5);
-    	
-    	ArrayList<SearchState> states = new ArrayList<SearchState>();
-    	states.add(state);
-    	// loop until return
-    	while(true) {
-    		//System.out.println(state.getPosition().toString());
-    		state = states.get(0);
-    		if(state.isGoal()) {
-    			// modify grid
-    			while(state != null) {
-    				int x = state.getPosition().x;
-    				int y = state.getPosition().y;
-    				grid[x][y] = new PathTile();
-    				state = state.getPred();
-    			}
-    			// then return
-    			return true;
-    		}else {
-    			// add successors to list
-    			states.addAll(state.getSuccessors());
-    			// remove current state
-    			states.remove(0);
-    			// order list
-    			Collections.sort(states);
-    		}
-    		
-    	}
-    	
+    
+    private void placePath(List<Point> path) {
+        for (Point p: path) {
+        	if (!(grid[p.x][p.y] == AirTile.getInstance()))
+        		grid[p.x][p.y] = new PathTile();
+        }
     }
     
     @Override
@@ -169,7 +241,6 @@ public class MapGenerator extends ProceduralAreaGenerator {
         }
     }
 
-    // reflection in y-axis
     private void makeSymY() {
         int width = grid.length;
         int height = grid[0].length;
@@ -201,30 +272,13 @@ public class MapGenerator extends ProceduralAreaGenerator {
     }
 
     // TODO delete
-    
     public static void main(String[] args) {
     	MapGenerator genr = new MapGenerator();
     	Map map = genr.createMap(48 , 32, Environment.LIGHT_OUTDOORS);
     	
-    	double min = 1;
-    	double max = -1;
-    	
-    	//double[][] p = genr.perlinNoise;
-    	//for(int i=0; i< p.length; i++) {
-    	//	System.out.print(i + "::: ");
-    	//	for(int j=0; j < p[0].length; j++) {
-    	//		if (p[i][j] > max) max = p[i][j];
-    	//		if (p[i][j] < min) min = p[i][j];
-    	//		System.out.print(j + ": " + p[i][j]);
-    	//	}
-    	//	System.out.println();
-    	//}
-    	System.out.println("MIN: " + min);
-    	System.out.println("MAX: " + max);
-    	
     	System.out.println("--------------");
     	System.out.println(map.toString());
-    	
+    	System.out.println("Num rooms: " + genr.rooms.size());
     	
     }
 	

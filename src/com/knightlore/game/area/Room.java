@@ -1,5 +1,6 @@
 package com.knightlore.game.area;
 
+import com.knightlore.game.area.generation.RoomConnection;
 import com.knightlore.game.tile.Tile;
 
 import java.awt.*;
@@ -21,15 +22,26 @@ public class Room extends Area {
         this.position = position;
     }
 
-    public boolean addConnection(Room r) {
-        if (connections.size() < MAX_CONNECTIONS) {
-            connections.add(r);
+    public static boolean addConnection(RoomConnection con) {
+    	Room source = con.source;
+    	Room target = con.target;
+    	return addConnection(source,target);
+    }
+    
+    public static boolean addConnection(Room r1, Room r2) {
+    	if (r1.connections.size() < MAX_CONNECTIONS &&
+        	r2.connections.size() < MAX_CONNECTIONS) {
+            r1.connections.add(r2);
+            r2.connections.add(r1);
             return true;
         }
-
         return false;
     }
 
+    public int getNumConnections() {
+    	return connections.size();
+    }
+    
     public List<Room> getConnections() {
         return connections;
     }
@@ -37,4 +49,27 @@ public class Room extends Area {
     public Point getPosition() {
         return position;
     }
+    
+    public Point getCentre() {
+    	return new Point(position.x + width/2, position.y + height/2);
+    }
+    
+    @Override
+    public boolean equals(Object o) {
+    	if (this == o) {
+    		return true;
+    	}
+    	
+    	if (o == null) {
+    		return false;
+    	}
+    	
+    	if (!(o instanceof Room)) {
+    		return false;
+    	}
+    	
+    	Room r = (Room) o;
+    	return position.equals(r.position);
+    }
+    
 }
