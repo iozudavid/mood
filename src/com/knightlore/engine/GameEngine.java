@@ -1,5 +1,6 @@
 package com.knightlore.engine;
 
+import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -11,6 +12,7 @@ import com.knightlore.game.area.Map;
 import com.knightlore.game.area.generation.MapGenerator;
 import com.knightlore.render.Environment;
 import com.knightlore.render.Screen;
+import com.knightlore.render.minimap.Minimap;
 
 /**
  * Game engine acting as sort of a 'hub' for each of the individual game
@@ -52,7 +54,7 @@ public class GameEngine implements Runnable {
 			window = null;
 		else {
 	        final int w = MainWindow.WIDTH, h = MainWindow.HEIGHT;
-			window = new MainWindow(MainWindow.TITLE, w, h);
+			window = new MainWindow(MainWindow.TITLE);
 			window.finalise();
 			this.screen = window.getScreen();
 		}
@@ -91,7 +93,7 @@ public class GameEngine implements Runnable {
 		    setupMouse();
 		}
 		MapGenerator generator  = new MapGenerator();
-		Map map = generator.createMap(64, 64, Environment.LIGHT_OUTDOORS);
+		Map map = generator.createMap(64, 64, Environment.DUNGEON);
 		//Camera camera = new Camera(4.5, 4.5, 1, 0, 0, Camera.FIELD_OF_VIEW,
 		//		map);
 		renderer = new Renderer(null, map);
@@ -142,6 +144,7 @@ public class GameEngine implements Runnable {
 	}
 
 	private void updateObjects() {
+	    
 		// perform internal list management before updating.
 		// as modifying a list whilst iterating over it is a very bad idea.
 
