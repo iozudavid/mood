@@ -2,7 +2,6 @@ package com.knightlore.gamelogic;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.ListIterator;
 
 import com.knightlore.engine.GameObject;
 import com.knightlore.game.entity.Entity;
@@ -29,17 +28,11 @@ public class MobManager extends GameObject {
 
 	@Override
 	public void onUpdate() {
-		ListIterator<Entity> itr = mobs.listIterator();
-		while (itr.hasNext()) {
-			Entity m = itr.next();
-			if (!m.exists())
-				itr.remove();
-		}
+		mobs.removeIf(m -> !m.exists());
 	}
 
 	@Override
 	public void onDestroy() {
-
 	}
 
 }
