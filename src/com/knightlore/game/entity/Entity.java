@@ -95,9 +95,8 @@ public abstract class Entity extends NetworkObject implements IMinimapObject {
     }
 
     public synchronized void moveForward() {
-        System.out.println("forward called");
         double xPos = position.getX(), yPos = position.getY();
-        double xDir = direction.getX(), yDir = position.getY();
+        double xDir = direction.getX(), yDir = direction.getY();
         Tile xTile = map.getTile((int) (xPos + xDir * moveSpeed), (int) yPos);
         Tile yTile = map.getTile((int) xPos, (int) (yPos + yDir * moveSpeed));
         xPos += xDir * moveSpeed * (1 - xTile.getSolidity());
@@ -107,7 +106,7 @@ public abstract class Entity extends NetworkObject implements IMinimapObject {
 
     public synchronized void moveBackward() {
         double xPos = position.getX(), yPos = position.getY();
-        double xDir = direction.getX(), yDir = position.getY();
+        double xDir = direction.getX(), yDir = direction.getY();
         Tile xTile = map.getTile((int) (xPos - xDir * moveSpeed), (int) yPos);
         Tile yTile = map.getTile((int) xPos, (int) (yPos - yDir * moveSpeed));
         xPos -= xDir * moveSpeed * (1 - xTile.getSolidity());
@@ -117,7 +116,7 @@ public abstract class Entity extends NetworkObject implements IMinimapObject {
 
     public synchronized void strafeLeft() {
         double xPos = position.getX(), yPos = position.getY();
-        double xDir = direction.getX(), yDir = position.getY();
+        double xDir = direction.getX(), yDir = direction.getY();
         Tile xTile = map.getTile((int) (xPos - yDir * strafeSpeed), (int) (yPos));
         Tile yTile = map.getTile((int) (xPos), (int) (yPos + xDir * strafeSpeed));
         xPos -= yDir * strafeSpeed * (1 - xTile.getSolidity());
@@ -127,7 +126,7 @@ public abstract class Entity extends NetworkObject implements IMinimapObject {
 
     public synchronized void strafeRight() {
         double xPos = position.getX(), yPos = position.getY();
-        double xDir = direction.getX(), yDir = position.getY();
+        double xDir = direction.getX(), yDir = direction.getY();
         Tile xTile = map.getTile((int) (xPos + yDir * strafeSpeed), (int) (yPos));
         Tile yTile = map.getTile((int) (xPos), (int) (yPos + -xDir * strafeSpeed));
         xPos += yDir * strafeSpeed * (1 - xTile.getSolidity());
@@ -141,7 +140,7 @@ public abstract class Entity extends NetworkObject implements IMinimapObject {
      * (whose parameter is ROTATION_SPEED). This lets us rotate.
      */
     public synchronized void rotateAntiClockwise() {
-        double xDir = direction.getX(), yDir = position.getY();
+        double xDir = direction.getX(), yDir = direction.getY();
         double xPlane = plane.getX(), yPlane = plane.getY();
         double oldxDir = xDir;
         xDir = xDir * Math.cos(rotationSpeed) - yDir * Math.sin(rotationSpeed);
@@ -157,7 +156,7 @@ public abstract class Entity extends NetworkObject implements IMinimapObject {
      * Same as rotating left but clockwise this time.
      */
     public synchronized void rotateClockwise() {
-        double xDir = direction.getX(), yDir = position.getY();
+        double xDir = direction.getX(), yDir = direction.getY();
         double xPlane = plane.getX(), yPlane = plane.getY();
         double oldxDir = xDir;
         xDir = xDir * Math.cos(-rotationSpeed) - yDir * Math.sin(-rotationSpeed);
