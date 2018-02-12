@@ -32,9 +32,8 @@ public abstract class Entity extends NetworkObject implements IMinimapObject {
         this.size = size;
         this.dSprite = dSprite;
         this.direction = direction;
+        this.plane = direction.perpendicular();
         this.zOffset = 0;
-
-        plane = Vector2D.RIGHT;
     }
 
     // Use a random UUID.

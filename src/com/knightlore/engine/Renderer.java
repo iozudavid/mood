@@ -48,7 +48,7 @@ public class Renderer implements IRenderable {
 		new NetworkObjectManager();
 	}
 
-	private final int BLOCKINESS = 10; // how 'old school' you want to look.
+	private final int BLOCKINESS = 1; // how 'old school' you want to look.
 
 	@Override
 	public void render(PixelBuffer pix, int x, int y) {
@@ -72,32 +72,32 @@ public class Renderer implements IRenderable {
 	}
 
 	public void updateNetworkObjectPos(NetworkObject obj, Vector2D position, Vector2D direction) {
-//		if (camera == null)
-//			return;
-//		synchronized (this.mobsToRender) {
-//			if (position == null) {
-//				this.networkObjPos.remove(obj);
-//                this.networkObjMobs.get(obj).destroy();
-//				this.mobsToRender.remove(this.networkObjMobs.get(obj));
-//				this.minimap.removeMinimapObject(this.networkObjMobs.get(obj));
-//				this.networkObjMobs.remove(obj);
-//			} else if (networkObjPos.containsKey(obj)) {
-//				this.minimap.removeMinimapObject(this.networkObjMobs.get(obj));
-//				this.networkObjPos.put(obj, position);
-//				this.mobsToRender.remove(this.networkObjMobs.get(obj));
-//				this.networkObjMobs.get(obj).destroy();
-//				Zombie z = new Zombie(map, 1D, position, direction);
-//				this.networkObjMobs.put(obj, z);
-//				this.mobsToRender.add(z);
-//				this.minimap.addMinimapObject(this.networkObjMobs.get(obj));
-//			} else {
-//				this.networkObjPos.put(obj, position);
-//				Zombie z = new Zombie(map, 1D, position, direction);
-//				this.networkObjMobs.put(obj, z);
-//				this.mobsToRender.add(z);
-//				this.minimap.addMinimapObject(this.networkObjMobs.get(obj));
-//			}
-//		}
+		if (camera == null)
+			return;
+		synchronized (this.mobsToRender) {
+			if (position == null) {
+				this.networkObjPos.remove(obj);
+                this.networkObjMobs.get(obj).destroy();
+				this.mobsToRender.remove(this.networkObjMobs.get(obj));
+				this.minimap.removeMinimapObject(this.networkObjMobs.get(obj));
+				this.networkObjMobs.remove(obj);
+			} else if (networkObjPos.containsKey(obj)) {
+				this.minimap.removeMinimapObject(this.networkObjMobs.get(obj));
+				this.networkObjPos.put(obj, position);
+				this.mobsToRender.remove(this.networkObjMobs.get(obj));
+				this.networkObjMobs.get(obj).destroy();
+				Zombie z = new Zombie(map, 1D, position, direction);
+				this.networkObjMobs.put(obj, z);
+				this.mobsToRender.add(z);
+				this.minimap.addMinimapObject(this.networkObjMobs.get(obj));
+			} else {
+				this.networkObjPos.put(obj, position);
+				Zombie z = new Zombie(map, 1D, position, direction);
+				this.networkObjMobs.put(obj, z);
+				this.mobsToRender.add(z);
+				this.minimap.addMinimapObject(this.networkObjMobs.get(obj));
+			}
+		}
 	}
 
 	/*

@@ -28,7 +28,7 @@ public class Player extends Entity implements IRenderable {
 
     private final Map<ServerControl, CameraGetterInterface> controlGettersMap;
     private final Map<ServerControl, CameraSetterInterface> controlSettersMap;
-    private static volatile boolean finished = false;
+    private volatile boolean finished = false;
     
     public Player(UUID uuid, com.knightlore.game.area.Map map, Vector2D pos, Vector2D dir) {
         super(uuid, map, 0.33D, DirectionalSprite.SHOTGUN_DIRECTIONAL_SPRITE, pos, dir);
@@ -66,7 +66,6 @@ public class Player extends Entity implements IRenderable {
     }
 
     public void setInputState(Map<ClientControl, Byte> inputState) {
-        System.out.println("setting new input state");
         this.inputState = inputState;
     }
 
@@ -159,12 +158,12 @@ public class Player extends Entity implements IRenderable {
     @Override
     public void deserialize(ServerCommand command) {
         // TODO: only deserialise if the command's timestamp is recent enough.
-        System.out.println("deserialising player");
         Double val;
         for (ServerControl c : ServerControl.values())
             if ((val = command.getValueByControl(c)) != null)
                 this.controlSettersMap.get(c).setDataOnCamera(val);
-        System.out.println("new location: " + this.getxPos() + this.getyPos());
+        System.out.println("new location: " + this.getxPos() + " " + this.getyPos());
+        System.out.println("new plane: " + this.getxPlane() + " " + this.getyPlane());
         
     }
 

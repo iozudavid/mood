@@ -38,6 +38,11 @@ public final class Vector2D {
 		return new Vector2D(x+v.x,y+v.y);
 	}
 	
+	// allocates a new vector, does not modify the original
+	public Vector2D perpendicular() {
+	    return new Vector2D(y, -x);
+	}
+	
 	// FUNCTIONS
 
 	public double dot(Vector2D v) {

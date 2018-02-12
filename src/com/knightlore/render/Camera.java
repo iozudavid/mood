@@ -15,8 +15,6 @@ public class Camera {
 
     private Entity subject;
 
-    // TODO constructor takes a lot of parameters, maybe use Builder Pattern
-    // instead?
     public Camera(Map map) {
         super();
 
@@ -62,11 +60,11 @@ public class Camera {
     }
 
     public synchronized double getxPlane() {
-        return getPlane().getX();
+        return this.getPlane().getX();
     }
 
     public synchronized double getyPlane() {
-        return getPlane().getY();
+        return this.getPlane().getY();
     }
     
     public Entity getSubject() {
