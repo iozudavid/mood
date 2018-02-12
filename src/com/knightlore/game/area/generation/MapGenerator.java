@@ -11,6 +11,7 @@ import java.util.*;
 
 public class MapGenerator extends ProceduralAreaGenerator {
     private static final int MAX_ROOMS = 5;
+
     private final List<Room> rooms = new LinkedList<>();
     private double[][] costGrid;
     
@@ -95,34 +96,16 @@ public class MapGenerator extends ProceduralAreaGenerator {
 
     private void generatePaths() {
         generateMinimumSpanningTree();
+        satisfyMinimumRoomConnections();
 
-        // satisfy minimum number of connections for each room
-        Queue<RoomConnection> possibleConnections = new PriorityQueue<>();
-        for (Room room: rooms) {
-            for (Room target: rooms) {
-                possibleConnections.add(new RoomConnection(room, target));
-            }
-
-            while (room.getNumConnections() < Room.MIN_CONNECTIONS) {
-                RoomConnection connection = possibleConnections.poll();
-                Room.addConnection(connection);
-            }
-
-            possibleConnections.clear();
-        }
-
+        // place paths
         PathFinder pathFinder = new PathFinder(costGrid);
-        for(int i=0; i<rooms.size();i++) {
-            Room source = rooms.get(i);
-            for(int j=i; j<rooms.size();j++) {
-                Room target = rooms.get(j);
-                if (source.getConnections().contains(target)) {
-                    List<Point> path = pathFinder.findPath(source.getCentre(), target.getCentre());
-                    placePath(path);
-                }
+        for (Room source: rooms) {
+            for (Room target: source.getConnections()) {
+                List<Point> path = pathFinder.findPath(source.getCentre(), target.getCentre());
+                placePath(path);
             }
         }
-
     }
 
     private void generateMinimumSpanningTree() {
@@ -151,11 +134,26 @@ public class MapGenerator extends ProceduralAreaGenerator {
             lastAdded = connection.getTarget();
         }
     }
-    
+
+    private void satisfyMinimumRoomConnections() {
+        Queue<RoomConnection> possibleConnections = new PriorityQueue<>();
+        for (Room room: rooms) {
+            for (Room target: rooms) {
+                possibleConnections.add(new RoomConnection(room, target));
+            }
+
+            while (room.getNumConnections() < Room.MIN_CONNECTIONS) {
+                RoomConnection connection = possibleConnections.poll();
+                Room.addConnection(connection);
+            }
+
+            possibleConnections.clear();
+        }
+    }
+
     private void placePath(List<Point> path) {
         for (Point p: path) {
-        	if (!(grid[p.x][p.y] == AirTile.getInstance()))
-        		grid[p.x][p.y] = AirTile.getInstance();
+            grid[p.x][p.y] = AirTile.getInstance();
         }
     }
     
