@@ -162,9 +162,6 @@ public class Player extends Entity implements IRenderable {
         for (ServerControl c : ServerControl.values())
             if ((val = command.getValueByControl(c)) != null)
                 this.controlSettersMap.get(c).setDataOnCamera(val);
-        System.out.println("new location: " + this.getxPos() + " " + this.getyPos());
-        System.out.println("new plane: " + this.getxPlane() + " " + this.getyPlane());
-        
     }
 
     @FunctionalInterface
