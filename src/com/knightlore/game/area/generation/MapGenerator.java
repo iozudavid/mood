@@ -108,7 +108,8 @@ public class MapGenerator extends ProceduralAreaGenerator {
     	// We'll do Prim's
     	ArrayList<Room> toAdd = new ArrayList<Room>();
     	ArrayList<RoomConnection> possibleConnections = new ArrayList<RoomConnection>();
-    	
+
+    	toAdd.addAll(rooms);
     	for(int i=0; i< rooms.size(); i++) {
     		toAdd.add(rooms.get(i));
     	}
@@ -225,7 +226,7 @@ public class MapGenerator extends ProceduralAreaGenerator {
     private void placePath(List<Point> path) {
         for (Point p: path) {
         	if (!(grid[p.x][p.y] == AirTile.getInstance()))
-        		grid[p.x][p.y] = new PathTile();
+        		grid[p.x][p.y] = AirTile.getInstance();
         }
     }
     
@@ -234,10 +235,7 @@ public class MapGenerator extends ProceduralAreaGenerator {
         for (int x = 0; x < grid.length; x++) {
             for (int y = 0; y < grid[0].length; y++) {
                 if(grid[x][y] == UndecidedTile.getInstance()) {
-                    grid[x][y] = AirTile.getInstance();
-                }
-                if(grid[x][y].toChar() == 'P') {
-                	//grid[x][y] = AirTile.getInstance();
+                    grid[x][y] = new BrickTile();
                 }
             }
         }
