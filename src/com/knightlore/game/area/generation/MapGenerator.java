@@ -4,6 +4,7 @@ import com.knightlore.game.area.Map;
 import com.knightlore.game.area.Room;
 import com.knightlore.game.tile.*;
 import com.knightlore.render.Environment;
+import com.knightlore.utils.Vector2D;
 import com.knightlore.utils.pathfinding.PathFinder;
 
 import java.awt.Point;
@@ -222,4 +223,8 @@ public class MapGenerator extends ProceduralAreaGenerator {
 
     }
 
+	public Vector2D getDemoSpawnPos() {
+		Point p = rooms.get(0).getCentre();
+		return new Vector2D(p.x,p.y);
+	}
 }

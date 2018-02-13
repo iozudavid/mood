@@ -27,6 +27,8 @@ public class InputManager {
 		keyboard = new Keyboard();
 		mouse = new Mouse();
 	}
-	
 
+	public static void clearMouse(){
+		mouse.clearButtons();
+	}
 }

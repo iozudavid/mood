@@ -12,6 +12,7 @@ import com.knightlore.game.entity.Zombie;
 import com.knightlore.game.entity.pickup.ShotgunPickup;
 import com.knightlore.game.tile.AirTile;
 import com.knightlore.game.tile.Tile;
+import com.knightlore.gui.GUICanvas;
 import com.knightlore.network.NetworkObject;
 import com.knightlore.network.NetworkObjectManager;
 import com.knightlore.render.Camera;
@@ -29,6 +30,7 @@ public class Renderer implements IRenderable {
 	private Camera camera;
 	private Map map;
 	private Minimap minimap;
+	private static GUICanvas gui = null;
 
 	private java.util.Map<NetworkObject, Vector2D> networkObjPos;
 	// consider other players as mobs for now
@@ -48,6 +50,14 @@ public class Renderer implements IRenderable {
 		new NetworkObjectManager();
 	}
 
+	public void setMap(Map m){
+		this.map = m;
+	}
+	
+	public static void setGUI(GUICanvas g){
+		gui = g;
+	}
+
 	private final int BLOCKINESS = 10; // how 'old school' you want to look.
 
 	@Override
@@ -62,7 +72,9 @@ public class Renderer implements IRenderable {
 		map.getEnvironment().renderEnvironment(pix);
 		drawPerspective(pix);
 		drawCrosshair(pix);
-		// gui.render(pix, x, y);
+		if(gui != null){
+			gui.render(pix, x, y);
+		}
 
 		minimap.render();
 
@@ -351,12 +363,13 @@ public class Renderer implements IRenderable {
 	public void setCamera(Camera cam) {
         this.mobsToRender = new ArrayList<Entity>();
         this.camera = cam;
-        
         // FIXME: put all this in the constructor when we get a camera on objet
         // creation.
         ShotgunPickup p = new ShotgunPickup(new Vector2D(10, 5));
         mobsToRender.add(p);
 		this.minimap = new Minimap(camera, map, 128);
 		this.minimap.addMinimapObject(p);
+		// propagate to minimap
+		minimap.setCamera(cam);
 	}
 }

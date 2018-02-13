@@ -9,6 +9,7 @@ import java.util.Map.Entry;
 import java.util.UUID;
 import java.util.concurrent.CopyOnWriteArrayList;
 
+import com.knightlore.GameSettings;
 import com.knightlore.engine.GameEngine;
 import com.knightlore.engine.GameObject;
 import com.knightlore.game.Player;
@@ -16,6 +17,7 @@ import com.knightlore.network.protocol.NetworkUtils;
 import com.knightlore.network.server.SendToClient;
 import com.knightlore.render.Camera;
 import com.knightlore.utils.Tuple;
+import com.knightlore.utils.Vector2D;
 
 public class NetworkObjectManager extends GameObject {
     // How often to send an update of state, rather than just if the
@@ -91,8 +93,8 @@ public class NetworkObjectManager extends GameObject {
 		synchronized (this.networkObjects) {
 			if (networkObjects.containsKey(uuid))
 				return networkObjects.get(uuid).x;
-			
-			Camera camera = new Camera(4.5, 4.5, 1, 0, 0, Camera.FIELD_OF_VIEW,
+			Vector2D pos = GameSettings.spawnPos;
+			Camera camera = new Camera(pos.getX(), pos.getY(), 1, 0, 0, Camera.FIELD_OF_VIEW,
 					GameEngine.getSingleton().getRenderer().getMap());
 			networkObjects.put(uuid, new Tuple<NetworkObject, byte[]>(new Player(uuid, camera), null));
 			return getNetworkObject(uuid);

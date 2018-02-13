@@ -11,6 +11,7 @@ import com.knightlore.network.protocol.ClientControl;
 import com.knightlore.utils.Vector2D;
 
 public class Camera extends GameObject {
+	
 
     public static final double FIELD_OF_VIEW = -.66;
     private static final double MOTION_BOB_AMOUNT = 7.0;
@@ -33,6 +34,8 @@ public class Camera extends GameObject {
     private java.util.Map<ClientControl, Byte> inputState = new HashMap<>();
     private java.util.Map<ClientControl, Runnable> ACTION_MAPPINGS = new HashMap<>();
 
+    private static Camera mainCam;
+    
     // TODO constructor takes a lot of parameters, maybe use Builder Pattern
     // instead?
     public Camera(double xPos, double yPos, double xDir, double yDir, double xPlane, double yPlane, Map map) {
@@ -57,8 +60,20 @@ public class Camera extends GameObject {
 
         this.motionOffset = 0;
         this.moveTicks = 0;
+        if(mainCam == null){
+			mainCam = this;
+		}
     }
 
+
+	/**
+	 * 
+	 * Returns the main camera. Note: This may be null if the main camera is destroyed.
+	 */
+	public static Camera mainCamera(){
+		return mainCam;
+	}
+    
     @Override
     public Vector2D getPosition() {
         return new Vector2D(xPos, yPos);

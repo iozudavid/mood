@@ -1,6 +1,6 @@
 package com.knightlore.gui;
 
-public enum ButtonState {
+public enum SelectState {
 		UP,
 		DOWN,
 		HOVER
