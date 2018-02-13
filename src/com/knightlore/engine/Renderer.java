@@ -60,15 +60,8 @@ public class Renderer implements IRenderable {
     @Override
     public void render(PixelBuffer pix, int x, int y) {
         // FIXME: HACK
-        while (camera == null || minimap == null) {
-            // wait till minimap and camera not null
-            // Sleep thread to allow references to update.
-            try {
-                Thread.sleep(5);
-            } catch (InterruptedException e) {
-
-            }
-        }
+        if (camera == null || minimap == null)
+            return;
 
         // Draw the environment, as specified by the world.
         world.getEnvironment().renderEnvironment(pix);
