@@ -11,12 +11,11 @@ import com.knightlore.network.protocol.ClientControl;
 import com.knightlore.utils.Vector2D;
 
 public class Camera extends GameObject {
-	
 
     public static final double FIELD_OF_VIEW = -.66;
     private static final double MOTION_BOB_AMOUNT = 7.0;
     private static final double MOTION_BOB_SPEED = 0.15;
-    private static final double MOVE_SPEED = .040;
+    private static final double MOVE_SPEED = .040 * 2;
 
     // will be implemented
     private static final double SPRINT_MULTIPLIER = 1.5D;

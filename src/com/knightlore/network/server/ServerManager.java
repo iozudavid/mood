@@ -6,12 +6,11 @@ import java.net.Socket;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
-import com.knightlore.GameSettings;
 import com.knightlore.engine.GameEngine;
 import com.knightlore.game.Player;
 import com.knightlore.network.Connection;
-import com.knightlore.network.NetworkObject;
 import com.knightlore.network.ConnectionDetails;
+import com.knightlore.network.NetworkObject;
 import com.knightlore.network.TCPConnection;
 import com.knightlore.render.Camera;
 import com.knightlore.utils.Tuple;
@@ -49,10 +48,9 @@ public class ServerManager implements Runnable {
             try {
                 Socket socket = serverSocket.accept();
                 // TODO: decide how to choose player location
-                //       fix this hack
-                Vector2D pos = GameSettings.spawnPos;
-                Camera camera = new Camera(pos.getX(), pos.getY(), 1, 0, 0,
-                        Camera.FIELD_OF_VIEW,
+                // fix this hack
+                Vector2D pos = GameEngine.getSingleton().getRenderer().getMap().getRandomSpawnPoint();
+                Camera camera = new Camera(pos.getX(), pos.getY(), 1, 0, 0, Camera.FIELD_OF_VIEW,
                         GameEngine.getSingleton().getRenderer().getMap());
                 Player player = new Player(nextUUID, camera);
                 Connection conn = new TCPConnection(socket);
