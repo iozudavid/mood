@@ -54,7 +54,7 @@ public class GameEngine implements Runnable {
 			window = null;
 		else {
 	        final int w = MainWindow.WIDTH, h = MainWindow.HEIGHT;
-			window = new MainWindow(MainWindow.TITLE);
+			window = new MainWindow(MainWindow.TITLE, w, h);
 			window.finalise();
 			this.screen = window.getScreen();
 		}

@@ -16,7 +16,7 @@ public class BrickTile extends Tile {
 
     @Override
     public double getSolidity() {
-        return 0D;
+        return 1D;
     }
 
     @Override
