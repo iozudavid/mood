@@ -1,4 +1,4 @@
-package com.knightlore.engine;
+package com.knightlore.world;
 
 import java.util.ArrayList;
 import java.util.List;

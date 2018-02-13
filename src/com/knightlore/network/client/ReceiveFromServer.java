@@ -3,7 +3,6 @@ package com.knightlore.network.client;
 import java.util.UUID;
 
 import com.knightlore.engine.GameEngine;
-import com.knightlore.engine.Renderer;
 import com.knightlore.game.Player;
 import com.knightlore.network.Connection;
 import com.knightlore.network.NetworkObjectManager;
@@ -11,6 +10,7 @@ import com.knightlore.network.protocol.ServerCommand;
 import com.knightlore.network.protocol.ServerControl;
 import com.knightlore.network.protocol.ServerProtocol;
 import com.knightlore.render.Camera;
+import com.knightlore.render.Renderer;
 import com.knightlore.utils.Vector2D;
 
 public class ReceiveFromServer implements Runnable {

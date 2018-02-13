@@ -1,4 +1,4 @@
-package com.knightlore.engine;
+package com.knightlore.render;
 
 import java.util.Comparator;
 import java.util.HashMap;
@@ -13,15 +13,10 @@ import com.knightlore.game.tile.Tile;
 import com.knightlore.gui.GUICanvas;
 import com.knightlore.network.NetworkObject;
 import com.knightlore.network.NetworkObjectManager;
-import com.knightlore.render.Camera;
-import com.knightlore.render.ColorUtils;
-import com.knightlore.render.IRenderable;
-import com.knightlore.render.PerspectiveRenderItem;
-import com.knightlore.render.PixelBuffer;
-import com.knightlore.render.RaycasterUtils;
 import com.knightlore.render.graphic.Graphic;
 import com.knightlore.render.minimap.Minimap;
 import com.knightlore.utils.Vector2D;
+import com.knightlore.world.GameWorld;
 
 public class Renderer implements IRenderable {
 
@@ -266,8 +261,8 @@ public class Renderer implements IRenderable {
 
                 @Override
                 public int compare(Entity o1, Entity o2) {
-                    final double distance1 = camera.getPosition().distance(o1.position);
-                    final double distance2 = camera.getPosition().distance(o2.position);
+                    final double distance1 = camera.getPosition().distance(o1.getPosition());
+                    final double distance2 = camera.getPosition().distance(o2.getPosition());
                     return Double.compare(distance2, distance1);
                 }
 

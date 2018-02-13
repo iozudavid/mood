@@ -14,7 +14,6 @@ import com.knightlore.game.tile.AirTile;
 import com.knightlore.game.tile.BrickTile;
 import com.knightlore.game.tile.Tile;
 import com.knightlore.game.tile.UndecidedTile;
-import com.knightlore.render.Environment;
 import com.knightlore.utils.Vector2D;
 import com.knightlore.utils.pathfinding.PathFinder;
 
@@ -27,12 +26,12 @@ public class MapGenerator extends ProceduralAreaGenerator {
     public MapGenerator() {
     }
 
-    public Map createMap(int width, int height, Environment env) {
+    public Map createMap(int width, int height) {
         Random rand = new Random();
-        return createMap(width, height, env, rand.nextLong());
+        return createMap(width, height, rand.nextLong());
     }
 
-    public Map createMap(int width, int height, Environment env, long seed) {
+    public Map createMap(int width, int height, long seed) {
         rand = new Random(seed);
         grid = new Tile[width][height];
         PerlinNoiseGenerator perlinGenerator = new PerlinNoiseGenerator(width, height, seed);
@@ -223,7 +222,7 @@ public class MapGenerator extends ProceduralAreaGenerator {
     // TODO delete
     public static void main(String[] args) {
         MapGenerator genr = new MapGenerator();
-        Map map = genr.createMap(48, 32, Environment.LIGHT_OUTDOORS);
+        Map map = genr.createMap(48, 32);
 
         System.out.println("--------------");
         System.out.println(map.toString());

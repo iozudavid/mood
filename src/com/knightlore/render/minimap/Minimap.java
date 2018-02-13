@@ -4,13 +4,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.knightlore.engine.GameEngine;
-import com.knightlore.engine.GameWorld;
 import com.knightlore.engine.TickListener;
 import com.knightlore.game.area.Map;
 import com.knightlore.game.tile.Tile;
 import com.knightlore.render.Camera;
 import com.knightlore.render.PixelBuffer;
 import com.knightlore.utils.Vector2D;
+import com.knightlore.world.GameWorld;
 
 /**
  * The minimap class. This is a small UI element that shows a birds-eye view of
@@ -193,6 +193,9 @@ public class Minimap implements TickListener {
         display.fillSquare(PLAYER_COLOR, display.getWidth() / 2, display.getWidth() / 2, SCALE / 2);
     }
 
+    /**
+     * Draws a border around the minimap.
+     */
     private void drawBorder() {
         final int BORDER_COLOR = 0xFFFFFF;
         final int BORDER_WIDTH = 2;
@@ -257,7 +260,8 @@ public class Minimap implements TickListener {
 
     @Override
     public long interval() {
-        final long UPDATE_DELAY = 3 * 60L;
+        // 3 seconds, no matter what the value of UPDATES_PER_SECOND is.
+        final long UPDATE_DELAY = (long) (3 * GameEngine.UPDATES_PER_SECOND);
         return UPDATE_DELAY;
     }
 

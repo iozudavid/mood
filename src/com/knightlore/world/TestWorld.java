@@ -1,7 +1,6 @@
 package com.knightlore.world;
 
 import com.knightlore.GameSettings;
-import com.knightlore.engine.GameWorld;
 import com.knightlore.game.area.generation.MapGenerator;
 import com.knightlore.game.entity.Zombie;
 import com.knightlore.game.entity.pickup.ShotgunPickup;
@@ -18,7 +17,7 @@ public class TestWorld extends GameWorld {
     private GUICanvas gui;
 
     public TestWorld() {
-        super(Environment.DARK_OUTDOORS);
+        super(Environment.DUNGEON);
     }
 
     @Override
@@ -26,7 +25,7 @@ public class TestWorld extends GameWorld {
         // First create the map
         MapGenerator generator = new MapGenerator();
         // FIXME don't hardcode the seed...
-        map = generator.createMap(64, 64, Environment.DUNGEON, 161803398875L);
+        map = generator.createMap(16, 16, 161803398875L);
         // FIXME hack hack hack, this is just for the demo
         GameSettings.spawnPos = generator.getDemoSpawnPos();
 

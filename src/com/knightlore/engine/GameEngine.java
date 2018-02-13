@@ -5,7 +5,9 @@ import com.knightlore.MainWindow;
 import com.knightlore.engine.input.InputManager;
 import com.knightlore.engine.input.Mouse;
 import com.knightlore.render.Camera;
+import com.knightlore.render.Renderer;
 import com.knightlore.render.Screen;
+import com.knightlore.world.GameWorld;
 import com.knightlore.world.TestWorld;
 
 /**
@@ -24,7 +26,7 @@ public class GameEngine implements Runnable {
     private Thread thread;
     private volatile boolean running = false;
 
-    private static final double UPDATES_PER_SECOND = 60D;
+    public static final double UPDATES_PER_SECOND = 60D;
     public static final Ticker ticker = new Ticker();
 
     private MainWindow window;
