@@ -78,7 +78,7 @@ public class Minimap implements TickListener {
         this.camera = camera;
         this.world = world;
         recreatePixelMap();
-        
+
         this.mask = new MinimapLightingMask(world.getEnvironment());
         this.minimapObjects = new ArrayList<IMinimapObject>();
         this.display = new PixelBuffer(size, size);

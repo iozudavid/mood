@@ -231,8 +231,8 @@ public class MapGenerator extends ProceduralAreaGenerator {
 
     }
 
-	public Vector2D getDemoSpawnPos() {
-		Point p = rooms.get(0).getCentre();
-		return new Vector2D(p.x,p.y);
-	}
+    public Vector2D getDemoSpawnPos() {
+        Point p = rooms.get(0).getCentre();
+        return new Vector2D(p.x, p.y);
+    }
 }
