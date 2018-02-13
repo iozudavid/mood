@@ -38,6 +38,8 @@ public class SpriteSheetMaker {
 			case "-animated":
 
 				break;
+				default:
+					System.err.println("Unknown mode "+mode);
 			}
 		}
 		else{
