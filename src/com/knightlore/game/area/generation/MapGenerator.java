@@ -1,14 +1,22 @@
 package com.knightlore.game.area.generation;
 
+import java.awt.Point;
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.PriorityQueue;
+import java.util.Queue;
+import java.util.Random;
+
 import com.knightlore.game.area.Map;
 import com.knightlore.game.area.Room;
-import com.knightlore.game.tile.*;
+import com.knightlore.game.tile.AirTile;
+import com.knightlore.game.tile.BrickTile;
+import com.knightlore.game.tile.Tile;
+import com.knightlore.game.tile.UndecidedTile;
 import com.knightlore.render.Environment;
 import com.knightlore.utils.Vector2D;
 import com.knightlore.utils.pathfinding.PathFinder;
-
-import java.awt.Point;
-import java.util.*;
 
 public class MapGenerator extends ProceduralAreaGenerator {
     private static final int MAX_ROOMS = 5;
@@ -32,7 +40,7 @@ public class MapGenerator extends ProceduralAreaGenerator {
         // optimal
         costGrid = perlinGenerator.createPerlinNoise();
         fillGrid();
-        return new Map(grid, env, seed);
+        return new Map(grid, seed);
     }
 
     @Override

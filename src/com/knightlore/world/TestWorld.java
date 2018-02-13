@@ -1,13 +1,8 @@
 package com.knightlore.world;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import com.knightlore.GameSettings;
 import com.knightlore.engine.GameWorld;
-import com.knightlore.engine.Renderer;
 import com.knightlore.game.area.generation.MapGenerator;
-import com.knightlore.game.entity.Entity;
 import com.knightlore.game.entity.Zombie;
 import com.knightlore.game.entity.pickup.ShotgunPickup;
 import com.knightlore.gui.Button;
@@ -19,14 +14,11 @@ import com.knightlore.utils.Vector2D;
 
 public class TestWorld extends GameWorld {
 
-    private List<Entity> mobs;
-
     private Camera mainCamera;
     private GUICanvas gui;
 
     public TestWorld() {
-        // init all the variables
-        mobs = new ArrayList<Entity>();
+        super(Environment.DARK_OUTDOORS);
     }
 
     @Override
@@ -46,8 +38,8 @@ public class TestWorld extends GameWorld {
     @Override
     public void populateWorld() {
         // add the player and mobs
-        mobs.add(new ShotgunPickup(new Vector2D(20, 20)));
-        mobs.add(new Zombie(1, new Vector2D(21, 20)));
+        entities.add(new ShotgunPickup(new Vector2D(20, 20)));
+        entities.add(new Zombie(1, new Vector2D(21, 20)));
 
         if (GameSettings.isClient()) {
             // setup testing ui
@@ -60,12 +52,12 @@ public class TestWorld extends GameWorld {
             tf.rect.height = 30;
             gui.addGUIObject(tf);
             gui.addGUIObject(b);
-            Renderer.setGUI(gui);
+            // Renderer.setGUI(gui);
         }
 
         // add pickups
         for (int i = 1; i < 5; i += 2) {
-            mobs.add(new ShotgunPickup(new Vector2D(i, 3)));
+            entities.add(new ShotgunPickup(new Vector2D(i, 3)));
         }
     }
 
@@ -84,10 +76,6 @@ public class TestWorld extends GameWorld {
     public boolean saveToFile(String fileName) {
         System.out.println("Saving Not implemented!");
         return false;
-    }
-
-    public List<Entity> getMobs() {
-        return mobs;
     }
 
 }

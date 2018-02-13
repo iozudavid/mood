@@ -81,7 +81,7 @@ public class GameEngine implements Runnable {
         System.out.println("populating...");
         world.populateWorld();
         System.out.println("World Initialised Successfully.");
-        this.renderer = new Renderer(Camera.mainCamera(), world.map);
+        this.renderer = new Renderer(Camera.mainCamera(), world);
     }
 
     /**

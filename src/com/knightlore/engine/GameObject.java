@@ -2,7 +2,19 @@ package com.knightlore.engine;
 
 import com.knightlore.utils.Vector2D;
 
+/**
+ * A game object is any structure/entity in the game that has a 2D position.
+ * They are coupled with the GameObjectManager class, which handles creating
+ * updating, deleting and managing instances of this class.
+ * 
+ * @author James Adey
+ *
+ */
 public abstract class GameObject {
+
+    /**
+     * The position of the game object.
+     */
     protected Vector2D position;
 
     /**
@@ -30,8 +42,13 @@ public abstract class GameObject {
         return exists;
     }
 
-    // is internal to the package, should not be accessible elsewhere
-    // only the game engine should call this
+    /**
+     * Package internal; should not be accessed elsewhere. Only the game engine
+     * should call this method.
+     * 
+     * @param b
+     *            true if the game object exists, false otherwise.
+     */
     protected void setExists(boolean b) {
         exists = b;
     }
@@ -54,10 +71,18 @@ public abstract class GameObject {
      */
     public abstract void onDestroy();
 
+    /**
+     * Removes this game object from the game object manager.
+     */
     public void destroy() {
         getGOM().removeGameObject(this);
     }
 
+    /**
+     * Internal helper method. Gets the game engine's GOM.
+     * 
+     * @return the GOM.
+     */
     private GameObjectManager getGOM() {
         GameEngine ge = GameEngine.getSingleton();
         GameObjectManager gom = ge.getGameObjectManager();
