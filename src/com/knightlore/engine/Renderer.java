@@ -126,9 +126,9 @@ public class Renderer implements IRenderable {
         final int width = pix.getWidth(), height = pix.getHeight();
         double[] zbuffer = new double[width];
 
-        for (int xx = 0; xx < width; xx += BLOCKINESS) {
-            Stack<PerspectiveRenderItem> renderStack = new Stack<PerspectiveRenderItem>();
+        Stack<PerspectiveRenderItem> renderStack = new Stack<PerspectiveRenderItem>();
 
+        for (int xx = 0; xx < width; xx += BLOCKINESS) {
             // Calculate direction of the ray based on camera direction.
             double cameraX = 2 * xx / (double) (width) - 1;
             double rayX = camera.getxDir() + camera.getxPlane() * cameraX;
