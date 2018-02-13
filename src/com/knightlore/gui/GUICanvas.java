@@ -4,6 +4,7 @@ import java.awt.AlphaComposite;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics2D;
+import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 
@@ -34,12 +35,13 @@ public class GUICanvas extends GameObject implements IRenderable {
 	
 	// TODO remove this and make it screen size
 	private final int TEMP_SIZE = 200;
-	
+	private Rectangle rect;
 	private final Color backgroundColor = new Color(0xFF000000,true);
 	
 	public GUICanvas (){
 		super();
 		guis = new ArrayList<GUIObject>();
+		rect = new Rectangle(0,0,TEMP_SIZE,TEMP_SIZE);
 		canvasImage = new BufferedImage(TEMP_SIZE,TEMP_SIZE, BufferedImage.TYPE_INT_ARGB);
 		canvasG2D = canvasImage.createGraphics();
 		canvasG2D.setComposite(AlphaComposite.SrcOver);
@@ -79,7 +81,7 @@ public class GUICanvas extends GameObject implements IRenderable {
 		canvasG2D.fillRect(x, y, TEMP_SIZE, TEMP_SIZE);
 		
 		for(int i=0;i<guis.size();i++){
-			guis.get(i).Draw(canvasG2D);
+			guis.get(i).Draw(canvasG2D,rect);
 		}
 		canvasImage.getRGB(0, 0, TEMP_SIZE, TEMP_SIZE, drawPixels, 0, TEMP_SIZE);
 		pix.drawGraphic(canvasGraphic, x, y);

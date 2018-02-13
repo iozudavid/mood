@@ -9,10 +9,13 @@ public class Text extends GUIObject{
 	protected String text;
 	protected char[] rawChars;
 	
-	public Text(int x, int y, int depth, String text) {
-		super(x, y, depth);
-		SetText(text);
-	}
+	public Text(int x, int y, int width, int height, int depth) {
+        super(x,y,width,height,depth);
+    }
+
+    public Text(int x, int y, int width, int height) {
+        super(x,y,width,height);
+    }
 
 	public void SetText(String newText){
 		text = newText;
@@ -20,7 +23,7 @@ public class Text extends GUIObject{
 	}
 	
 	@Override
-	void Draw(Graphics g) {
+	void Draw(Graphics g, Rectangle parentRect) {
 		int hOffset = g.getFontMetrics().getHeight();
 		// draw the characters of the string
 		g.drawChars(rawChars, 0, rawChars.length, rect.x, rect.y + hOffset);

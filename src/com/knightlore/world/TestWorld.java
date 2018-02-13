@@ -10,8 +10,10 @@ import com.knightlore.game.area.generation.MapGenerator;
 import com.knightlore.game.entity.Entity;
 import com.knightlore.game.entity.Zombie;
 import com.knightlore.game.entity.pickup.ShotgunPickup;
+import com.knightlore.game.menus.Menus;
 import com.knightlore.gui.Button;
 import com.knightlore.gui.GUICanvas;
+import com.knightlore.gui.GUIPanel;
 import com.knightlore.gui.TextField;
 import com.knightlore.render.Camera;
 import com.knightlore.render.Environment;
@@ -41,6 +43,7 @@ public class TestWorld extends GameWorld {
         // now populate the world
         Vector2D pos = GameSettings.spawnPos;
         mainCamera = new Camera(pos.getX(), pos.getY(), 1, 0, 0, Camera.FIELD_OF_VIEW, map);
+        Menus.createMenus();
     }
 
     @Override
@@ -52,10 +55,13 @@ public class TestWorld extends GameWorld {
         if (GameSettings.isClient()) {
             // setup testing ui
             gui = new GUICanvas();
-            Button b = new Button(5, 5, 0);
-            b.rect.width = 100;
-            b.rect.height = 30;
-            TextField tf = new TextField(100, 100, 0, "Sample Text");
+            GUIPanel optionsPanel = new GUIPanel(0,0,150,150);
+            Button b = new Button(5, 5,100,30);
+            optionsPanel.AddGUIObject(b);
+            Menus.getOptionsMenu().setPanel(optionsPanel);
+            b.clickFunction = Menus.getOptionsMenu()::openMenu;
+            TextField tf = new TextField(100, 100, 150,30);
+            tf.setText("Sample Text");
             tf.rect.width = 150;
             tf.rect.height = 30;
             gui.addGUIObject(tf);

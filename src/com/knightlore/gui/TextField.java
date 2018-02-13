@@ -2,6 +2,7 @@ package com.knightlore.gui;
 
 import java.awt.Color;
 import java.awt.Graphics;
+import java.awt.Rectangle;
 
 public class TextField extends GUIObject {
 	
@@ -9,24 +10,30 @@ public class TextField extends GUIObject {
 	private String text;
 	private String insertString;
 	private char[] rawChars;
-	private int maxLength;
 	private int insertPosition = 0;
 	
 	public Color upColour = Color.LIGHT_GRAY;
 	public Color downColour = Color.DARK_GRAY;
 	public Color hoverColour = Color.WHITE;
 	
-	public TextField(int x, int y, int depth, String text) {
-		super(x, y, depth);
-		SetText(text);
-		DisplayText(text);
-	}
+	public TextField(int x, int y, int width, int height) {
+        super(x, y, width, height);
+    }
+    
+    TextField(int x, int y, int width, int height, int depth) {
+        super(x, y, width, height, depth);
+    }
 	
-	public void SetText(String newText){
+	public void setText(String newText){
 		text = newText;
+		displayText(text);
 	}
 	
-	public void DisplayText(String t){
+	public String getText() {
+	    return text;
+	}
+	
+	public void displayText(String t){
 		rawChars = t.toCharArray();
 	}
 	
@@ -46,7 +53,7 @@ public class TextField extends GUIObject {
 	}
 	
 	@Override
-	void Draw(Graphics g) {
+	void Draw(Graphics g, Rectangle parentRect) {
 		// draw a background
 		g.setColor(activeColor());
 		int hOffset = g.getFontMetrics().getHeight();
@@ -71,14 +78,16 @@ public class TextField extends GUIObject {
 	@Override
 	void onLostFocus(){
 		System.out.println("LOST FOCUS");
-		SetText(text);
+		GUICanvas.activeTextField = null;
+		displayText(text);
 	}
 
 	void onInputChar(char c) {
 		System.out.println(c);
 		insertString = text.substring(0, insertPosition)+c+'|'+text.substring(insertPosition);
 		text = insertString.replace("|", "");
-		DisplayText(insertString);
+		insertPosition++;
+		displayText(insertString);
 	}
 	
 	void onLeftArrow(){
@@ -87,7 +96,7 @@ public class TextField extends GUIObject {
 			insertPosition = 0;
 		}
 		insertString = text.substring(0, insertPosition)+'|'+text.substring(insertPosition);
-		DisplayText(insertString);
+		displayText(insertString);
 	}
 	
 	void onRightArrow () {
@@ -96,7 +105,7 @@ public class TextField extends GUIObject {
 			insertPosition = text.length();
 		}
 		insertString = text.substring(0, insertPosition)+'|'+text.substring(insertPosition);
-		DisplayText(insertString);
+		displayText(insertString);
 	}
 	
 	@Override
