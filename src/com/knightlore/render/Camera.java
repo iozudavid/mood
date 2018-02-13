@@ -101,7 +101,7 @@ public class Camera extends GameObject {
                     updated = true;
                 }
         }
-        if (GameEngine.getSingleton().headless)
+        if (GameEngine.getSingleton().HEADLESS)
             return;
 
         Keyboard keyboard = InputManager.getKeyboard();
