@@ -1,6 +1,5 @@
 package com.knightlore.engine;
 
-import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -38,7 +37,7 @@ public class GameEngine implements Runnable {
 	private LinkedList<GameObject> notifyToCreate;
 	private LinkedList<GameObject> notifyToDestroy;
 
-	private boolean headless;
+	public final boolean headless;
 
 	public GameEngine(boolean headless) {
 		this.headless = headless;

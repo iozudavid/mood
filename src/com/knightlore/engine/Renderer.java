@@ -279,13 +279,15 @@ public class Renderer implements IRenderable {
                 double transformX = invDet * (camera.getyDir() * spriteX - camera.getxDir() * spriteY);
                 double transformY = invDet * (-camera.getyPlane() * spriteX + camera.getxPlane() * spriteY);
 
+                int zMoveScreen = (int) (m.getzOffset() / transformY);
+
                 int spriteScreenX = (int) ((pix.getWidth() / 2) * (1 + transformX / transformY));
                 int spriteHeight = Math.abs((int) (pix.getHeight() / transformY));
 
                 // calculate lowest and highest pixel
-                int drawStartY = -spriteHeight / 2 + pix.getHeight() / 2;
+                int drawStartY = -spriteHeight / 2 + pix.getHeight() / 2 + zMoveScreen;
                 drawStartY = Math.max(0, drawStartY);
-                int drawEndY = spriteHeight / 2 + pix.getHeight() / 2;
+                int drawEndY = spriteHeight / 2 + pix.getHeight() / 2 + zMoveScreen;
                 drawEndY = Math.min(drawEndY, pix.getHeight() - 1);
 
                 // calculate width of the sprite
@@ -314,7 +316,7 @@ public class Renderer implements IRenderable {
                         for (int y = drawStartY; y < drawEndY; y++) {
                             // 16 and 8 are factors to avoid division and
                             // floats.
-                            int d = 16 * y - 8 * (pix.getHeight() - spriteHeight - 1);
+                            int d = 16 * (y - zMoveScreen) - 8 * (pix.getHeight() - spriteHeight - 1);
 
                             int texY = ((d * g.getHeight()) / spriteHeight) / 16;
 
@@ -328,7 +330,6 @@ public class Renderer implements IRenderable {
                                     camera.getPosition().distance(m.getPosition()));
 
                             int drawY = y + camera.getMotionOffset();
-                            drawY += m.getzOffset() / transformY;
                             pix.fillRect(color, stripe, drawY, BLOCKINESS, 1);
                         }
                 }

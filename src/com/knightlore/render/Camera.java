@@ -3,6 +3,7 @@ package com.knightlore.render;
 import java.util.HashMap;
 import java.util.Map.Entry;
 
+import com.knightlore.engine.GameEngine;
 import com.knightlore.engine.GameObject;
 import com.knightlore.engine.input.InputManager;
 import com.knightlore.engine.input.Keyboard;
@@ -100,6 +101,8 @@ public class Camera extends GameObject {
                     updated = true;
                 }
         }
+        if (GameEngine.getSingleton().headless)
+            return;
 
         Keyboard keyboard = InputManager.getKeyboard();
         BasicController c = new BasicController();
