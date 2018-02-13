@@ -214,11 +214,11 @@ public class PixelBuffer {
      *            the x-position.
      * @param y
      *            the y-position.
-     * @return the colour at the x-y position
-     * @throws ArrayIndexOutOfBounds
-     *             if the x-y coordinate is outside of the pixel buffer.
+     * @return the colour at the x-y position -- 0 if it is out of bounds.
      */
     public int pixelAt(int x, int y) {
+        if (!inBounds(x, y))
+            return 0;
         return pixels[x + y * WIDTH];
     }
 
