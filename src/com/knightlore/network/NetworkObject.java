@@ -1,38 +1,60 @@
 package com.knightlore.network;
 
+import java.nio.ByteBuffer;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
+import java.util.function.Consumer;
 
 import com.knightlore.engine.GameObject;
-import com.knightlore.network.protocol.ServerCommand;
 import com.knightlore.utils.Vector2D;
 
-public abstract class NetworkObject extends GameObject{
-	
-	protected UUID objectUniqueID;
-	
-	public NetworkObject(UUID uuid) {
-	    this(uuid, Vector2D.ZERO);
-	}
-	
-	public NetworkObject(UUID uuid, Vector2D position){
-		super(position);
-		this.objectUniqueID = uuid;
+public abstract class NetworkObject extends GameObject implements INetworkable {
+    private UUID objectUniqueID;
+
+    protected Map<String, Consumer<ByteBuffer>> networkConsumers = new HashMap<>();
+    
+    public abstract NetworkObject(ByteBuffer buf);
+
+    public NetworkObject(UUID uuid) {
+        this(uuid, Vector2D.ZERO);
+
+    }
+
+    public NetworkObject(UUID uuid, Vector2D position) {
+        super(position);
+        this.objectUniqueID = uuid;
+        setNetworkConsumers();
         NetworkObjectManager.getSingleton().registerNetworkObject(this);
-        System.out.println("netobject uuid " + objectUniqueID + " registered with manager");
-	}
-	
-	//the boolean variable will be used to know which type of state
-	//we want to obtain
-	//state = the resulted byte array
-	//if disconnect == true  : the state will be a disconnect state for this network object
-	//                         the protocol for disconnect state will be found in server protocols
-	//if disconnect == false : the state will be the actual state of the client
-	public abstract byte[] serialize(boolean disconnect);
-	
-	public abstract void deserialize(ServerCommand packet);
-	
-	public synchronized UUID getObjectId(){
-		return this.objectUniqueID;
-	}
-	
+    }
+    
+    private void setNetworkConsumers() {
+        networkConsumers.put("deserialize", this::deserialize);
+    }
+
+    public synchronized UUID getObjectId() {
+        return this.objectUniqueID;
+    }
+
+    @Override
+    public Map<String, Consumer<ByteBuffer>> getNetworkConsumers() {
+        return networkConsumers;
+    }
+
+    @Override
+    public void onDestroy() {
+        NetworkObjectManager.getSingleton().removeNetworkObject(this);
+    }
+
+
+    // Convenience method for implementors. Returns a new ByteBuffer prefixed
+    // with this object's UUID, and the name of the method of this object's
+    // remote counterpart to pass the ByteBuffer to.
+    protected ByteBuffer newByteBuffer(String remoteMethod) {
+        ByteBuffer buf = ByteBuffer.allocate(BYTE_BUFFER_MAX_SIZE);
+        buf.put(objectUniqueID.toString().getBytes());
+        buf.put(remoteMethod.getBytes());
+        return buf;
+    }
+
 }

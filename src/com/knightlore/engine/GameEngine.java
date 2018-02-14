@@ -9,6 +9,8 @@ import com.knightlore.engine.input.InputManager;
 import com.knightlore.engine.input.Mouse;
 import com.knightlore.game.area.AreaFactory;
 import com.knightlore.game.area.Map;
+import com.knightlore.network.client.ClientNetworkObjectManager;
+import com.knightlore.network.server.ServerNetworkObjectManager;
 import com.knightlore.render.Environment;
 import com.knightlore.render.Screen;
 
@@ -39,7 +41,8 @@ public class GameEngine implements Runnable {
 
 	private boolean headless;
 
-	public GameEngine(boolean headless) {
+
+    public GameEngine(boolean headless) {
 		this.headless = headless;
 		singleton = this;
 
@@ -48,13 +51,17 @@ public class GameEngine implements Runnable {
 		notifyToCreate = new LinkedList<GameObject>();
 		notifyToDestroy = new LinkedList<GameObject>();
 
-		if (headless)
+		if (headless) {
 			window = null;
+			// FIXME: use settings class instead
+			new ServerNetworkObjectManager();
+		}
 		else {
 	        final int w = MainWindow.WIDTH, h = MainWindow.HEIGHT;
 			window = new MainWindow(MainWindow.TITLE, w, h);
 			window.finalise();
 			this.screen = window.getScreen();
+			new ClientNetworkObjectManager();
 		}
 		initEngine();
 	}

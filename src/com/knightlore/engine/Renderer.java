@@ -2,18 +2,14 @@ package com.knightlore.engine;
 
 import java.util.ArrayList;
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Stack;
 
 import com.knightlore.game.area.Map;
 import com.knightlore.game.entity.Entity;
-import com.knightlore.game.entity.Zombie;
 import com.knightlore.game.entity.pickup.ShotgunPickup;
 import com.knightlore.game.tile.AirTile;
 import com.knightlore.game.tile.Tile;
-import com.knightlore.network.NetworkObject;
-import com.knightlore.network.NetworkObjectManager;
 import com.knightlore.render.Camera;
 import com.knightlore.render.ColorUtils;
 import com.knightlore.render.IRenderable;
@@ -30,22 +26,12 @@ public class Renderer implements IRenderable {
 	private Map map;
 	private Minimap minimap;
 
-	private java.util.Map<NetworkObject, Vector2D> networkObjPos;
-	// consider other players as mobs for now
-	// in order to render them
-	private java.util.Map<NetworkObject, Entity> networkObjMobs;
-
 	private List<Entity> mobsToRender;
 
 	public Renderer(Camera camera, Map map) {
 		this.camera = camera;
 		this.map = map;
 		this.minimap = null;
-
-		this.networkObjPos = new HashMap<>();
-		this.networkObjMobs = new HashMap<>();
-		// FIXME: create this elsewhere.....
-		new NetworkObjectManager();
 	}
 
 	private final int BLOCKINESS = 1; // how 'old school' you want to look.
@@ -71,34 +57,6 @@ public class Renderer implements IRenderable {
 				pix.getWidth() - minimapBuffer.getWidth() - 10, 5);
 	}
 
-	public void updateNetworkObjectPos(NetworkObject obj, Vector2D position, Vector2D direction) {
-		if (camera == null)
-			return;
-		synchronized (this.mobsToRender) {
-			if (position == null) {
-				this.networkObjPos.remove(obj);
-                this.networkObjMobs.get(obj).destroy();
-				this.mobsToRender.remove(this.networkObjMobs.get(obj));
-				this.minimap.removeMinimapObject(this.networkObjMobs.get(obj));
-				this.networkObjMobs.remove(obj);
-			} else if (networkObjPos.containsKey(obj)) {
-				this.minimap.removeMinimapObject(this.networkObjMobs.get(obj));
-				this.networkObjPos.put(obj, position);
-				this.mobsToRender.remove(this.networkObjMobs.get(obj));
-				this.networkObjMobs.get(obj).destroy();
-				Zombie z = new Zombie(map, 1D, position, direction);
-				this.networkObjMobs.put(obj, z);
-				this.mobsToRender.add(z);
-				this.minimap.addMinimapObject(this.networkObjMobs.get(obj));
-			} else {
-				this.networkObjPos.put(obj, position);
-				Zombie z = new Zombie(map, 1D, position, direction);
-				this.networkObjMobs.put(obj, z);
-				this.mobsToRender.add(z);
-				this.minimap.addMinimapObject(this.networkObjMobs.get(obj));
-			}
-		}
-	}
 
 	/*
 	 * NOTE: THIS ONLY AFFECTS THE RENDERING SIZE OF A TILE. If you change this

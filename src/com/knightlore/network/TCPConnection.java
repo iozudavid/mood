@@ -5,6 +5,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.Socket;
 import java.net.SocketTimeoutException;
+import java.nio.ByteBuffer;
 
 /*
  * Basic network connection
@@ -44,10 +45,11 @@ public class TCPConnection extends Connection {
     }
 
     @Override
-    public void send(byte[] data) {
+    public void send(ByteBuffer data) {
+        byte[] byteArray = data.array();
         try {
-            infoSend.write(data.length);
-            infoSend.write(data);
+            infoSend.write(byteArray.length);
+            infoSend.write(byteArray);
             infoSend.flush();
         } catch (IOException e) {
             System.err.println("Communication broke...");
@@ -57,7 +59,7 @@ public class TCPConnection extends Connection {
     }
 
     @Override
-    public byte[] receiveBlocking() {
+    public ByteBuffer receiveBlocking() {
         byte[] data = null;
         try {
             int len = infoReceive.read();
@@ -76,7 +78,7 @@ public class TCPConnection extends Connection {
             System.err.println("Communication broke...");
             this.terminated = true;
         }
-        return data;
+        return ByteBuffer.wrap(data);
     }
 
 }

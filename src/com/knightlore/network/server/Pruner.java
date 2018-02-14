@@ -7,7 +7,6 @@ import java.util.UUID;
 
 import com.knightlore.network.Connection;
 import com.knightlore.network.NetworkObject;
-import com.knightlore.network.NetworkObjectManager;
 import com.knightlore.utils.Tuple;
 
 /**
@@ -35,7 +34,6 @@ public class Pruner implements Runnable {
                     //if connection lost then remove the network object
                     //remove from connection list
                     //and inform other clients
-                    NetworkObjectManager.getSingleton().disconnectClient(next.getKey());
                     next.getValue().y.destroy();
                     i.remove();
                 }

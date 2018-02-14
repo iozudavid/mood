@@ -1,5 +1,6 @@
 package com.knightlore.game.entity;
 
+import java.nio.ByteBuffer;
 import java.util.UUID;
 
 import com.knightlore.game.area.Map;
@@ -166,5 +167,29 @@ public abstract class Entity extends NetworkObject implements IMinimapObject {
         direction = new Vector2D(xDir, yDir);
         plane = new Vector2D(xPlane, yPlane);
     }
-
+    
+    @Override
+    public ByteBuffer serialize() {
+        // TODO: serialise objects as well as primitives
+        ByteBuffer buf = newByteBuffer("deserialize");
+        buf.putDouble(size);
+        buf.putDouble(direction.getX());
+        buf.putDouble(direction.getY());
+        buf.putDouble(plane.getX());
+        buf.putDouble(plane.getY());
+        buf.putInt(zOffset);
+        return buf;
+    }
+    
+    @Override
+    public void deserialize(ByteBuffer buf) {
+        size = buf.getDouble();
+        double dX = buf.getDouble();
+        double dY = buf.getDouble();
+        direction = new Vector2D(dX, dY);
+        double pX = buf.getDouble();
+        double pY = buf.getDouble();
+        plane = new Vector2D(pX, pY);
+        zOffset = buf.getInt();
+    }
 }

@@ -1,8 +1,7 @@
 package com.knightlore.game;
 
-import java.io.IOException;
+import java.nio.ByteBuffer;
 import java.util.HashMap;
-import java.util.Map;
 import java.util.Map.Entry;
 import java.util.UUID;
 
@@ -10,9 +9,6 @@ import com.knightlore.game.entity.Entity;
 import com.knightlore.game.entity.weapon.Shotgun;
 import com.knightlore.game.entity.weapon.Weapon;
 import com.knightlore.network.protocol.ClientControl;
-import com.knightlore.network.protocol.ServerCommand;
-import com.knightlore.network.protocol.ServerControl;
-import com.knightlore.network.protocol.ServerProtocol;
 import com.knightlore.render.IRenderable;
 import com.knightlore.render.PixelBuffer;
 import com.knightlore.render.graphic.sprite.DirectionalSprite;
@@ -25,13 +21,12 @@ public class Player extends Entity implements IRenderable {
     // Maps all inputs that the player could be making to their values.
     private java.util.Map<ClientControl, Runnable> ACTION_MAPPINGS = new HashMap<>();
     private java.util.Map<ClientControl, Byte> inputState = new HashMap<>();
+    //private volatile boolean finished = false;
 
-    private final Map<ServerControl, CameraGetterInterface> controlGettersMap;
-    private final Map<ServerControl, CameraSetterInterface> controlSettersMap;
-    private volatile boolean finished = false;
-    
-    public Player(UUID uuid, com.knightlore.game.area.Map map, Vector2D pos, Vector2D dir) {
-        super(uuid, map, 0.33D, DirectionalSprite.SHOTGUN_DIRECTIONAL_SPRITE, pos, dir);
+    public Player(UUID uuid, com.knightlore.game.area.Map map, Vector2D pos,
+            Vector2D dir) {
+        super(uuid, map, 0.33D, DirectionalSprite.SHOTGUN_DIRECTIONAL_SPRITE,
+                pos, dir);
         this.currentWeapon = new Shotgun();
         
         // Map possible inputs to the methods that handle them. Avoids long
@@ -42,36 +37,36 @@ public class Player extends Entity implements IRenderable {
         ACTION_MAPPINGS.put(ClientControl.ROTATE_CLOCKWISE, this::rotateClockwise);
         ACTION_MAPPINGS.put(ClientControl.LEFT, this::strafeLeft);
         ACTION_MAPPINGS.put(ClientControl.RIGHT, this::strafeRight);
-
-        this.controlGettersMap = new HashMap<>();
-        this.controlGettersMap.put(ServerControl.XPOS, this::getxPos);
-        this.controlGettersMap.put(ServerControl.YPOS, this::getyPos);
-        this.controlGettersMap.put(ServerControl.XDIR, this::getxDir);
-        this.controlGettersMap.put(ServerControl.YDIR, this::getyDir);
-        this.controlGettersMap.put(ServerControl.XPLANE, this::getxPlane);
-        this.controlGettersMap.put(ServerControl.YPLANE, this::getyPlane);
-
-        this.controlSettersMap = new HashMap<>();
-        this.controlSettersMap.put(ServerControl.XPOS, this::setxPos);
-        this.controlSettersMap.put(ServerControl.YPOS, this::setyPos);
-        this.controlSettersMap.put(ServerControl.XDIR, this::setxDir);
-        this.controlSettersMap.put(ServerControl.YDIR, this::setyDir);
-        this.controlSettersMap.put(ServerControl.XPLANE, this::setxPlane);
-        this.controlSettersMap.put(ServerControl.YPLANE, this::setyPlane);
-        Player.this.finished = true;
+        
+        setNetworkConsumers();
+        
+        //Player.this.finished = true;
     }
 
-    public Player(com.knightlore.game.area.Map map, Vector2D pos, Vector2D dir) {
+    public Player(com.knightlore.game.area.Map map, Vector2D pos,
+            Vector2D dir) {
         this(UUID.randomUUID(), map, pos, dir);
     }
+    
+    private void setNetworkConsumers() {
+        networkConsumers.put("setInputState", this::setInputState);
+    }
 
-    public void setInputState(Map<ClientControl, Byte> inputState) {
-        this.inputState = inputState;
+    public void setInputState(ByteBuffer buf) {
+        synchronized (inputState) {
+            while (buf.hasRemaining()) {
+                ClientControl control = ClientControl.values()[buf.getInt()];
+                Byte value = buf.get();
+                inputState.put(control, value);
+            }
+        }
+
     }
 
     @Override
     public void render(PixelBuffer pix, int x, int y) {
-        pix.fillRect(0x000000, (int) this.position.getX(), (int) this.position.getY(), 10, 50);
+        pix.fillRect(0x000000, (int) this.position.getX(),
+                (int) this.position.getY(), 10, 50);
     }
 
     @Override
@@ -94,88 +89,19 @@ public class Player extends Entity implements IRenderable {
         }
     }
 
+    // TODO: serialize weapon etc.
     @Override
-    public byte[] serialize(boolean disconnect) {
-        if (Player.this.finished == false) 
-            return null;
-
-        byte[] thisState = new byte[ServerProtocol.TOTAL_LENGTH];
-
-        // Prepend metadata to the state array.
-        byte[] metadata = ServerProtocol.getMetadata();
-        for (int i = 0; i < ServerProtocol.METADATA_LENGTH; i++) {
-            thisState[i] = metadata[i];
-        }
-
-        byte[] playerID = ServerProtocol.uuidAsBytes(getObjectId());
-        // add player id to the packet
-        for (int i = ServerProtocol.METADATA_LENGTH; i < ServerProtocol.METADATA_LENGTH
-                + ServerProtocol.OBJECTID_LENGTH; i++) {
-            thisState[i] = playerID[i - ServerProtocol.METADATA_LENGTH];
-        }
-
-        if (disconnect) {
-            for (int i = ServerProtocol.MESSAGE_STARTING_POINT; i < ServerProtocol.TOTAL_LENGTH; i++) {
-                thisState[i] = ServerProtocol.disconnectedState[i - ServerProtocol.MESSAGE_STARTING_POINT];
-            }
-            // if disconnect then end it here with return statement
-            return thisState;
-        }
-
-        // adding player stats from camera class
-        int loopsNumber = 0;
-        try {
-            for (int i = ServerProtocol.MESSAGE_STARTING_POINT; i < ServerProtocol.TOTAL_LENGTH;) {
-                // taking the current control
-                int positionCurrentCommand = loopsNumber;
-                ServerControl currentControl = ServerProtocol.getControlByPosition(positionCurrentCommand);
-                Integer[] indexes = ServerProtocol.getIndexesByControl(currentControl);
-                int startingIndex = indexes[0];
-                int endingIndex = indexes[1];
-
-                CameraGetterInterface cameraReference = this.controlGettersMap.get(currentControl);
-                if (cameraReference == null)
-                    return null;
-                double cameraResult = cameraReference.accessDataFromCamera();
-                byte[] convertedCameraValue = ServerProtocol.doubleToByteArray(cameraResult);
-
-                for (int j = startingIndex + ServerProtocol.MESSAGE_STARTING_POINT; j < endingIndex
-                        + ServerProtocol.MESSAGE_STARTING_POINT; j++) {
-                    thisState[j] = convertedCameraValue[j - startingIndex - ServerProtocol.MESSAGE_STARTING_POINT];
-                }
-                i += endingIndex - startingIndex;
-                loopsNumber++;
-
-            }
-        } catch (IOException e) {
-            System.err.println("Index not good...");
-            e.printStackTrace();
-        }
-        return thisState;
-
+    public ByteBuffer serialize() {
+        return super.serialize();
     }
 
     @Override
-    public void deserialize(ServerCommand command) {
-        // TODO: only deserialise if the command's timestamp is recent enough.
-        Double val;
-        for (ServerControl c : ServerControl.values())
-            if ((val = command.getValueByControl(c)) != null)
-                this.controlSettersMap.get(c).setDataOnCamera(val);
-    }
-
-    @FunctionalInterface
-    public static interface CameraGetterInterface {
-        double accessDataFromCamera();
+    public void deserialize(ByteBuffer buffer) {
+        super.deserialize(buffer);
     }
 
     public Weapon getCurrentWeapon() {
         return currentWeapon;
-    }
-
-    @FunctionalInterface
-    public static interface CameraSetterInterface {
-        void setDataOnCamera(double val);
     }
 
     @Override
@@ -199,4 +125,5 @@ public class Player extends Entity implements IRenderable {
     public int getMinimapColor() {
         return 0;
     }
+
 }

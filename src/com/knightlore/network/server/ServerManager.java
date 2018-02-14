@@ -52,7 +52,7 @@ public class ServerManager implements Runnable {
                 Connection conn = new TCPConnection(socket);
                 new Thread(conn).start();
 
-                new Thread(new ReceiveFromClient(conn, player)).start();
+                new Thread(new Receive(conn)).start();
                 new Thread(new SendToClient(conn, player.getObjectId())).start();
 
                 this.connections.put(player.getObjectId(), new Tuple<Connection, NetworkObject>(conn, player));

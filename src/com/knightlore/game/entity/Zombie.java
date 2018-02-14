@@ -1,7 +1,6 @@
 package com.knightlore.game.entity;
 
 import com.knightlore.game.area.Map;
-import com.knightlore.network.protocol.ServerCommand;
 import com.knightlore.render.graphic.sprite.DirectionalSprite;
 import com.knightlore.render.minimap.Minimap;
 import com.knightlore.utils.Vector2D;
@@ -41,18 +40,6 @@ public class Zombie extends Entity {
 
     // TODO TODO TODO
     // TODO TODO TODO // TODO TODO TODO // TODO TODO TODO // TODO TODO TODO //
-    // TODO TODO TODO
-
-    @Override
-    public byte[] serialize(boolean disconnect) {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    @Override
-    public void deserialize(ServerCommand packet) {
-        // TODO Auto-generated method stub
-
-    }
+    // TODO TODO TODO SERIALIZE
 
 }

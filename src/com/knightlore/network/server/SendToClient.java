@@ -1,16 +1,19 @@
 package com.knightlore.network.server;
 
+import java.nio.ByteBuffer;
 import java.util.UUID;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
 import com.knightlore.network.Connection;
+import com.knightlore.network.NetworkObject;
 import com.knightlore.network.NetworkObjectManager;
+import com.knightlore.network.protocol.NetworkUtils;
 
 public class SendToClient implements Runnable {
 
     private Connection conn;
-    private BlockingQueue<byte[]> commandQueue = new LinkedBlockingQueue<>();
+    private BlockingQueue<ByteBuffer> commandQueue = new LinkedBlockingQueue<>();
     private UUID uuid;
 
     public SendToClient(Connection conn, UUID uuid) {
@@ -20,12 +23,20 @@ public class SendToClient implements Runnable {
 
     @Override
     public void run() {
-        NetworkObjectManager.getSingleton().registerClientSender(this);
-        // Firstly, send the player's own state to inform them of their own identity.
-        conn.send(NetworkObjectManager.getSingleton().getNetworkObject(uuid)
-                .serialize(false));
+        ServerNetworkObjectManager manager = (ServerNetworkObjectManager) NetworkObjectManager
+                .getSingleton();
+        manager.registerClientSender(this);
+        // Firstly, tell the player who they are.
+        ByteBuffer buf = ByteBuffer
+                .allocate(NetworkObject.BYTE_BUFFER_MAX_SIZE);
+        NetworkUtils.putStringIntoBuf(buf,
+                NetworkObjectManager.MANAGER_UUID.toString());
+        NetworkUtils.putStringIntoBuf(buf, "registerPlayerIdentity");
+        NetworkUtils.putStringIntoBuf(buf, uuid.toString());
+        conn.send(buf);
+        
         while (!conn.terminated) {
-            byte[] nextState;
+            ByteBuffer nextState;
             try {
                 nextState = commandQueue.take();
                 conn.send(nextState);
@@ -35,12 +46,11 @@ public class SendToClient implements Runnable {
             }
 
         }
-        NetworkObjectManager.getSingleton().removeClientSender(this);
+        manager.removeClientSender(this);
     }
 
-    public void sendState(byte[] state) {
-        if (state != null)
-            commandQueue.offer(state);
+    public void send(ByteBuffer data) {
+        commandQueue.offer(data);
     }
 
 }
