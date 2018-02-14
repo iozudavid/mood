@@ -120,12 +120,18 @@ public class Renderer implements IRenderable {
 
     private void drawPerspective(PixelBuffer pix) {
 
+        // Can't render without a camera.
         if (camera == null)
             return;
 
         final int width = pix.getWidth(), height = pix.getHeight();
         double[] zbuffer = new double[width];
 
+        /*
+         * SEE: PerspectiveRenderItem.java for how this works. In short: we keep
+         * adding new render items to a stack until we reach an opaque block.
+         * The stack is then popped and rendered in turn.
+         */
         Stack<PerspectiveRenderItem> renderStack = new Stack<PerspectiveRenderItem>();
 
         for (int xx = 0; xx < width; xx += BLOCKINESS) {
@@ -147,8 +153,9 @@ public class Renderer implements IRenderable {
 
             double distanceToWall;
 
-            boolean hit = false;
-            boolean side = false; // wall facing x-direction vs y-direction?
+            // hit = true when the ray has hit a wall.
+            // side = true or false depending on the side.
+            boolean hit = false, side = false;
 
             // find x and y components of the ray vector.
             int stepX, stepY;
