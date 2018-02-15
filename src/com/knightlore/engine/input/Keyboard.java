@@ -3,6 +3,8 @@ package com.knightlore.engine.input;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 
+import com.knightlore.gui.GUICanvas;
+
 public class Keyboard extends KeyAdapter {
 
 
@@ -14,12 +16,32 @@ public class Keyboard extends KeyAdapter {
 
 	@Override
 	public void keyPressed(KeyEvent e) {
+		// defend against bad keys
+		if(e.getKeyCode() < 0 || e.getKeyCode() > keys.length){
+			return;
+		}
 		keys[e.getKeyCode()] = true;
 	}
 
 	@Override
 	public void keyReleased(KeyEvent e) {
+		// defend against bad keys
+		if(e.getKeyCode() < 0 || e.getKeyCode() > keys.length){
+			return;
+		}
 		keys[e.getKeyCode()] = false;
+		// determine if this was left or right
+		if(e.getKeyCode() == KeyEvent.VK_LEFT){
+			GUICanvas.inputLeftArrow();
+		}
+		else if(e.getKeyCode() == KeyEvent.VK_RIGHT){
+			GUICanvas.inputRightArrow();
+		}
+	}
+	
+	@Override
+	public void keyTyped(KeyEvent e) {
+		GUICanvas.inputChar(e.getKeyChar());
 	}
 
 	/**

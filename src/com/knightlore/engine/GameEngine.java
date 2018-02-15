@@ -7,12 +7,12 @@ import java.util.LinkedList;
 import com.knightlore.MainWindow;
 import com.knightlore.engine.input.InputManager;
 import com.knightlore.engine.input.Mouse;
-import com.knightlore.game.area.AreaFactory;
-import com.knightlore.game.area.Map;
 import com.knightlore.network.client.ClientNetworkObjectManager;
 import com.knightlore.network.server.ServerNetworkObjectManager;
-import com.knightlore.render.Environment;
+import com.knightlore.render.Camera;
 import com.knightlore.render.Screen;
+import com.knightlore.world.TestWorld;
+
 
 /**
  * Game engine acting as sort of a 'hub' for each of the individual game
@@ -22,32 +22,33 @@ import com.knightlore.render.Screen;
  *
  */
 public class GameEngine implements Runnable {
-
+	
 	private static GameEngine singleton = null;
-
+	
 	private static final double UPDATES_PER_SECOND = 60D;
 	public static final Ticker ticker = new Ticker();
-
 	private Screen screen;
 	private final MainWindow window;
+	private GameWorld world;
 
 	private Renderer renderer;
 	private final ArrayList<GameObject> objects;
 	private Thread thread;
 	private volatile boolean running = false;
-
+	
 	private LinkedList<GameObject> notifyToCreate;
 	private LinkedList<GameObject> notifyToDestroy;
 
-	private boolean headless;
+	public final boolean headless;
 
 
     public GameEngine(boolean headless) {
 		this.headless = headless;
+
 		singleton = this;
-
+		
 		objects = new ArrayList<GameObject>();
-
+		
 		notifyToCreate = new LinkedList<GameObject>();
 		notifyToDestroy = new LinkedList<GameObject>();
 
@@ -66,18 +67,17 @@ public class GameEngine implements Runnable {
 		initEngine();
 	}
 
-
 	public static GameEngine getSingleton() {
 		return singleton;
 	}
-
+	
 	void addGameObject(GameObject g) {
 		// delay adding until next loop
 		synchronized (notifyToCreate) {
 			notifyToCreate.add(g);
 		}
 	}
-
+	
 	void removeGameObject(GameObject g) {
 		// delay deleting until next loop
 		synchronized (notifyToDestroy) {
@@ -89,7 +89,7 @@ public class GameEngine implements Runnable {
 	public Renderer getRenderer() {
 		return this.renderer;
 	}
-
+	
 	private void initEngine() {
 		System.out.println("Initialising Engine...");
 		if (!headless) {
@@ -97,13 +97,20 @@ public class GameEngine implements Runnable {
 		    setupKeyboard();
 		    setupMouse();
 		}
-		Map map = AreaFactory.createRandomMap(Environment.DARK_OUTDOORS);
-		//Camera camera = new Camera(4.5, 4.5, 1, 0, 0, Camera.FIELD_OF_VIEW,
-		//		map);
-		renderer = new Renderer(null, map);
-		System.out.println("Engine Initialised Successfully.");
-	}
 
+		System.out.println("Engine Initialised Successfully.");
+		// TODO maybe refactor this into a make world method
+		// ALSO TODO, UNHOOK TEST WORLD
+		System.out.println("Initialising World...");
+		world = new TestWorld();
+		System.out.println("initialising...");
+		world.initWorld();
+		System.out.println("populating...");
+		world.populateWorld();
+		System.out.println("World Initialised Successfully.");
+		renderer = new Renderer(Camera.mainCamera(), GameWorld.map);
+	}
+	
 	public void start() {
 		running = true;
 		thread = new Thread(this);
@@ -111,7 +118,7 @@ public class GameEngine implements Runnable {
 		if (!headless)
 			window.setVisible(true);
 	}
-
+	
 	public void stop() {
 		running = false;
 		try {
@@ -121,7 +128,7 @@ public class GameEngine implements Runnable {
 			e.printStackTrace();
 		}
 	}
-
+	
 	@Override
 	public void run() {
 		/*
@@ -135,19 +142,23 @@ public class GameEngine implements Runnable {
 			long now = System.nanoTime();
 			delta += (now - lastTime) / ns;
 			lastTime = now;
-
+			
 			while (delta >= 1) {
 				updateObjects();
 				delta -= 1;
-
 				ticker.tick();
 			}
-            if (!headless)
+			
+            if (!headless){
                 screen.render(0, 0, renderer);
+        		InputManager.clearMouse();
+            }
+
 		}
 	}
-
+	
 	private void updateObjects() {
+	    
 		// perform internal list management before updating.
 		// as modifying a list whilst iterating over it is a very bad idea.
 
@@ -181,7 +192,7 @@ public class GameEngine implements Runnable {
 			obj.onUpdate();
 		}
 	}
-
+	
 	/**
 	 * Add the singleton keyboard instance to the canvas and request focus.
 	 */
@@ -189,7 +200,7 @@ public class GameEngine implements Runnable {
 		screen.addKeyListener(InputManager.getKeyboard());
 		screen.requestFocus();
 	}
-
+	
 	/**
 	 * Add the singleton mouse instance to the canvas and request focus.
 	 */
@@ -200,5 +211,5 @@ public class GameEngine implements Runnable {
 		screen.addMouseWheelListener(mouse);
 		screen.requestFocus();
 	}
-
+	
 }

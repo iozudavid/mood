@@ -6,14 +6,13 @@ import java.awt.Rectangle;
 
 public class Text extends GUIObject{
 	
-	private String text;
-	private char[] rawChars;
+	protected String text;
+	protected char[] rawChars;
 	
-	Text(int x, int y, int depth) {
+	public Text(int x, int y, int depth, String text) {
 		super(x, y, depth);
+		SetText(text);
 	}
-
-	
 
 	public void SetText(String newText){
 		text = newText;
@@ -22,7 +21,6 @@ public class Text extends GUIObject{
 	
 	@Override
 	void Draw(Graphics g) {
-		
 		int hOffset = g.getFontMetrics().getHeight();
 		// draw the characters of the string
 		g.drawChars(rawChars, 0, rawChars.length, rect.x, rect.y + hOffset);

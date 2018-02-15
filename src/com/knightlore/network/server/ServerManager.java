@@ -45,10 +45,8 @@ public class ServerManager implements Runnable {
         while (true) {
             try {
                 Socket socket = serverSocket.accept();
-                // TODO: decide how to choose player location
-                // fix this hack
-                Player player = new Player(GameEngine.getSingleton().getRenderer().getMap(), new Vector2D(4.5, 4.5),
-                        Vector2D.UP);
+                Vector2D pos = GameEngine.getSingleton().getRenderer().getMap().getRandomSpawnPoint();
+                Player player = new Player(pos, Vector2D.UP);
                 Connection conn = new TCPConnection(socket);
                 new Thread(conn).start();
 

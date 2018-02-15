@@ -9,7 +9,7 @@ public class Button extends GUIObject {
 	
 	Graphic activeGraphic = null;
 	
-	private ButtonState state = ButtonState.UP;
+	private SelectState state = SelectState.UP;
 	
 	public Color upColour = Color.LIGHT_GRAY;
 	public Color downColour = Color.DARK_GRAY;
@@ -32,12 +32,11 @@ public class Button extends GUIObject {
 	
 	public Button(int x, int y, int depth) {
 		super(x, y, depth);
-		// TODO Auto-generated constructor stub
 	}
 	
 	@Override
 	void Draw(Graphics g) {
-		// TODO Auto-generated method stub
+		
 		if(activeGraphic != null){
 			
 		}
@@ -50,18 +49,33 @@ public class Button extends GUIObject {
 	
 	@Override
 	void OnClick(){
-		state = ButtonState.DOWN;
 		System.out.println("Button clicked");
 	}
 	
 	@Override
-	void OnMouseEnter(){
-		state = ButtonState.HOVER;
+	void onMouseEnter(){
+		state = SelectState.HOVER;
+	}
+	
+	void onMouseOver(){
+		if(state == SelectState.UP){
+			state = SelectState.HOVER;
+		}
 	}
 	
 	@Override
 	void OnMouseExit(){
-		state = ButtonState.UP;
+		state = SelectState.UP;
+	}
+	
+	@Override
+	void onMouseDown(){
+		state = SelectState.DOWN;
+	}
+	
+	@Override
+	void onMouseUp(){
+		state = SelectState.UP;
 	}
 	
 	@Override

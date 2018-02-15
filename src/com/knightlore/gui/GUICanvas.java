@@ -2,6 +2,7 @@ package com.knightlore.gui;
 
 import java.awt.AlphaComposite;
 import java.awt.Color;
+import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
@@ -14,7 +15,10 @@ import com.knightlore.render.graphic.Graphic;
 import com.knightlore.utils.Physics;
 import com.knightlore.utils.Vector2D;
 
+
 public class GUICanvas extends GameObject implements IRenderable {
+
+	static TextField activeTextField;
 
 	private ArrayList<GUIObject> guis;
 	
@@ -23,6 +27,9 @@ public class GUICanvas extends GameObject implements IRenderable {
 	private Graphics2D canvasG2D;
 	private int[] drawPixels;
 	
+	// the object that was selected when the mouse was pressed down
+	private GUIObject downSelected;
+	private GUIObject focussed;
 	private boolean lastHeld;
 	
 	// TODO remove this and make it screen size
@@ -39,7 +46,31 @@ public class GUICanvas extends GameObject implements IRenderable {
 		canvasGraphic = new Graphic(canvasImage);
 		// store pixel array
 		drawPixels = canvasGraphic.getPixels();
-		
+		canvasG2D.setFont(Font.getFont(Font.SERIF));
+	}
+	
+	/** Called from the keyboard when a textual character is typed
+	 */
+	public static void inputChar(char c){
+		if(activeTextField != null){
+			activeTextField.onInputChar(c);
+		}
+	}
+	
+	public static void inputLeftArrow(){
+		if(activeTextField != null){
+			activeTextField.onLeftArrow();
+		}
+	}
+	
+	public static void inputRightArrow(){
+		if(activeTextField != null){
+			activeTextField.onRightArrow();
+		}
+	}
+	
+	public static boolean isTyping(){
+		return activeTextField != null;
 	}
 	
 	@Override
@@ -83,22 +114,53 @@ public class GUICanvas extends GameObject implements IRenderable {
 		// notify previous gui of mouse exit
 		if(lastSelected != selected){
 			if(lastSelected != null){
+				if(downSelected == lastSelected){
+					lastSelected.onMouseUp();
+				}
 				lastSelected.OnMouseExit();
 			}
-			lastSelected = selected;
 		}
 		
 		// notify new gui of mouse enter
 		if(selected != null){
-			selected.OnMouseEnter();
+			// send mouse entered event
+			if(selected != lastSelected){
+				selected.onMouseEnter();
+			}
 			
-			// TODO finish input
-			if(lastHeld && !InputManager.getMouse().isLeftHeld()){
-				selected.OnClick();
+			selected.onMouseOver();
+			
+			// mouse held and we 
+			if(InputManager.getMouse().isLeftHeld() && !lastHeld){
+				// send mouse down event
+				selected.onMouseDown();
+				downSelected = selected;
+			}
+			else if(!InputManager.getMouse().isLeftHeld() && lastHeld){
+				// did we click down over the same object
+				if(downSelected == selected){
+					selected.OnClick();
+					if(focussed != selected && focussed != null){
+						focussed.onLostFocus();
+					}
+					focussed = selected;
+					selected.onGainedFocus();
+				}
+				// send mouse up event
+				selected.onMouseUp();
 			}
 		}
-		
+		else{
+			if(!InputManager.getMouse().isLeftHeld() && lastHeld){
+				// we have nothing selected... did we click?
+				if(focussed != null){
+					focussed.onLostFocus();
+					focussed = null;
+				}
+			}
+		}
 		lastHeld = InputManager.getMouse().isLeftHeld();
+		lastSelected = selected;		
 	}
 
 	@Override

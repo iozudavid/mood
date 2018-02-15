@@ -1,13 +1,12 @@
 package com.knightlore.game.entity.pickup;
 
-import com.knightlore.game.area.Map;
 import com.knightlore.render.graphic.sprite.ShotgunSprite;
 import com.knightlore.utils.Vector2D;
 
 public class ShotgunPickup extends PickupItem {
 
-    public ShotgunPickup(Map map, Vector2D position) {
-        super(map, ShotgunSprite.SHOTGUN_DIRECTIONAL_SPRITE, position);
+    public ShotgunPickup(Vector2D position) {
+        super(ShotgunSprite.SHOTGUN_DIRECTIONAL_SPRITE, position);
     }
 
     @Override

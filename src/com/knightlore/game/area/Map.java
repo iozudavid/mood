@@ -1,47 +1,46 @@
 package com.knightlore.game.area;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
+
+import com.knightlore.game.tile.AirTile;
 import com.knightlore.game.tile.Tile;
 import com.knightlore.render.Environment;
+import com.knightlore.utils.Vector2D;
 
 public class Map extends Area {
-	
-    // TODO: read in maps from files/procedurally generate.
-    // Maps have associated environments
+    
+    // TODO: read in maps from file
+	private final long seed;
 	private final Environment environment;
 
 	public Environment getEnvironment() {
 		return environment;
 	}
 
-	Map(Tile[][] grid, Environment environment) {
+	public Map(Tile[][] grid, Environment environment, long seed) {
 		super(grid);
 		this.environment = environment;
+		this.seed = seed;
 	}
 
-	/* private static Map joinUpR(Map m1, Map m2) { TODO not used, dead code? if so, delete
-
-		// ensure same height
-		assert (m1.height == m2.height);
-
-		Map m3 = new Map(m1.width + m2.width, m1.height);
-
-		for (int i = 0; i < m1.height; i++) {
-			for (int j = 0; j < m1.width; j++) {
-				m3.map[i][j] = m1.map[i][j];
-			}
-			for (int k = 0; k < m2.width; k++) {
-				m3.map[i][m1.width + 1 + k] = m2.map[i][k];
+	public long getSeed() {
+		return seed;
+	}
+	
+	public Vector2D getRandomSpawnPoint() {
+		List<Vector2D> candidates = new ArrayList<>();
+		for(int i=0; i<getWidth(); i++) {
+			for(int j=0; j<getHeight(); j++) {
+				if(getTile(i,j) == AirTile.getInstance()) {
+					candidates.add(new Vector2D(i,j));
+				}
 			}
 		}
 
-		return m3;
-
-	} */
-
-	// dumb test
-	public static void main(String args[]) {
-		Map m = AreaFactory.createRandomMap(Environment.LIGHT_OUTDOORS);
-		// // m = joinUpR(m,m);
-		System.out.println(m.toString());
+		Random rand = new Random();
+		int index = rand.nextInt(candidates.size());
+		return candidates.get(index);
 	}
-
 }

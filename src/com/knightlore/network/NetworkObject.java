@@ -14,7 +14,9 @@ public abstract class NetworkObject extends GameObject implements INetworkable {
 
     protected Map<String, Consumer<ByteBuffer>> networkConsumers = new HashMap<>();
     
-    public abstract NetworkObject(ByteBuffer buf);
+    public NetworkObject(ByteBuffer buf) {
+        
+    }
 
     public NetworkObject(UUID uuid) {
         this(uuid, Vector2D.ZERO);

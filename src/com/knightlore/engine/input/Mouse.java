@@ -15,13 +15,15 @@ import javax.swing.SwingUtilities;
  * @author Joe Ellis
  *
  */
-public class Mouse implements MouseListener, MouseMotionListener, MouseWheelListener {
+public final class Mouse implements MouseListener, MouseMotionListener, MouseWheelListener {
 
-	protected volatile int x, y;
-	protected volatile int scroll;
+	private volatile int x, y;
+	private volatile int scroll;
 
-	protected boolean leftHeld, rightHeld;
-
+	private boolean leftHeld, rightHeld;
+	private boolean lastLeftHeld, lastRightHeld;
+	private boolean leftClick, rightClick;
+	
 	public void mouseDragged(MouseEvent e) {
 		x = e.getX();
 		y = e.getY();
@@ -37,8 +39,8 @@ public class Mouse implements MouseListener, MouseMotionListener, MouseWheelList
 	public void mouseClicked(MouseEvent e) {
 		x = e.getX();
 		y = e.getY();
-		leftHeld = SwingUtilities.isLeftMouseButton(e);
-		rightHeld = SwingUtilities.isRightMouseButton(e);
+		leftClick = SwingUtilities.isLeftMouseButton(e);
+		rightClick = SwingUtilities.isRightMouseButton(e);
 	}
 
 	public void mouseReleased(MouseEvent e) {
@@ -50,6 +52,11 @@ public class Mouse implements MouseListener, MouseMotionListener, MouseWheelList
 		} else {
 			rightHeld = false;
 		}
+	}
+	
+	public void clearButtons(){
+		leftClick = false;
+		rightClick = false;
 	}
 
 	public void mouseWheelMoved(MouseWheelEvent e) {
@@ -98,6 +105,10 @@ public class Mouse implements MouseListener, MouseMotionListener, MouseWheelList
 	public boolean isLeftHeld() {
 		return leftHeld;
 	}
+	
+	public boolean isLeftClick(){
+		return leftClick;
+	}
 
 	/**
 	 * Get a boolean value representing whether the right mouse button is
@@ -118,6 +129,12 @@ public class Mouse implements MouseListener, MouseMotionListener, MouseWheelList
 	}
 
 	public void mousePressed(MouseEvent e) {
+		if(SwingUtilities.isLeftMouseButton(e)){
+			leftHeld = true;
+		}
+		if(SwingUtilities.isRightMouseButton(e)){
+			rightHeld = true;
+		}
 	}
 
 }

@@ -7,6 +7,7 @@ public class KnightLoreGame {
 
 	public static void main(String[] args) {
 		System.out.println("Starting Client...");
+		GameSettings.client = true;
 		GameEngine engine = new GameEngine(false);
 		engine.start();
 		ClientManager networkManager = new ClientManager();

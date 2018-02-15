@@ -6,21 +6,40 @@ import com.knightlore.utils.Vector2D;
 
 public class Camera {
 
+    /* -.66 is a good value. */
     public static final double FIELD_OF_VIEW = -.66;
+
+    /* Variables concerning motion bob. */
     private static final double MOTION_BOB_AMOUNT = 7.0;
     private static final double MOTION_BOB_SPEED = 0.15;
 
+    private static Camera mainCam;
+    
     private int motionOffset;
     private long moveTicks;
 
     private Entity subject;
+
 
     public Camera(Map map) {
         super();
 
         this.motionOffset = 0;
         this.moveTicks = 0;
+        
+        if (mainCam == null)
+            mainCam = this;
     }
+    
+    /**
+     * 
+     * Returns the main camera. Note: This may be null if the main camera is
+     * destroyed.
+     */
+    public static Camera mainCamera() {
+        return mainCam;
+    }
+
 
     public Vector2D getPosition() {
         return subject.getPosition();
@@ -30,6 +49,7 @@ public class Camera {
         return subject.getDirection();
     }
 
+    // TODO: implement motion bob using offset
     private void updateMotionOffset() {
         moveTicks++;
         this.motionOffset = (int) (Math.abs(Math.sin(moveTicks * MOTION_BOB_SPEED) * MOTION_BOB_AMOUNT));

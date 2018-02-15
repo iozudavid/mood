@@ -21,33 +21,33 @@ public class Player extends Entity implements IRenderable {
     // Maps all inputs that the player could be making to their values.
     private java.util.Map<ClientControl, Runnable> ACTION_MAPPINGS = new HashMap<>();
     private java.util.Map<ClientControl, Byte> inputState = new HashMap<>();
-    //private volatile boolean finished = false;
+    // private volatile boolean finished = false;
 
-    public Player(UUID uuid, com.knightlore.game.area.Map map, Vector2D pos,
-            Vector2D dir) {
-        super(uuid, map, 0.33D, DirectionalSprite.SHOTGUN_DIRECTIONAL_SPRITE,
-                pos, dir);
+    public Player(UUID uuid, Vector2D pos, Vector2D dir) {
+        super(uuid, 0.33D, DirectionalSprite.SHOTGUN_DIRECTIONAL_SPRITE, pos,
+                dir);
         this.currentWeapon = new Shotgun();
-        
+
         // Map possible inputs to the methods that handle them. Avoids long
         // if-statement chain.
         ACTION_MAPPINGS.put(ClientControl.FORWARD, this::moveForward);
-        ACTION_MAPPINGS.put(ClientControl.ROTATE_ANTI_CLOCKWISE, this::rotateAntiClockwise);
+        ACTION_MAPPINGS.put(ClientControl.ROTATE_ANTI_CLOCKWISE,
+                this::rotateAntiClockwise);
         ACTION_MAPPINGS.put(ClientControl.BACKWARD, this::moveBackward);
-        ACTION_MAPPINGS.put(ClientControl.ROTATE_CLOCKWISE, this::rotateClockwise);
+        ACTION_MAPPINGS.put(ClientControl.ROTATE_CLOCKWISE,
+                this::rotateClockwise);
         ACTION_MAPPINGS.put(ClientControl.LEFT, this::strafeLeft);
         ACTION_MAPPINGS.put(ClientControl.RIGHT, this::strafeRight);
-        
+
         setNetworkConsumers();
-        
-        //Player.this.finished = true;
+
+        // Player.this.finished = true;
     }
 
-    public Player(com.knightlore.game.area.Map map, Vector2D pos,
-            Vector2D dir) {
-        this(UUID.randomUUID(), map, pos, dir);
+    public Player(Vector2D pos, Vector2D dir) {
+        this(UUID.randomUUID(), pos, dir);
     }
-    
+
     private void setNetworkConsumers() {
         networkConsumers.put("setInputState", this::setInputState);
     }

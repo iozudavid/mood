@@ -5,6 +5,14 @@ import com.knightlore.render.graphic.Graphic;
 import com.knightlore.render.graphic.texture.Texture;
 
 public class UndecidedTile extends Tile {
+	private static UndecidedTile instance = new UndecidedTile();
+
+	private UndecidedTile() {
+	}
+
+	public static UndecidedTile getInstance() {
+		return instance;
+	}
 
 	@Override
 	public Graphic getTexture() {

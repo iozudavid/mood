@@ -1,7 +1,6 @@
 package com.knightlore.game.entity.pickup;
 
 import com.knightlore.engine.GameEngine;
-import com.knightlore.game.area.Map;
 import com.knightlore.game.entity.Entity;
 import com.knightlore.render.graphic.sprite.DirectionalSprite;
 import com.knightlore.utils.Vector2D;
@@ -16,8 +15,8 @@ public abstract class PickupItem extends Entity {
 
 	protected DirectionalSprite sprite;
 
-	public PickupItem(Map map, DirectionalSprite sprite, Vector2D position) {
-		super(map, PICKUP_SIZE, sprite, position, Math.random() < 0.5 ? Vector2D.UP : Vector2D.DOWN);
+	public PickupItem(DirectionalSprite sprite, Vector2D position) {
+		super(PICKUP_SIZE, sprite, position, Math.random() < 0.5 ? Vector2D.UP : Vector2D.DOWN);
 		this.sprite = sprite;
 	}
 

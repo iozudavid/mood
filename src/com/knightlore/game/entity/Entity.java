@@ -27,9 +27,8 @@ public abstract class Entity extends NetworkObject implements IMinimapObject {
     protected int zOffset;
     
     // Allow you to create an entity with a specified UUID. Useful for creating "synchronised" objects on the client-side.
-    protected Entity(UUID uuid, Map map, double size, DirectionalSprite dSprite, Vector2D position, Vector2D direction) {
+    protected Entity(UUID uuid, double size, DirectionalSprite dSprite, Vector2D position, Vector2D direction) {
         super(uuid, position);
-        this.map = map;
         this.size = size;
         this.dSprite = dSprite;
         this.direction = direction;
@@ -38,8 +37,8 @@ public abstract class Entity extends NetworkObject implements IMinimapObject {
     }
 
     // Use a random UUID.
-    protected Entity(Map map, double size, DirectionalSprite dSprite, Vector2D position, Vector2D direction) {
-        this(UUID.randomUUID(), map, size, dSprite, position, direction);
+    protected Entity(double size, DirectionalSprite dSprite, Vector2D position, Vector2D direction) {
+        this(UUID.randomUUID(), size, dSprite, position, direction);
     }
 
     public Graphic getGraphic(Vector2D playerPos) {
