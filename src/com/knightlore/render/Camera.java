@@ -3,7 +3,11 @@ package com.knightlore.render;
 import java.util.HashMap;
 import java.util.Map.Entry;
 
+import com.knightlore.engine.GameEngine;
 import com.knightlore.engine.GameObject;
+import com.knightlore.engine.input.BasicController;
+import com.knightlore.engine.input.InputManager;
+import com.knightlore.engine.input.Keyboard;
 import com.knightlore.game.Player;
 import com.knightlore.game.area.Map;
 import com.knightlore.game.tile.Tile;
@@ -11,12 +15,11 @@ import com.knightlore.network.protocol.ClientControl;
 import com.knightlore.utils.Vector2D;
 
 public class Camera extends GameObject {
-	
 
     public static final double FIELD_OF_VIEW = -.66;
     private static final double MOTION_BOB_AMOUNT = 7.0;
     private static final double MOTION_BOB_SPEED = 0.15;
-    private static final double MOVE_SPEED = .040;
+    private static final double MOVE_SPEED = .040 * 2;
 
     // will be implemented
     private static final double SPRINT_MULTIPLIER = 1.5D;
@@ -35,7 +38,7 @@ public class Camera extends GameObject {
     private java.util.Map<ClientControl, Runnable> ACTION_MAPPINGS = new HashMap<>();
 
     private static Camera mainCam;
-    
+
     // TODO constructor takes a lot of parameters, maybe use Builder Pattern
     // instead?
     public Camera(double xPos, double yPos, double xDir, double yDir, double xPlane, double yPlane, Map map) {
@@ -60,20 +63,20 @@ public class Camera extends GameObject {
 
         this.motionOffset = 0;
         this.moveTicks = 0;
-        if(mainCam == null){
-			mainCam = this;
-		}
+        if (mainCam == null) {
+            mainCam = this;
+        }
     }
 
+    /**
+     * 
+     * Returns the main camera. Note: This may be null if the main camera is
+     * destroyed.
+     */
+    public static Camera mainCamera() {
+        return mainCam;
+    }
 
-	/**
-	 * 
-	 * Returns the main camera. Note: This may be null if the main camera is destroyed.
-	 */
-	public static Camera mainCamera(){
-		return mainCam;
-	}
-    
     @Override
     public Vector2D getPosition() {
         return new Vector2D(xPos, yPos);
@@ -97,8 +100,15 @@ public class Camera extends GameObject {
                     ACTION_MAPPINGS.get(entry.getKey()).run();
                     updated = true;
                 }
-            if (updated)
-                updateMotionOffset();
+        }
+        if (GameEngine.getSingleton().headless)
+            return;
+
+        Keyboard keyboard = InputManager.getKeyboard();
+        BasicController c = new BasicController();
+        if (keyboard.isPressed(c.moveForward()) || keyboard.isPressed(c.moveBackward())
+                || keyboard.isPressed(c.moveLeft()) || keyboard.isPressed(c.moveRight())) {
+            updateMotionOffset();
         }
     }
 

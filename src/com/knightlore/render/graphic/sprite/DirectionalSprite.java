@@ -8,6 +8,7 @@ import com.knightlore.utils.Vector2D;
 
 public class DirectionalSprite {
 
+    public static final PlayerSprite PLAYER_DIRECTIONAL_SPRITE = new PlayerSprite();
 	public static final ShotgunSprite SHOTGUN_DIRECTIONAL_SPRITE = new ShotgunSprite();
 
 	private List<Graphic> angles;
