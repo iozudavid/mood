@@ -1,4 +1,4 @@
-    package com.knightlore;
+package com.knightlore;
 
 import java.awt.BorderLayout;
 import java.awt.Canvas;
@@ -18,60 +18,59 @@ import com.knightlore.render.Screen;
  */
 public class MainWindow extends JFrame {
 
-	public static final String TITLE = "KnightLore";
+    public static final String TITLE = "KnightLore";
 
-	/* Only used if !fullscreen */
-	public static final int WIDTH = 1000;
-	public static final int HEIGHT = WIDTH / 16 * 9; // 16:9 aspect ratio
+    /* Only used if !fullscreen */
+    public static final int WIDTH = 1000;
+    public static final int HEIGHT = WIDTH / 16 * 9; // 16:9 aspect ratio
 
-	private Screen screen;
-	private boolean fullscreen;
+    private Screen screen;
+    private boolean fullscreen;
 
-	public MainWindow(String title) {
-		this(title, -1, -1);
-	}
+    public MainWindow(String title) {
+        this(title, -1, -1);
+    }
 
-	public MainWindow(String title, int width, int height) {
-		super(TITLE);
-		fullscreen = width <= 0 || height <= 0;
+    public MainWindow(String title, int width, int height) {
+        super(TITLE);
+        fullscreen = width <= 0 || height <= 0;
 
-		setSize(width, height);
-		setResizable(false);
+        setSize(width, height);
+        setResizable(false);
 
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setLayout(new BorderLayout());
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setLayout(new BorderLayout());
 
-		setLocationRelativeTo(null);
-	}
+        setLocationRelativeTo(null);
+    }
 
-	private void setCanvas(Canvas canvas) {
-		canvas.setPreferredSize(new Dimension(getWidth(), getHeight()));
-		add(canvas, BorderLayout.CENTER);
-		pack();
-	}
+    private void setCanvas(Canvas canvas) {
+        canvas.setPreferredSize(new Dimension(getWidth(), getHeight()));
+        add(canvas, BorderLayout.CENTER);
+        pack();
+    }
 
-	public void finalise() {
-		int w = WIDTH, h = HEIGHT;
-		if (fullscreen) {
-			goFullscreen();
-			Dimension resolution = Screen.getScreenResolution();
-			w = resolution.width;
-			h = resolution.height;
-		}
+    public void finalise() {
+        int w = WIDTH, h = HEIGHT;
+        if (fullscreen) {
+            goFullscreen();
+            Dimension resolution = Screen.getScreenResolution();
+            w = resolution.width;
+            h = resolution.height;
+        }
 
-		this.screen = new Screen(w, h);
-		setCanvas(this.screen);
-	}
+        this.screen = new Screen(w, h);
+        setCanvas(this.screen);
+    }
 
-	public Screen getScreen() {
-		return screen;
-	}
+    public Screen getScreen() {
+        return screen;
+    }
 
-	public void goFullscreen() {
-		GraphicsEnvironment gd = GraphicsEnvironment
-				.getLocalGraphicsEnvironment();
-		GraphicsDevice device = gd.getDefaultScreenDevice();
-		device.setFullScreenWindow(this);
-	}
+    public void goFullscreen() {
+        GraphicsEnvironment gd = GraphicsEnvironment.getLocalGraphicsEnvironment();
+        GraphicsDevice device = gd.getDefaultScreenDevice();
+        device.setFullScreenWindow(this);
+    }
 
 }

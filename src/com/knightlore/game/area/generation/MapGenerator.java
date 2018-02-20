@@ -1,14 +1,21 @@
 package com.knightlore.game.area.generation;
 
+import java.awt.Point;
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.PriorityQueue;
+import java.util.Queue;
+import java.util.Random;
+
 import com.knightlore.game.area.Map;
 import com.knightlore.game.area.Room;
-import com.knightlore.game.tile.*;
-import com.knightlore.render.Environment;
+import com.knightlore.game.tile.AirTile;
+import com.knightlore.game.tile.BrickTile;
+import com.knightlore.game.tile.Tile;
+import com.knightlore.game.tile.UndecidedTile;
 import com.knightlore.utils.Vector2D;
 import com.knightlore.utils.pathfinding.PathFinder;
-
-import java.awt.Point;
-import java.util.*;
 
 public class MapGenerator extends ProceduralAreaGenerator {
     private static final int MAX_ROOMS = 5;
@@ -19,12 +26,12 @@ public class MapGenerator extends ProceduralAreaGenerator {
     public MapGenerator() {
     }
 
-    public Map createMap(int width, int height, Environment env) {
+    public Map createMap(int width, int height) {
         Random rand = new Random();
-        return createMap(width, height, env, rand.nextLong());
+        return createMap(width, height, rand.nextLong());
     }
 
-    public Map createMap(int width, int height, Environment env, long seed) {
+    public Map createMap(int width, int height, long seed) {
         rand = new Random(seed);
         grid = new Tile[width][height];
         PerlinNoiseGenerator perlinGenerator = new PerlinNoiseGenerator(width, height, seed);
@@ -32,7 +39,7 @@ public class MapGenerator extends ProceduralAreaGenerator {
         // optimal
         costGrid = perlinGenerator.createPerlinNoise();
         fillGrid();
-        return new Map(grid, env, seed);
+        return new Map(grid, seed);
     }
 
     @Override
@@ -215,7 +222,7 @@ public class MapGenerator extends ProceduralAreaGenerator {
     // TODO delete
     public static void main(String[] args) {
         MapGenerator genr = new MapGenerator();
-        Map map = genr.createMap(48, 32, Environment.LIGHT_OUTDOORS);
+        Map map = genr.createMap(48, 32);
 
         System.out.println("--------------");
         System.out.println(map.toString());

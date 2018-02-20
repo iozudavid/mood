@@ -14,14 +14,24 @@ import com.knightlore.game.tile.Tile;
 import com.knightlore.network.protocol.ClientControl;
 import com.knightlore.utils.Vector2D;
 
+/**
+ * Viewport into the world. A camera can be bound to any entity (its 'subject')
+ * to view the world from the point of view of something/someone else.
+ * 
+ * @author Joe Ellis
+ *
+ */
 public class Camera extends GameObject {
 
+    /* -.66 is a good value. */
     public static final double FIELD_OF_VIEW = -.66;
+
+    /* Variables concerning motion bob. */
     private static final double MOTION_BOB_AMOUNT = 7.0;
     private static final double MOTION_BOB_SPEED = 0.15;
     private static final double MOVE_SPEED = .040 * 2;
 
-    // will be implemented
+    // TODO: will be implemented
     private static final double SPRINT_MULTIPLIER = 1.5D;
     private static final double STRAFE_SPEED = .01;
     private static final double ROTATION_SPEED = .025;
@@ -101,7 +111,7 @@ public class Camera extends GameObject {
                     updated = true;
                 }
         }
-        if (GameEngine.getSingleton().headless)
+        if (GameEngine.getSingleton().HEADLESS)
             return;
 
         Keyboard keyboard = InputManager.getKeyboard();

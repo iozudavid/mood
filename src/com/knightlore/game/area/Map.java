@@ -6,22 +6,15 @@ import java.util.Random;
 
 import com.knightlore.game.tile.AirTile;
 import com.knightlore.game.tile.Tile;
-import com.knightlore.render.Environment;
 import com.knightlore.utils.Vector2D;
 
 public class Map extends Area {
     
     // TODO: read in maps from file
 	private final long seed;
-	private final Environment environment;
 
-	public Environment getEnvironment() {
-		return environment;
-	}
-
-	public Map(Tile[][] grid, Environment environment, long seed) {
+	public Map(Tile[][] grid, long seed) {
 		super(grid);
-		this.environment = environment;
 		this.seed = seed;
 	}
 
