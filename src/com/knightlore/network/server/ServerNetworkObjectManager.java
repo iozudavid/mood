@@ -32,15 +32,15 @@ public class ServerNetworkObjectManager extends NetworkObjectManager {
         UUID uuid = obj.getObjectId();
         this.networkObjects.put(uuid, new Tuple<>(obj, obj.serialize()));
         // Notify all clients of the newly-created object.
-        //this.sendToClients(getObjectCreationMessage(obj));
+        // this.sendToClients(getObjectCreationMessage(obj));
     }
 
     private ByteBuffer getObjectCreationMessage(NetworkObject obj) {
         ByteBuffer buf = ByteBuffer.allocate(BYTE_BUFFER_MAX_SIZE);
-        // The remote method to call.
-        NetworkUtils.putStringIntoBuf(buf, "newObjCreated");
         // Send the message to the ClientNetworkObjectManager.
         NetworkUtils.putStringIntoBuf(buf, MANAGER_UUID.toString());
+        // The remote method to call.
+        NetworkUtils.putStringIntoBuf(buf, "newObjCreated");
         // Let the client know which class it needs to instantiate.
         NetworkUtils.putStringIntoBuf(buf, obj.getClass().getName());
         // UUID of object to instantiate.
@@ -81,11 +81,22 @@ public class ServerNetworkObjectManager extends NetworkObjectManager {
         networkObjects.remove(obj.getObjectId());
     }
 
-    public void registerClientSender(SendToClient obj) {
+    public void registerClientSender(SendToClient sender) {
         synchronized (this.clientSenders) {
-            this.clientSenders.add(obj);
+            this.clientSenders.add(sender);
         }
-        notifyOfAllObjs(obj);
+        // First, tell the client what objects are on the server.
+        notifyOfAllObjs(sender);
+
+        System.out.println(
+                "sending player identity" + System.currentTimeMillis());
+        // Now, tell the player who they are.
+        ByteBuffer buf = ByteBuffer
+                .allocate(NetworkObject.BYTE_BUFFER_MAX_SIZE);
+        NetworkUtils.putStringIntoBuf(buf, MANAGER_UUID.toString());
+        NetworkUtils.putStringIntoBuf(buf, "registerPlayerIdentity");
+        NetworkUtils.putStringIntoBuf(buf, sender.uuid.toString());
+        sender.send(buf);
     }
 
     public void removeClientSender(SendToClient obj) {
@@ -93,7 +104,7 @@ public class ServerNetworkObjectManager extends NetworkObjectManager {
             this.clientSenders.remove(obj);
         }
     }
-    
+
     @Override
     public void onUpdate() {
         super.onUpdate();

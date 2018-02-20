@@ -49,11 +49,9 @@ public class TCPConnection extends Connection {
         synchronized (lock) {
             try {
                 int numBytes = data.position();
-                System.out.println("position before sending: " + numBytes);
                 byte[] tmp = new byte[numBytes];
                 data.rewind();
                 data.get(tmp);
-                System.out.println("size of data to send " + tmp.length);
                 infoSend.writeInt(tmp.length);
                 infoSend.write(tmp);
             } catch (IOException e) {
@@ -68,9 +66,7 @@ public class TCPConnection extends Connection {
         Object lock = new Object();
         synchronized (lock) {
             try {
-                System.out.println("waiting to receive");
                 int size = infoReceive.readInt();
-                System.out.println("size to receive " + size);
                 byte[] tmp = new byte[size];
                 infoReceive.readFully(tmp);
                 return ByteBuffer.wrap(tmp);

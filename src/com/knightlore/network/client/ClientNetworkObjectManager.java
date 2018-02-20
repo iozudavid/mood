@@ -28,6 +28,7 @@ public class ClientNetworkObjectManager extends NetworkObjectManager {
     private void setNetworkConsumers() {
         networkConsumers.put("registerPlayerIdentity",
                 this::registerPlayerIdentity);
+        networkConsumers.put("newObjCreated", this::newObjCreated);
     }
 
     @Override
@@ -111,22 +112,13 @@ public class ClientNetworkObjectManager extends NetworkObjectManager {
     // our UUID is.
     public void registerPlayerIdentity(ByteBuffer buf) {
         myPlayerUUID = UUID.fromString(NetworkUtils.getStringFromBuf(buf));
-        Player player = null;
-        while ((player = (Player) getNetworkObject(myPlayerUUID)) == null) {
-            // Wait until we receive our player object from the server.
-            try {
-                Thread.sleep(10);
-            } catch (InterruptedException e) {
-                System.err.println("Interrupted while waiting for player ID.");
-                return;
-            }
-        }
+        Player player = (Player) getNetworkObject(myPlayerUUID);
         Camera camera = new Camera(
                 GameEngine.getSingleton().getRenderer().getMap());
         camera.setSubject(player);
         GameEngine.getSingleton().getRenderer().setCamera(camera);
     }
-    
+
     @Override
     public void onCreate() {
         System.out.println("on create called for client");
