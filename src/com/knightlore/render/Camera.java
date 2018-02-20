@@ -5,12 +5,12 @@ import java.util.Map.Entry;
 
 import com.knightlore.engine.GameEngine;
 import com.knightlore.engine.GameObject;
+import com.knightlore.engine.input.BasicController;
 import com.knightlore.engine.input.InputManager;
 import com.knightlore.engine.input.Keyboard;
 import com.knightlore.game.Player;
 import com.knightlore.game.area.Map;
 import com.knightlore.game.tile.Tile;
-import com.knightlore.input.BasicController;
 import com.knightlore.network.protocol.ClientControl;
 import com.knightlore.utils.Vector2D;
 

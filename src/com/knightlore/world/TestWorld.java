@@ -12,7 +12,6 @@ import com.knightlore.render.Environment;
 import com.knightlore.utils.Vector2D;
 
 public class TestWorld extends GameWorld {
-
     private Camera mainCamera;
     private GUICanvas gui;
 
@@ -27,7 +26,7 @@ public class TestWorld extends GameWorld {
         // FIXME don't hardcode the seed...
         map = generator.createMap(16, 16, 161803398875L);
         // FIXME hack hack hack, this is just for the demo
-        GameSettings.spawnPos = generator.getDemoSpawnPos();
+        GameSettings.spawnPos = map.getRandomSpawnPoint();
 
         // now populate the world
         Vector2D pos = GameSettings.spawnPos;
@@ -76,5 +75,4 @@ public class TestWorld extends GameWorld {
         System.out.println("Saving Not implemented!");
         return false;
     }
-
 }
