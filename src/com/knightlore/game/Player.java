@@ -24,8 +24,7 @@ public class Player extends Entity implements IRenderable {
     // private volatile boolean finished = false;
 
     public Player(UUID uuid, Vector2D pos, Vector2D dir) {
-        super(uuid, 0.33D, DirectionalSprite.SHOTGUN_DIRECTIONAL_SPRITE, pos,
-                dir);
+        super(uuid, 0.33D, pos, dir);
         this.currentWeapon = new Shotgun();
 
         // Map possible inputs to the methods that handle them. Avoids long
@@ -105,18 +104,6 @@ public class Player extends Entity implements IRenderable {
     }
 
     @Override
-    public void onCreate() {
-        // TODO Auto-generated method stub
-
-    }
-
-    @Override
-    public void onDestroy() {
-        // TODO Auto-generated method stub
-
-    }
-
-    @Override
     public int getDrawSize() {
         return 0;
     }
@@ -124,6 +111,11 @@ public class Player extends Entity implements IRenderable {
     @Override
     public int getMinimapColor() {
         return 0;
+    }
+
+    @Override
+    public DirectionalSprite getDirectionalSprite() {
+        return DirectionalSprite.SHOTGUN_DIRECTIONAL_SPRITE;
     }
 
 }

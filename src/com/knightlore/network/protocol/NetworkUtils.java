@@ -23,20 +23,25 @@ public class NetworkUtils {
         return false;
 
     }
-    
+
     // Puts a String into a ByteBuffer.
     public static void putStringIntoBuf(ByteBuffer buf, String string) {
         int len = string.length();
+        System.out.println("put string " + string + " length " + len);
+        System.out.println("buffer pos before string " + buf.position());
         buf.putInt(len);
         for (int i = 0; i > len; i++)
             buf.putChar(string.charAt(i));
+        System.out.println("buffer pos before string " + buf.position());
     }
-    
+
     // Gets a String from a ByteBuffer.
     public static String getStringFromBuf(ByteBuffer buf) {
+        System.out.println("getting string, limit " + buf.limit() + " pos " + buf.position());
         int len = buf.getInt();
+        System.out.println("str length " + len);
         char[] chars = new char[len];
-        for (int i = 0; i < len; i ++)
+        for (int i = 0; i < len; i++)
             chars[i] = buf.getChar();
         return new String(chars);
     }

@@ -13,10 +13,6 @@ public abstract class NetworkObject extends GameObject implements INetworkable {
     private UUID objectUniqueID;
 
     protected Map<String, Consumer<ByteBuffer>> networkConsumers = new HashMap<>();
-    
-    public NetworkObject(ByteBuffer buf) {
-        
-    }
 
     public NetworkObject(UUID uuid) {
         this(uuid, Vector2D.ZERO);
@@ -27,7 +23,6 @@ public abstract class NetworkObject extends GameObject implements INetworkable {
         super(position);
         this.objectUniqueID = uuid;
         setNetworkConsumers();
-        NetworkObjectManager.getSingleton().registerNetworkObject(this);
     }
     
     private void setNetworkConsumers() {
@@ -41,6 +36,11 @@ public abstract class NetworkObject extends GameObject implements INetworkable {
     @Override
     public Map<String, Consumer<ByteBuffer>> getNetworkConsumers() {
         return networkConsumers;
+    }
+    
+    @Override
+    public void onCreate() {
+        NetworkObjectManager.getSingleton().registerNetworkObject(this);
     }
 
     @Override

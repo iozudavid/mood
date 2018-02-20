@@ -9,9 +9,10 @@ import java.util.concurrent.LinkedBlockingQueue;
 import java.util.function.Consumer;
 
 import com.knightlore.engine.GameObject;
+import com.knightlore.network.protocol.NetworkUtils;
 
 public abstract class NetworkObjectManager extends GameObject
-        implements INetworkable {
+        implements INetworkable, Runnable {
     private static NetworkObjectManager singleton;
     // This is a special UUID that refers to the NetworkObjectManager itself.
     public static final UUID MANAGER_UUID = UUID
@@ -26,14 +27,15 @@ public abstract class NetworkObjectManager extends GameObject
     }
 
     public void processMessage(ByteBuffer buffer) {
+        System.out.println("adding message");
         this.messages.add(buffer);
     }
 
-    public abstract void registerNetworkObject(INetworkable obj);
+    public abstract void registerNetworkObject(NetworkObject obj);
 
-    public abstract void removeNetworkObject(INetworkable obj);
+    public abstract void removeNetworkObject(NetworkObject obj);
 
-    // public abstract INetworkable getNetworkObject(UUID uuid);
+    public abstract NetworkObject getNetworkObject(UUID uuid);
 
     public static NetworkObjectManager getSingleton() {
         return singleton;
@@ -62,20 +64,47 @@ public abstract class NetworkObjectManager extends GameObject
 
     @Override
     public void onCreate() {
-        // TODO Auto-generated method stub
-
+        System.out.println("oncreate called");
+        new Thread(this).start();
+        System.out.println("Object manager started");
     }
 
     @Override
     public void onUpdate() {
         // TODO Auto-generated method stub
-
     }
 
     @Override
     public void onDestroy() {
         // TODO Auto-generated method stub
 
+    }
+
+    @Override
+    public void run() {
+        while (true) {
+            ByteBuffer buf = null;
+            try {
+                buf = this.messages.take();
+            } catch (InterruptedException e) {
+                System.err.println("Interrupted while waiting for a message.");
+                e.printStackTrace();
+                return;
+            }
+            UUID objID = UUID.fromString(NetworkUtils.getStringFromBuf(buf));
+            String methodName = NetworkUtils.getStringFromBuf(buf);
+            Consumer<ByteBuffer> cons;
+            if (objID.equals(MANAGER_UUID))
+                // This message is directed at the NetworkManager, i.e. ourself.
+                cons = this.getNetworkConsumers().get(methodName);
+            else {
+                NetworkObject obj = this.getNetworkObject(objID);
+                cons = obj.getNetworkConsumers().get(methodName);
+            }
+            // Execute the specified method on the specified object, with the
+            // rest of the ByteBuffer as input.
+            cons.accept(buf);
+        }
     }
 
 }

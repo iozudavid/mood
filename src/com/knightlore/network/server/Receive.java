@@ -16,8 +16,9 @@ public class Receive implements Runnable {
     public void run() {
         ByteBuffer buf;
         try {
-            while ((buf = conn.receive()) != null)
+            while ((buf = conn.receive()) != null) {
                 NetworkObjectManager.getSingleton().processMessage(buf);
+            }
         } catch (Exception e) {
             System.err.println("Error while receiving packet: ");
             e.printStackTrace();

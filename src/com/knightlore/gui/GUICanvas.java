@@ -160,7 +160,7 @@ public class GUICanvas extends GameObject implements IRenderable {
 			}
 		}
 		lastHeld = InputManager.getMouse().isLeftHeld();
-		lastSelected = selected;		
+		lastSelected = selected;	
 	}
 
 	@Override

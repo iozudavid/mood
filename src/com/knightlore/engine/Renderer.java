@@ -45,13 +45,8 @@ public class Renderer implements IRenderable {
 
     @Override
     public void render(PixelBuffer pix, int x, int y) {
-        while (camera == null || minimap==null){
-            //wait till minimap and camera not null
-            // Sleep thread to allow references to update.
-            try {
-                Thread.sleep(5);
-            } catch (InterruptedException e) {}
-        }
+        if (camera == null || minimap == null)
+            return;
         map.getEnvironment().renderEnvironment(pix);
         drawPerspective(pix);
         drawCrosshair(pix); 

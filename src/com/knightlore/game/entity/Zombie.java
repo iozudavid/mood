@@ -11,21 +11,8 @@ public class Zombie extends Entity {
     }
 
     public Zombie(double size, Vector2D position, Vector2D direction) {
-        super(size, DirectionalSprite.PLAYER_DIRECTIONAL_SPRITE, position,
-                direction);
+        super(size, position, direction);
         zOffset = 100;
-    }
-
-    @Override
-    public void onCreate() {
-    }
-
-    @Override
-    public void onUpdate() {
-    }
-
-    @Override
-    public void onDestroy() {
     }
 
     @Override
@@ -37,6 +24,16 @@ public class Zombie extends Entity {
     public int getMinimapColor() {
         // make it white
         return 0xFFFFFF;
+    }
+
+    @Override
+    public DirectionalSprite getDirectionalSprite() {
+        return DirectionalSprite.PLAYER_DIRECTIONAL_SPRITE;
+    }
+
+    @Override
+    public void onUpdate() {
+        
     }
 
     // TODO TODO TODO

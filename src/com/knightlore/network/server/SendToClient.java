@@ -25,7 +25,8 @@ public class SendToClient implements Runnable {
     public void run() {
         ServerNetworkObjectManager manager = (ServerNetworkObjectManager) NetworkObjectManager
                 .getSingleton();
-        manager.registerClientSender(this);
+        
+        System.out.println("sending player identity" + System.currentTimeMillis());
         // Firstly, tell the player who they are.
         ByteBuffer buf = ByteBuffer
                 .allocate(NetworkObject.BYTE_BUFFER_MAX_SIZE);
@@ -35,10 +36,14 @@ public class SendToClient implements Runnable {
         NetworkUtils.putStringIntoBuf(buf, uuid.toString());
         conn.send(buf);
         
+
+        manager.registerClientSender(this);
+        
         while (!conn.terminated) {
             ByteBuffer nextState;
             try {
                 nextState = commandQueue.take();
+                System.out.println("took new command to send");
                 conn.send(nextState);
             } catch (InterruptedException e) {
                 // TODO Auto-generated catch block

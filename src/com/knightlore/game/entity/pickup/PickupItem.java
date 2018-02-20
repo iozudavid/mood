@@ -15,9 +15,8 @@ public abstract class PickupItem extends Entity {
 
 	protected DirectionalSprite sprite;
 
-	public PickupItem(DirectionalSprite sprite, Vector2D position) {
-		super(PICKUP_SIZE, sprite, position, Math.random() < 0.5 ? Vector2D.UP : Vector2D.DOWN);
-		this.sprite = sprite;
+	public PickupItem(Vector2D position) {
+		super(PICKUP_SIZE, position, Math.random() < 0.5 ? Vector2D.UP : Vector2D.DOWN);
 	}
 
 	@Override

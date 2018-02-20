@@ -43,9 +43,10 @@ public abstract class Connection implements Runnable {
             ByteBuffer packet = Connection.this.receiveBlocking();
             if (packet == null) {
                 this.terminated = true;
-                System.err.println("Received a null packet.");
+                System.err.println("Connection terminated.");
                 break;
             }
+            System.out.println("received buffer of size " + packet.remaining());
             try {
                 packets.put(packet);
             } catch (InterruptedException e) {
