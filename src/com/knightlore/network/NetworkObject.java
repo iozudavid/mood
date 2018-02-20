@@ -7,6 +7,7 @@ import java.util.UUID;
 import java.util.function.Consumer;
 
 import com.knightlore.engine.GameObject;
+import com.knightlore.network.protocol.NetworkUtils;
 import com.knightlore.utils.Vector2D;
 
 public abstract class NetworkObject extends GameObject implements INetworkable {
@@ -64,8 +65,8 @@ public abstract class NetworkObject extends GameObject implements INetworkable {
     // remote counterpart to pass the ByteBuffer to.
     protected ByteBuffer newByteBuffer(String remoteMethod) {
         ByteBuffer buf = ByteBuffer.allocate(BYTE_BUFFER_MAX_SIZE);
-        buf.put(objectUniqueID.toString().getBytes());
-        buf.put(remoteMethod.getBytes());
+        NetworkUtils.putStringIntoBuf(buf, objectUniqueID.toString());
+        NetworkUtils.putStringIntoBuf(buf, remoteMethod);
         return buf;
     }
 
