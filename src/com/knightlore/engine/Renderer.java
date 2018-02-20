@@ -1,13 +1,11 @@
 package com.knightlore.engine;
 
-import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Stack;
 
 import com.knightlore.game.area.Map;
 import com.knightlore.game.entity.Entity;
-import com.knightlore.game.entity.pickup.ShotgunPickup;
 import com.knightlore.game.tile.AirTile;
 import com.knightlore.game.tile.Tile;
 import com.knightlore.gui.GUICanvas;
@@ -19,6 +17,7 @@ import com.knightlore.render.PixelBuffer;
 import com.knightlore.render.RaycasterUtils;
 import com.knightlore.render.graphic.Graphic;
 import com.knightlore.render.minimap.Minimap;
+import com.knightlore.world.TestWorld;
 
 public class Renderer implements IRenderable {
 
@@ -225,7 +224,11 @@ public class Renderer implements IRenderable {
     }
 
     private void drawSprites(PixelBuffer pix, double[] zbuffer) {
-        List<Entities> = GameEn
+        GameWorld world = GameEngine.getSingleton().getGameWorld();
+        if(!(world instanceof TestWorld))
+        	return;
+        TestWorld testWorld = ((TestWorld) world);
+        mobsToRender = testWorld.getMobs();
         synchronized (mobsToRender) {
             mobsToRender.sort(new Comparator<Entity>() {
 

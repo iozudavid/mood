@@ -200,6 +200,10 @@ public class GameEngine implements Runnable {
         screen.addKeyListener(InputManager.getKeyboard());
         screen.requestFocus();
     }
+    
+    public GameWorld getGameWorld(){
+    	return this.world;
+    }
 
     /**
      * Add the singleton mouse instance to the canvas and request focus.
