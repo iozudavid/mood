@@ -1,14 +1,26 @@
 package com.knightlore.game.entity.pickup;
 
+import java.util.UUID;
+
+import com.knightlore.network.NetworkObject;
 import com.knightlore.render.graphic.sprite.DirectionalSprite;
 import com.knightlore.render.graphic.sprite.ShotgunSprite;
 import com.knightlore.utils.Vector2D;
 
 public class ShotgunPickup extends PickupItem {
+    // Returns a new 'blank' instance. See NetworkObject for details.
+    public static NetworkObject build(UUID uuid) {
+        return new ShotgunPickup(uuid, Vector2D.ZERO);
+    }
+
+    public ShotgunPickup(UUID uuid, Vector2D position) {
+        super(uuid, position);
+    }
 
     public ShotgunPickup(Vector2D position) {
         super(position);
     }
+
     @Override
     public int getDrawSize() {
         return 5;

@@ -46,7 +46,6 @@ public abstract class Connection implements Runnable {
                 System.err.println("Connection terminated.");
                 break;
             }
-            System.out.println("received buffer of size " + packet.remaining());
             try {
                 packets.put(packet);
             } catch (InterruptedException e) {

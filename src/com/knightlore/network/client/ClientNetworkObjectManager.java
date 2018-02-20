@@ -1,7 +1,7 @@
 package com.knightlore.network.client;
 
-import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.nio.ByteBuffer;
 import java.util.HashMap;
 import java.util.Map;
@@ -14,7 +14,6 @@ import com.knightlore.network.NetworkObject;
 import com.knightlore.network.NetworkObjectManager;
 import com.knightlore.network.protocol.NetworkUtils;
 import com.knightlore.render.Camera;
-import com.knightlore.utils.Vector2D;
 
 public class ClientNetworkObjectManager extends NetworkObjectManager {
     private Map<UUID, NetworkObject> networkObjects = new HashMap<>();
@@ -55,57 +54,25 @@ public class ClientNetworkObjectManager extends NetworkObjectManager {
         if (networkObjects.containsKey(objID))
             // We already know about this object.
             return;
-        double posX = buf.getDouble();
-        double posY = buf.getDouble();
-        Vector2D position = new Vector2D(posX, posY);
-        // This bit represents whether the object is an Entity.
-        if (buf.get() == 1) {
-            double size = buf.getDouble();
-            double dirX = buf.getDouble();
-            double dirY = buf.getDouble();
-            Vector2D direction = new Vector2D(dirX, dirY);
-            try {
-                Class<Entity> cls = (Class<Entity>) Class.forName(className);
-                Constructor<Entity> cons = cls.getConstructor(UUID.class,
-                        double.class, Vector2D.class, Vector2D.class);
-                // Create the new object.
-                cons.newInstance(objID, size, position, direction);
-            } catch (NoSuchMethodException | SecurityException
-                    | ClassNotFoundException e) {
-                System.err.println("Class " + className
-                        + " may not implement the required parameter signature for an Entity.");
-                e.printStackTrace();
-                return;
-            } catch (InstantiationException | IllegalAccessException
-                    | IllegalArgumentException | InvocationTargetException e) {
-                System.err.println(
-                        "There was a problem while instantiating a new object of class "
-                                + className + " with UUID " + objID);
-                e.printStackTrace();
-                return;
-            }
-        } else {
-            try {
-                Class<NetworkObject> cls = (Class<NetworkObject>) Class
-                        .forName(className);
-                Constructor<NetworkObject> cons = cls.getConstructor(UUID.class,
-                        Vector2D.class);
-                // Create the new object.
-                cons.newInstance(objID, position);
-            } catch (NoSuchMethodException | SecurityException
-                    | ClassNotFoundException e) {
-                System.err.println("Class " + className
-                        + " may not implement the required parameter signature for a NetworkObject.");
-            } catch (InstantiationException | IllegalAccessException
-                    | IllegalArgumentException | InvocationTargetException e) {
-                System.err.println(
-                        "There was a problem while instantiating a new object of class "
-                                + className + " with UUID " + objID);
-                e.printStackTrace();
-                return;
-            }
+        try {
+            Class<Entity> cls = (Class<Entity>) Class.forName(className);
+            // Build the new object.
+            Method method = cls.getMethod("build", UUID.class);
+            // Static method, so pass null.
+            method.invoke(null, objID);
+        } catch (NoSuchMethodException | SecurityException
+                | IllegalAccessException | IllegalArgumentException
+                | InvocationTargetException e) {
+            System.err.println(
+                    "Error when attempting to call the static method build(UUID) on the class "
+                            + className
+                            + ". Are you sure you implemented it? See NetworkObject for details.");
+            e.printStackTrace();
+        } catch (ClassNotFoundException e) {
+            System.err.println("The specified class " + className
+                    + " could not be found.");
+            e.printStackTrace();
         }
-
     }
 
     // Called remotely when we receive a message from the server to tell us what

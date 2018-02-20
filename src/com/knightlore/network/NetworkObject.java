@@ -10,6 +10,17 @@ import com.knightlore.engine.GameObject;
 import com.knightlore.utils.Vector2D;
 
 public abstract class NetworkObject extends GameObject implements INetworkable {
+    /*
+     * NOTE: While it is not enforceable in this abstract class, all
+     * non-abstract classes implementing NetworkObject MUST provide a static
+     * method of the following signature:
+     * 
+     * public static NetworkObject build(UUID uuid);
+     * 
+     * This method should return a 'blank' instance of the class, with the
+     * provided UUID. Use sensible defaults to set any required attributes, as
+     * they will likely be overwritten by deserialisation anyway.
+     */
     private UUID objectUniqueID;
 
     protected Map<String, Consumer<ByteBuffer>> networkConsumers = new HashMap<>();
@@ -24,7 +35,7 @@ public abstract class NetworkObject extends GameObject implements INetworkable {
         this.objectUniqueID = uuid;
         setNetworkConsumers();
     }
-    
+
     private void setNetworkConsumers() {
         networkConsumers.put("deserialize", this::deserialize);
     }
@@ -37,7 +48,7 @@ public abstract class NetworkObject extends GameObject implements INetworkable {
     public Map<String, Consumer<ByteBuffer>> getNetworkConsumers() {
         return networkConsumers;
     }
-    
+
     @Override
     public void onCreate() {
         NetworkObjectManager.getSingleton().registerNetworkObject(this);
@@ -47,7 +58,6 @@ public abstract class NetworkObject extends GameObject implements INetworkable {
     public void onDestroy() {
         NetworkObjectManager.getSingleton().removeNetworkObject(this);
     }
-
 
     // Convenience method for implementors. Returns a new ByteBuffer prefixed
     // with this object's UUID, and the name of the method of this object's

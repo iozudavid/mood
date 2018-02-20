@@ -28,10 +28,12 @@ public class Renderer implements IRenderable {
     private static GUICanvas gui = null;
 
     private List<Entity> mobsToRender;
+    private GameWorld world;
 
-    public Renderer(Camera camera, Map map) {
+    public Renderer(Camera camera, GameWorld world) {
         this.camera = camera;
-        this.map = map;
+        this.world = world;
+        this.map = GameWorld.getMap();
         this.minimap = null;
         
     }
@@ -223,6 +225,7 @@ public class Renderer implements IRenderable {
     }
 
     private void drawSprites(PixelBuffer pix, double[] zbuffer) {
+        List<Entities> = GameEn
         synchronized (mobsToRender) {
             mobsToRender.sort(new Comparator<Entity>() {
 
@@ -320,14 +323,7 @@ public class Renderer implements IRenderable {
     }
 
     public void setCamera(Camera cam) {
-        this.mobsToRender = new ArrayList<Entity>();
         this.camera = cam;
-        // FIXME: put all this in the constructor when we get a camera on objet
-        // creation.
-        ShotgunPickup p = new ShotgunPickup(cam.getPosition());
-        mobsToRender.add(p);
         this.minimap = new Minimap(camera, map, 128);
-        this.minimap.addMinimapObject(p);
-        // propagate to minimap
     }
 }

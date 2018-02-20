@@ -8,6 +8,7 @@ import java.util.UUID;
 import com.knightlore.game.entity.Entity;
 import com.knightlore.game.entity.weapon.Shotgun;
 import com.knightlore.game.entity.weapon.Weapon;
+import com.knightlore.network.NetworkObject;
 import com.knightlore.network.protocol.ClientControl;
 import com.knightlore.render.IRenderable;
 import com.knightlore.render.PixelBuffer;
@@ -22,6 +23,11 @@ public class Player extends Entity implements IRenderable {
     private java.util.Map<ClientControl, Runnable> ACTION_MAPPINGS = new HashMap<>();
     private java.util.Map<ClientControl, Byte> inputState = new HashMap<>();
     // private volatile boolean finished = false;
+    
+    // Returns a new 'blank' instance. See NetworkObject for details.
+    public static NetworkObject build(UUID uuid) {
+        return new Player(uuid, Vector2D.ZERO, Vector2D.ZERO);
+    }
 
     public Player(UUID uuid, Vector2D pos, Vector2D dir) {
         super(uuid, 0.33D, pos, dir);
@@ -46,6 +52,8 @@ public class Player extends Entity implements IRenderable {
     public Player(Vector2D pos, Vector2D dir) {
         this(UUID.randomUUID(), pos, dir);
     }
+    
+    
 
     private void setNetworkConsumers() {
         networkConsumers.put("setInputState", this::setInputState);

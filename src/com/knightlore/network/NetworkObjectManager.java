@@ -27,7 +27,6 @@ public abstract class NetworkObjectManager extends GameObject
     }
 
     public void processMessage(ByteBuffer buffer) {
-        System.out.println("adding message");
         this.messages.add(buffer);
     }
 

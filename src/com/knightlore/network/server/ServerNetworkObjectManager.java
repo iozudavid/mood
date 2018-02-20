@@ -8,7 +8,6 @@ import java.util.Map.Entry;
 import java.util.UUID;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-import com.knightlore.game.entity.Entity;
 import com.knightlore.network.NetworkObject;
 import com.knightlore.network.NetworkObjectManager;
 import com.knightlore.network.protocol.NetworkUtils;
@@ -28,11 +27,10 @@ public class ServerNetworkObjectManager extends NetworkObjectManager {
 
     @Override
     public synchronized void registerNetworkObject(NetworkObject obj) {
-        System.out.println("server registering net obj " + obj.getObjectId());
         UUID uuid = obj.getObjectId();
         this.networkObjects.put(uuid, new Tuple<>(obj, obj.serialize()));
         // Notify all clients of the newly-created object.
-        // this.sendToClients(getObjectCreationMessage(obj));
+        this.sendToClients(getObjectCreationMessage(obj));
     }
 
     private ByteBuffer getObjectCreationMessage(NetworkObject obj) {
@@ -45,17 +43,6 @@ public class ServerNetworkObjectManager extends NetworkObjectManager {
         NetworkUtils.putStringIntoBuf(buf, obj.getClass().getName());
         // UUID of object to instantiate.
         NetworkUtils.putStringIntoBuf(buf, obj.getObjectId().toString());
-        // Networked objects should take exactly two parameters: UUID and
-        // position. Entities take two extra parameters: size and direction.
-        buf.putDouble(obj.getxPos());
-        buf.putDouble(obj.getyPos());
-        boolean isEntity = obj instanceof Entity;
-        buf.put((byte) (isEntity ? 1 : 0));
-        if (isEntity) {
-            buf.putDouble(((Entity) obj).getSize());
-            buf.putDouble(((Entity) obj).getxDir());
-            buf.putDouble(((Entity) obj).getyDir());
-        }
         return buf;
     }
 

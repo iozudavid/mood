@@ -1,10 +1,17 @@
 package com.knightlore.game.entity;
 
+import java.util.UUID;
+
+import com.knightlore.network.NetworkObject;
 import com.knightlore.render.graphic.sprite.DirectionalSprite;
 import com.knightlore.render.minimap.Minimap;
 import com.knightlore.utils.Vector2D;
 
 public class Zombie extends Entity {
+    // Returns a new 'blank' instance. See NetworkObject for details.
+    public static NetworkObject build(UUID uuid) {
+        return new Zombie(uuid, 0, Vector2D.ZERO, Vector2D.ZERO);
+    }
 
     public Zombie(double size, Vector2D position) {
         this(size, position, Vector2D.UP);
@@ -12,6 +19,12 @@ public class Zombie extends Entity {
 
     public Zombie(double size, Vector2D position, Vector2D direction) {
         super(size, position, direction);
+        zOffset = 100;
+    }
+
+    protected Zombie(UUID uuid, double size, Vector2D position,
+            Vector2D direction) {
+        super(uuid, size, position, direction);
         zOffset = 100;
     }
 
@@ -33,7 +46,7 @@ public class Zombie extends Entity {
 
     @Override
     public void onUpdate() {
-        
+
     }
 
     // TODO TODO TODO
