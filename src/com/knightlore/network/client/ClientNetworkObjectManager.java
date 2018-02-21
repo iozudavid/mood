@@ -14,6 +14,7 @@ import com.knightlore.network.NetworkObject;
 import com.knightlore.network.NetworkObjectManager;
 import com.knightlore.network.protocol.NetworkUtils;
 import com.knightlore.render.Camera;
+import com.knightlore.utils.Vector2D;
 
 public class ClientNetworkObjectManager extends NetworkObjectManager {
     private Map<UUID, NetworkObject> networkObjects = new HashMap<>();
@@ -66,6 +67,9 @@ public class ClientNetworkObjectManager extends NetworkObjectManager {
         System.out.println("Receiving new object details from server");
         String className = NetworkUtils.getStringFromBuf(buf);
         UUID objID = UUID.fromString(NetworkUtils.getStringFromBuf(buf));
+        double xPos = buf.getDouble();
+        double yPos = buf.getDouble();
+        Vector2D initialPos = new Vector2D(xPos, yPos);
 		synchronized (this.networkObjects) {
 			if (networkObjects.containsKey(objID))
 				// We already know about this object.
@@ -74,9 +78,9 @@ public class ClientNetworkObjectManager extends NetworkObjectManager {
         try {
             Class<Entity> cls = (Class<Entity>) Class.forName(className);
             // Build the new object.
-            Method method = cls.getMethod("build", UUID.class);
+            Method method = cls.getMethod("build", UUID.class, Vector2D.class);
             // Static method, so pass null.
-            method.invoke(null, objID);
+            method.invoke(null, objID, initialPos);
         } catch (NoSuchMethodException | SecurityException
                 | IllegalAccessException | IllegalArgumentException
                 | InvocationTargetException e) {

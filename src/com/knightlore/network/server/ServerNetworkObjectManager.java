@@ -47,6 +47,8 @@ public class ServerNetworkObjectManager extends NetworkObjectManager {
         NetworkUtils.putStringIntoBuf(buf, obj.getClass().getName());
         // UUID of object to instantiate.
         NetworkUtils.putStringIntoBuf(buf, obj.getObjectId().toString());
+        buf.putDouble(obj.getxPos());
+        buf.putDouble(obj.getyPos());
         return buf;
     }
 
