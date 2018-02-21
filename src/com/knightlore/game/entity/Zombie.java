@@ -10,7 +10,7 @@ import com.knightlore.utils.Vector2D;
 public class Zombie extends Entity {
     // Returns a new 'blank' instance. See NetworkObject for details.
     public static NetworkObject build(UUID uuid) {
-        return new Zombie(uuid, 0, Vector2D.ZERO, Vector2D.ZERO);
+        return new Zombie(uuid, 0, Vector2D.ONE, Vector2D.ONE);
     }
 
     public Zombie(double size, Vector2D position) {

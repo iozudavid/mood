@@ -10,7 +10,7 @@ import com.knightlore.utils.Vector2D;
 public class ShotgunPickup extends PickupItem {
     // Returns a new 'blank' instance. See NetworkObject for details.
     public static NetworkObject build(UUID uuid) {
-        return new ShotgunPickup(uuid, Vector2D.ZERO);
+        return new ShotgunPickup(uuid, Vector2D.ONE);
     }
 
     public ShotgunPickup(UUID uuid, Vector2D position) {

@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.ByteBuffer;
+import java.util.Arrays;
 import java.util.UUID;
 
 import com.knightlore.engine.input.InputManager;
@@ -33,22 +34,18 @@ public class SendToServer implements Runnable {
     private int l = 0;
 
     private ByteBuffer currentState;
+    private ClientNetworkObjectManager manager;
+    private UUID myUUID;
 
     public SendToServer(Connection conn) {
         this.conn = conn;
         // this.lock = new Object();
-        this.lastState = getCurentControlState();
-        this.currentState = getCurentControlState();
+        this.manager = (ClientNetworkObjectManager) NetworkObjectManager
+                .getSingleton();
 
     }
 
-    private synchronized ByteBuffer getCurentControlState() {
-        ClientNetworkObjectManager manager = (ClientNetworkObjectManager) NetworkObjectManager
-                .getSingleton();
-        UUID myUUID = manager.getMyPlayerUUID();
-        if (myUUID == null)
-            // We don't know which player we are yet.
-            return null;
+    private synchronized ByteBuffer getCurrentControlState() {
         // ByteBuffer to store current input state.
         ByteBuffer buf = ByteBuffer
                 .allocate(NetworkObject.BYTE_BUFFER_MAX_SIZE);
@@ -96,8 +93,8 @@ public class SendToServer implements Runnable {
         // Send a controls update if either the controls have changed or
         // a regular update is due.
         synchronized (this.currentState) {
-            if (updateCounter++ >= REGULAR_UPDATE_FREQ
-                    || !this.lastState.equals(this.currentState)) {
+            if (updateCounter++ >= REGULAR_UPDATE_FREQ || !Arrays
+                    .equals(currentState.array(), lastState.array())) {
                 System.out.println("Packet " + l++);
                 updateCounter = 1;
                 conn.send(currentState);
@@ -111,20 +108,20 @@ public class SendToServer implements Runnable {
         double freq = (UPDATE_TICK_FREQ / 1000d);
         long delay = (long) (1 / freq);
 
-        while (this.currentState == null)
+        while ((this.myUUID = manager.getMyPlayerUUID()) == null)
+            // Wait for UUID to be set.
             try {
                 Thread.sleep(delay);
             } catch (InterruptedException e1) {
                 // TODO Auto-generated catch block
                 e1.printStackTrace();
             }
+        this.currentState = getCurrentControlState();
+        this.lastState = this.currentState;
 
         while (!conn.terminated) {
-
             synchronized (this.currentState) {
-                ByteBuffer newState = getCurentControlState();
-                if (newState != null)
-                    this.currentState = newState;
+                this.currentState = getCurrentControlState();
             }
             this.tick();
             try {

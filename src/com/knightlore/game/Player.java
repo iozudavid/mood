@@ -26,7 +26,7 @@ public class Player extends Entity implements IRenderable {
     
     // Returns a new 'blank' instance. See NetworkObject for details.
     public static NetworkObject build(UUID uuid) {
-        return new Player(uuid, Vector2D.ZERO, Vector2D.ZERO);
+        return new Player(uuid, Vector2D.ONE, Vector2D.ONE);
     }
 
     public Player(UUID uuid, Vector2D pos, Vector2D dir) {
@@ -87,6 +87,7 @@ public class Player extends Entity implements IRenderable {
                 // For boolean inputs (i.e. all current inputs), 0 represents
                 // false.
                 if (entry.getValue() != 0) {
+                    System.out.println(entry.getKey() + " activated");
                     ACTION_MAPPINGS.get(entry.getKey()).run();
                     updated = true;
                 }

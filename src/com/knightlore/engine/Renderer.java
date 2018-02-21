@@ -34,23 +34,26 @@ public class Renderer implements IRenderable {
         this.world = world;
         this.map = GameWorld.getMap();
         this.minimap = null;
-        
+
     }
 
     public static void setGUI(GUICanvas g) {
         gui = g;
     }
 
-
     private final int BLOCKINESS = 1; // how 'old school' you want to look.
 
     @Override
     public void render(PixelBuffer pix, int x, int y) {
-        if (camera == null || minimap == null)
+        // Can't render without a camera, or if the camera doesn't have a
+        // subject to track.
+        if (camera == null || !camera.isSubjectSet())
             return;
+
+        
         map.getEnvironment().renderEnvironment(pix);
         drawPerspective(pix);
-        drawCrosshair(pix); 
+        drawCrosshair(pix);
         if (gui != null) {
             gui.render(pix, x, y);
         }
@@ -62,7 +65,6 @@ public class Renderer implements IRenderable {
                 pix.getWidth() - minimapBuffer.getWidth() - 10, 5);
     }
 
-
     /*
      * NOTE: THIS ONLY AFFECTS THE RENDERING SIZE OF A TILE. If you change this
      * variable, tiles will be drawn differently but the player will still move
@@ -72,19 +74,17 @@ public class Renderer implements IRenderable {
     private final float TILE_SIZE = 1F;
 
     private void drawPerspective(PixelBuffer pix) {
-        // Can't render without a camera.
-        if (camera == null)
-            return;
-
         final int width = pix.getWidth(), height = pix.getHeight();
         double[] zbuffer = new double[width];
 
-/*
+        /*
          * SEE: PerspectiveRenderItem.java for how this works. In short: we keep
          * adding new render items to a stack until we reach an opaque block.
          * The stack is then popped and rendered in turn.
          */
         Stack<PerspectiveRenderItem> renderStack = new Stack<PerspectiveRenderItem>();
+
+        int debug=1;
         for (int xx = 0; xx < width; xx += BLOCKINESS) {
 
             // Calculate direction of the ray based on camera direction.
@@ -190,9 +190,7 @@ public class Renderer implements IRenderable {
                     zbuffer[xx] = p.distanceToWall;
 
                 }
-
             }
-
             while (!renderStack.isEmpty()) {
                 draw(pix, renderStack.pop());
             }
@@ -225,8 +223,8 @@ public class Renderer implements IRenderable {
 
     private void drawSprites(PixelBuffer pix, double[] zbuffer) {
         GameWorld world = this.world;
-        if(!(world instanceof TestWorld))
-        	return;
+        if (!(world instanceof TestWorld))
+            return;
         TestWorld testWorld = ((TestWorld) world);
         mobsToRender = testWorld.getMobs();
         synchronized (mobsToRender) {
@@ -234,8 +232,10 @@ public class Renderer implements IRenderable {
 
                 @Override
                 public int compare(Entity o1, Entity o2) {
-                    final double distance1 = camera.getPosition().distance(o1.position);
-                    final double distance2 = camera.getPosition().distance(o2.position);
+                    final double distance1 = camera.getPosition()
+                            .distance(o1.position);
+                    final double distance2 = camera.getPosition()
+                            .distance(o2.position);
                     return Double.compare(distance2, distance1);
                 }
 
@@ -245,24 +245,32 @@ public class Renderer implements IRenderable {
                 double spriteX = m.getPosition().getX() - camera.getxPos();
                 double spriteY = m.getPosition().getY() - camera.getyPos();
 
-                double invDet = 1.0 / (camera.getxPlane() * camera.getyDir() - camera.getxDir() * camera.getyPlane());
+                double invDet = 1.0 / (camera.getxPlane() * camera.getyDir()
+                        - camera.getxDir() * camera.getyPlane());
 
-                double transformX = invDet * (camera.getyDir() * spriteX - camera.getxDir() * spriteY);
-                double transformY = invDet * (-camera.getyPlane() * spriteX + camera.getxPlane() * spriteY);
+                double transformX = invDet * (camera.getyDir() * spriteX
+                        - camera.getxDir() * spriteY);
+                double transformY = invDet * (-camera.getyPlane() * spriteX
+                        + camera.getxPlane() * spriteY);
 
                 int zMoveScreen = (int) (m.getzOffset() / transformY);
 
-                int spriteScreenX = (int) ((pix.getWidth() / 2) * (1 + transformX / transformY));
-                int spriteHeight = Math.abs((int) (pix.getHeight() / transformY));
+                int spriteScreenX = (int) ((pix.getWidth() / 2)
+                        * (1 + transformX / transformY));
+                int spriteHeight = Math
+                        .abs((int) (pix.getHeight() / transformY));
 
                 // calculate lowest and highest pixel
-                int drawStartY = -spriteHeight / 2 + pix.getHeight() / 2 + zMoveScreen;
+                int drawStartY = -spriteHeight / 2 + pix.getHeight() / 2
+                        + zMoveScreen;
                 drawStartY = Math.max(0, drawStartY);
-                int drawEndY = spriteHeight / 2 + pix.getHeight() / 2 + zMoveScreen;
+                int drawEndY = spriteHeight / 2 + pix.getHeight() / 2
+                        + zMoveScreen;
                 drawEndY = Math.min(drawEndY, pix.getHeight() - 1);
 
                 // calculate width of the sprite
-                int spriteWidth = Math.abs((int) (pix.getHeight() / transformY));
+                int spriteWidth = Math
+                        .abs((int) (pix.getHeight() / transformY));
                 int drawStartX = -spriteWidth / 2 + spriteScreenX;
                 if (drawStartX < 0)
                     drawStartX = 0;
@@ -274,7 +282,8 @@ public class Renderer implements IRenderable {
                 for (int stripe = drawStartX; stripe < drawEndX; stripe++) {
                     Graphic g = m.getGraphic(camera.getPosition());
 
-                    int texX = (int) (256 * (stripe - (-spriteWidth / 2 + spriteScreenX))
+                    int texX = (int) (256
+                            * (stripe - (-spriteWidth / 2 + spriteScreenX))
                             * g.getWidth() / spriteWidth) / 256;
 
                     // the conditions in the if are:
@@ -283,22 +292,28 @@ public class Renderer implements IRenderable {
                     // 2) it's on the screen (left)
                     // 3) it's on the screen (right)
                     // 4) ZBuffer, with perpendicular distance
-                    if (transformY > 0 && stripe > 0 && stripe < pix.getWidth() && transformY < zbuffer[stripe])
+                    if (transformY > 0 && stripe > 0 && stripe < pix.getWidth()
+                            && transformY < zbuffer[stripe])
                         for (int y = drawStartY; y < drawEndY; y++) {
-                            // 16 and 8 are factors to avoid division and floats.
+                            // 16 and 8 are factors to avoid division and
+                            // floats.
                             int d = 16 * (y - zMoveScreen)
                                     - 8 * (pix.getHeight() - spriteHeight - 1);
 
-                            int texY = ((d * g.getHeight()) / spriteHeight) / 16;
+                            int texY = ((d * g.getHeight()) / spriteHeight)
+                                    / 16;
 
-                            int color = g.getPixels()[texX + g.getWidth() * texY];
+                            int color = g.getPixels()[texX
+                                    + g.getWidth() * texY];
 
                             // dont draw transparent pixels.
                             if (color == PixelBuffer.CHROMA_KEY)
                                 continue;
 
-                            color = ColorUtils.darken(color, map.getEnvironment().getDarkness(),
-                                    camera.getPosition().distance(m.getPosition()));
+                            color = ColorUtils.darken(color,
+                                    map.getEnvironment().getDarkness(),
+                                    camera.getPosition()
+                                            .distance(m.getPosition()));
 
                             int drawY = y + camera.getMotionOffset();
                             pix.fillRect(color, stripe, drawY, BLOCKINESS, 1);
