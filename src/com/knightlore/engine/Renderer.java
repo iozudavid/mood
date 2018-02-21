@@ -224,7 +224,7 @@ public class Renderer implements IRenderable {
     }
 
     private void drawSprites(PixelBuffer pix, double[] zbuffer) {
-        GameWorld world = GameEngine.getSingleton().getGameWorld();
+        GameWorld world = this.world;
         if(!(world instanceof TestWorld))
         	return;
         TestWorld testWorld = ((TestWorld) world);
