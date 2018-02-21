@@ -27,10 +27,12 @@ public class ServerNetworkObjectManager extends NetworkObjectManager {
 
     @Override
     public synchronized void registerNetworkObject(NetworkObject obj) {
-        UUID uuid = obj.getObjectId();
-        this.networkObjects.put(uuid, new Tuple<>(obj, obj.serialize()));
-        // Notify all clients of the newly-created object.
-        this.sendToClients(getObjectCreationMessage(obj));
+		synchronized (this.networkObjects) {
+			UUID uuid = obj.getObjectId();
+			this.networkObjects.put(uuid, new Tuple<>(obj, obj.serialize()));
+			// Notify all clients of the newly-created object.
+			this.sendToClients(getObjectCreationMessage(obj));
+		}
     }
 
     private ByteBuffer getObjectCreationMessage(NetworkObject obj) {
@@ -49,12 +51,13 @@ public class ServerNetworkObjectManager extends NetworkObjectManager {
     // Notify a particular client of all existing objects.
     private synchronized void notifyOfAllObjs(SendToClient sender) {
         System.out.println("Notifying new client of all objects");
-        for (Entry<UUID, Tuple<NetworkObject, ByteBuffer>> e : networkObjects
-                .entrySet()) {
-            NetworkObject obj = e.getValue().x;
-            ByteBuffer msg = getObjectCreationMessage(obj);
-            sender.send(msg);
-        }
+		synchronized (this.networkObjects) {
+			for (Entry<UUID, Tuple<NetworkObject, ByteBuffer>> e : networkObjects.entrySet()) {
+				NetworkObject obj = e.getValue().x;
+				ByteBuffer msg = getObjectCreationMessage(obj);
+				sender.send(msg);
+			}
+		}
     }
 
     // call this function to disconnect client
@@ -65,7 +68,9 @@ public class ServerNetworkObjectManager extends NetworkObjectManager {
     }
 
     public synchronized void removeNetworkObject(NetworkObject obj) {
-        networkObjects.remove(obj.getObjectId());
+		synchronized (this.networkObjects) {
+			networkObjects.remove(obj.getObjectId());
+		}
     }
 
     public void registerClientSender(SendToClient sender) {
@@ -101,19 +106,19 @@ public class ServerNetworkObjectManager extends NetworkObjectManager {
     private synchronized void syncStates() {
         // Iterate through each networkable object. If its state
         // has changed, send the new state to each client.
-        for (Entry<UUID, Tuple<NetworkObject, ByteBuffer>> t : networkObjects
-                .entrySet()) {
-            ByteBuffer newState = t.getValue().x.serialize();
-            // Send state either if we're due a regular update, or if the
-            // state has changed.
-            synchronized (this.clientSenders) {
-                if (updateCount >= REGULAR_UPDATE_FREQ
-                        || !newState.equals(t.getValue().y)) {
-                    this.sendToClients(newState);
-                    t.getValue().y = newState;
-                }
-            }
-        }
+		synchronized (this.networkObjects) {
+			for (Entry<UUID, Tuple<NetworkObject, ByteBuffer>> t : networkObjects.entrySet()) {
+				ByteBuffer newState = t.getValue().x.serialize();
+				// Send state either if we're due a regular update, or if the
+				// state has changed.
+				synchronized (this.clientSenders) {
+					if (updateCount >= REGULAR_UPDATE_FREQ || !newState.equals(t.getValue().y)) {
+						this.sendToClients(newState);
+						t.getValue().y = newState;
+					}
+				}
+			}
+		}
         if (updateCount >= REGULAR_UPDATE_FREQ)
             updateCount = 1;
         else
@@ -121,11 +126,14 @@ public class ServerNetworkObjectManager extends NetworkObjectManager {
     }
 
     public synchronized NetworkObject getNetworkObject(UUID uuid) {
-        if (networkObjects.containsKey(uuid))
-            return networkObjects.get(uuid).x;
+		synchronized (this.networkObjects) {
+			if (networkObjects.containsKey(uuid))
+				return networkObjects.get(uuid).x;
+		}
         System.err.println("No network object with UUID " + uuid
                 + " could be found on this client.");
         return null;
+    	
     }
 
     // Send a message to all connected clients.

@@ -18,10 +18,12 @@ import com.knightlore.render.Camera;
 public class ClientNetworkObjectManager extends NetworkObjectManager {
     private Map<UUID, NetworkObject> networkObjects = new HashMap<>();
     private UUID myPlayerUUID = null;
+	private boolean registerNetObjchecked;
 
     public ClientNetworkObjectManager() {
         super();
         setNetworkConsumers();
+        this.registerNetObjchecked = false;
     }
 
     private void setNetworkConsumers() {
@@ -31,14 +33,27 @@ public class ClientNetworkObjectManager extends NetworkObjectManager {
     }
 
     @Override
-    public synchronized void registerNetworkObject(NetworkObject obj) {
-        System.out.println("client registering net obj");
-        this.networkObjects.put(obj.getObjectId(), obj);
-    }
+	public synchronized void registerNetworkObject(NetworkObject obj) {
+		System.out.println("client registering net obj " + obj.getObjectId());
+		synchronized (this.networkObjects) {
+			this.networkObjects.put(obj.getObjectId(), obj);
+			if (this.networkObjects.containsKey(myPlayerUUID)) {
+				registerNetObjchecked = true;
+				// notify it if the player
+				// was register
+				synchronized (this) {
+					if (registerNetObjchecked)
+						notify();
+				}
+			}
+		}
+	}
 
     @Override
     public synchronized void removeNetworkObject(NetworkObject obj) {
-        networkObjects.remove(obj.getObjectId());
+		synchronized (this.networkObjects) {
+			networkObjects.remove(obj.getObjectId());
+		}
     }
 
     public UUID getMyPlayerUUID() {
@@ -51,9 +66,11 @@ public class ClientNetworkObjectManager extends NetworkObjectManager {
         System.out.println("Receiving new object details from server");
         String className = NetworkUtils.getStringFromBuf(buf);
         UUID objID = UUID.fromString(NetworkUtils.getStringFromBuf(buf));
-        if (networkObjects.containsKey(objID))
-            // We already know about this object.
-            return;
+		synchronized (this.networkObjects) {
+			if (networkObjects.containsKey(objID))
+				// We already know about this object.
+				return;
+		}
         try {
             Class<Entity> cls = (Class<Entity>) Class.forName(className);
             // Build the new object.
@@ -79,6 +96,18 @@ public class ClientNetworkObjectManager extends NetworkObjectManager {
     // our UUID is.
     public void registerPlayerIdentity(ByteBuffer buf) {
         myPlayerUUID = UUID.fromString(NetworkUtils.getStringFromBuf(buf));
+        // wait until the network object
+        // is added to the list
+        // this will avoid getting a null value as the player
+        synchronized(this){
+        	while (!registerNetObjchecked) {
+				try {
+					wait();
+				} catch (InterruptedException e) {
+					System.err.println("Unexpected interruption while waiting for subject set " + e.getMessage());
+				}
+			}
+        }
         Player player = (Player) getNetworkObject(myPlayerUUID);
         Camera camera = new Camera(
                 GameEngine.getSingleton().getRenderer().getMap());
@@ -94,8 +123,10 @@ public class ClientNetworkObjectManager extends NetworkObjectManager {
 
     @Override
     public synchronized NetworkObject getNetworkObject(UUID uuid) {
-        if (networkObjects.containsKey(uuid))
-            return networkObjects.get(uuid);
+		synchronized (this.networkObjects) {
+			if (networkObjects.containsKey(uuid))
+				return networkObjects.get(uuid);
+		}
         System.err.println("No network object with UUID " + uuid
                 + " could be found on this client.");
         return null;
