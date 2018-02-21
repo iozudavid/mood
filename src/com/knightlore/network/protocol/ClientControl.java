@@ -14,7 +14,7 @@ public enum ClientControl {
 	
 	public static int getKeyCode(ClientControl k) throws IOException{
 		switch(k){
-			//at this moment only this keys are provided
+			//at this moment only these keys are provided
 			case FORWARD : return KeyEvent.VK_W;
 			case LEFT : return KeyEvent.VK_A;
 			case BACKWARD : return KeyEvent.VK_S;

@@ -1,5 +1,6 @@
 package com.knightlore.game;
 
+import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.HashMap;
 import java.util.Map.Entry;
@@ -10,6 +11,7 @@ import com.knightlore.game.entity.weapon.Shotgun;
 import com.knightlore.game.entity.weapon.Weapon;
 import com.knightlore.network.NetworkObject;
 import com.knightlore.network.protocol.ClientControl;
+import com.knightlore.network.protocol.ClientProtocol;
 import com.knightlore.render.IRenderable;
 import com.knightlore.render.PixelBuffer;
 import com.knightlore.render.graphic.sprite.DirectionalSprite;
@@ -62,7 +64,15 @@ public class Player extends Entity implements IRenderable {
     public void setInputState(ByteBuffer buf) {
         synchronized (inputState) {
             while (buf.hasRemaining()) {
-                ClientControl control = ClientControl.values()[buf.getInt()];
+            	//take the control
+            	//using client protocol
+            	//to fetch the order
+                ClientControl control = null;
+				try {
+					control = ClientProtocol.getByIndex(buf.getInt());
+				} catch (IOException e) {
+					System.err.println("Index not good... " + e.getMessage());
+				}
                 Byte value = buf.get();
                 inputState.put(control, value);
             }
