@@ -1,6 +1,7 @@
 package com.knightlore.network.server;
 
 import java.nio.ByteBuffer;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -8,6 +9,7 @@ import java.util.Map.Entry;
 import java.util.UUID;
 import java.util.concurrent.CopyOnWriteArrayList;
 
+import com.knightlore.game.Player;
 import com.knightlore.network.NetworkObject;
 import com.knightlore.network.NetworkObjectManager;
 import com.knightlore.network.protocol.NetworkUtils;
@@ -112,7 +114,10 @@ public class ServerNetworkObjectManager extends NetworkObjectManager {
 				// Send state either if we're due a regular update, or if the
 				// state has changed.
 				synchronized (this.clientSenders) {
-					if (updateCount >= REGULAR_UPDATE_FREQ || !newState.equals(t.getValue().y)) {
+					//check if they are equal
+					//by transforming into arrays
+					//and use the standard library
+					if (updateCount >= REGULAR_UPDATE_FREQ || !Arrays.equals(newState.array(), t.getValue().y.array())) {
 						this.sendToClients(newState);
 						t.getValue().y = newState;
 					}

@@ -189,6 +189,8 @@ public abstract class Entity extends NetworkObject implements IMinimapObject {
         // TODO: serialise objects as well as primitives
         ByteBuffer buf = newByteBuffer("deserialize");
         buf.putDouble(size);
+        buf.putDouble(position.getX());
+        buf.putDouble(position.getY());
         buf.putDouble(direction.getX());
         buf.putDouble(direction.getY());
         buf.putDouble(plane.getX());
@@ -200,12 +202,15 @@ public abstract class Entity extends NetworkObject implements IMinimapObject {
     @Override
     public void deserialize(ByteBuffer buf) {
         size = buf.getDouble();
-        double dX = buf.getDouble();
-        double dY = buf.getDouble();
-        direction = new Vector2D(dX, dY);
-        double pX = buf.getDouble();
-        double pY = buf.getDouble();
-        plane = new Vector2D(pX, pY);
+        double posX = buf.getDouble();
+        double posY = buf.getDouble();
+        position = new Vector2D(posX, posY);
+        double dirX = buf.getDouble();
+        double dirY = buf.getDouble();
+        direction = new Vector2D(dirX, dirY);
+        double planeX = buf.getDouble();
+        double planeY = buf.getDouble();
+        plane = new Vector2D(planeX, planeY);
         zOffset = buf.getInt();
     }
 }
