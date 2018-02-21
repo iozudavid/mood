@@ -26,8 +26,6 @@ public class SendToClient implements Runnable {
                 .getSingleton();
         
 
-        
-
         manager.registerClientSender(this);
         
         while (!conn.terminated) {

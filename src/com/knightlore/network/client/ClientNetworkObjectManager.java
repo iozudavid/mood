@@ -39,13 +39,8 @@ public class ClientNetworkObjectManager extends NetworkObjectManager {
 		synchronized (this.networkObjects) {
 			this.networkObjects.put(obj.getObjectId(), obj);
 			if (this.networkObjects.containsKey(myPlayerUUID)) {
+				// let it know that the object was registered
 				registerNetObjchecked = true;
-				// notify it if the player
-				// was register
-				synchronized (this) {
-					if (registerNetObjchecked)
-						notify();
-				}
 			}
 		}
 	}
@@ -103,13 +98,12 @@ public class ClientNetworkObjectManager extends NetworkObjectManager {
         // wait until the network object
         // is added to the list
         // this will avoid getting a null value as the player
-        synchronized(this){
-        	while (!registerNetObjchecked) {
-				try {
-					wait();
-				} catch (InterruptedException e) {
-					System.err.println("Unexpected interruption while waiting for subject set " + e.getMessage());
-				}
+        while(!this.isNetObjRegistered()){
+        	try {
+				Thread.sleep(5);
+			} catch (InterruptedException e) {
+				System.err.println(
+						"Unexpected interruption while waiting for network obj to be registered " + e.getMessage());
 			}
         }
         Player player = (Player) getNetworkObject(myPlayerUUID);
@@ -134,5 +128,11 @@ public class ClientNetworkObjectManager extends NetworkObjectManager {
         System.err.println("No network object with UUID " + uuid
                 + " could be found on this client.");
         return null;
+    }
+    
+    // wait() - notify() creating a strange deadlock
+    // use this instead combined with sleep
+    private boolean isNetObjRegistered(){
+    	return this.registerNetObjchecked;
     }
 }
