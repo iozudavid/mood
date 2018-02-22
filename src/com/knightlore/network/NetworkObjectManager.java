@@ -46,13 +46,13 @@ public abstract class NetworkObjectManager extends GameObject
     }
 
     @Override
-    public ByteBuffer serialize() {
+    public synchronized ByteBuffer serialize() {
         // N.B. The manager should never be serialised...
         return null;
     }
 
     @Override
-    public void deserialize(ByteBuffer buffer) {
+    public synchronized void deserialize(ByteBuffer buffer) {
         // N.B. The manager should never be serialised...
     }
 

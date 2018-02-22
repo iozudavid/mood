@@ -185,7 +185,7 @@ public abstract class Entity extends NetworkObject implements IMinimapObject {
     }
 
     @Override
-    public ByteBuffer serialize() {
+    public synchronized ByteBuffer serialize() {
         // TODO: serialise objects as well as primitives
         ByteBuffer buf = newByteBuffer("deserialize");
         buf.putDouble(size);
@@ -200,7 +200,7 @@ public abstract class Entity extends NetworkObject implements IMinimapObject {
     }
 
     @Override
-    public void deserialize(ByteBuffer buf) {
+    public synchronized void deserialize(ByteBuffer buf) {
         size = buf.getDouble();
         double posX = buf.getDouble();
         double posY = buf.getDouble();

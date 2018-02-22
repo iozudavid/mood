@@ -97,7 +97,6 @@ public class Player extends Entity implements IRenderable {
                 // For boolean inputs (i.e. all current inputs), 0 represents
                 // false.
                 if (entry.getValue() != 0) {
-                    System.out.println(entry.getKey() + " activated");
                     ACTION_MAPPINGS.get(entry.getKey()).run();
                     updated = true;
                 }
