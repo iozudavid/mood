@@ -64,7 +64,7 @@ public class TextField extends GUIObject {
 	@Override
 	void onGainedFocus(){
 		System.out.println("GAINED FOCUS");
-		GUICanvas.activeTextField = this;
+		GUICanvas.setActiveTextField(this);
 		
 	}
 	
