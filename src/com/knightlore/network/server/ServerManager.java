@@ -49,9 +49,9 @@ public class ServerManager implements Runnable {
                 Player player = new Player(pos, Vector2D.UP);
                 Connection conn = new TCPConnection(socket);
                 new Thread(conn).start();
-
-                new Thread(new Receive(conn)).start();
                 new Thread(new SendToClient(conn, player.getObjectId())).start();
+                new Thread(new Receive(conn)).start();
+
 
                 this.connections.put(player.getObjectId(), new Tuple<Connection, NetworkObject>(conn, player));
             } catch (IOException e) {

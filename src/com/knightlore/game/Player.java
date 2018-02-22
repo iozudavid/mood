@@ -27,8 +27,8 @@ public class Player extends Entity implements IRenderable {
     // private volatile boolean finished = false;
     
     // Returns a new 'blank' instance. See NetworkObject for details.
-    public static NetworkObject build(UUID uuid) {
-        return new Player(uuid, Vector2D.ONE, Vector2D.ONE);
+    public static NetworkObject build(UUID uuid, Vector2D initialPos) {
+        return new Player(uuid, initialPos, Vector2D.ONE);
     }
 
     public Player(UUID uuid, Vector2D pos, Vector2D dir) {
