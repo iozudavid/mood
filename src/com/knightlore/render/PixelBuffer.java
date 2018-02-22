@@ -208,6 +208,33 @@ public class PixelBuffer {
     }
 
     /**
+     * Draws a line starting at (x1, y1) to (x2, y2) using Bresenham's line
+     * drawing algorithm.
+     * 
+     * @param color
+     * @param x1
+     * @param y1
+     * @param x2
+     * @param y2
+     */
+    public void drawLine(int color, int x1, int y1, int x2, int y2) {
+        double dx = x2 - x1, dy = y2 - y1;
+        double de = Math.abs(dy / dx);
+        double e = 0.0;
+
+        int y = y1;
+        for (int x = x1; x < x2; x++) {
+            fillPixel(color, x, y);
+            e += de;
+            while (e >= 0.5) {
+                y += Math.signum(dy);
+                e -= 1.0;
+                fillPixel(color, x, y);
+            }
+        }
+    }
+
+    /**
      * Gets the colour of the pixel at a given x-y position.
      * 
      * @param x
