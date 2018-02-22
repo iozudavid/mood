@@ -104,8 +104,9 @@ public class GameEngine implements Runnable {
         running = true;
         thread = new Thread(this);
         thread.start();
-        if (!HEADLESS)
+        if (!HEADLESS) {
             window.setVisible(true);
+        }
     }
 
     public void stop() {
