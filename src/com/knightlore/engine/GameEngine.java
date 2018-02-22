@@ -53,9 +53,9 @@ public class GameEngine implements Runnable {
         notifyToDestroy = new LinkedList<GameObject>();
 
         if (GameSettings.isClient())
-            new ClientNetworkObjectManager();
+            new ClientNetworkObjectManager().init();
         if (GameSettings.isServer())
-            new ServerNetworkObjectManager();
+            new ServerNetworkObjectManager().init();
 
         if (headless) {
             window = null;

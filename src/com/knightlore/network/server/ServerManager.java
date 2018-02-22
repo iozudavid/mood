@@ -47,6 +47,7 @@ public class ServerManager implements Runnable {
                 Socket socket = serverSocket.accept();
                 Vector2D pos = GameEngine.getSingleton().getRenderer().getMap().getRandomSpawnPoint();
                 Player player = new Player(pos, Vector2D.UP);
+                player.init();
                 Connection conn = new TCPConnection(socket);
                 new Thread(conn).start();
                 new Thread(new SendToClient(conn, player.getObjectId())).start();

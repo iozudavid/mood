@@ -47,12 +47,16 @@ public class TestWorld extends GameWorld {
     public void populateWorld() {
         if (GameSettings.isServer()) {
             // add the player and mobs
-            mobs.add(new ShotgunPickup(new Vector2D(20, 20)));
-            mobs.add(new Zombie(1, new Vector2D(21, 20)));
-            // add pickups
-            for (int i = 1; i < 5; i += 2) {
-                mobs.add(new ShotgunPickup(new Vector2D(i, 3)));
-            }
+            //TODO
+            ///
+            /////TODO!!!!!!
+            // ADD INIT
+//            mobs.add(new ShotgunPickup(new Vector2D(20, 20)));
+//            mobs.add(new Zombie(1, new Vector2D(21, 20)));
+//            // add pickups
+//            for (int i = 1; i < 5; i += 2) {
+//                mobs.add(new ShotgunPickup(new Vector2D(i, 3)));
+//            }
         }
 
         if (GameSettings.isClient()) {

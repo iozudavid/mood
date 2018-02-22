@@ -28,7 +28,9 @@ public class Player extends Entity implements IRenderable {
 
     // Returns a new instance. See NetworkObject for details.
     public static NetworkObject build(UUID uuid, ByteBuffer state) {
+        System.out.println("Player build, state size: " + state.remaining());
         NetworkObject obj = new Player(uuid, Vector2D.ONE, Vector2D.ONE);
+        obj.init();
         obj.deserialize(state);
         return obj;
     }

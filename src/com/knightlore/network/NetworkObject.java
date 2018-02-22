@@ -49,10 +49,15 @@ public abstract class NetworkObject extends GameObject implements INetworkable {
     public Map<String, Consumer<ByteBuffer>> getNetworkConsumers() {
         return networkConsumers;
     }
+    
+    @Override
+    public void init() {
+        super.init();
+        NetworkObjectManager.getSingleton().registerNetworkObject(this);
+    }
 
     @Override
     public void onCreate() {
-        NetworkObjectManager.getSingleton().registerNetworkObject(this);
     }
 
     @Override

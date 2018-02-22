@@ -12,6 +12,7 @@ public class Zombie extends Entity {
     // Returns a new instance. See NetworkObject for details.
     public static NetworkObject build(UUID uuid, ByteBuffer state) {
         NetworkObject obj = new Zombie(uuid, 0, Vector2D.ONE, Vector2D.ONE);
+        obj.init();
         obj.deserialize(state);
         return obj;
     }
