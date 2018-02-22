@@ -1,11 +1,8 @@
 package com.knightlore.gui;
 
 import java.awt.Graphics;
-import java.awt.Rectangle;
-
 
 public class Text extends GUIObject{
-	
 	protected String text;
 	protected char[] rawChars;
 	
@@ -14,7 +11,7 @@ public class Text extends GUIObject{
 		SetText(text);
 	}
 
-	public void SetText(String newText){
+	public void SetText(String newText) {
 		text = newText;
 		rawChars = text.toCharArray();
 	}

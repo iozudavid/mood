@@ -4,12 +4,10 @@ import java.awt.Color;
 import java.awt.Graphics;
 
 public class TextField extends GUIObject {
-	
 	private SelectState state = SelectState.UP;
 	private String text;
 	private String insertString;
 	private char[] rawChars;
-	private int maxLength;
 	private int insertPosition = 0;
 	
 	public Color upColour = Color.LIGHT_GRAY;
@@ -22,27 +20,27 @@ public class TextField extends GUIObject {
 		DisplayText(text);
 	}
 	
-	public void SetText(String newText){
+	public void SetText(String newText) {
 		text = newText;
 	}
 	
-	public void DisplayText(String t){
+	public void DisplayText(String t) {
 		rawChars = t.toCharArray();
 	}
 	
-	public Color activeColor (){
+	public Color activeColor () {
 		switch(state){
-		case UP:
-			return upColour;
-			
-		case HOVER:
-			return hoverColour;
-			
-		case DOWN:
-			return downColour;
-			
+			case UP:
+				return upColour;
+
+			case HOVER:
+				return hoverColour;
+
+			case DOWN:
+				return downColour;
 		}
-		return upColour;
+
+		throw new IllegalStateException("State " + state + " is not legal");
 	}
 	
 	@Override
@@ -57,19 +55,19 @@ public class TextField extends GUIObject {
 	}
 	
 	@Override
-	boolean isSelectable(){
+	boolean isSelectable() {
 		return true;
 	}
 	
 	@Override
-	void onGainedFocus(){
+	void onGainedFocus() {
 		System.out.println("GAINED FOCUS");
 		GUICanvas.setActiveTextField(this);
 		
 	}
 	
 	@Override
-	void onLostFocus(){
+	void onLostFocus() {
 		System.out.println("LOST FOCUS");
 		SetText(text);
 	}
@@ -81,11 +79,12 @@ public class TextField extends GUIObject {
 		DisplayText(insertString);
 	}
 	
-	void onLeftArrow(){
+	void onLeftArrow() {
 		insertPosition --;
 		if(insertPosition < 0){
 			insertPosition = 0;
 		}
+
 		insertString = text.substring(0, insertPosition)+'|'+text.substring(insertPosition);
 		DisplayText(insertString);
 	}
@@ -100,28 +99,28 @@ public class TextField extends GUIObject {
 	}
 	
 	@Override
-	void onMouseEnter(){
+	void onMouseEnter() {
 		state = SelectState.HOVER;
 	}
 	
-	void onMouseOver(){
-		if(state == SelectState.UP){
+	void onMouseOver() {
+		if(state == SelectState.UP) {
 			state = SelectState.HOVER;
 		}
 	}
 	
 	@Override
-	void OnMouseExit(){
+	void OnMouseExit() {
 		state = SelectState.UP;
 	}
 	
 	@Override
-	void onMouseDown(){
+	void onMouseDown() {
 		state = SelectState.DOWN;
 	}
 	
 	@Override
-	void onMouseUp(){
+	void onMouseUp() {
 		state = SelectState.UP;
 	}
 }

@@ -8,12 +8,12 @@ public abstract class GUIObject {
 	public int depth;
 	public Rectangle rect;
 	
-	GUIObject(int x, int y, int depth){
+	GUIObject(int x, int y, int depth) {
 		this.depth = depth;
 		rect = new Rectangle();
 		rect.x = x;
 		rect.y = y;
-				}
+	}
 	
 	abstract void Draw(Graphics g);
 	
@@ -21,27 +21,27 @@ public abstract class GUIObject {
 		return false;
 	}
 	 
-	void OnClick(){
+	void OnClick() {
 		
 	}
 	
-	void OnMouseExit(){
+	void OnMouseExit() {
 		
 	}
 	
-	void onMouseEnter(){
+	void onMouseEnter() {
 		
 	}
 	
-	void onMouseOver(){
+	void onMouseOver() {
 		
 	}
 	
-	void onMouseUp(){
+	void onMouseUp() {
 		
 	}
 	
-	void onMouseDown(){
+	void onMouseDown() {
 		
 	}
 

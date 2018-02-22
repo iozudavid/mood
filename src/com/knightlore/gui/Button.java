@@ -10,8 +10,8 @@ public class Button extends GUIObject {
 
 	private SelectState state = SelectState.UP;
 	
-	public Color activeColor (){
-		switch(state){
+	public Color activeColor () {
+		switch(state) {
 			case UP:
 				return UP_COLOR;
 
@@ -36,38 +36,38 @@ public class Button extends GUIObject {
 	}
 	
 	@Override
-	void OnClick(){
+	void OnClick() {
 		System.out.println("Button clicked");
 	}
 	
 	@Override
-	void onMouseEnter(){
+	void onMouseEnter() {
 		state = SelectState.HOVER;
 	}
 	
-	void onMouseOver(){
+	void onMouseOver() {
 		if(state == SelectState.UP){
 			state = SelectState.HOVER;
 		}
 	}
 	
 	@Override
-	void OnMouseExit(){
+	void OnMouseExit() {
 		state = SelectState.UP;
 	}
 	
 	@Override
-	void onMouseDown(){
+	void onMouseDown() {
 		state = SelectState.DOWN;
 	}
 	
 	@Override
-	void onMouseUp(){
+	void onMouseUp() {
 		state = SelectState.UP;
 	}
 	
 	@Override
-	boolean isSelectable(){
+	boolean isSelectable() {
 		return true;
 	}
 }
