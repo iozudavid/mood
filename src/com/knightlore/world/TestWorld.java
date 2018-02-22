@@ -5,7 +5,6 @@ import java.util.List;
 
 import com.knightlore.GameSettings;
 import com.knightlore.engine.GameWorld;
-import com.knightlore.engine.Renderer;
 import com.knightlore.game.area.generation.MapGenerator;
 import com.knightlore.game.entity.Entity;
 import com.knightlore.game.entity.Zombie;
@@ -15,6 +14,7 @@ import com.knightlore.gui.GUICanvas;
 import com.knightlore.gui.TextField;
 import com.knightlore.render.Camera;
 import com.knightlore.render.Environment;
+import com.knightlore.render.Renderer;
 import com.knightlore.utils.Vector2D;
 
 public class TestWorld extends GameWorld {

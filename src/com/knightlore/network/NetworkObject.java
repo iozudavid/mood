@@ -64,7 +64,7 @@ public abstract class NetworkObject extends GameObject implements INetworkable {
     // with this object's UUID, and the name of the method of this object's
     // remote counterpart to pass the ByteBuffer to.
     protected ByteBuffer newByteBuffer(String remoteMethod) {
-        ByteBuffer buf = ByteBuffer.allocate(BYTE_BUFFER_MAX_SIZE);
+        ByteBuffer buf = ByteBuffer.allocate(BYTE_BUFFER_DEFAULT_SIZE);
         NetworkUtils.putStringIntoBuf(buf, objectUniqueID.toString());
         NetworkUtils.putStringIntoBuf(buf, remoteMethod);
         return buf;

@@ -51,6 +51,8 @@ public class TCPConnection extends Connection {
                 int numBytes = data.position();
                 byte[] tmp = new byte[numBytes];
                 data.rewind();
+                if (!data.hasRemaining())
+                    System.err.println("Error: Trying to send an empty ByteBuffer!");
                 data.get(tmp);
                 infoSend.writeInt(tmp.length);
                 infoSend.write(tmp);
@@ -69,7 +71,11 @@ public class TCPConnection extends Connection {
                 int size = infoReceive.readInt();
                 byte[] tmp = new byte[size];
                 infoReceive.readFully(tmp);
-                return ByteBuffer.wrap(tmp);
+                // return ByteBuffer.wrap(tmp);
+                ByteBuffer buf = ByteBuffer.wrap(tmp);
+                if (!buf.hasRemaining())
+                    System.err.println("Error: Trying to receive an empty ByteBuffer!");
+                return buf;
             } catch (IOException e) {
                 System.err.println("Communication broke...");
                 this.terminated = true;

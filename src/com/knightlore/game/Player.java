@@ -25,10 +25,12 @@ public class Player extends Entity implements IRenderable {
     private java.util.Map<ClientControl, Runnable> ACTION_MAPPINGS = new HashMap<>();
     private java.util.Map<ClientControl, Byte> inputState = new HashMap<>();
     // private volatile boolean finished = false;
-    
-    // Returns a new 'blank' instance. See NetworkObject for details.
-    public static NetworkObject build(UUID uuid, Vector2D initialPos) {
-        return new Player(uuid, initialPos, Vector2D.ONE);
+
+    // Returns a new instance. See NetworkObject for details.
+    public static NetworkObject build(UUID uuid, ByteBuffer state) {
+        NetworkObject obj = new Player(uuid, Vector2D.ONE, Vector2D.ONE);
+        obj.deserialize(state);
+        return obj;
     }
 
     public Player(UUID uuid, Vector2D pos, Vector2D dir) {
@@ -38,11 +40,9 @@ public class Player extends Entity implements IRenderable {
         // Map possible inputs to the methods that handle them. Avoids long
         // if-statement chain.
         ACTION_MAPPINGS.put(ClientControl.FORWARD, this::moveForward);
-        ACTION_MAPPINGS.put(ClientControl.ROTATE_ANTI_CLOCKWISE,
-                this::rotateAntiClockwise);
+        ACTION_MAPPINGS.put(ClientControl.ROTATE_ANTI_CLOCKWISE, this::rotateAntiClockwise);
         ACTION_MAPPINGS.put(ClientControl.BACKWARD, this::moveBackward);
-        ACTION_MAPPINGS.put(ClientControl.ROTATE_CLOCKWISE,
-                this::rotateClockwise);
+        ACTION_MAPPINGS.put(ClientControl.ROTATE_CLOCKWISE, this::rotateClockwise);
         ACTION_MAPPINGS.put(ClientControl.LEFT, this::strafeLeft);
         ACTION_MAPPINGS.put(ClientControl.RIGHT, this::strafeRight);
 
@@ -54,8 +54,6 @@ public class Player extends Entity implements IRenderable {
     public Player(Vector2D pos, Vector2D dir) {
         this(UUID.randomUUID(), pos, dir);
     }
-    
-    
 
     private void setNetworkConsumers() {
         networkConsumers.put("setInputState", this::setInputState);
@@ -64,15 +62,15 @@ public class Player extends Entity implements IRenderable {
     public void setInputState(ByteBuffer buf) {
         synchronized (inputState) {
             while (buf.hasRemaining()) {
-            	//take the control
-            	//using client protocol
-            	//to fetch the order
+                // take the control
+                // using client protocol
+                // to fetch the order
                 ClientControl control = null;
-				try {
-					control = ClientProtocol.getByIndex(buf.getInt());
-				} catch (IOException e) {
-					System.err.println("Index not good... " + e.getMessage());
-				}
+                try {
+                    control = ClientProtocol.getByIndex(buf.getInt());
+                } catch (IOException e) {
+                    System.err.println("Index not good... " + e.getMessage());
+                }
                 Byte value = buf.get();
                 inputState.put(control, value);
             }
@@ -82,8 +80,7 @@ public class Player extends Entity implements IRenderable {
 
     @Override
     public void render(PixelBuffer pix, int x, int y) {
-        pix.fillRect(0x000000, (int) this.position.getX(),
-                (int) this.position.getY(), 10, 50);
+        pix.fillRect(0x000000, (int) this.position.getX(), (int) this.position.getY(), 10, 50);
     }
 
     @Override

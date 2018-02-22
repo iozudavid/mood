@@ -18,26 +18,25 @@ public abstract class PickupItem extends Entity {
     protected DirectionalSprite sprite;
 
     public PickupItem(UUID uuid, Vector2D position) {
-        super(uuid, PICKUP_SIZE, position,
-                Math.random() < 0.5 ? Vector2D.UP : Vector2D.DOWN);
+        super(uuid, PICKUP_SIZE, position, Math.random() < 0.5 ? Vector2D.UP : Vector2D.DOWN);
     }
 
     public PickupItem(Vector2D position) {
-        super(PICKUP_SIZE, position,
-                Math.random() < 0.5 ? Vector2D.UP : Vector2D.DOWN);
+        super(PICKUP_SIZE, position, Math.random() < 0.5 ? Vector2D.UP : Vector2D.DOWN);
     }
 
     @Override
     public void onUpdate() {
+        // FIXME: avoid null pointer for direction when this is called and the
+        // constructor hasn't yet finished.
+        if (direction == null)
+            return;
         // Make the item bob up and down.
         long t = GameEngine.ticker.getTime();
-        zOffset = FLOOR_OFFSET
-                + (int) (Math.sin(t * FLOAT_BOB_SPEED) * FLOAT_BOB_AMOUNT);
+        zOffset = FLOOR_OFFSET + (int) (Math.sin(t * FLOAT_BOB_SPEED) * FLOAT_BOB_AMOUNT);
 
-        double xprime = direction.getX() * Math.cos(ROTATION_SPEED)
-                - direction.getY() * Math.sin(ROTATION_SPEED);
-        double yprime = direction.getX() * Math.sin(ROTATION_SPEED)
-                + direction.getY() * Math.cos(ROTATION_SPEED);
+        double xprime = direction.getX() * Math.cos(ROTATION_SPEED) - direction.getY() * Math.sin(ROTATION_SPEED);
+        double yprime = direction.getX() * Math.sin(ROTATION_SPEED) + direction.getY() * Math.cos(ROTATION_SPEED);
         direction = new Vector2D(xprime, yprime);
     }
 

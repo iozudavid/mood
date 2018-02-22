@@ -8,9 +8,9 @@ import java.util.function.Consumer;
 // NOTE: Implementing this interface will NOT automatically make your object known to the NetworkObjectManager. 
 // Use the NetworkObject class for that.
 public interface INetworkable {
-    // The maximum size a ByteBuffer used to serialise something can be, in
+    // The default size to make a ByteBuffer used to serialise something in
     // bytes.
-    public static final int BYTE_BUFFER_MAX_SIZE = 512;
+    public static final int BYTE_BUFFER_DEFAULT_SIZE = 512;
 
     // Implement this to encapsulate the state of the object in a ByteBuffer.
     // Use this interface's newByteBuffer static method.

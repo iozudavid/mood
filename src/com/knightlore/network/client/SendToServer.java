@@ -48,7 +48,7 @@ public class SendToServer implements Runnable {
     private synchronized ByteBuffer getCurrentControlState() {
         // ByteBuffer to store current input state.
         ByteBuffer buf = ByteBuffer
-                .allocate(NetworkObject.BYTE_BUFFER_MAX_SIZE);
+                .allocate(NetworkObject.BYTE_BUFFER_DEFAULT_SIZE);
         // Let the server know which UUID this relates to.
         NetworkUtils.putStringIntoBuf(buf, myUUID.toString());
         // Call the setInputState method on our player.

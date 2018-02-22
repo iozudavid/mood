@@ -11,6 +11,7 @@ import com.knightlore.engine.input.Mouse;
 import com.knightlore.network.client.ClientNetworkObjectManager;
 import com.knightlore.network.server.ServerNetworkObjectManager;
 import com.knightlore.render.Camera;
+import com.knightlore.render.Renderer;
 import com.knightlore.render.Screen;
 import com.knightlore.world.TestWorld;
 

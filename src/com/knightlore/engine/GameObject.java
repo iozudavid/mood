@@ -14,7 +14,7 @@ public abstract class GameObject {
     private boolean exists;
 
     public GameObject() {
-        this(Vector2D.ZERO);
+        this(Vector2D.ONE);
     }
 
     public GameObject(Vector2D position) {
