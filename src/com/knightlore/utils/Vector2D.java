@@ -1,5 +1,7 @@
 package com.knightlore.utils;
 
+import java.awt.Point;
+
 public final class Vector2D {
 	private double x;
 	private double y;
@@ -79,6 +81,14 @@ public final class Vector2D {
 	
 	public double sqrMagnitude(){
 		return (x*x) + (y*y);
+	}
+	
+	/** returns integer coordinate (lossy)
+	 * 
+	 * @return
+	 */
+	public Point toPoint() {
+		return new Point((int) x , (int) y);
 	}
 	
 	@Override

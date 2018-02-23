@@ -1,6 +1,7 @@
 package com.knightlore.world;
 
 import com.knightlore.GameSettings;
+import com.knightlore.ai.AIManager;
 import com.knightlore.game.area.generation.MapGenerator;
 import com.knightlore.game.entity.Zombie;
 import com.knightlore.game.entity.pickup.ShotgunPickup;
@@ -14,7 +15,9 @@ import com.knightlore.utils.Vector2D;
 public class TestWorld extends GameWorld {
     private Camera mainCamera;
     private GUICanvas gui;
-
+    private AIManager aiManager;
+    
+    
     public TestWorld() {
         super(Environment.DUNGEON);
     }
@@ -31,6 +34,9 @@ public class TestWorld extends GameWorld {
         // now populate the world
         Vector2D pos = GameSettings.spawnPos;
         mainCamera = new Camera(pos.getX(), pos.getY(), 1, 0, 0, Camera.FIELD_OF_VIEW, map);
+        
+        // as of the moment, aiManager will do pathfinding for AI Bots
+        aiManager = new AIManager(map); 
     }
 
     @Override
