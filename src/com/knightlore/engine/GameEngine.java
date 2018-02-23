@@ -52,6 +52,9 @@ public class GameEngine implements Runnable {
         notifyToCreate = new LinkedList<GameObject>();
         notifyToDestroy = new LinkedList<GameObject>();
 
+
+        world = new TestWorld();
+        
         if (GameSettings.isClient())
             new ClientNetworkObjectManager().init();
         if (GameSettings.isServer())
@@ -104,7 +107,6 @@ public class GameEngine implements Runnable {
         // TODO maybe refactor this into a make world method
         // ALSO TODO, UNHOOK TEST WORLD
         System.out.println("Initialising World...");
-        world = new TestWorld();
         System.out.println("initialising...");
         world.initWorld();
         System.out.println("populating...");

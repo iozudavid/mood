@@ -5,6 +5,7 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
 import java.nio.ByteBuffer;
+import java.util.Arrays;
 
 /*
  * Basic network connection
@@ -48,13 +49,16 @@ public class TCPConnection extends Connection {
         Object lock = new Object();
         synchronized (lock) {
             try {
-                int numBytes = data.position();
-                byte[] tmp = new byte[numBytes];
-                data.rewind();
-                if (!data.hasRemaining())
+                int dataLength = data.position();
+                if (dataLength == 0) {
                     System.err.println("Error: Trying to send an empty ByteBuffer!");
-                data.get(tmp);
-                infoSend.writeInt(tmp.length);
+                    return;
+                }
+                // Copy buffer contents to avoid rewinding buffer (which has
+                // side-effects and changes the pointer of the buffer).
+                byte[] tmp = Arrays.copyOfRange(data.array(), 0, dataLength);
+
+                infoSend.writeInt(dataLength);
                 infoSend.write(tmp);
             } catch (IOException e) {
                 System.err.println("Communication broke...");
@@ -69,12 +73,13 @@ public class TCPConnection extends Connection {
         synchronized (lock) {
             try {
                 int size = infoReceive.readInt();
+                if (size == 0) {
+                    System.err.println("Error: Trying to receive an empty ByteBuffer!");
+                    return null;
+                }
                 byte[] tmp = new byte[size];
                 infoReceive.readFully(tmp);
-                // return ByteBuffer.wrap(tmp);
                 ByteBuffer buf = ByteBuffer.wrap(tmp);
-                if (!buf.hasRemaining())
-                    System.err.println("Error: Trying to receive an empty ByteBuffer!");
                 return buf;
             } catch (IOException e) {
                 System.err.println("Communication broke...");

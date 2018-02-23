@@ -48,8 +48,8 @@ public class ServerNetworkObjectManager extends NetworkObjectManager {
         NetworkUtils.putStringIntoBuf(buf, obj.getObjectId().toString());
         // Send the current state when sending the creation message.
         ByteBuffer state = networkObjects.get(obj.getObjectId()).y;
-        state.rewind();
-        buf.put(state);
+        int stateLength = state.position();
+        buf.put(Arrays.copyOfRange(state.array(), 0, stateLength));
         return buf;
     }
 

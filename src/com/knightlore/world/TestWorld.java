@@ -5,6 +5,7 @@ import java.util.List;
 
 import com.knightlore.GameSettings;
 import com.knightlore.engine.GameWorld;
+import com.knightlore.game.area.Map;
 import com.knightlore.game.area.generation.MapGenerator;
 import com.knightlore.game.entity.Entity;
 import com.knightlore.game.entity.Zombie;
@@ -34,29 +35,28 @@ public class TestWorld extends GameWorld {
         // First create the map
         MapGenerator generator = new MapGenerator();
         // FIXME don't hardcode the seed...
-        map = generator.createMap(64, 64, Environment.DUNGEON, 161803398875L);
-        // FIXME hack hack hack, this is just for the demo
-        GameSettings.spawnPos = generator.getDemoSpawnPos();
+        map = generator.createMap(16, 16, Environment.LIGHT_OUTDOORS, 161803398875L);
 
         // now populate the world
-        Vector2D pos = GameSettings.spawnPos;
         mainCamera = new Camera(GameWorld.getMap());
     }
 
     @Override
     public void populateWorld() {
         if (GameSettings.isServer()) {
-            // add the player and mobs
-            //TODO
-            ///
-            /////TODO!!!!!!
-            // ADD INIT
-//            mobs.add(new ShotgunPickup(new Vector2D(20, 20)));
-//            mobs.add(new Zombie(1, new Vector2D(21, 20)));
-//            // add pickups
-//            for (int i = 1; i < 5; i += 2) {
-//                mobs.add(new ShotgunPickup(new Vector2D(i, 3)));
-//            }
+            // add the mobs
+            ShotgunPickup shot = new ShotgunPickup(new Vector2D(20, 20));
+            shot.init();
+            mobs.add(shot);
+            Zombie zom = new Zombie(1, new Vector2D(21, 20));
+            zom.init();
+            mobs.add(zom);
+            // add pickups
+            for (int i = 1; i < 5; i += 2) {
+                ShotgunPickup shotI = new ShotgunPickup(new Vector2D(i, 3));
+                shotI.init();
+                mobs.add(shotI);
+            }
         }
 
         if (GameSettings.isClient()) {
