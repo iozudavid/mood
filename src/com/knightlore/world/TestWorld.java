@@ -112,6 +112,11 @@ public class TestWorld extends GameWorld {
     public void addEntity(Entity ent) {
         this.ents.add(ent);
     }
+    
+    @Override
+    public void removeEntity(Entity ent) {
+        this.ents.remove(ent);
+    }
 
     @Override
     public List<IMinimapObject> getMinimapObjs() {
@@ -124,6 +129,13 @@ public class TestWorld extends GameWorld {
     public void addMinimapObj(IMinimapObject obj) {
         synchronized (minimapObjs) {
             minimapObjs.add(obj);
+        }
+    }
+    
+    @Override
+    public void removeMinimapObj(IMinimapObject obj) {
+        synchronized (minimapObjs) {
+            minimapObjs.remove(obj);
         }
     }
 

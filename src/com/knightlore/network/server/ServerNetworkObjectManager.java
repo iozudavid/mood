@@ -58,6 +58,21 @@ public class ServerNetworkObjectManager extends NetworkObjectManager {
         buf.put(Arrays.copyOfRange(state.array(), 0, stateLength));
         return buf;
     }
+    
+    private ByteBuffer getObjectDestroyMessage(NetworkObject obj) {
+        // Leave room for the state (1 full buffer size), and the additional
+        // overhead as well.
+        ByteBuffer buf = ByteBuffer.allocate(BYTE_BUFFER_DEFAULT_SIZE);
+        // Send the message to the ClientNetworkObjectManager.
+        NetworkUtils.putStringIntoBuf(buf, MANAGER_UUID.toString());
+        // The remote method to call.
+        NetworkUtils.putStringIntoBuf(buf, "objDestroyed");
+        // Let the client know which class it needs to instantiate.
+        NetworkUtils.putStringIntoBuf(buf, obj.getClass().getName());
+        // UUID of object to instantiate.
+        NetworkUtils.putStringIntoBuf(buf, obj.getObjectId().toString());
+        return buf;
+    }
 
     // Notify a particular client of all existing objects.
     private synchronized void notifyOfAllObjs(SendToClient sender) {
@@ -77,7 +92,10 @@ public class ServerNetworkObjectManager extends NetworkObjectManager {
     }
 
     public synchronized void removeNetworkObject(NetworkObject obj) {
-        networkObjects.remove(obj.getObjectId());
+    	UUID uuid = obj.getObjectId();
+    	// Notify all clients of the destroyed object.
+        this.sendToClients(getObjectDestroyMessage(obj));
+        this.networkObjects.remove(uuid);
     }
 
     public UUID registerClientSender(SendToClient sender) {
