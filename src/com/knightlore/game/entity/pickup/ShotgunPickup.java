@@ -6,6 +6,7 @@ import java.util.UUID;
 import com.knightlore.network.NetworkObject;
 import com.knightlore.render.graphic.sprite.DirectionalSprite;
 import com.knightlore.render.graphic.sprite.ShotgunSprite;
+import com.knightlore.render.minimap.Minimap;
 import com.knightlore.utils.Vector2D;
 
 public class ShotgunPickup extends PickupItem {
@@ -27,7 +28,7 @@ public class ShotgunPickup extends PickupItem {
 
     @Override
     public int getDrawSize() {
-        return 5;
+        return Minimap.SCALE/2;
     }
 
     @Override

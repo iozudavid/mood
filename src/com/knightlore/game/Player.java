@@ -15,6 +15,7 @@ import com.knightlore.network.protocol.ClientProtocol;
 import com.knightlore.render.IRenderable;
 import com.knightlore.render.PixelBuffer;
 import com.knightlore.render.graphic.sprite.DirectionalSprite;
+import com.knightlore.render.minimap.Minimap;
 import com.knightlore.utils.Vector2D;
 
 public class Player extends Entity implements IRenderable {
@@ -122,17 +123,17 @@ public class Player extends Entity implements IRenderable {
 
     @Override
     public int getDrawSize() {
-        return 0;
+        return Minimap.SCALE/2;
     }
 
     @Override
     public int getMinimapColor() {
-        return 0;
+        return 0xFFFFFF;
     }
 
     @Override
     public DirectionalSprite getDirectionalSprite() {
-        return DirectionalSprite.SHOTGUN_DIRECTIONAL_SPRITE;
+        return DirectionalSprite.PLAYER_DIRECTIONAL_SPRITE;
     }
 
 }
