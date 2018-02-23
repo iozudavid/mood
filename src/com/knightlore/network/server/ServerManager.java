@@ -6,14 +6,9 @@ import java.net.Socket;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
-import com.knightlore.engine.GameEngine;
-import com.knightlore.game.Player;
 import com.knightlore.network.Connection;
 import com.knightlore.network.ConnectionDetails;
-import com.knightlore.network.NetworkObject;
 import com.knightlore.network.TCPConnection;
-import com.knightlore.utils.Tuple;
-import com.knightlore.utils.Vector2D;
 
 /**
  * A network connection manager that runs server-side and deals with all
@@ -22,7 +17,7 @@ import com.knightlore.utils.Vector2D;
  * @author Will
  */
 public class ServerManager implements Runnable {
-    private ConcurrentHashMap<UUID, Tuple<Connection, NetworkObject>> connections = new ConcurrentHashMap<UUID, Tuple<Connection, NetworkObject>>();
+    private ConcurrentHashMap<UUID, Connection> connections = new ConcurrentHashMap<UUID, Connection>();
     private ServerSocket serverSocket = null;
 
     @Override
@@ -45,16 +40,14 @@ public class ServerManager implements Runnable {
         while (true) {
             try {
                 Socket socket = serverSocket.accept();
-                Vector2D pos = GameEngine.getSingleton().getRenderer().getMap().getRandomSpawnPoint();
-                Player player = new Player(pos, Vector2D.UP);
-                player.init();
                 Connection conn = new TCPConnection(socket);
                 new Thread(conn).start();
-                new Thread(new SendToClient(conn, player.getObjectId())).start();
+                SendToClient sender = new SendToClient(conn);
+                new Thread(sender).start();
                 new Thread(new Receive(conn)).start();
 
 
-                this.connections.put(player.getObjectId(), new Tuple<Connection, NetworkObject>(conn, player));
+                this.connections.put(sender.getUUID(), conn);
             } catch (IOException e) {
                 System.err.println("Couldn't create the connection...");
                 System.exit(1);

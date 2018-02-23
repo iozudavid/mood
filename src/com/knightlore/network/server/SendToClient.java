@@ -12,22 +12,18 @@ public class SendToClient implements Runnable {
 
     private Connection conn;
     private BlockingQueue<ByteBuffer> commandQueue = new LinkedBlockingQueue<>();
-    
-    public UUID uuid;
+    private UUID uuid;
+    private ServerNetworkObjectManager manager;
 
-    public SendToClient(Connection conn, UUID uuid) {
+    public SendToClient(Connection conn) {
         this.conn = conn;
-        this.uuid = uuid;
+        this.manager = (ServerNetworkObjectManager) NetworkObjectManager.getSingleton();
+        this.uuid = manager.registerClientSender(this);
     }
 
     @Override
     public void run() {
-        ServerNetworkObjectManager manager = (ServerNetworkObjectManager) NetworkObjectManager
-                .getSingleton();
-        
 
-        manager.registerClientSender(this);
-        
         while (!conn.terminated) {
             ByteBuffer nextState;
             try {
@@ -44,6 +40,10 @@ public class SendToClient implements Runnable {
 
     public void send(ByteBuffer data) {
         commandQueue.offer(data);
+    }
+
+    public UUID getUUID() {
+        return this.uuid;
     }
 
 }

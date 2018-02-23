@@ -1,5 +1,6 @@
 package com.knightlore.engine;
 
+import com.knightlore.game.Player;
 import com.knightlore.game.area.Map;
 
 public abstract class GameWorld {
@@ -34,7 +35,7 @@ public abstract class GameWorld {
 	
 	public abstract boolean saveToFile(String fileName);
 
-
-	
+    // Create a player in the world at a random position with a random UUID.
+	public abstract Player createPlayer();
 	
 }

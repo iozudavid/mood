@@ -18,12 +18,10 @@ import com.knightlore.render.Camera;
 public class ClientNetworkObjectManager extends NetworkObjectManager {
     private Map<UUID, NetworkObject> networkObjects = new HashMap<>();
     private UUID myPlayerUUID = null;
-    private boolean registerNetObjchecked;
 
     public ClientNetworkObjectManager() {
         super();
         setNetworkConsumers();
-        this.registerNetObjchecked = false;
     }
 
     private void setNetworkConsumers() {

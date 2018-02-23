@@ -9,6 +9,8 @@ import java.util.Map.Entry;
 import java.util.UUID;
 import java.util.concurrent.CopyOnWriteArrayList;
 
+import com.knightlore.engine.GameWorld;
+import com.knightlore.game.Player;
 import com.knightlore.network.NetworkObject;
 import com.knightlore.network.NetworkObjectManager;
 import com.knightlore.network.protocol.NetworkUtils;
@@ -25,6 +27,11 @@ public class ServerNetworkObjectManager extends NetworkObjectManager {
     private List<SendToClient> clientSenders = new CopyOnWriteArrayList<>();
     // Counter for REGULAR_UPDATE_FREQ
     private int updateCount = 1;
+    private GameWorld world;
+
+    public ServerNetworkObjectManager(GameWorld world) {
+        this.world = world;
+    }
 
     @Override
     public synchronized void registerNetworkObject(NetworkObject obj) {
@@ -74,20 +81,22 @@ public class ServerNetworkObjectManager extends NetworkObjectManager {
         networkObjects.remove(obj.getObjectId());
     }
 
-    public void registerClientSender(SendToClient sender) {
+    public UUID registerClientSender(SendToClient sender) {
         synchronized (this.clientSenders) {
             this.clientSenders.add(sender);
         }
         // First, tell the client what objects are on the server.
         notifyOfAllObjs(sender);
 
+        Player newPlayer = world.createPlayer();
         System.out.println("sending player identity" + System.currentTimeMillis());
         // Now, tell the player who they are.
         ByteBuffer buf = ByteBuffer.allocate(NetworkObject.BYTE_BUFFER_DEFAULT_SIZE);
         NetworkUtils.putStringIntoBuf(buf, MANAGER_UUID.toString());
         NetworkUtils.putStringIntoBuf(buf, "registerPlayerIdentity");
-        NetworkUtils.putStringIntoBuf(buf, sender.uuid.toString());
+        NetworkUtils.putStringIntoBuf(buf, newPlayer.getObjectId().toString());
         sender.send(buf);
+        return newPlayer.getObjectId();
     }
 
     public void removeClientSender(SendToClient obj) {
@@ -115,7 +124,8 @@ public class ServerNetworkObjectManager extends NetworkObjectManager {
                 // and use the standard library
                 if (updateCount >= REGULAR_UPDATE_FREQ || !Arrays.equals(newState.array(), t.getValue().y.array())) {
                     this.sendToClients(newState);
-                    //networkObjects.put(t.getKey(), new Tuple<>(t.getValue().x, newState));
+                    // networkObjects.put(t.getKey(), new
+                    // Tuple<>(t.getValue().x, newState));
                     t.getValue().y = newState;
                 }
             }

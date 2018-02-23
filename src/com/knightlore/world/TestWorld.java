@@ -4,8 +4,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.knightlore.GameSettings;
+import com.knightlore.engine.GameEngine;
 import com.knightlore.engine.GameWorld;
-import com.knightlore.game.area.Map;
+import com.knightlore.game.Player;
 import com.knightlore.game.area.generation.MapGenerator;
 import com.knightlore.game.entity.Entity;
 import com.knightlore.game.entity.Zombie;
@@ -22,7 +23,6 @@ public class TestWorld extends GameWorld {
 
     private List<Entity> mobs;
 
-    private Camera mainCamera;
     private GUICanvas gui;
 
     public TestWorld() {
@@ -37,8 +37,7 @@ public class TestWorld extends GameWorld {
         // FIXME don't hardcode the seed...
         map = generator.createMap(16, 16, Environment.LIGHT_OUTDOORS, 161803398875L);
 
-        // now populate the world
-        mainCamera = new Camera(GameWorld.getMap());
+        new Camera(GameWorld.getMap());
     }
 
     @Override
@@ -94,6 +93,15 @@ public class TestWorld extends GameWorld {
 
     public List<Entity> getMobs() {
         return mobs;
+    }
+    
+    @Override
+    public Player createPlayer() {
+        Vector2D pos = GameEngine.getSingleton().getRenderer().getMap().getRandomSpawnPoint();
+        Player player = new Player(pos, Vector2D.UP);
+        player.init();
+        mobs.add(player);
+        return player;
     }
 
 }

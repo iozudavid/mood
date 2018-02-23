@@ -58,7 +58,7 @@ public class GameEngine implements Runnable {
         if (GameSettings.isClient())
             new ClientNetworkObjectManager().init();
         if (GameSettings.isServer())
-            new ServerNetworkObjectManager().init();
+            new ServerNetworkObjectManager(world).init();
 
         if (headless) {
             window = null;
