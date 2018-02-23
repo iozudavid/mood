@@ -21,13 +21,13 @@ import com.knightlore.utils.Vector2D;
 
 public class TestWorld extends GameWorld {
 
-    private List<Entity> mobs;
+    private List<Entity> ents;
 
     private GUICanvas gui;
 
     public TestWorld() {
         // init all the variables
-        mobs = new ArrayList<Entity>();
+        ents = new ArrayList<Entity>();
     }
 
     @Override
@@ -46,15 +46,15 @@ public class TestWorld extends GameWorld {
             // add the mobs
             ShotgunPickup shot = new ShotgunPickup(new Vector2D(20, 20));
             shot.init();
-            mobs.add(shot);
+            ents.add(shot);
             Zombie zom = new Zombie(1, new Vector2D(21, 20));
             zom.init();
-            mobs.add(zom);
+            ents.add(zom);
             // add pickups
             for (int i = 1; i < 5; i += 2) {
                 ShotgunPickup shotI = new ShotgunPickup(new Vector2D(i, 3));
                 shotI.init();
-                mobs.add(shotI);
+                ents.add(shotI);
             }
         }
 
@@ -91,8 +91,8 @@ public class TestWorld extends GameWorld {
         return false;
     }
 
-    public List<Entity> getMobs() {
-        return mobs;
+    public List<Entity> getEntities() {
+        return ents;
     }
     
     @Override
@@ -100,8 +100,13 @@ public class TestWorld extends GameWorld {
         Vector2D pos = GameEngine.getSingleton().getRenderer().getMap().getRandomSpawnPoint();
         Player player = new Player(pos, Vector2D.UP);
         player.init();
-        mobs.add(player);
+        ents.add(player);
         return player;
+    }
+
+    @Override
+    public void addEntity(Entity ent) {
+        this.ents.add(ent);
     }
 
 }

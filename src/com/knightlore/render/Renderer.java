@@ -13,7 +13,6 @@ import com.knightlore.gui.GUICanvas;
 import com.knightlore.render.graphic.Graphic;
 import com.knightlore.render.minimap.Minimap;
 import com.knightlore.utils.Vector2D;
-import com.knightlore.world.TestWorld;
 
 public class Renderer implements IRenderable {
 
@@ -22,7 +21,7 @@ public class Renderer implements IRenderable {
     private Minimap minimap;
     private static GUICanvas gui = null;
 
-    private List<Entity> mobsToRender;
+    private List<Entity> entsToRender;
     private GameWorld world;
 
     public Renderer(Camera camera, GameWorld world) {
@@ -215,13 +214,9 @@ public class Renderer implements IRenderable {
     }
 
     private void drawSprites(PixelBuffer pix, double[] zbuffer) {
-        GameWorld world = this.world;
-        if (!(world instanceof TestWorld))
-            return;
-        TestWorld testWorld = ((TestWorld) world);
-        mobsToRender = testWorld.getMobs();
-        synchronized (mobsToRender) {
-            mobsToRender.sort(new Comparator<Entity>() {
+        entsToRender = world.getEntities();
+        synchronized (entsToRender) {
+            entsToRender.sort(new Comparator<Entity>() {
 
                 @Override
                 public int compare(Entity o1, Entity o2) {
@@ -232,7 +227,7 @@ public class Renderer implements IRenderable {
 
             });
 
-            for (Entity m : mobsToRender) {
+            for (Entity m : entsToRender) {
                 double spriteX = m.getPosition().getX() - camera.getxPos();
                 double spriteY = m.getPosition().getY() - camera.getyPos();
 

@@ -27,10 +27,9 @@ public class ServerNetworkObjectManager extends NetworkObjectManager {
     private List<SendToClient> clientSenders = new CopyOnWriteArrayList<>();
     // Counter for REGULAR_UPDATE_FREQ
     private int updateCount = 1;
-    private GameWorld world;
-
+    
     public ServerNetworkObjectManager(GameWorld world) {
-        this.world = world;
+        super(world);
     }
 
     @Override

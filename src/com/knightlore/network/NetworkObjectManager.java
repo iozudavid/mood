@@ -9,6 +9,7 @@ import java.util.concurrent.LinkedBlockingQueue;
 import java.util.function.Consumer;
 
 import com.knightlore.engine.GameObject;
+import com.knightlore.engine.GameWorld;
 import com.knightlore.network.protocol.NetworkUtils;
 
 public abstract class NetworkObjectManager extends GameObject
@@ -20,9 +21,11 @@ public abstract class NetworkObjectManager extends GameObject
     protected Map<String, Consumer<ByteBuffer>> networkConsumers = new HashMap<>();
 
     protected BlockingQueue<ByteBuffer> messages = new LinkedBlockingQueue<>();
+    
+    protected GameWorld world;
 
-    public NetworkObjectManager() {
-        super();
+    public NetworkObjectManager(GameWorld world) {
+        this.world = world;
         singleton = this;
     }
 

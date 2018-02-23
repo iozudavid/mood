@@ -8,6 +8,7 @@ import java.util.Map;
 import java.util.UUID;
 
 import com.knightlore.engine.GameEngine;
+import com.knightlore.engine.GameWorld;
 import com.knightlore.game.Player;
 import com.knightlore.game.entity.Entity;
 import com.knightlore.network.NetworkObject;
@@ -19,8 +20,8 @@ public class ClientNetworkObjectManager extends NetworkObjectManager {
     private Map<UUID, NetworkObject> networkObjects = new HashMap<>();
     private UUID myPlayerUUID = null;
 
-    public ClientNetworkObjectManager() {
-        super();
+    public ClientNetworkObjectManager(GameWorld world) {
+        super(world);
         setNetworkConsumers();
     }
 
@@ -62,7 +63,10 @@ public class ClientNetworkObjectManager extends NetworkObjectManager {
             // Static method, so pass null for object reference. The remainder
             // of the ByteBuffer constitutes
             // the state of the object.
-            method.invoke(null, objID, buf);
+            NetworkObject obj = (NetworkObject) method.invoke(null, objID, buf);
+            if (obj instanceof Entity) {
+                world.addEntity((Entity) obj);
+            }
         } catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException
                 | InvocationTargetException e) {
             System.err.println("Error when attempting to call the static method build(UUID, ByteBuffer) on the class "

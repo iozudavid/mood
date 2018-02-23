@@ -1,7 +1,10 @@
 package com.knightlore.engine;
 
+import java.util.List;
+
 import com.knightlore.game.Player;
 import com.knightlore.game.area.Map;
+import com.knightlore.game.entity.Entity;
 
 public abstract class GameWorld {
 
@@ -38,4 +41,7 @@ public abstract class GameWorld {
     // Create a player in the world at a random position with a random UUID.
 	public abstract Player createPlayer();
 	
+	public abstract List<Entity> getEntities();
+	
+	public abstract void addEntity(Entity ent);
 }
