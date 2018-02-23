@@ -34,20 +34,12 @@ public class ClientNetworkObjectManager extends NetworkObjectManager {
     @Override
     public synchronized void registerNetworkObject(NetworkObject obj) {
         System.out.println("client registering net obj " + obj.getObjectId());
-        synchronized (this.networkObjects) {
-            this.networkObjects.put(obj.getObjectId(), obj);
-            if (this.networkObjects.containsKey(myPlayerUUID)) {
-                // let it know that the object was registered
-                registerNetObjchecked = true;
-            }
-        }
+        this.networkObjects.put(obj.getObjectId(), obj);
     }
 
     @Override
     public synchronized void removeNetworkObject(NetworkObject obj) {
-        synchronized (this.networkObjects) {
-            networkObjects.remove(obj.getObjectId());
-        }
+        networkObjects.remove(obj.getObjectId());
     }
 
     public UUID getMyPlayerUUID() {
@@ -87,11 +79,12 @@ public class ClientNetworkObjectManager extends NetworkObjectManager {
     // Called remotely when we receive a message from the server to tell us what
     // our UUID is.
     public void registerPlayerIdentity(ByteBuffer buf) {
+        System.out.println("Registering player identity");
         myPlayerUUID = UUID.fromString(NetworkUtils.getStringFromBuf(buf));
         // wait until the network object
         // is added to the list
         // this will avoid getting a null value as the player
-        while (!this.isNetObjRegistered()) {
+        while (!networkObjects.containsKey(myPlayerUUID)) {
             try {
                 Thread.sleep(5);
             } catch (InterruptedException e) {
@@ -107,7 +100,6 @@ public class ClientNetworkObjectManager extends NetworkObjectManager {
 
     @Override
     public void onCreate() {
-        System.out.println("on create called for client");
         super.onCreate();
     }
 
@@ -119,11 +111,5 @@ public class ClientNetworkObjectManager extends NetworkObjectManager {
         }
         System.err.println("No network object with UUID " + uuid + " could be found on this client.");
         return null;
-    }
-
-    // wait() - notify() creating a strange deadlock
-    // use this instead combined with sleep
-    private boolean isNetObjRegistered() {
-        return this.registerNetObjchecked;
     }
 }
