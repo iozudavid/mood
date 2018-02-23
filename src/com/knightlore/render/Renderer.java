@@ -311,6 +311,6 @@ public class Renderer implements IRenderable {
 
     public void setCamera(Camera cam) {
         this.camera = cam;
-        this.minimap = new Minimap(camera, map, 128);
+        this.minimap = new Minimap(camera, map, world.getMinimapObjs(), 128);
     }
 }

@@ -5,6 +5,7 @@ import java.util.List;
 import com.knightlore.game.Player;
 import com.knightlore.game.area.Map;
 import com.knightlore.game.entity.Entity;
+import com.knightlore.render.minimap.IMinimapObject;
 
 public abstract class GameWorld {
 
@@ -44,4 +45,8 @@ public abstract class GameWorld {
 	public abstract List<Entity> getEntities();
 	
 	public abstract void addEntity(Entity ent);
+	
+	public abstract List<IMinimapObject> getMinimapObjs();
+	
+	public abstract void addMinimapObj(IMinimapObject obj);
 }

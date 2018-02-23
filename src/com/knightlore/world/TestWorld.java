@@ -17,17 +17,20 @@ import com.knightlore.gui.TextField;
 import com.knightlore.render.Camera;
 import com.knightlore.render.Environment;
 import com.knightlore.render.Renderer;
+import com.knightlore.render.minimap.IMinimapObject;
 import com.knightlore.utils.Vector2D;
 
 public class TestWorld extends GameWorld {
 
     private List<Entity> ents;
+    private List<IMinimapObject> minimapObjs;
 
     private GUICanvas gui;
 
     public TestWorld() {
         // init all the variables
         ents = new ArrayList<Entity>();
+        minimapObjs = new ArrayList<IMinimapObject>();
     }
 
     @Override
@@ -94,19 +97,34 @@ public class TestWorld extends GameWorld {
     public List<Entity> getEntities() {
         return ents;
     }
-    
+
     @Override
     public Player createPlayer() {
         Vector2D pos = GameEngine.getSingleton().getRenderer().getMap().getRandomSpawnPoint();
         Player player = new Player(pos, Vector2D.UP);
         player.init();
         ents.add(player);
+        minimapObjs.add(player);
         return player;
     }
 
     @Override
     public void addEntity(Entity ent) {
         this.ents.add(ent);
+    }
+
+    @Override
+    public List<IMinimapObject> getMinimapObjs() {
+        synchronized (minimapObjs) {
+            return minimapObjs;
+        }
+    }
+
+    @Override
+    public void addMinimapObj(IMinimapObject obj) {
+        synchronized (minimapObjs) {
+            minimapObjs.add(obj);
+        }
     }
 
 }

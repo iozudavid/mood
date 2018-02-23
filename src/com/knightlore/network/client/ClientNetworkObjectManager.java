@@ -15,6 +15,7 @@ import com.knightlore.network.NetworkObject;
 import com.knightlore.network.NetworkObjectManager;
 import com.knightlore.network.protocol.NetworkUtils;
 import com.knightlore.render.Camera;
+import com.knightlore.render.minimap.IMinimapObject;
 
 public class ClientNetworkObjectManager extends NetworkObjectManager {
     private Map<UUID, NetworkObject> networkObjects = new HashMap<>();
@@ -46,6 +47,7 @@ public class ClientNetworkObjectManager extends NetworkObjectManager {
     }
 
     // Called remotely when a new network object is created on the server.
+    // WARNING: dank reflection in this method.
     @SuppressWarnings("unchecked")
     public void newObjCreated(ByteBuffer buf) {
         System.out.println("Receiving new object details from server");
@@ -64,8 +66,12 @@ public class ClientNetworkObjectManager extends NetworkObjectManager {
             // of the ByteBuffer constitutes
             // the state of the object.
             NetworkObject obj = (NetworkObject) method.invoke(null, objID, buf);
+            // Entities need to exist in the world.
             if (obj instanceof Entity) {
                 world.addEntity((Entity) obj);
+            }
+            if (obj instanceof IMinimapObject) {
+                world.addMinimapObj((IMinimapObject) obj);
             }
         } catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException
                 | InvocationTargetException e) {
