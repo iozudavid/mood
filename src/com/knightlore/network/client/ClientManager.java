@@ -42,11 +42,9 @@ public class ClientManager implements Runnable {
         } catch (UnknownHostException e) {
             System.err.println("Unknown host: " + ConnectionDetails.SERVER_HOSTNAME);
         } catch (IOException e) {
-            System.err.println(
-                    "The server doesn't seem to be running " + e.getMessage());
+            System.err.println("The server doesn't seem to be running " + e.getMessage());
         } catch (InterruptedException e) {
-            System.err.println(
-                    "Unexpected interruption occured " + e.getMessage());
+            System.err.println("Unexpected interruption occured " + e.getMessage());
         }
 
     }

@@ -35,8 +35,7 @@ public class ReceiveFromServer implements Runnable {
             // FIXME: Create Camera inside player, don't pass in dummy values to
             // initialise.
             Renderer rend = GameEngine.getSingleton().getRenderer();
-            Player player = new Player(this.clientID, new Camera(0, 0, 0, 0, 0,
-                    0, rend.getMap()));
+            Player player = new Player(this.clientID, new Camera(0, 0, 0, 0, 0, 0, rend.getMap()));
             player.deserialize(serverCommand);
             // FIXME: interface better with World to provide the camera during
             // its constructor.
@@ -44,32 +43,26 @@ public class ReceiveFromServer implements Runnable {
 
             while (!conn.terminated && (packet = conn.receive()) != null) {
                 ServerCommand command = ServerCommand.decodePacket(packet);
-                
-                //if we receive the disconnect packet
-                //then remove object from game engine
-                //and from network manager
-                if(ServerProtocol.isDisconnectedState(packet)){
+
+                // if we receive the disconnect packet
+                // then remove object from game engine
+                // and from network manager
+                if (ServerProtocol.isDisconnectedState(packet)) {
                     NetworkObjectManager.getSingleton().getNetworkObject(command.getObjectId()).destroy();
-					NetworkObjectManager.getSingleton().disconnectClient(command.getObjectId());
-					rend.updateNetworkObjectPos(
-							NetworkObjectManager.getSingleton().getNetworkObject(command.getObjectId()), null, null);
+                    NetworkObjectManager.getSingleton().disconnectClient(command.getObjectId());
+                    rend.updateNetworkObjectPos(
+                            NetworkObjectManager.getSingleton().getNetworkObject(command.getObjectId()), null, null);
                     continue;
                 }
-                
+
                 // Update the object with the received information.
-                NetworkObjectManager.getSingleton()
-                        .getNetworkObject(command.getObjectId())
-                        .deserialize(command);
-                
-                rend.updateNetworkObjectPos(
-                        NetworkObjectManager.getSingleton()
-                                .getNetworkObject(command.getObjectId()),
-                        new Vector2D(
-                                command.getValueByControl(ServerControl.XPOS),
+                NetworkObjectManager.getSingleton().getNetworkObject(command.getObjectId()).deserialize(command);
+
+                rend.updateNetworkObjectPos(NetworkObjectManager.getSingleton().getNetworkObject(command.getObjectId()),
+                        new Vector2D(command.getValueByControl(ServerControl.XPOS),
                                 command.getValueByControl(ServerControl.YPOS)),
-                        new Vector2D(
-                        		command.getValueByControl(ServerControl.XDIR),
-                        		command.getValueByControl(ServerControl.YDIR)));
+                        new Vector2D(command.getValueByControl(ServerControl.XDIR),
+                                command.getValueByControl(ServerControl.YDIR)));
 
             }
             if (!conn.terminated)

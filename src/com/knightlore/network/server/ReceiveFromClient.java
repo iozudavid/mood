@@ -31,8 +31,8 @@ public class ReceiveFromClient implements Runnable {
         } catch (Exception e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
-        } 
-        
+        }
+
         System.out.println("Got null packet, exiting");
         conn.terminated = true;
     }
@@ -44,13 +44,11 @@ public class ReceiveFromClient implements Runnable {
 
         try {
             Map<ClientControl, Byte> clientInput = new HashMap<ClientControl, Byte>();
-            for (int i = 0; i < ClientProtocol.getIndexActionMap()
-                    .size(); i++) {
+            for (int i = 0; i < ClientProtocol.getIndexActionMap().size(); i++) {
                 // using the protocol
                 // to decode the byte array
                 ClientControl control = ClientProtocol.getByIndex(i);
-                clientInput.put(control,
-                        packet[i + ClientProtocol.METADATA_LENGTH]);
+                clientInput.put(control, packet[i + ClientProtocol.METADATA_LENGTH]);
             }
             return new ClientCommand(clientInput, timeSent);
         } catch (IOException e) {

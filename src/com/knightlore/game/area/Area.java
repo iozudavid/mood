@@ -20,30 +20,30 @@ public abstract class Area {
 
         this.grid = grid;
     }
-    
-    //this is used to render other players
-    //added for prototype presentation
-    //as a quick solution
+
+    // this is used to render other players
+    // added for prototype presentation
+    // as a quick solution
     public void setTile(int x, int y, Tile t) {
         grid[x][y] = t;
     }
 
     public Tile getTile(int x, int y) {
-        if(x < 0 || x >= width || y < 0 || y >= height) {
+        if (x < 0 || x >= width || y < 0 || y >= height) {
             return AirTile.getInstance();
         }
         return grid[x][y];
     }
-    
-    public int getWidth() {
-		return width;
-	}
-    
-    public int getHeight() {
-		return height;
-	}
 
-	public String toString() {
+    public int getWidth() {
+        return width;
+    }
+
+    public int getHeight() {
+        return height;
+    }
+
+    public String toString() {
         StringBuilder sBuilder = new StringBuilder("AREA\n" + "WIDTH = " + width + "\n" + "HEIGHT = " + height + "\n");
         for (int j = 0; j < height; j++) {
             for (int i = 0; i < width; i++) {
@@ -54,5 +54,5 @@ public abstract class Area {
 
         return sBuilder.toString();
     }
-	
+
 }

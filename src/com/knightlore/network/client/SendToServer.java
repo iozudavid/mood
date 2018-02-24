@@ -39,8 +39,7 @@ public class SendToServer implements Runnable {
     }
 
     private synchronized byte[] getCurentStateByteArray() {
-        byte[] thisState = new byte[ClientProtocol.METADATA_LENGTH
-                + ClientProtocol.getIndexActionMap().size()];
+        byte[] thisState = new byte[ClientProtocol.METADATA_LENGTH + ClientProtocol.getIndexActionMap().size()];
 
         // Prepend metadata to the state array.
         byte[] metadata = ClientProtocol.getMetadata();
@@ -49,13 +48,11 @@ public class SendToServer implements Runnable {
         }
 
         try {
-            for (int i = 0; i < ClientProtocol.getIndexActionMap()
-                    .size(); i++) {
+            for (int i = 0; i < ClientProtocol.getIndexActionMap().size(); i++) {
                 // taking the current control
                 ClientControl currentControl = ClientProtocol.getByIndex(i);
                 int keyCode = ClientControl.getKeyCode(currentControl);
-                boolean currententControlState = InputManager
-                        .isKeyDown(keyCode);
+                boolean currententControlState = InputManager.isKeyDown(keyCode);
                 if (currententControlState == false) {
                     thisState[i + ClientProtocol.METADATA_LENGTH] = 0;
                 } else {
@@ -86,8 +83,8 @@ public class SendToServer implements Runnable {
         // Send a controls update if either the controls have changed or
         // a regular update is due.
         synchronized (this.currentState) {
-            if (updateCounter++ >= REGULAR_UPDATE_FREQ || NetworkUtils
-                    .areStatesDifferent(this.lastState, currentState)) {
+            if (updateCounter++ >= REGULAR_UPDATE_FREQ
+                    || NetworkUtils.areStatesDifferent(this.lastState, currentState)) {
                 System.out.println("Packet " + l++);
                 updateCounter = 1;
                 conn.send(currentState);

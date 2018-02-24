@@ -51,8 +51,7 @@ public class UDPConnection extends Connection {
     public void send(byte[] data) {
         // TODO
         try {
-            this.packet = new DatagramPacket(data, data.length, this.address,
-                    ConnectionDetails.PORT);
+            this.packet = new DatagramPacket(data, data.length, this.address, ConnectionDetails.PORT);
             socket.send(packet);
         } catch (IOException e) {
             e.printStackTrace();

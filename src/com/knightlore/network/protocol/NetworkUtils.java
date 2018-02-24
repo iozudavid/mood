@@ -8,10 +8,9 @@ public class NetworkUtils {
     public static boolean areStatesDifferent(byte[] x, byte[] currentState) {
         if (x == null || currentState == null)
             return true;
-        byte[] lastStateWithoutTimeToCompare = Arrays.copyOfRange(x,
-                ServerProtocol.METADATA_LENGTH, ServerProtocol.TOTAL_LENGTH);
-        byte[] currentStateWithoutTimeToCompare = Arrays.copyOfRange(
-                currentState, ServerProtocol.METADATA_LENGTH,
+        byte[] lastStateWithoutTimeToCompare = Arrays.copyOfRange(x, ServerProtocol.METADATA_LENGTH,
+                ServerProtocol.TOTAL_LENGTH);
+        byte[] currentStateWithoutTimeToCompare = Arrays.copyOfRange(currentState, ServerProtocol.METADATA_LENGTH,
                 ServerProtocol.TOTAL_LENGTH);
         if (lastStateWithoutTimeToCompare.length != currentStateWithoutTimeToCompare.length)
             return true;

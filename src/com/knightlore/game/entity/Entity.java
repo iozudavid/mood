@@ -8,34 +8,34 @@ import com.knightlore.utils.Vector2D;
 
 public abstract class Entity extends GameObject implements IMinimapObject {
 
-	protected DirectionalSprite dSprite;
-	protected double size;
-	protected Vector2D direction;
+    protected DirectionalSprite dSprite;
+    protected double size;
+    protected Vector2D direction;
 
-	protected int zOffset;
+    protected int zOffset;
 
-	protected Entity(double size, DirectionalSprite dSprite, Vector2D position, Vector2D direction) {
-		super(position);
-		this.size = size;
-		this.dSprite = dSprite;
-		this.direction = direction;
-		this.zOffset = 0;
-	}
-	
-	public Graphic getGraphic(Vector2D playerPos) {
-		return dSprite.getCurrentGraphic(position, direction, playerPos);
-	}
+    protected Entity(double size, DirectionalSprite dSprite, Vector2D position, Vector2D direction) {
+        super(position);
+        this.size = size;
+        this.dSprite = dSprite;
+        this.direction = direction;
+        this.zOffset = 0;
+    }
 
-	public double getSize() {
-		return size;
-	}
+    public Graphic getGraphic(Vector2D playerPos) {
+        return dSprite.getCurrentGraphic(position, direction, playerPos);
+    }
 
-	public Vector2D getDirection() {
-		return direction;
-	}
-	
-	public int getzOffset() {
-		return zOffset;
-	}
+    public double getSize() {
+        return size;
+    }
+
+    public Vector2D getDirection() {
+        return direction;
+    }
+
+    public int getzOffset() {
+        return zOffset;
+    }
 
 }

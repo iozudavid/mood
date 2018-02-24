@@ -4,34 +4,34 @@ import com.knightlore.game.Player;
 import com.knightlore.render.graphic.Graphic;
 import com.knightlore.render.graphic.texture.Texture;
 
-public class ExpectRoom extends Tile{
+public class ExpectRoom extends Tile {
 
-	private char direction;
-	
-	public static final char RIGHT = 'r';
-	public static final char DOWN  = 'd';
-	public static final char BOTH  = 'b';
-	
-	public ExpectRoom(char c){
-		assert(c == RIGHT || c == DOWN || c == BOTH);
-		direction = c;
-	}
-	
-	@Override
-	public Graphic getTexture() {
-		return Texture.AIR;
-	}
+    private char direction;
 
-	@Override
-	public void onShot() {
-	}
+    public static final char RIGHT = 'r';
+    public static final char DOWN = 'd';
+    public static final char BOTH = 'b';
 
-	@Override
-	public void onEntered(Player p) {
-	}
+    public ExpectRoom(char c) {
+        assert (c == RIGHT || c == DOWN || c == BOTH);
+        direction = c;
+    }
 
-	public char toChar(){
-		return direction;
-	}
-	
+    @Override
+    public Graphic getTexture() {
+        return Texture.AIR;
+    }
+
+    @Override
+    public void onShot() {
+    }
+
+    @Override
+    public void onEntered(Player p) {
+    }
+
+    public char toChar() {
+        return direction;
+    }
+
 }

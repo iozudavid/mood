@@ -73,7 +73,7 @@ public class Renderer implements IRenderable {
 
         PixelBuffer minimapBuffer = minimap.getPixelBuffer();
         pix.composite(minimapBuffer, pix.getWidth() - minimapBuffer.getWidth() - 10, 5);
-        
+
     }
 
     public void updateNetworkObjectPos(NetworkObject obj, Vector2D position, Vector2D direction) {

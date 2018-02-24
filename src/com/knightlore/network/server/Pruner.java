@@ -19,9 +19,9 @@ import com.knightlore.utils.Tuple;
 public class Pruner implements Runnable {
     // The time to wait, in milliseconds, between checks for terminated threads.
     private static int PERIOD_MILLIS = 1000;
-    private Map<UUID, Tuple<Connection,NetworkObject>> conns;
+    private Map<UUID, Tuple<Connection, NetworkObject>> conns;
 
-    public Pruner(Map<UUID, Tuple<Connection,NetworkObject>> conns) {
+    public Pruner(Map<UUID, Tuple<Connection, NetworkObject>> conns) {
         this.conns = conns;
     }
 
@@ -29,12 +29,12 @@ public class Pruner implements Runnable {
         while (true) {
             Iterator<Entry<UUID, Tuple<Connection, NetworkObject>>> i = conns.entrySet().iterator();
             Entry<UUID, Tuple<Connection, NetworkObject>> next = null;
-            while (i.hasNext()){
+            while (i.hasNext()) {
                 next = i.next();
-                if (next.getValue().x.getTerminated()){
-                    //if connection lost then remove the network object
-                    //remove from connection list
-                    //and inform other clients
+                if (next.getValue().x.getTerminated()) {
+                    // if connection lost then remove the network object
+                    // remove from connection list
+                    // and inform other clients
                     NetworkObjectManager.getSingleton().disconnectClient(next.getKey());
                     next.getValue().y.destroy();
                     i.remove();
