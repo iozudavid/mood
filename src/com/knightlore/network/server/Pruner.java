@@ -6,9 +6,7 @@ import java.util.Map.Entry;
 import java.util.UUID;
 
 import com.knightlore.network.Connection;
-import com.knightlore.network.NetworkObject;
 import com.knightlore.network.NetworkObjectManager;
-import com.knightlore.utils.Tuple;
 
 /**
  * Constantly checks for inactive client connections, and removes them from the
@@ -19,24 +17,25 @@ import com.knightlore.utils.Tuple;
 public class Pruner implements Runnable {
     // The time to wait, in milliseconds, between checks for terminated threads.
     private static int PERIOD_MILLIS = 1000;
-    private Map<UUID, Tuple<Connection, NetworkObject>> conns;
+    private Map<UUID, Connection> conns;
 
-    public Pruner(Map<UUID, Tuple<Connection, NetworkObject>> conns) {
+    public Pruner(Map<UUID, Connection> conns) {
         this.conns = conns;
     }
 
     public void run() {
         while (true) {
-            Iterator<Entry<UUID, Tuple<Connection, NetworkObject>>> i = conns.entrySet().iterator();
-            Entry<UUID, Tuple<Connection, NetworkObject>> next = null;
+            Iterator<Entry<UUID, Connection>> i = conns.entrySet().iterator();
+            Entry<UUID, Connection> next = null;
             while (i.hasNext()) {
                 next = i.next();
-                if (next.getValue().x.getTerminated()) {
+                UUID uuid = next.getKey();
+                Connection conn = next.getValue();
+                if (conn.getTerminated()) {
                     // if connection lost then remove the network object
                     // remove from connection list
                     // and inform other clients
-                    NetworkObjectManager.getSingleton().disconnectClient(next.getKey());
-                    next.getValue().y.destroy();
+                    NetworkObjectManager.getSingleton().getNetworkObject(uuid).destroy();
                     i.remove();
                 }
             }

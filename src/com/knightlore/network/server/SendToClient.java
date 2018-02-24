@@ -1,5 +1,6 @@
 package com.knightlore.network.server;
 
+import java.nio.ByteBuffer;
 import java.util.UUID;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -10,22 +11,21 @@ import com.knightlore.network.NetworkObjectManager;
 public class SendToClient implements Runnable {
 
     private Connection conn;
-    private BlockingQueue<byte[]> commandQueue = new LinkedBlockingQueue<>();
+    private BlockingQueue<ByteBuffer> commandQueue = new LinkedBlockingQueue<>();
     private UUID uuid;
+    private ServerNetworkObjectManager manager;
 
-    public SendToClient(Connection conn, UUID uuid) {
+    public SendToClient(Connection conn) {
         this.conn = conn;
-        this.uuid = uuid;
+        this.manager = (ServerNetworkObjectManager) NetworkObjectManager.getSingleton();
+        this.uuid = manager.registerClientSender(this);
     }
 
     @Override
     public void run() {
-        NetworkObjectManager.getSingleton().registerClientSender(this);
-        // Firstly, send the player's own state to inform them of their own
-        // identity.
-        conn.send(NetworkObjectManager.getSingleton().getNetworkObject(uuid).serialize(false));
+
         while (!conn.terminated) {
-            byte[] nextState;
+            ByteBuffer nextState;
             try {
                 nextState = commandQueue.take();
                 conn.send(nextState);
@@ -35,12 +35,15 @@ public class SendToClient implements Runnable {
             }
 
         }
-        NetworkObjectManager.getSingleton().removeClientSender(this);
+        manager.removeClientSender(this);
     }
 
-    public void sendState(byte[] state) {
-        if (state != null)
-            commandQueue.offer(state);
+    public void send(ByteBuffer data) {
+        commandQueue.offer(data);
+    }
+
+    public UUID getUUID() {
+        return this.uuid;
     }
 
 }

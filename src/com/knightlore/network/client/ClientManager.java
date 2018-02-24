@@ -6,6 +6,7 @@ import java.net.UnknownHostException;
 
 import com.knightlore.network.ConnectionDetails;
 import com.knightlore.network.TCPConnection;
+import com.knightlore.network.server.Receive;
 
 public class ClientManager implements Runnable {
     @Override
@@ -16,17 +17,17 @@ public class ClientManager implements Runnable {
             TCPConnection conn = new TCPConnection(server);
             new Thread(conn).start();
             SendToServer sender = new SendToServer(conn);
-            ReceiveFromServer receiver = new ReceiveFromServer(conn);
-            Thread receiveFromServer = new Thread(receiver);
+            Receive receive = new Receive(conn);
+            Thread receiver = new Thread(receive);
             Thread sendToServer = new Thread(sender);
 
             // start threads
-            receiveFromServer.start();
+            receiver.start();
             sendToServer.start();
 
             // Wait for them to end and close sockets.
 
-            receiveFromServer.join();
+            receiver.join();
             conn.closeInputStream();
 
             // if the reciving from server ends

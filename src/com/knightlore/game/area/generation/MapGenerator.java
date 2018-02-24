@@ -14,7 +14,6 @@ import com.knightlore.game.tile.AirTile;
 import com.knightlore.game.tile.BrickTile;
 import com.knightlore.game.tile.Tile;
 import com.knightlore.game.tile.UndecidedTile;
-import com.knightlore.utils.Vector2D;
 import com.knightlore.utils.pathfinding.PathFinder;
 
 public class MapGenerator extends ProceduralAreaGenerator {
@@ -229,4 +228,5 @@ public class MapGenerator extends ProceduralAreaGenerator {
         System.out.println("Num rooms: " + genr.rooms.size());
 
     }
+    
 }

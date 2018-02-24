@@ -1,173 +1,117 @@
 package com.knightlore.game;
 
 import java.io.IOException;
+import java.nio.ByteBuffer;
 import java.util.HashMap;
-import java.util.Map;
+import java.util.Map.Entry;
 import java.util.UUID;
 
+import com.knightlore.game.entity.Entity;
 import com.knightlore.game.entity.weapon.Shotgun;
 import com.knightlore.game.entity.weapon.Weapon;
 import com.knightlore.network.NetworkObject;
 import com.knightlore.network.protocol.ClientControl;
-import com.knightlore.network.protocol.ServerCommand;
-import com.knightlore.network.protocol.ServerControl;
-import com.knightlore.network.protocol.ServerProtocol;
-import com.knightlore.render.Camera;
-import com.knightlore.render.IRenderable;
-import com.knightlore.render.PixelBuffer;
+import com.knightlore.network.protocol.ClientProtocol;
+import com.knightlore.render.graphic.sprite.DirectionalSprite;
+import com.knightlore.render.minimap.Minimap;
 import com.knightlore.utils.Vector2D;
 
-public class Player extends NetworkObject implements IRenderable {
+public class Player extends Entity {
 
-    private Camera camera;
     private Weapon currentWeapon;
 
-    private final Map<ServerControl, CameraGetterInterface> controlGettersMap;
-    private final Map<ServerControl, CameraSetterInterface> controlSettersMap;
-    private static volatile boolean finished = false;
+    // Maps all inputs that the player could be making to their values.
+    private java.util.Map<ClientControl, Runnable> ACTION_MAPPINGS = new HashMap<>();
+    private java.util.Map<ClientControl, Byte> inputState = new HashMap<>();
+    // private volatile boolean finished = false;
 
-    public Player(UUID uuid, Camera camera) {
-        super(uuid);
-        assert (camera != null);
+    // Returns a new instance. See NetworkObject for details.
+    public static NetworkObject build(UUID uuid, ByteBuffer state) {
+        System.out.println("Player build, state size: " + state.remaining());
+        NetworkObject obj = new Player(uuid, Vector2D.ONE, Vector2D.ONE);
+        obj.init();
+        obj.deserialize(state);
+        return obj;
+    }
 
-        this.camera = camera;
+    public Player(UUID uuid, Vector2D pos, Vector2D dir) {
+        super(uuid, 0.33D, pos, dir);
         this.currentWeapon = new Shotgun();
 
-        this.controlGettersMap = new HashMap<>();
-        this.controlGettersMap.put(ServerControl.XPOS, this.camera::getxPos);
-        this.controlGettersMap.put(ServerControl.YPOS, this.camera::getyPos);
-        this.controlGettersMap.put(ServerControl.XDIR, this.camera::getxDir);
-        this.controlGettersMap.put(ServerControl.YDIR, this.camera::getyDir);
-        this.controlGettersMap.put(ServerControl.XPLANE, this.camera::getxPlane);
-        this.controlGettersMap.put(ServerControl.YPLANE, this.camera::getyPlane);
+        // Map possible inputs to the methods that handle them. Avoids long
+        // if-statement chain.
+        ACTION_MAPPINGS.put(ClientControl.FORWARD, this::moveForward);
+        ACTION_MAPPINGS.put(ClientControl.ROTATE_ANTI_CLOCKWISE, this::rotateAntiClockwise);
+        ACTION_MAPPINGS.put(ClientControl.BACKWARD, this::moveBackward);
+        ACTION_MAPPINGS.put(ClientControl.ROTATE_CLOCKWISE, this::rotateClockwise);
+        ACTION_MAPPINGS.put(ClientControl.LEFT, this::strafeLeft);
+        ACTION_MAPPINGS.put(ClientControl.RIGHT, this::strafeRight);
 
-        this.controlSettersMap = new HashMap<>();
-        this.controlSettersMap.put(ServerControl.XPOS, this.camera::setxPos);
-        this.controlSettersMap.put(ServerControl.YPOS, this.camera::setyPos);
-        this.controlSettersMap.put(ServerControl.XDIR, this.camera::setxDir);
-        this.controlSettersMap.put(ServerControl.YDIR, this.camera::setyDir);
-        this.controlSettersMap.put(ServerControl.XPLANE, this.camera::setxPlane);
-        this.controlSettersMap.put(ServerControl.YPLANE, this.camera::setyPlane);
-        Player.this.finished = true;
+        setNetworkConsumers();
 
+        // Player.this.finished = true;
     }
 
-    public Vector2D getPosition() {
-        Vector2D pos = new Vector2D(camera.getxPos(), camera.getyPos());
-        return pos;
+    public Player(Vector2D pos, Vector2D dir) {
+        this(UUID.randomUUID(), pos, dir);
     }
 
-    public Vector2D getDirection() {
-        Vector2D dir = new Vector2D(camera.getxDir(), camera.getyDir());
-        return dir;
+    private void setNetworkConsumers() {
+        networkConsumers.put("setInputState", this::setInputState);
     }
 
-    public void setInputState(Map<ClientControl, Byte> inputState) {
-        camera.setInputState(inputState);
-    }
+    public void setInputState(ByteBuffer buf) {
+        synchronized (inputState) {
+            while (buf.hasRemaining()) {
+                // take the control
+                // using client protocol
+                // to fetch the order
+                ClientControl control = null;
+                try {
+                    control = ClientProtocol.getByIndex(buf.getInt());
+                } catch (IOException e) {
+                    System.err.println("Index not good... " + e.getMessage());
+                }
+                Byte value = buf.get();
+                inputState.put(control, value);
+            }
+        }
 
-    @Override
-    public void render(PixelBuffer pix, int x, int y) {
-        pix.fillRect(0x000000, (int) this.position.getX(), (int) this.position.getY(), 10, 50);
     }
 
     @Override
     public void onUpdate() {
-    }
-
-    @Override
-    public byte[] serialize(boolean disconnect) {
-        if (camera == null) {
-            System.out.println("Camera started null");
-            return null;
-        }
-        if (Player.this.finished == false) {
-            System.out.println("Constructor didn't finish");
-            return null;
-        }
-
-        byte[] thisState = new byte[ServerProtocol.TOTAL_LENGTH];
-
-        // Prepend metadata to the state array.
-        byte[] metadata = ServerProtocol.getMetadata();
-        for (int i = 0; i < ServerProtocol.METADATA_LENGTH; i++) {
-            thisState[i] = metadata[i];
-        }
-
-        byte[] playerID = ServerProtocol.uuidAsBytes(super.objectUniqueID);
-        // add player id to the packet
-        for (int i = ServerProtocol.METADATA_LENGTH; i < ServerProtocol.METADATA_LENGTH
-                + ServerProtocol.OBJECTID_LENGTH; i++) {
-            thisState[i] = playerID[i - ServerProtocol.METADATA_LENGTH];
-        }
-
-        if (disconnect) {
-            for (int i = ServerProtocol.MESSAGE_STARTING_POINT; i < ServerProtocol.TOTAL_LENGTH; i++) {
-                thisState[i] = ServerProtocol.disconnectedState[i - ServerProtocol.MESSAGE_STARTING_POINT];
-            }
-            // if disconnect then end it here with return statement
-            return thisState;
-        }
-
-        // adding player stats from camera class
-        int loopsNumber = 0;
-        try {
-            for (int i = ServerProtocol.MESSAGE_STARTING_POINT; i < ServerProtocol.TOTAL_LENGTH;) {
-                // taking the current control
-                int positionCurrentCommand = loopsNumber;
-                ServerControl currentControl = ServerProtocol.getControlByPosition(positionCurrentCommand);
-                Integer[] indexes = ServerProtocol.getIndexesByControl(currentControl);
-                int startingIndex = indexes[0];
-                int endingIndex = indexes[1];
-
-                CameraGetterInterface cameraReference = this.controlGettersMap.get(currentControl);
-                if (cameraReference == null)
-                    return null;
-                double cameraResult = cameraReference.accessDataFromCamera();
-                byte[] convertedCameraValue = ServerProtocol.doubleToByteArray(cameraResult);
-
-                for (int j = startingIndex + ServerProtocol.MESSAGE_STARTING_POINT; j < endingIndex
-                        + ServerProtocol.MESSAGE_STARTING_POINT; j++) {
-                    thisState[j] = convertedCameraValue[j - startingIndex - ServerProtocol.MESSAGE_STARTING_POINT];
+        synchronized (inputState) {
+            // Check whether each input is triggered - if it is, execute the
+            // respective method.
+            // DEBUG
+            boolean updated = false;
+            for (Entry<ClientControl, Byte> entry : inputState.entrySet())
+                // For boolean inputs (i.e. all current inputs), 0 represents
+                // false.
+                if (entry.getValue() != 0) {
+                    ACTION_MAPPINGS.get(entry.getKey()).run();
+                    updated = true;
                 }
-                i += endingIndex - startingIndex;
-                loopsNumber++;
-
+            if (updated) {
+                // updateMotionOffset();
             }
-        } catch (IOException e) {
-            System.err.println("Index not good...");
-            e.printStackTrace();
         }
-        return thisState;
+    }
 
+    // TODO: serialize weapon etc.
+    @Override
+    public ByteBuffer serialize() {
+        return super.serialize();
     }
 
     @Override
-    public void deserialize(ServerCommand command) {
-        // TODO: only deserialise if the command's timestamp is recent enough.
-        Double val;
-        for (ServerControl c : ServerControl.values())
-            if ((val = command.getValueByControl(c)) != null)
-                this.controlSettersMap.get(c).setDataOnCamera(val);
-
-    }
-
-    @FunctionalInterface
-    public static interface CameraGetterInterface {
-        double accessDataFromCamera();
-    }
-
-    public Camera getCamera() {
-        return camera;
+    public void deserialize(ByteBuffer buffer) {
+        super.deserialize(buffer);
     }
 
     public Weapon getCurrentWeapon() {
         return currentWeapon;
-    }
-
-    @FunctionalInterface
-    public static interface CameraSetterInterface {
-        void setDataOnCamera(double val);
     }
 
     @Override
@@ -181,4 +125,20 @@ public class Player extends NetworkObject implements IRenderable {
         // TODO Auto-generated method stub
 
     }
+
+    @Override
+    public int getDrawSize() {
+        return Minimap.SCALE / 2;
+    }
+
+    @Override
+    public int getMinimapColor() {
+        return 0xFFFFFF;
+    }
+
+    @Override
+    public DirectionalSprite getDirectionalSprite() {
+        return DirectionalSprite.PLAYER_DIRECTIONAL_SPRITE;
+    }
+
 }

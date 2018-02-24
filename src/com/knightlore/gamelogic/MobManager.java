@@ -33,6 +33,7 @@ public class MobManager extends GameObject {
 
     @Override
     public void onDestroy() {
+
     }
 
 }

@@ -1,5 +1,7 @@
 package com.knightlore.game.entity.pickup;
 
+import java.util.UUID;
+
 import com.knightlore.engine.GameEngine;
 import com.knightlore.game.entity.Entity;
 import com.knightlore.render.graphic.sprite.DirectionalSprite;
@@ -15,13 +17,21 @@ public abstract class PickupItem extends Entity {
 
     protected DirectionalSprite sprite;
 
-    public PickupItem(DirectionalSprite sprite, Vector2D position) {
-        super(PICKUP_SIZE, sprite, position, Math.random() < 0.5 ? Vector2D.UP : Vector2D.DOWN);
-        this.sprite = sprite;
+    public PickupItem(Vector2D position) {
+        super(PICKUP_SIZE, position, Vector2D.UP);
+    }
+
+    public PickupItem(UUID uuid, Vector2D position) {
+        super(uuid, PICKUP_SIZE, position, Vector2D.UP);
     }
 
     @Override
     public void onUpdate() {
+        // FIXME: avoid null pointer for direction when this is called and the
+        // constructor hasn't yet finished.
+        if (direction == null)
+            return;
+
         // Make the item bob up and down.
         long t = GameEngine.ticker.getTime();
         zOffset = FLOOR_OFFSET + (int) (Math.sin(t * FLOAT_BOB_SPEED) * FLOAT_BOB_AMOUNT);

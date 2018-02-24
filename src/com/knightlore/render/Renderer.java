@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Stack;
 
+import com.knightlore.engine.GameWorld;
 import com.knightlore.game.area.Map;
 import com.knightlore.game.entity.Entity;
 import com.knightlore.game.entity.Zombie;
@@ -12,11 +13,9 @@ import com.knightlore.game.tile.AirTile;
 import com.knightlore.game.tile.Tile;
 import com.knightlore.gui.GUICanvas;
 import com.knightlore.network.NetworkObject;
-import com.knightlore.network.NetworkObjectManager;
 import com.knightlore.render.graphic.Graphic;
 import com.knightlore.render.minimap.Minimap;
 import com.knightlore.utils.Vector2D;
-import com.knightlore.world.GameWorld;
 
 public class Renderer implements IRenderable {
 
@@ -42,12 +41,10 @@ public class Renderer implements IRenderable {
     public Renderer(Camera camera, GameWorld world) {
         this.camera = camera;
         this.world = world;
-        this.minimap = null;
+        this.minimap = new Minimap(camera, world, 64);
 
         this.networkObjPos = new HashMap<>();
         this.networkObjMobs = new HashMap<>();
-        // FIXME: create this elsewhere.....
-        new NetworkObjectManager();
     }
 
     private final int BLOCKINESS = 3; // how 'old school' you want to look.
@@ -55,8 +52,14 @@ public class Renderer implements IRenderable {
     @Override
     public void render(PixelBuffer pix, int x, int y) {
         // FIXME: HACK
-        if (camera == null || minimap == null)
+        // if (camera == null || minimap == null) {
+        // return;
+        // }
+        // Can't render without a camera.
+        camera = Camera.mainCam;
+        if (camera == null || !camera.isSubjectSet()) {
             return;
+        }
 
         // Draw the environment, as specified by the world.
         world.getEnvironment().renderEnvironment(pix);
@@ -115,10 +118,6 @@ public class Renderer implements IRenderable {
     private final float TILE_SIZE = 1F;
 
     private void drawPerspective(PixelBuffer pix) {
-
-        // Can't render without a camera.
-        if (camera == null)
-            return;
 
         Map map = world.getMap();
 

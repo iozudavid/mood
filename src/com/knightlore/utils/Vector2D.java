@@ -1,6 +1,7 @@
 package com.knightlore.utils;
 
 public final class Vector2D {
+    
     private double x;
     private double y;
 
@@ -29,11 +30,8 @@ public final class Vector2D {
         return v != null && x == v.x && y == v.y;
     }
 
-    // ADDITION
-
-    public void addInPlace(Vector2D v) {
-        x = x + v.x;
-        y = y + v.y;
+    public boolean isEqualTo(Vector2D v, double epsilon) {
+        return v != null && Math.abs(x - v.x) <= epsilon && Math.abs(y - v.y) <= epsilon;
     }
 
     // allocates a new vector, does not modify the original
@@ -41,19 +39,15 @@ public final class Vector2D {
         return new Vector2D(x + v.x, y + v.y);
     }
 
-    // SUBTRACTION
-
-    public void subtractInPlace(Vector2D v) {
-        x = x - v.x;
-        y = y - v.y;
-    }
-
     // allocates a new vector, does not modify the original
     public Vector2D subtract(Vector2D v) {
         return new Vector2D(x + v.x, y + v.y);
     }
 
-    // FUNCTIONS
+    // allocates a new vector, does not modify the original
+    public Vector2D perpendicular() {
+        return new Vector2D(y, -x);
+    }
 
     public double dot(Vector2D v) {
         return (x * v.x) + (y * v.y);
@@ -69,11 +63,11 @@ public final class Vector2D {
         return Math.sqrt(Math.pow(x, 2) + Math.pow(y, 2));
     }
 
-    public double getX() {
+    public synchronized double getX() {
         return x;
     }
 
-    public double getY() {
+    public synchronized double getY() {
         return y;
     }
 
@@ -83,7 +77,7 @@ public final class Vector2D {
 
     @Override
     public String toString() {
-        return String.format("(%f, %f)", x, y);
+        return String.format("(%.20f, %.20f)", x, y);
     }
 
 }

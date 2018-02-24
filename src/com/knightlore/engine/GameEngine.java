@@ -4,10 +4,12 @@ import com.knightlore.GameSettings;
 import com.knightlore.MainWindow;
 import com.knightlore.engine.input.InputManager;
 import com.knightlore.engine.input.Mouse;
+import com.knightlore.network.NetworkObjectManager;
+import com.knightlore.network.client.ClientNetworkObjectManager;
+import com.knightlore.network.server.ServerNetworkObjectManager;
 import com.knightlore.render.Camera;
 import com.knightlore.render.Renderer;
 import com.knightlore.render.Screen;
-import com.knightlore.world.GameWorld;
 import com.knightlore.world.TestWorld;
 
 /**
@@ -73,6 +75,15 @@ public class GameEngine implements Runnable {
             setupMouse();
         }
 
+        NetworkObjectManager man = null;
+        if (GameSettings.isClient())
+            man = new ClientNetworkObjectManager(world);
+        if (GameSettings.isServer())
+            man = new ServerNetworkObjectManager(world);
+
+        man.init();
+        System.out.println("Player ready!");
+
         System.out.println("Engine Initialised Successfully.");
         // TODO maybe refactor this into a make world method
         // ALSO TODO, UNHOOK TEST WORLD
@@ -83,6 +94,8 @@ public class GameEngine implements Runnable {
         System.out.println("populating...");
         world.populateWorld();
         System.out.println("World Initialised Successfully.");
+        man.setWorld(world); // TODO: fix. ugly.
+
         this.renderer = new Renderer(Camera.mainCamera(), world);
     }
 
@@ -132,7 +145,6 @@ public class GameEngine implements Runnable {
             long now = System.nanoTime();
             delta += (now - lastTime) / ns;
             lastTime = now;
-
             while (delta >= 1) {
                 gameObjectManager.updateObjects();
                 delta -= 1;
@@ -143,8 +155,8 @@ public class GameEngine implements Runnable {
                 screen.render(0, 0, renderer);
                 InputManager.clearMouse();
             }
-
         }
+        System.err.println("GameEngine finished running.");
     }
 
     /**
@@ -164,6 +176,10 @@ public class GameEngine implements Runnable {
         screen.addMouseMotionListener(mouse);
         screen.addMouseWheelListener(mouse);
         screen.requestFocus();
+    }
+
+    public GameWorld getWorld() {
+        return world;
     }
 
 }

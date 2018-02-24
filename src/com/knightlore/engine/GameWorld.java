@@ -5,16 +5,13 @@ import java.util.List;
 import com.knightlore.game.Player;
 import com.knightlore.game.area.Map;
 import com.knightlore.game.entity.Entity;
+import com.knightlore.render.Environment;
 import com.knightlore.render.minimap.IMinimapObject;
 
 public abstract class GameWorld {
 
     // all worlds need a map
-    protected static Map map;
-
-    public static Map getMap() {
-        return map;
-    }
+    protected Map map;
 
     /**
      * Called by the engine to initialise the world. This should be used to link
@@ -52,5 +49,11 @@ public abstract class GameWorld {
     public abstract void addMinimapObj(IMinimapObject obj);
 
     public abstract void removeMinimapObj(IMinimapObject obj);
+    
+    public abstract Environment getEnvironment();
+
+    public Map getMap() {
+        return map;
+    }
 
 }
