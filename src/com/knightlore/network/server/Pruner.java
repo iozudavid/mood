@@ -27,14 +27,14 @@ public class Pruner implements Runnable {
         while (true) {
             Iterator<Entry<UUID, Connection>> i = conns.entrySet().iterator();
             Entry<UUID, Connection> next = null;
-            while (i.hasNext()){
+            while (i.hasNext()) {
                 next = i.next();
                 UUID uuid = next.getKey();
                 Connection conn = next.getValue();
-                if (conn.getTerminated()){
-                    //if connection lost then remove the network object
-                    //remove from connection list
-                    //and inform other clients
+                if (conn.getTerminated()) {
+                    // if connection lost then remove the network object
+                    // remove from connection list
+                    // and inform other clients
                     NetworkObjectManager.getSingleton().getNetworkObject(uuid).destroy();
                     i.remove();
                 }

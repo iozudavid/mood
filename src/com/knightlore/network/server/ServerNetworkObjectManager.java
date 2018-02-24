@@ -27,7 +27,7 @@ public class ServerNetworkObjectManager extends NetworkObjectManager {
     private List<SendToClient> clientSenders = new CopyOnWriteArrayList<>();
     // Counter for REGULAR_UPDATE_FREQ
     private int updateCount = 1;
-    
+
     public ServerNetworkObjectManager(GameWorld world) {
         super(world);
     }
@@ -58,7 +58,7 @@ public class ServerNetworkObjectManager extends NetworkObjectManager {
         buf.put(Arrays.copyOfRange(state.array(), 0, stateLength));
         return buf;
     }
-    
+
     private ByteBuffer getObjectDestroyMessage(NetworkObject obj) {
         // Leave room for the state (1 full buffer size), and the additional
         // overhead as well.
@@ -92,8 +92,8 @@ public class ServerNetworkObjectManager extends NetworkObjectManager {
     }
 
     public synchronized void removeNetworkObject(NetworkObject obj) {
-    	UUID uuid = obj.getObjectId();
-    	// Notify all clients of the destroyed object.
+        UUID uuid = obj.getObjectId();
+        // Notify all clients of the destroyed object.
         this.sendToClients(getObjectDestroyMessage(obj));
         this.networkObjects.remove(uuid);
     }

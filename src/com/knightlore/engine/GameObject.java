@@ -20,7 +20,7 @@ public abstract class GameObject {
     public GameObject(Vector2D position) {
         this.position = position;
     }
-    
+
     public void init() {
         exists = true;
         GameEngine.getSingleton().addGameObject(this);

@@ -26,8 +26,7 @@ public class Zombie extends Entity {
         zOffset = 100;
     }
 
-    protected Zombie(UUID uuid, double size, Vector2D position,
-            Vector2D direction) {
+    protected Zombie(UUID uuid, double size, Vector2D position, Vector2D direction) {
         super(uuid, size, position, direction);
         zOffset = 100;
     }

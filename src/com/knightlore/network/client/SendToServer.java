@@ -40,15 +40,13 @@ public class SendToServer implements Runnable {
     public SendToServer(Connection conn) {
         this.conn = conn;
         // this.lock = new Object();
-        this.manager = (ClientNetworkObjectManager) NetworkObjectManager
-                .getSingleton();
+        this.manager = (ClientNetworkObjectManager) NetworkObjectManager.getSingleton();
 
     }
 
     private synchronized ByteBuffer getCurrentControlState() {
         // ByteBuffer to store current input state.
-        ByteBuffer buf = ByteBuffer
-                .allocate(NetworkObject.BYTE_BUFFER_DEFAULT_SIZE);
+        ByteBuffer buf = ByteBuffer.allocate(NetworkObject.BYTE_BUFFER_DEFAULT_SIZE);
         // Let the server know which UUID this relates to.
         NetworkUtils.putStringIntoBuf(buf, myUUID.toString());
         // Call the setInputState method on our player.
@@ -93,8 +91,7 @@ public class SendToServer implements Runnable {
         // Send a controls update if either the controls have changed or
         // a regular update is due.
         synchronized (this.currentState) {
-            if (updateCounter++ >= REGULAR_UPDATE_FREQ || !Arrays
-                    .equals(currentState.array(), lastState.array())) {
+            if (updateCounter++ >= REGULAR_UPDATE_FREQ || !Arrays.equals(currentState.array(), lastState.array())) {
                 System.out.println("Packet " + l++);
                 updateCounter = 1;
                 conn.send(currentState);

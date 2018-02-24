@@ -84,20 +84,20 @@ public class ClientNetworkObjectManager extends NetworkObjectManager {
             e.printStackTrace();
         }
     }
-    
+
     public void objDestroyed(ByteBuffer buf) {
         System.out.println("Receiving new object details from server");
         String className = NetworkUtils.getStringFromBuf(buf);
         UUID objID = UUID.fromString(NetworkUtils.getStringFromBuf(buf));
         synchronized (this.networkObjects) {
-        	NetworkObject toBeDestroyedObject = this.getNetworkObject(objID);
+            NetworkObject toBeDestroyedObject = this.getNetworkObject(objID);
             this.networkObjects.remove(objID);
             toBeDestroyedObject.destroy();
-            if(toBeDestroyedObject instanceof Entity){
-            	world.removeEntity((Entity)toBeDestroyedObject);
+            if (toBeDestroyedObject instanceof Entity) {
+                world.removeEntity((Entity) toBeDestroyedObject);
             }
-            if(toBeDestroyedObject instanceof IMinimapObject){
-            	world.removeMinimapObj((IMinimapObject)toBeDestroyedObject);
+            if (toBeDestroyedObject instanceof IMinimapObject) {
+                world.removeMinimapObj((IMinimapObject) toBeDestroyedObject);
             }
         }
     }

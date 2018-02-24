@@ -71,8 +71,9 @@ public class Renderer implements IRenderable {
         double epsilon = 0.01d;
         if (camera.getPlane().isEqualTo(Vector2D.ZERO, epsilon)
                 || camera.getDirection().isEqualTo(Vector2D.ZERO, epsilon)) {
-            //System.err.println(
-            //        "Warning: zero vector found for camera plane or direction. Skipping rendering for this frame.");
+            // System.err.println(
+            // "Warning: zero vector found for camera plane or direction.
+            // Skipping rendering for this frame.");
             return;
         }
         final int width = pix.getWidth(), height = pix.getHeight();

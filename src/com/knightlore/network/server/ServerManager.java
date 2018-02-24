@@ -46,7 +46,6 @@ public class ServerManager implements Runnable {
                 new Thread(sender).start();
                 new Thread(new Receive(conn)).start();
 
-
                 this.connections.put(sender.getUUID(), conn);
             } catch (IOException e) {
                 System.err.println("Couldn't create the connection...");

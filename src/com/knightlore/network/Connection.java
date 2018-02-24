@@ -50,8 +50,7 @@ public abstract class Connection implements Runnable {
                 packets.put(packet);
             } catch (InterruptedException e) {
                 this.terminated = true;
-                System.err
-                        .println("Thread interrupted while receiving packet: ");
+                System.err.println("Thread interrupted while receiving packet: ");
                 break;
             }
         }

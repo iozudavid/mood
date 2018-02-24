@@ -50,8 +50,7 @@ public class Camera {
     // TODO: implement motion bob using offset
     private void updateMotionOffset() {
         moveTicks++;
-        this.motionOffset = (int) (Math.abs(
-                Math.sin(moveTicks * MOTION_BOB_SPEED) * MOTION_BOB_AMOUNT));
+        this.motionOffset = (int) (Math.abs(Math.sin(moveTicks * MOTION_BOB_SPEED) * MOTION_BOB_AMOUNT));
     }
 
     public int getMotionOffset() {
@@ -79,7 +78,7 @@ public class Camera {
     }
 
     public synchronized Vector2D getPlane() {
-            return subject.getPlane();
+        return subject.getPlane();
     }
 
     public synchronized double getxPlane() {

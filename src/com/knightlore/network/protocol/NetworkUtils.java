@@ -3,7 +3,7 @@ package com.knightlore.network.protocol;
 import java.nio.ByteBuffer;
 
 public class NetworkUtils {
-	
+
     // Puts a String into a ByteBuffer.
     public static void putStringIntoBuf(ByteBuffer buf, String string) {
         int len = string.length();

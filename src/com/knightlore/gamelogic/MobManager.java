@@ -9,37 +9,37 @@ import com.knightlore.game.entity.Entity;
 
 public class MobManager extends GameObject {
 
-	private List<Entity> mobs;
+    private List<Entity> mobs;
 
-	public MobManager() {
-		mobs = new ArrayList<Entity>();
-	}
+    public MobManager() {
+        mobs = new ArrayList<Entity>();
+    }
 
-	public void addMob(Entity m) {
-		mobs.add(m);
-	}
+    public void addMob(Entity m) {
+        mobs.add(m);
+    }
 
-	public void delMob(Entity m) {
-		mobs.remove(m);
-	}
+    public void delMob(Entity m) {
+        mobs.remove(m);
+    }
 
-	@Override
-	public void onCreate() {
-	}
+    @Override
+    public void onCreate() {
+    }
 
-	@Override
-	public void onUpdate() {
-		ListIterator<Entity> itr = mobs.listIterator();
-		while (itr.hasNext()) {
-			Entity m = itr.next();
-			if (!m.exists())
-				itr.remove();
-		}
-	}
+    @Override
+    public void onUpdate() {
+        ListIterator<Entity> itr = mobs.listIterator();
+        while (itr.hasNext()) {
+            Entity m = itr.next();
+            if (!m.exists())
+                itr.remove();
+        }
+    }
 
-	@Override
-	public void onDestroy() {
+    @Override
+    public void onDestroy() {
 
-	}
+    }
 
 }

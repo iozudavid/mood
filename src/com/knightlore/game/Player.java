@@ -123,7 +123,7 @@ public class Player extends Entity implements IRenderable {
 
     @Override
     public int getDrawSize() {
-        return Minimap.SCALE/2;
+        return Minimap.SCALE / 2;
     }
 
     @Override

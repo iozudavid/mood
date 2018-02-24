@@ -30,8 +30,7 @@ public abstract class Entity extends NetworkObject implements IMinimapObject {
 
     // Allow you to create an entity with a specified UUID. Useful for creating
     // "synchronised" objects on the client-side.
-    protected Entity(UUID uuid, double size, Vector2D position,
-            Vector2D direction) {
+    protected Entity(UUID uuid, double size, Vector2D position, Vector2D direction) {
         super(uuid, position);
         this.size = size;
         this.direction = direction;
@@ -45,8 +44,7 @@ public abstract class Entity extends NetworkObject implements IMinimapObject {
     }
 
     public Graphic getGraphic(Vector2D playerPos) {
-        return getDirectionalSprite().getCurrentGraphic(position, direction,
-                playerPos);
+        return getDirectionalSprite().getCurrentGraphic(position, direction, playerPos);
     }
 
     public abstract DirectionalSprite getDirectionalSprite();
@@ -122,10 +120,8 @@ public abstract class Entity extends NetworkObject implements IMinimapObject {
     public synchronized void strafeLeft() {
         double xPos = position.getX(), yPos = position.getY();
         double xDir = direction.getX(), yDir = direction.getY();
-        Tile xTile = map.getTile((int) (xPos - yDir * strafeSpeed),
-                (int) (yPos));
-        Tile yTile = map.getTile((int) (xPos),
-                (int) (yPos + xDir * strafeSpeed));
+        Tile xTile = map.getTile((int) (xPos - yDir * strafeSpeed), (int) (yPos));
+        Tile yTile = map.getTile((int) (xPos), (int) (yPos + xDir * strafeSpeed));
         xPos -= yDir * strafeSpeed * (1 - xTile.getSolidity());
         yPos -= -xDir * strafeSpeed * (1 - yTile.getSolidity());
         position = new Vector2D(xPos, yPos);
@@ -134,10 +130,8 @@ public abstract class Entity extends NetworkObject implements IMinimapObject {
     public synchronized void strafeRight() {
         double xPos = position.getX(), yPos = position.getY();
         double xDir = direction.getX(), yDir = direction.getY();
-        Tile xTile = map.getTile((int) (xPos + yDir * strafeSpeed),
-                (int) (yPos));
-        Tile yTile = map.getTile((int) (xPos),
-                (int) (yPos + -xDir * strafeSpeed));
+        Tile xTile = map.getTile((int) (xPos + yDir * strafeSpeed), (int) (yPos));
+        Tile yTile = map.getTile((int) (xPos), (int) (yPos + -xDir * strafeSpeed));
         xPos += yDir * strafeSpeed * (1 - xTile.getSolidity());
         yPos += -xDir * strafeSpeed * (1 - yTile.getSolidity());
         position = new Vector2D(xPos, yPos);
@@ -153,13 +147,10 @@ public abstract class Entity extends NetworkObject implements IMinimapObject {
         double xPlane = plane.getX(), yPlane = plane.getY();
         double oldxDir = xDir;
         xDir = xDir * Math.cos(rotationSpeed) - yDir * Math.sin(rotationSpeed);
-        yDir = oldxDir * Math.sin(rotationSpeed)
-                + yDir * Math.cos(rotationSpeed);
+        yDir = oldxDir * Math.sin(rotationSpeed) + yDir * Math.cos(rotationSpeed);
         double oldxPlane = xPlane;
-        xPlane = xPlane * Math.cos(rotationSpeed)
-                - yPlane * Math.sin(rotationSpeed);
-        yPlane = oldxPlane * Math.sin(rotationSpeed)
-                + yPlane * Math.cos(rotationSpeed);
+        xPlane = xPlane * Math.cos(rotationSpeed) - yPlane * Math.sin(rotationSpeed);
+        yPlane = oldxPlane * Math.sin(rotationSpeed) + yPlane * Math.cos(rotationSpeed);
         direction = new Vector2D(xDir, yDir);
         plane = new Vector2D(xPlane, yPlane);
     }
@@ -171,15 +162,11 @@ public abstract class Entity extends NetworkObject implements IMinimapObject {
         double xDir = direction.getX(), yDir = direction.getY();
         double xPlane = plane.getX(), yPlane = plane.getY();
         double oldxDir = xDir;
-        xDir = xDir * Math.cos(-rotationSpeed)
-                - yDir * Math.sin(-rotationSpeed);
-        yDir = oldxDir * Math.sin(-rotationSpeed)
-                + yDir * Math.cos(-rotationSpeed);
+        xDir = xDir * Math.cos(-rotationSpeed) - yDir * Math.sin(-rotationSpeed);
+        yDir = oldxDir * Math.sin(-rotationSpeed) + yDir * Math.cos(-rotationSpeed);
         double oldxPlane = xPlane;
-        xPlane = xPlane * Math.cos(-rotationSpeed)
-                - yPlane * Math.sin(-rotationSpeed);
-        yPlane = oldxPlane * Math.sin(-rotationSpeed)
-                + yPlane * Math.cos(-rotationSpeed);
+        xPlane = xPlane * Math.cos(-rotationSpeed) - yPlane * Math.sin(-rotationSpeed);
+        yPlane = oldxPlane * Math.sin(-rotationSpeed) + yPlane * Math.cos(-rotationSpeed);
         direction = new Vector2D(xDir, yDir);
         plane = new Vector2D(xPlane, yPlane);
     }

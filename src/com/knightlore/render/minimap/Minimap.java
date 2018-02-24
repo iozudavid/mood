@@ -68,7 +68,7 @@ public class Minimap implements TickListener {
      * We keep track of the previous position and direction so we know not to
      * re-render the minimap if nothing changes.
      */
-    //private Vector2D prevPos, prevDir;
+    // private Vector2D prevPos, prevDir;
 
     private List<IMinimapObject> minimapObjects;
 
@@ -116,8 +116,8 @@ public class Minimap implements TickListener {
 
         display.flood(0x000000);
 
-        //prevPos = pos;
-        //prevDir = dir;
+        // prevPos = pos;
+        // prevDir = dir;
 
         // Find the positions to start rendering based on SCOPE.
         int startX = (int) Math.max(0, pos.getX() * SCALE - SCOPE),
@@ -189,12 +189,13 @@ public class Minimap implements TickListener {
         return new Vector2D(drawX, drawY);
     }
 
-    //private void drawPlayer() {
-    //    // draw the current player.
-    //    final int PLAYER_COLOR = 0xFFFFFF;
+    // private void drawPlayer() {
+    // // draw the current player.
+    // final int PLAYER_COLOR = 0xFFFFFF;
     //
-    //    display.fillSquare(PLAYER_COLOR, display.getWidth() / 2, display.getWidth() / 2, SCALE / 2);
-    //}
+    // display.fillSquare(PLAYER_COLOR, display.getWidth() / 2,
+    // display.getWidth() / 2, SCALE / 2);
+    // }
 
     private void drawBorder() {
         final int BORDER_COLOR = 0xFFFFFF;

@@ -52,9 +52,8 @@ public class GameEngine implements Runnable {
         notifyToCreate = new LinkedList<GameObject>();
         notifyToDestroy = new LinkedList<GameObject>();
 
-
         world = new TestWorld();
-        
+
         if (GameSettings.isClient())
             new ClientNetworkObjectManager(world).init();
         if (GameSettings.isServer())

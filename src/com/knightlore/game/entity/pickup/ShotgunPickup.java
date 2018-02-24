@@ -28,7 +28,7 @@ public class ShotgunPickup extends PickupItem {
 
     @Override
     public int getDrawSize() {
-        return Minimap.SCALE/2;
+        return Minimap.SCALE / 2;
     }
 
     @Override

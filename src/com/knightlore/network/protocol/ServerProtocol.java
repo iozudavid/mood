@@ -16,8 +16,7 @@ public final class ServerProtocol {
     public static final int OBJECTID_LENGTH = 16;
 
     // where actual stats are written
-    public static final int MESSAGE_STARTING_POINT = METADATA_LENGTH
-            + OBJECTID_LENGTH;
+    public static final int MESSAGE_STARTING_POINT = METADATA_LENGTH + OBJECTID_LENGTH;
 
     // double will have exactly 8 entries in array
     // when serialize it
@@ -47,46 +46,28 @@ public final class ServerProtocol {
         try {
             // mentain 8 entries for each element
             indexAction.put(
-                    new Integer[] {
-                            getPositionByControl(ServerControl.XPOS)
-                                    * DOUBLE_TO_BYTES_LENGTH,
-                            (getPositionByControl(ServerControl.XPOS) + 1)
-                                    * DOUBLE_TO_BYTES_LENGTH },
+                    new Integer[] { getPositionByControl(ServerControl.XPOS) * DOUBLE_TO_BYTES_LENGTH,
+                            (getPositionByControl(ServerControl.XPOS) + 1) * DOUBLE_TO_BYTES_LENGTH },
                     ServerControl.XPOS); // 0, 8
             indexAction.put(
-                    new Integer[] {
-                            getPositionByControl(ServerControl.YPOS)
-                                    * DOUBLE_TO_BYTES_LENGTH,
-                            (getPositionByControl(ServerControl.YPOS) + 1)
-                                    * DOUBLE_TO_BYTES_LENGTH },
+                    new Integer[] { getPositionByControl(ServerControl.YPOS) * DOUBLE_TO_BYTES_LENGTH,
+                            (getPositionByControl(ServerControl.YPOS) + 1) * DOUBLE_TO_BYTES_LENGTH },
                     ServerControl.YPOS); // 8, 16
             indexAction.put(
-                    new Integer[] {
-                            getPositionByControl(ServerControl.XDIR)
-                                    * DOUBLE_TO_BYTES_LENGTH,
-                            (getPositionByControl(ServerControl.XDIR) + 1)
-                                    * DOUBLE_TO_BYTES_LENGTH },
+                    new Integer[] { getPositionByControl(ServerControl.XDIR) * DOUBLE_TO_BYTES_LENGTH,
+                            (getPositionByControl(ServerControl.XDIR) + 1) * DOUBLE_TO_BYTES_LENGTH },
                     ServerControl.XDIR); // 16, 24
             indexAction.put(
-                    new Integer[] {
-                            getPositionByControl(ServerControl.YDIR)
-                                    * DOUBLE_TO_BYTES_LENGTH,
-                            (getPositionByControl(ServerControl.YDIR) + 1)
-                                    * DOUBLE_TO_BYTES_LENGTH },
+                    new Integer[] { getPositionByControl(ServerControl.YDIR) * DOUBLE_TO_BYTES_LENGTH,
+                            (getPositionByControl(ServerControl.YDIR) + 1) * DOUBLE_TO_BYTES_LENGTH },
                     ServerControl.YDIR); // 32, 40
             indexAction.put(
-                    new Integer[] {
-                            getPositionByControl(ServerControl.XPLANE)
-                                    * DOUBLE_TO_BYTES_LENGTH,
-                            (getPositionByControl(ServerControl.XPLANE) + 1)
-                                    * DOUBLE_TO_BYTES_LENGTH },
+                    new Integer[] { getPositionByControl(ServerControl.XPLANE) * DOUBLE_TO_BYTES_LENGTH,
+                            (getPositionByControl(ServerControl.XPLANE) + 1) * DOUBLE_TO_BYTES_LENGTH },
                     ServerControl.XPLANE); // 40, 48
             indexAction.put(
-                    new Integer[] {
-                            getPositionByControl(ServerControl.YPLANE)
-                                    * DOUBLE_TO_BYTES_LENGTH,
-                            (getPositionByControl(ServerControl.YPLANE) + 1)
-                                    * DOUBLE_TO_BYTES_LENGTH },
+                    new Integer[] { getPositionByControl(ServerControl.YPLANE) * DOUBLE_TO_BYTES_LENGTH,
+                            (getPositionByControl(ServerControl.YPLANE) + 1) * DOUBLE_TO_BYTES_LENGTH },
                     ServerControl.YPLANE); // 48, 56
             // just this for now
         } catch (IOException e) {
@@ -107,8 +88,7 @@ public final class ServerProtocol {
     // ServerProtocol.TOTAL_LENGTH the array will be populated with byte 0
     public static final byte[] disconnectedState;
     static {
-        disconnectedState = new byte[ServerProtocol.TOTAL_LENGTH
-                - ServerProtocol.MESSAGE_STARTING_POINT];
+        disconnectedState = new byte[ServerProtocol.TOTAL_LENGTH - ServerProtocol.MESSAGE_STARTING_POINT];
         Arrays.fill(disconnectedState, ServerProtocol.DISCONNECTED_BYTE);
     }
 
@@ -124,8 +104,7 @@ public final class ServerProtocol {
     }
 
     // get the index by passing the key
-    public static Integer[] getIndexesByControl(ServerControl key)
-            throws IOException {
+    public static Integer[] getIndexesByControl(ServerControl key) throws IOException {
         if (!indexAction.containsValue(key))
             throw new IOException();
         for (Integer[] i : indexAction.keySet()) {
@@ -136,16 +115,14 @@ public final class ServerProtocol {
     }
 
     // get the control by passing the position
-    public static ServerControl getControlByPosition(int pos)
-            throws IOException {
+    public static ServerControl getControlByPosition(int pos) throws IOException {
         if (!positionAction.containsKey(pos))
             throw new IOException();
         return positionAction.get(pos);
     }
 
     // get the position by passing the control
-    public static Integer getPositionByControl(ServerControl key)
-            throws IOException {
+    public static Integer getPositionByControl(ServerControl key) throws IOException {
         if (!positionAction.containsValue(key))
             throw new IOException();
         for (Integer i : positionAction.keySet()) {
@@ -194,10 +171,10 @@ public final class ServerProtocol {
         return ByteBuffer.wrap(bytes).getDouble();
     }
 
-    //used on client side
+    // used on client side
     public static boolean isDisconnectedState(byte[] packet) {
         for (int i = ServerProtocol.MESSAGE_STARTING_POINT; i < ServerProtocol.TOTAL_LENGTH; i++) {
-            if(packet[i] != ServerProtocol.disconnectedState[i-ServerProtocol.MESSAGE_STARTING_POINT])
+            if (packet[i] != ServerProtocol.disconnectedState[i - ServerProtocol.MESSAGE_STARTING_POINT])
                 return false;
         }
         return true;
