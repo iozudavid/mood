@@ -29,6 +29,10 @@ public final class Vector2D {
     public static Vector2D sub(Vector2D a, Vector2D b) {
         return new Vector2D(a.x - b.x, a.y - b.y);
     }
+
+    public Vector2D(Point p) {
+        this((double)p.x, (double)p.y);
+    }
     
     public Vector2D(double _x, double _y) {
         x = _x;
@@ -57,6 +61,10 @@ public final class Vector2D {
     // allocates a new vector, does not modify the original
     public Vector2D perpendicular() {
         return new Vector2D(y, -x);
+    }
+
+    public double cross(Vector2D v) {
+        return x * v.y - y * v.x;
     }
     
     public double dot(Vector2D v) {
@@ -106,7 +114,7 @@ public final class Vector2D {
      * @return
      */
     public Point toPoint() {
-        return new Point((int) x, (int) y);
+        return new Point((int)Math.round(x), (int)Math.round(y));
     }
     
     @Override

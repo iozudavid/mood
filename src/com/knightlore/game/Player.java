@@ -34,7 +34,7 @@ public class Player extends Entity {
     }
 
     public Player(UUID uuid, Vector2D pos, Vector2D dir) {
-        super(uuid, 0.66D, pos, dir);
+        super(uuid, 0.25D, pos, dir);
         this.currentWeapon = new Shotgun();
 
         // Map possible inputs to the methods that handle them. Avoids long

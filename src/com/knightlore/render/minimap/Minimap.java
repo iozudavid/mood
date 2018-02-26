@@ -1,7 +1,7 @@
 package com.knightlore.render.minimap;
 
 import com.knightlore.engine.GameEngine;
-import com.knightlore.engine.GameWorld;
+import com.knightlore.game.world.GameWorld;
 import com.knightlore.engine.TickListener;
 import com.knightlore.game.area.Map;
 import com.knightlore.game.tile.Tile;

@@ -6,6 +6,7 @@ import com.knightlore.game.tile.Tile;
 public abstract class Area {
     protected final int width, height;
     private final Tile[][] grid;
+    private final double[][] costGrid;
 
     public Area(Tile[][] grid) {
         this.width = grid.length;
@@ -19,17 +20,22 @@ public abstract class Area {
         }
 
         this.grid = grid;
+        this.costGrid = initCostGrid();
     }
 
-    // this is used to render other players
-    // added for prototype presentation
-    // as a quick solution
-    public void setTile(int x, int y, Tile t) {
-        grid[x][y] = t;
-    }
-
-    public Tile[][] getGrid() {
-    	return grid;
+    private double[][] initCostGrid() {
+        double[][] costGrid = new double[width][height];
+        for (int i = 0; i < width; i++) {
+            for (int j = 0; j < height; j++) {
+                Tile tile = grid[i][j];
+                if (tile.getSolidity() >= 1) {
+                    costGrid[i][j] = Double.POSITIVE_INFINITY;
+                } else {
+                    costGrid[i][j] = 1 / (1 - tile.getSolidity());
+                }
+            }
+        }
+        return costGrid;
     }
 
     public Tile getTile(int x, int y) {
@@ -37,6 +43,10 @@ public abstract class Area {
             return AirTile.getInstance();
         }
         return grid[x][y];
+    }
+
+    public double[][] getCostGrid() {
+        return costGrid;
     }
 
     public int getWidth() {

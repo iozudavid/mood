@@ -56,7 +56,6 @@ public final class TurretServer extends TurretShared {
         if (target == null) {
             return;
         }
-        System.out.println("Shooting at position " + target.getPosition());
     }
     
     @Override

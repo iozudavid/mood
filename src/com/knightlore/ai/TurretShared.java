@@ -75,11 +75,6 @@ public abstract class TurretShared extends Entity {
     }
     
     @Override
-    public String getClientClassName() {
-        return TurretClient.class.getName();
-    }
-    
-    @Override
     public double getDrawSize() {
         return 0.5f;
     }
@@ -93,5 +88,10 @@ public abstract class TurretShared extends Entity {
     public DirectionalSprite getDirectionalSprite() {
         return DirectionalSprite.SHOTGUN_DIRECTIONAL_SPRITE;
     }
-    
+
+    @Override
+    public String getClientClassName() {
+        // turret client please :)
+        return TurretClient.class.getName();
+    }
 }

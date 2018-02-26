@@ -8,7 +8,7 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.function.Consumer;
 
-import com.knightlore.engine.GameWorld;
+import com.knightlore.game.world.GameWorld;
 import com.knightlore.network.protocol.NetworkUtils;
 
 public abstract class NetworkObjectManager implements INetworkable, Runnable {
