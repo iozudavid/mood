@@ -51,7 +51,7 @@ public class ServerNetworkObjectManager extends NetworkObjectManager {
         // The remote method to call.
         NetworkUtils.putStringIntoBuf(buf, "newObjCreated");
         // Let the client know which class it needs to instantiate.
-        NetworkUtils.putStringIntoBuf(buf, obj.getClass().getName());
+        NetworkUtils.putStringIntoBuf(buf, obj.getClientClassName());
         // UUID of object to instantiate.
         NetworkUtils.putStringIntoBuf(buf, obj.getObjectId().toString());
         // Send the current state when sending the creation message.

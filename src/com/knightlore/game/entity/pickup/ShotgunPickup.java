@@ -37,4 +37,10 @@ public class ShotgunPickup extends PickupItem {
         return ShotgunSprite.SHOTGUN_DIRECTIONAL_SPRITE;
     }
 
+    @Override
+    public String getClientClassName() {
+        // One class for both client and server.
+        return this.getClass().getName();
+    }
+
 }

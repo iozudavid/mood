@@ -77,5 +77,10 @@ public abstract class NetworkObject extends GameObject implements INetworkable {
         NetworkUtils.putStringIntoBuf(buf, remoteMethod);
         return buf;
     }
+    
+    /**
+     * Return the name of the counterpart client class for this type of object.
+     */
+    public abstract String getClientClassName();
 
 }

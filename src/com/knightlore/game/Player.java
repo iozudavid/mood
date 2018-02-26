@@ -141,4 +141,10 @@ public class Player extends Entity {
         return DirectionalSprite.PLAYER_DIRECTIONAL_SPRITE;
     }
 
+    @Override
+    public String getClientClassName() {
+        // One class for both client and server.
+        return this.getClass().getName();
+    }
+
 }
