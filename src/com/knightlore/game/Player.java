@@ -49,6 +49,11 @@ public class Player extends Entity {
 
         setNetworkConsumers();
 
+        zOffset = 8;
+        moveSpeed = 0.120;
+        strafeSpeed = 0.08;
+        rotationSpeed = 0.06;
+
         // Player.this.finished = true;
     }
 

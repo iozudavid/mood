@@ -183,7 +183,7 @@ public abstract class Entity extends NetworkObject implements IMinimapObject {
         buf.putDouble(direction.getY());
         buf.putDouble(plane.getX());
         buf.putDouble(plane.getY());
-        buf.putInt(zOffset);
+        // buf.putInt(zOffset);
         return buf;
     }
 
@@ -199,6 +199,6 @@ public abstract class Entity extends NetworkObject implements IMinimapObject {
         double planeX = buf.getDouble();
         double planeY = buf.getDouble();
         plane = new Vector2D(planeX, planeY);
-        zOffset = buf.getInt();
+        // zOffset = buf.getInt();
     }
 }

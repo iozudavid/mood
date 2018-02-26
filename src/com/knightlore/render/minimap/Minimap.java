@@ -93,6 +93,7 @@ public class Minimap implements TickListener {
     public void render() {
         if (camera == null || !camera.isSubjectSet())
             return;
+
         Vector2D dir = camera.getDirection();
         double theta = -Math.atan2(dir.getX(), dir.getY());
         drawMap(theta);

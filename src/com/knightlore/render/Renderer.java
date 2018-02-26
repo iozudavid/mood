@@ -41,7 +41,7 @@ public class Renderer implements IRenderable {
     public Renderer(Camera camera, GameWorld world) {
         this.camera = camera;
         this.world = world;
-        this.minimap = new Minimap(camera, world, 64);
+        this.minimap = new Minimap(camera, world, 128);
 
         this.networkObjPos = new HashMap<>();
         this.networkObjMobs = new HashMap<>();
@@ -56,10 +56,12 @@ public class Renderer implements IRenderable {
         // return;
         // }
         // Can't render without a camera.
-        camera = Camera.mainCam;
         if (camera == null || !camera.isSubjectSet()) {
             return;
         }
+
+        if (camera.getSubject().getDirection().isEqualTo(Vector2D.ZERO, 0.01))
+            return;
 
         // Draw the environment, as specified by the world.
         world.getEnvironment().renderEnvironment(pix);

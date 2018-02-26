@@ -36,6 +36,7 @@ public class GameEngine implements Runnable {
 
     private GameWorld world;
     private GameObjectManager gameObjectManager;
+    private Camera camera;
     private Renderer renderer;
 
     private GameEngine() {
@@ -96,7 +97,8 @@ public class GameEngine implements Runnable {
         System.out.println("World Initialised Successfully.");
         man.setWorld(world); // TODO: fix. ugly.
 
-        this.renderer = new Renderer(Camera.mainCamera(), world);
+        camera = new Camera(world.getMap());
+        this.renderer = new Renderer(camera, world);
     }
 
     /**
@@ -176,6 +178,10 @@ public class GameEngine implements Runnable {
         screen.addMouseMotionListener(mouse);
         screen.addMouseWheelListener(mouse);
         screen.requestFocus();
+    }
+    
+    public Camera getCamera() {
+        return camera;
     }
 
     public GameWorld getWorld() {

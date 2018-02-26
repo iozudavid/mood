@@ -119,8 +119,7 @@ public class ClientNetworkObjectManager extends NetworkObjectManager {
             }
         }
         Player player = (Player) getNetworkObject(myPlayerUUID);
-        Camera.mainCam = new Camera(GameEngine.getSingleton().getWorld().getMap());
-        Camera.mainCam.setSubject(player);
+        GameEngine.getSingleton().getCamera().setSubject(player);
         System.out.println("Created and set player.");
     }
 

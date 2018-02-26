@@ -13,8 +13,6 @@ import com.knightlore.utils.Vector2D;
  */
 public class Camera {
 
-    public static Camera mainCam;
-
     /* -.66 is a good value. */
     public static final double FIELD_OF_VIEW = -.66;
 
@@ -33,17 +31,6 @@ public class Camera {
         this.motionOffset = 0;
         this.moveTicks = 0;
 
-        if (mainCam == null)
-            mainCam = this;
-    }
-
-    /**
-     * 
-     * Returns the main camera. Note: This may be null if the main camera is
-     * destroyed.
-     */
-    public static Camera mainCamera() {
-        return mainCam;
     }
 
     public synchronized Vector2D getPosition() {
@@ -96,6 +83,10 @@ public class Camera {
     public synchronized double getyPlane() {
         Vector2D plane = this.getPlane();
         return plane.getY();
+    }
+    
+    public Entity getSubject() {
+        return subject;
     }
 
     public void setSubject(Entity subject) {
