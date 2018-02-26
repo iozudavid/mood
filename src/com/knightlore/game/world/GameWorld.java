@@ -1,17 +1,19 @@
-package com.knightlore.engine;
+package com.knightlore.game.world;
 
 import java.util.List;
 
+import com.knightlore.ai.AIManager;
 import com.knightlore.game.Player;
+import com.knightlore.game.PlayerManager;
 import com.knightlore.game.area.Map;
 import com.knightlore.game.entity.Entity;
 import com.knightlore.render.Environment;
-import com.knightlore.render.minimap.IMinimapObject;
 
 public abstract class GameWorld {
-
     // all worlds need a map
     protected Map map;
+    protected AIManager aiManager;
+    protected final PlayerManager playerManager = new PlayerManager();
 
     /**
      * Called by the engine to initialise the world. This should be used to link
@@ -44,13 +46,15 @@ public abstract class GameWorld {
 
     public abstract void removeEntity(Entity ent);
 
-    public abstract List<IMinimapObject> getMinimapObjs();
-
-    public abstract void addMinimapObj(IMinimapObject obj);
-
-    public abstract void removeMinimapObj(IMinimapObject obj);
-    
     public abstract Environment getEnvironment();
+
+    public PlayerManager getPlayerManager() {
+        return playerManager;
+    }
+
+    public AIManager getAIManager() {
+        return aiManager;
+    }
 
     public Map getMap() {
         return map;

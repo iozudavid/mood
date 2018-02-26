@@ -13,7 +13,6 @@ import com.knightlore.network.NetworkObject;
 import com.knightlore.network.protocol.ClientControl;
 import com.knightlore.network.protocol.ClientProtocol;
 import com.knightlore.render.graphic.sprite.DirectionalSprite;
-import com.knightlore.render.minimap.Minimap;
 import com.knightlore.utils.Vector2D;
 
 public class Player extends Entity {
@@ -35,7 +34,7 @@ public class Player extends Entity {
     }
 
     public Player(UUID uuid, Vector2D pos, Vector2D dir) {
-        super(uuid, 0.33D, pos, dir);
+        super(uuid, 0.25D, pos, dir);
         this.currentWeapon = new Shotgun();
 
         // Map possible inputs to the methods that handle them. Avoids long
@@ -98,6 +97,7 @@ public class Player extends Entity {
                     ACTION_MAPPINGS.get(entry.getKey()).run();
                     updated = true;
                 }
+
             if (updated) {
                 // updateMotionOffset();
             }
@@ -132,11 +132,6 @@ public class Player extends Entity {
     }
 
     @Override
-    public int getDrawSize() {
-        return Minimap.SCALE / 2;
-    }
-
-    @Override
     public int getMinimapColor() {
         return 0xFFFFFF;
     }
@@ -144,6 +139,12 @@ public class Player extends Entity {
     @Override
     public DirectionalSprite getDirectionalSprite() {
         return DirectionalSprite.PLAYER_DIRECTIONAL_SPRITE;
+    }
+
+    @Override
+    public String getClientClassName() {
+        // One class for both client and server.
+        return this.getClass().getName();
     }
 
 }

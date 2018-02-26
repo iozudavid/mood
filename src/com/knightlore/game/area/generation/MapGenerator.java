@@ -275,7 +275,6 @@ public class MapGenerator extends ProceduralAreaGenerator {
         System.out.println("--------------");
         System.out.println(map.toString());
         System.out.println("Num rooms: " + genr.rooms.size());
-
     }
     
 }

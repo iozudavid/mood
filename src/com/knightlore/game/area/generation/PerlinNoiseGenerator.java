@@ -69,18 +69,10 @@ public class PerlinNoiseGenerator {
         double influenceValue3 = gradientVector3.dot(distanceVector3);
         double influenceValue4 = gradientVector4.dot(distanceVector4);
 
-        x = applyFade(xm);
-        y = applyFade(ym);
-
         // return "interpolation" of influence vectors
         double interpolation12 = (influenceValue1 + influenceValue2) / 2;
         double interpolation34 = (influenceValue3 + influenceValue4) / 2;
         // +2 to ensure A* is always optimistic
         return 2 + (interpolation12 + interpolation34) / 2;
-    }
-
-    private double applyFade(double t) {
-        // 6t^5 - 15t^4 + 10t^3
-        return 6 * (t * t * t * t * t) - 15 * (t * t * t * t) + 10 * (t * t * t);
     }
 }

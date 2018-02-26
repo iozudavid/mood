@@ -11,18 +11,19 @@ import com.knightlore.engine.GameObject;
 import com.knightlore.network.protocol.NetworkUtils;
 import com.knightlore.utils.Vector2D;
 
+
+/**
+ * NOTE: While it is not enforceable in this abstract class, all
+ * non-abstract classes implementing NetworkObject MUST provide a static
+ * method of the following signature:
+ * 
+ * public static NetworkObject build(UUID uuid);
+ * 
+ * This method should return a 'blank' instance of the class, with the
+ * provided UUID. Use sensible defaults to set any required attributes, as
+ * they will likely be overwritten by deserialisation anyway.
+ */
 public abstract class NetworkObject extends GameObject implements INetworkable {
-    /*
-     * NOTE: While it is not enforceable in this abstract class, all
-     * non-abstract classes implementing NetworkObject MUST provide a static
-     * method of the following signature:
-     * 
-     * public static NetworkObject build(UUID uuid);
-     * 
-     * This method should return a 'blank' instance of the class, with the
-     * provided UUID. Use sensible defaults to set any required attributes, as
-     * they will likely be overwritten by deserialisation anyway.
-     */
     private UUID objectUniqueID;
     private NetworkObjectManager networkObjectManager = GameEngine.getSingleton().getNetworkObjectManager();
 
@@ -76,5 +77,10 @@ public abstract class NetworkObject extends GameObject implements INetworkable {
         NetworkUtils.putStringIntoBuf(buf, remoteMethod);
         return buf;
     }
+    
+    /**
+     * Return the name of the counterpart client class for this type of object.
+     */
+    public abstract String getClientClassName();
 
 }

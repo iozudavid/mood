@@ -1,4 +1,4 @@
-package com.knightlore.world;
+package com.knightlore.game.world;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -7,7 +7,6 @@ import com.knightlore.GameSettings;
 import com.knightlore.ai.AIManager;
 import com.knightlore.ai.TurretServer;
 import com.knightlore.ai.TurretShared;
-import com.knightlore.engine.GameWorld;
 import com.knightlore.game.Player;
 import com.knightlore.game.area.generation.MapGenerator;
 import com.knightlore.game.entity.Entity;
@@ -18,22 +17,14 @@ import com.knightlore.gui.GUICanvas;
 import com.knightlore.gui.TextField;
 import com.knightlore.render.Camera;
 import com.knightlore.render.Environment;
-import com.knightlore.render.minimap.IMinimapObject;
 import com.knightlore.utils.Vector2D;
 
 public class TestWorld extends GameWorld {
-    
-    private List<Entity> ents;
-    private List<IMinimapObject> minimapObjs;
-    
+    private final List<Entity> ents = new ArrayList<>();
     private GUICanvas gui;
-    private AIManager aiManager;
     
     public TestWorld() {
         super();
-        // init all the variables
-        ents = new ArrayList<Entity>();
-        minimapObjs = new ArrayList<IMinimapObject>();
     }
     
     @Override
@@ -52,13 +43,12 @@ public class TestWorld extends GameWorld {
     
     @Override
     public void populateWorld() {
-
         if (GameSettings.isServer()) {
             // add the mobs
             ShotgunPickup shot = new ShotgunPickup(new Vector2D(8, 8));
             shot.init();
             ents.add(shot);
-            Zombie zom = new Zombie(1, new Vector2D(4, 5));
+            Zombie zom = new Zombie(new Vector2D(4, 5));
             zom.init();
             ents.add(zom);
             // add pickups
@@ -68,6 +58,7 @@ public class TestWorld extends GameWorld {
                 ents.add(shotI);
             }
             TurretShared tboi = new TurretServer(3, GameSettings.spawnPos, Vector2D.UP);
+            tboi.init();
         }
 
         if (GameSettings.isClient()) {
@@ -83,9 +74,6 @@ public class TestWorld extends GameWorld {
             gui.addGUIObject(b);
             // Renderer.setGUI(gui);
         }
-        
-         
-
     }
     
     @Override
@@ -115,7 +103,7 @@ public class TestWorld extends GameWorld {
         Player player = new Player(pos, Vector2D.UP);
         player.init();
         ents.add(player);
-        minimapObjs.add(player);
+        playerManager.addPlayer(player);
         return player;
     }
     
@@ -130,29 +118,7 @@ public class TestWorld extends GameWorld {
     }
     
     @Override
-    public List<IMinimapObject> getMinimapObjs() {
-        synchronized (minimapObjs) {
-            return minimapObjs;
-        }
-    }
-    
-    @Override
-    public void addMinimapObj(IMinimapObject obj) {
-        synchronized (minimapObjs) {
-            minimapObjs.add(obj);
-        }
-    }
-    
-    @Override
-    public void removeMinimapObj(IMinimapObject obj) {
-        synchronized (minimapObjs) {
-            minimapObjs.remove(obj);
-        }
-    }
-    
-    @Override
     public Environment getEnvironment() {
-        return Environment.DUNGEON;
+        return Environment.LIGHT_OUTDOORS;
     }
-    
 }

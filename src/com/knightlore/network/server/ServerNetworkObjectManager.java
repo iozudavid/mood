@@ -10,7 +10,7 @@ import java.util.UUID;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import com.knightlore.engine.GameEngine;
-import com.knightlore.engine.GameWorld;
+import com.knightlore.game.world.GameWorld;
 import com.knightlore.engine.TickListener;
 import com.knightlore.game.Player;
 import com.knightlore.network.NetworkObject;
@@ -51,7 +51,7 @@ public class ServerNetworkObjectManager extends NetworkObjectManager {
         // The remote method to call.
         NetworkUtils.putStringIntoBuf(buf, "newObjCreated");
         // Let the client know which class it needs to instantiate.
-        NetworkUtils.putStringIntoBuf(buf, obj.getClass().getName());
+        NetworkUtils.putStringIntoBuf(buf, obj.getClientClassName());
         // UUID of object to instantiate.
         NetworkUtils.putStringIntoBuf(buf, obj.getObjectId().toString());
         // Send the current state when sending the creation message.

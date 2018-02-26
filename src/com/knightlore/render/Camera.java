@@ -41,8 +41,8 @@ public class Camera {
         return subject.getDirection();
     }
 
-    // TODO: implement motion bob using offset
-    private void updateMotionOffset() {
+    public void updateMotionOffset() {
+        System.out.println(moveTicks);
         moveTicks++;
         this.motionOffset = (int) (Math.abs(Math.sin(moveTicks * MOTION_BOB_SPEED) * MOTION_BOB_AMOUNT));
     }
