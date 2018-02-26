@@ -16,7 +16,6 @@ import com.knightlore.render.graphic.Graphic;
 import com.knightlore.utils.Physics;
 import com.knightlore.utils.Vector2D;
 
-
 public class GUICanvas extends GameObject implements IRenderable {
 	// TODO remove this and make it screen size
 	private static final int TEMP_SIZE = 200;

@@ -6,15 +6,9 @@ import java.net.Socket;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
-import com.knightlore.engine.GameEngine;
-import com.knightlore.game.Player;
 import com.knightlore.network.Connection;
 import com.knightlore.network.ConnectionDetails;
-import com.knightlore.network.NetworkObject;
 import com.knightlore.network.TCPConnection;
-import com.knightlore.render.Camera;
-import com.knightlore.utils.Tuple;
-import com.knightlore.utils.Vector2D;
 
 /**
  * A network connection manager that runs server-side and deals with all
@@ -23,7 +17,7 @@ import com.knightlore.utils.Vector2D;
  * @author Will
  */
 public class ServerManager implements Runnable {
-    private ConcurrentHashMap<UUID, Tuple<Connection, NetworkObject>> connections = new ConcurrentHashMap<UUID, Tuple<Connection, NetworkObject>>();
+    private ConcurrentHashMap<UUID, Connection> connections = new ConcurrentHashMap<UUID, Connection>();
     private ServerSocket serverSocket = null;
 
     @Override
@@ -44,22 +38,15 @@ public class ServerManager implements Runnable {
         }
 
         while (true) {
-            UUID nextUUID = UUID.randomUUID();
             try {
                 Socket socket = serverSocket.accept();
-                // TODO: decide how to choose player location
-                // fix this hack
-                Vector2D pos = GameEngine.getSingleton().getRenderer().getMap().getRandomSpawnPoint();
-                Camera camera = new Camera(pos.getX(), pos.getY(), 1, 0, 0, Camera.FIELD_OF_VIEW,
-                        GameEngine.getSingleton().getRenderer().getMap());
-                Player player = new Player(nextUUID, camera);
                 Connection conn = new TCPConnection(socket);
                 new Thread(conn).start();
+                SendToClient sender = new SendToClient(conn);
+                new Thread(sender).start();
+                new Thread(new Receive(conn)).start();
 
-                new Thread(new ReceiveFromClient(conn, player)).start();
-                new Thread(new SendToClient(conn, nextUUID)).start();
-
-                this.connections.put(nextUUID, new Tuple<Connection, NetworkObject>(conn, player));
+                this.connections.put(sender.getUUID(), conn);
             } catch (IOException e) {
                 System.err.println("Couldn't create the connection...");
                 System.exit(1);

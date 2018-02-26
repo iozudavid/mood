@@ -4,15 +4,15 @@ import java.awt.Color;
 import java.awt.Graphics;
 
 public class TextField extends GUIObject {
+    private static final Color upColour = Color.LIGHT_GRAY;
+    private static final Color downColour = Color.DARK_GRAY;
+    private static final Color hoverColour = Color.WHITE;
+
 	private SelectState state = SelectState.UP;
 	private String text;
 	private String insertString;
 	private char[] rawChars;
 	private int insertPosition = 0;
-	
-	public Color upColour = Color.LIGHT_GRAY;
-	public Color downColour = Color.DARK_GRAY;
-	public Color hoverColour = Color.WHITE;
 	
 	public TextField(int x, int y, int depth, String text) {
 		super(x, y, depth);

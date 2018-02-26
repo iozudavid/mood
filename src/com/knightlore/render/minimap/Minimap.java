@@ -4,13 +4,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.knightlore.engine.GameEngine;
+import com.knightlore.engine.GameWorld;
 import com.knightlore.engine.TickListener;
 import com.knightlore.game.area.Map;
 import com.knightlore.game.tile.Tile;
 import com.knightlore.render.Camera;
 import com.knightlore.render.PixelBuffer;
 import com.knightlore.utils.Vector2D;
-import com.knightlore.world.GameWorld;
 
 /**
  * The minimap class. This is a small UI element that shows a birds-eye view of
@@ -66,8 +66,6 @@ public class Minimap implements TickListener {
     private Camera camera;
     private GameWorld world;
 
-    private List<IMinimapObject> minimapObjects;
-
     /**
      * We keep track of the previous position and direction so we know not to
      * re-render the minimap if nothing changes.
@@ -80,7 +78,6 @@ public class Minimap implements TickListener {
         recreatePixelMap();
 
         this.mask = new MinimapLightingMask(world.getEnvironment());
-        this.minimapObjects = new ArrayList<IMinimapObject>();
         this.display = new PixelBuffer(size, size);
 
         GameEngine.ticker.addTickListener(this);
@@ -91,6 +88,9 @@ public class Minimap implements TickListener {
      * minimap.
      */
     public void render() {
+        if (camera == null || !camera.isSubjectSet())
+            return;
+
         Vector2D dir = camera.getDirection();
         double theta = -Math.atan2(dir.getX(), dir.getY());
         drawMap(theta);
@@ -147,15 +147,13 @@ public class Minimap implements TickListener {
     }
 
     private void drawMinimapObjects(double theta) {
-        synchronized (this.minimapObjects) {
-            for (IMinimapObject obj : minimapObjects) {
-                Vector2D pos = obj.getPosition();
-                pos = transform((int) (pos.getX() * SCALE), (int) (pos.getY() * SCALE), theta);
+        for (IMinimapObject obj : world.getEntities()) {
+            Vector2D pos = obj.getPosition();
+            pos = transform((int) (pos.getX() * SCALE), (int) (pos.getY() * SCALE), theta);
 
-                int color = obj.getMinimapColor();
-                color = mask.adjustForLighting(display, color, (int) pos.getX(), (int) pos.getY());
-                display.fillSquare(color, (int) pos.getX(), (int) pos.getY(), obj.getDrawSize());
-            }
+            int color = obj.getMinimapColor();
+            color = mask.adjustForLighting(display, color, (int) pos.getX(), (int) pos.getY());
+            display.fillSquare(color, (int) pos.getX(), (int) pos.getY(), obj.getDrawSize());
         }
     }
 
@@ -196,6 +194,7 @@ public class Minimap implements TickListener {
     /**
      * Draws a border around the minimap.
      */
+
     private void drawBorder() {
         final int BORDER_COLOR = 0xFFFFFF;
         final int BORDER_WIDTH = 2;
@@ -234,24 +233,9 @@ public class Minimap implements TickListener {
         return display;
     }
 
-    public void addMinimapObject(IMinimapObject mo) {
-        synchronized (this.minimapObjects) {
-            this.minimapObjects.add(mo);
-        }
-    }
-
-    public void removeMinimapObject(IMinimapObject mo) {
-        synchronized (this.minimapObjects) {
-            this.minimapObjects.remove(mo);
-        }
-    }
-
     public void setCamera(Camera camera) {
         this.camera = camera;
     }
-
-    // Every three seconds, we recreate our pixelmap representation of the map
-    // using the actual map object.
 
     @Override
     public void onTick() {

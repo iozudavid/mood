@@ -4,7 +4,6 @@ import java.awt.Graphics;
 import java.awt.Rectangle;
 
 public abstract class GUIObject {
-	
 	public int depth;
 	public Rectangle rect;
 	

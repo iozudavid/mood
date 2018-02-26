@@ -22,5 +22,4 @@ public class Text extends GUIObject{
 		// draw the characters of the string
 		g.drawChars(rawChars, 0, rawChars.length, rect.x, rect.y + hOffset);
 	}
-
 }
