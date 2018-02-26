@@ -28,7 +28,7 @@ public class RoomGenerator extends ProceduralAreaGenerator {
         }
         Room room = new Room(grid);
         if(team != Team.none) {
-            System.out.println("Spawn room:\n" + room.toString());
+            //System.out.println("Spawn room:\n" + room.toString());
         }
         return room;
     }
