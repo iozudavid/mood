@@ -1,5 +1,6 @@
 package com.knightlore.game.entity;
 
+import com.knightlore.game.Team;
 import java.nio.ByteBuffer;
 import java.util.UUID;
 
@@ -26,6 +27,10 @@ public abstract class Entity extends NetworkObject implements IMinimapObject {
     protected Vector2D direction = Vector2D.ONE;
     protected Vector2D plane = Vector2D.ONE;
 
+    // cannot have invalid values
+    // anyone can set a team and get a team
+    public Team team;
+    
     protected int zOffset;
 
     // Allow you to create an entity with a specified UUID. Useful for creating
@@ -39,9 +44,24 @@ public abstract class Entity extends NetworkObject implements IMinimapObject {
         map = GameEngine.getSingleton().getWorld().getMap();
     }
 
-    // Use a random UUID.
+    /**
+     * Creates an Entity with random UUID
+     * @param size - the collision size of the entity
+     * @param position
+     * @param direction
+     */
     protected Entity(double size, Vector2D position, Vector2D direction) {
         this(UUID.randomUUID(), size, position, direction);
+    }
+    
+    /**
+     * Entity collision size defaults to 1
+     * @param uuid
+     * @param position
+     * @param direction
+     */
+    protected Entity(UUID uuid, Vector2D position, Vector2D direction) {
+        this(uuid, 1, position, direction);
     }
 
     public Graphic getGraphic(Vector2D playerPos) {
@@ -102,7 +122,7 @@ public abstract class Entity extends NetworkObject implements IMinimapObject {
         return zOffset;
     }
 
-    public synchronized void moveForward() {
+    protected synchronized void moveForward() {
         double xPos = position.getX(), yPos = position.getY();
         double xDir = direction.getX(), yDir = direction.getY();
         Tile xTile = map.getTile((int) (xPos + xDir * moveSpeed), (int) yPos);
@@ -112,7 +132,7 @@ public abstract class Entity extends NetworkObject implements IMinimapObject {
         position = new Vector2D(xPos, yPos);
     }
 
-    public synchronized void moveBackward() {
+    protected synchronized void moveBackward() {
         double xPos = position.getX(), yPos = position.getY();
         double xDir = direction.getX(), yDir = direction.getY();
         Tile xTile = map.getTile((int) (xPos - xDir * moveSpeed), (int) yPos);
@@ -122,7 +142,7 @@ public abstract class Entity extends NetworkObject implements IMinimapObject {
         position = new Vector2D(xPos, yPos);
     }
 
-    public synchronized void strafeLeft() {
+    protected synchronized void strafeLeft() {
         double xPos = position.getX(), yPos = position.getY();
         double xDir = direction.getX(), yDir = direction.getY();
         Tile xTile = map.getTile((int) (xPos - yDir * strafeSpeed), (int) (yPos));
@@ -132,7 +152,7 @@ public abstract class Entity extends NetworkObject implements IMinimapObject {
         position = new Vector2D(xPos, yPos);
     }
 
-    public synchronized void strafeRight() {
+    protected synchronized void strafeRight() {
         double xPos = position.getX(), yPos = position.getY();
         double xDir = direction.getX(), yDir = direction.getY();
         Tile xTile = map.getTile((int) (xPos + yDir * strafeSpeed), (int) (yPos));
@@ -147,7 +167,7 @@ public abstract class Entity extends NetworkObject implements IMinimapObject {
      * position and plane vectors, then multiply them by the rotation matrix
      * (whose parameter is ROTATION_SPEED). This lets us rotate.
      */
-    public synchronized void rotateAntiClockwise() {
+    protected synchronized void rotateAntiClockwise() {
         double xDir = direction.getX(), yDir = direction.getY();
         double oldxDir = xDir;
         xDir = xDir * Math.cos(rotationSpeed) - yDir * Math.sin(rotationSpeed);
@@ -159,7 +179,7 @@ public abstract class Entity extends NetworkObject implements IMinimapObject {
     /**
      * Same as rotating left but clockwise this time.
      */
-    public synchronized void rotateClockwise() {
+    protected synchronized void rotateClockwise() {
         double xDir = direction.getX(), yDir = direction.getY();
         double oldxDir = xDir;
         xDir = xDir * Math.cos(-rotationSpeed) - yDir * Math.sin(-rotationSpeed);
@@ -202,5 +222,4 @@ public abstract class Entity extends NetworkObject implements IMinimapObject {
     public double getDrawSize() {
         return 2 * size;
     }
-
 }

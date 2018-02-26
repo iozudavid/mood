@@ -1,10 +1,12 @@
-package com.knightlore.world;
+package com.knightlore.game.world;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import com.knightlore.GameSettings;
-import com.knightlore.engine.GameWorld;
+import com.knightlore.ai.AIManager;
+import com.knightlore.ai.TurretServer;
+import com.knightlore.ai.TurretShared;
 import com.knightlore.game.Player;
 import com.knightlore.game.area.generation.MapGenerator;
 import com.knightlore.game.entity.Entity;
@@ -15,23 +17,16 @@ import com.knightlore.gui.GUICanvas;
 import com.knightlore.gui.TextField;
 import com.knightlore.render.Camera;
 import com.knightlore.render.Environment;
-import com.knightlore.render.minimap.IMinimapObject;
 import com.knightlore.utils.Vector2D;
 
 public class TestWorld extends GameWorld {
-
-    private List<Entity> ents;
-    private List<IMinimapObject> minimapObjs;
-
+    private final List<Entity> ents = new ArrayList<>();
     private GUICanvas gui;
-
+    
     public TestWorld() {
         super();
-        // init all the variables
-        ents = new ArrayList<Entity>();
-        minimapObjs = new ArrayList<IMinimapObject>();
     }
-
+    
     @Override
     public void initWorld() {
         // First create the map
@@ -40,10 +35,12 @@ public class TestWorld extends GameWorld {
         this.map = generator.createMap(16, 16, 161803398875L);
         // FIXME hack hack hack, this is just for the demo
         GameSettings.spawnPos = map.getRandomSpawnPoint();
-
+        
+        // as of the moment, aiManager will do pathfinding for AI Bots
+        aiManager = new AIManager(map);
         new Camera(getMap());
     }
-
+    
     @Override
     public void populateWorld() {
         if (GameSettings.isServer()) {
@@ -60,6 +57,7 @@ public class TestWorld extends GameWorld {
                 shotI.init();
                 ents.add(shotI);
             }
+            TurretShared tboi = new TurretServer(3, GameSettings.spawnPos, Vector2D.UP);
         }
 
         if (GameSettings.isClient()) {
@@ -75,53 +73,51 @@ public class TestWorld extends GameWorld {
             gui.addGUIObject(b);
             // Renderer.setGUI(gui);
         }
-
     }
-
+    
     @Override
     public void updateWorld() {
-
+        
     }
-
+    
     @Override
     public GameWorld loadFromFile(String fileName) {
         System.out.println("Loading Not implemented!");
         return null;
     }
-
+    
     @Override
     public boolean saveToFile(String fileName) {
         System.out.println("Saving Not implemented!");
         return false;
     }
-
+    
     public List<Entity> getEntities() {
         return ents;
     }
-
+    
     @Override
     public Player createPlayer() {
         Vector2D pos = getMap().getRandomSpawnPoint();
         Player player = new Player(pos, Vector2D.UP);
         player.init();
         ents.add(player);
-        minimapObjs.add(player);
+        playerManager.addPlayer(player);
         return player;
     }
-
+    
     @Override
     public void addEntity(Entity ent) {
         this.ents.add(ent);
     }
-
+    
     @Override
     public void removeEntity(Entity ent) {
         this.ents.remove(ent);
     }
-
+    
     @Override
     public Environment getEnvironment() {
         return Environment.LIGHT_OUTDOORS;
     }
-
 }

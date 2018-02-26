@@ -10,7 +10,7 @@ import java.util.UUID;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import com.knightlore.engine.GameEngine;
-import com.knightlore.engine.GameWorld;
+import com.knightlore.game.world.GameWorld;
 import com.knightlore.engine.TickListener;
 import com.knightlore.game.Player;
 import com.knightlore.network.NetworkObject;
