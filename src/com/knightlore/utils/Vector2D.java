@@ -100,7 +100,7 @@ public final class Vector2D {
      * @return
      */
     public Point toPoint() {
-        return new Point((int) x, (int) y);
+        return new Point((int)Math.round(x), (int)Math.round(y));
     }
     
     @Override

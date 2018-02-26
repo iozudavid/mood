@@ -1,5 +1,7 @@
 package com.knightlore.utils.pathfinding;
 
+import com.knightlore.utils.Vector2D;
+
 import java.awt.Point;
 import java.util.*;
 
@@ -8,6 +10,10 @@ public class PathFinder {
 
     public PathFinder(double[][] costGrid) {
         this.costGrid = costGrid;
+    }
+
+    public List<Point> findPath(Vector2D start, Vector2D goal) {
+        return findPath(start.toPoint(), goal.toPoint());
     }
 
     public List<Point> findPath(Point start, Point goal) {
