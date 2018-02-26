@@ -76,26 +76,25 @@ public class GameEngine implements Runnable {
             setupMouse();
         }
 
-        NetworkObjectManager man = null;
-        if (GameSettings.isClient())
-            man = new ClientNetworkObjectManager(world);
-        if (GameSettings.isServer())
-            man = new ServerNetworkObjectManager(world);
-
-        man.init();
-        System.out.println("Player ready!");
-
         System.out.println("Engine Initialised Successfully.");
         // TODO maybe refactor this into a make world method
         // ALSO TODO, UNHOOK TEST WORLD
         System.out.println("Initialising World...");
         world = new TestWorld();
-        System.out.println("initialising...");
+
+        System.out.println("Initialising NetworkObjectManager...");
+        NetworkObjectManager man = null;
+        if (GameSettings.isClient())
+            man = new ClientNetworkObjectManager(world);
+        if (GameSettings.isServer())
+            man = new ServerNetworkObjectManager(world);
+        man.init();
+        
         world.initWorld();
-        System.out.println("populating...");
+        System.out.println("Populating world...");
         world.populateWorld();
         System.out.println("World Initialised Successfully.");
-        man.setWorld(world); // TODO: fix. ugly.
+
 
         camera = new Camera(world.getMap());
         this.renderer = new Renderer(camera, world);
