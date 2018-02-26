@@ -52,11 +52,17 @@ public final class Vector2D {
 	
 	// allocates a new vector, does not modify the original
 	public Vector2D subtract(Vector2D v){
-		return new Vector2D(x+v.x,y+v.y);
+		return new Vector2D(x-v.x,y-v.y);
 	}
 	
 	// FUNCTIONS
 
+	public void normalise() {
+		double mag = magnitude();
+		x = x / mag;
+		y = y / mag;
+	}
+	
 	public double dot(Vector2D v) {
 		return (x * v.x) + (y * v.y);
 	}

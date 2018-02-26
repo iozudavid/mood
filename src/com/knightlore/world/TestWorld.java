@@ -2,6 +2,7 @@ package com.knightlore.world;
 
 import com.knightlore.GameSettings;
 import com.knightlore.ai.AIManager;
+import com.knightlore.ai.TurretServer;
 import com.knightlore.game.area.generation.MapGenerator;
 import com.knightlore.game.entity.Zombie;
 import com.knightlore.game.entity.pickup.ShotgunPickup;
@@ -10,6 +11,7 @@ import com.knightlore.gui.GUICanvas;
 import com.knightlore.gui.TextField;
 import com.knightlore.render.Camera;
 import com.knightlore.render.Environment;
+import com.knightlore.render.graphic.sprite.DirectionalSprite;
 import com.knightlore.utils.Vector2D;
 
 public class TestWorld extends GameWorld {
@@ -42,8 +44,8 @@ public class TestWorld extends GameWorld {
     @Override
     public void populateWorld() {
         // add the player and mobs
-        entities.add(new ShotgunPickup(new Vector2D(20, 20)));
-        entities.add(new Zombie(1, new Vector2D(21, 20)));
+        //entities.add(new ShotgunPickup(new Vector2D(20, 20)));
+        //entities.add(new Zombie(1, new Vector2D(21, 20)));
 
         if (GameSettings.isClient()) {
             // setup testing ui
@@ -61,8 +63,11 @@ public class TestWorld extends GameWorld {
 
         // add pickups
         for (int i = 1; i < 5; i += 2) {
-            entities.add(new ShotgunPickup(new Vector2D(i, 3)));
+            //entities.add(new ShotgunPickup(new Vector2D(i, 3)));
         }
+        
+        TurretServer tboi = new TurretServer(3, DirectionalSprite.SHOTGUN_DIRECTIONAL_SPRITE, GameSettings.spawnPos, Vector2D.UP); 
+        
     }
 
     @Override
