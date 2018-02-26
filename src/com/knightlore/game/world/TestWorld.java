@@ -58,6 +58,7 @@ public class TestWorld extends GameWorld {
                 ents.add(shotI);
             }
             TurretShared tboi = new TurretServer(3, GameSettings.spawnPos, Vector2D.UP);
+            tboi.init();
         }
 
         if (GameSettings.isClient()) {

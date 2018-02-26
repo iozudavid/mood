@@ -3,21 +3,23 @@ package com.knightlore.ai;
 import java.nio.ByteBuffer;
 import java.util.UUID;
 
-import com.knightlore.engine.GameEngine;
+import com.knightlore.game.Team;
 import com.knightlore.game.entity.Entity;
 import com.knightlore.render.graphic.sprite.DirectionalSprite;
+import com.knightlore.utils.Utils;
 import com.knightlore.utils.Vector2D;
 
 public abstract class TurretShared extends Entity {
     
     protected int damage;
-    protected int team;
+    protected Team team = Team.none;
     
     protected long nextCheckTime = 0;
     protected static final long TURRET_CHECK_DELAY = 20;
     
     protected Entity target = null;
     protected byte targetByte = 0;
+    protected double sqrRange = 25;
     
     protected TurretShared(double size, Vector2D position, Vector2D direction) {
         super(size, position, direction);
@@ -32,22 +34,13 @@ public abstract class TurretShared extends Entity {
         // TODO Auto-generated method stub
         
     }
-    @Override
-    public void onUpdate() {
-        // 60 ticks per second
-        long currentTime = GameEngine.ticker.getTime();
-        aim();
-        if (currentTime >= nextCheckTime) {
-            shoot();
-            nextCheckTime = currentTime + TURRET_CHECK_DELAY;
-        }
-    }
+    
     
     @Override
     public synchronized ByteBuffer serialize() {
         ByteBuffer buf = super.serialize();
         // write 1 byte
-        buf.put(hasTarget());
+        buf.put(getTargetByte());
         return buf;
     }
 
@@ -58,24 +51,19 @@ public abstract class TurretShared extends Entity {
         targetByte = buf.get();
     }
     
+    protected abstract boolean hasTarget();
+    
     /**
      * Screw java, it can't convert bool to byte. Do it here implicitly
      * @return 1 if true, 0 if false
      */
-    protected abstract byte hasTarget();
-
-    
-    
-    protected void aim() {
-        long currentTime = GameEngine.ticker.getTime();
-        if (target == null) {
-            this.direction = new Vector2D(Math.sin(currentTime / 360d), Math.cos(currentTime / 360d));
-            return;
+    private byte getTargetByte() {
+        if(hasTarget()) {
+            return 1;
         }
-        this.direction = target.getPosition().subtract(this.getPosition());
-        this.direction.normalise();
-        this.plane = direction.perpendicular();
-        
+        else {
+            return 0;
+        }
     }
     
     protected abstract void shoot();
@@ -88,12 +76,12 @@ public abstract class TurretShared extends Entity {
     
     @Override
     public double getDrawSize() {
-        return 5;
+        return 0.5f;
     }
     
     @Override
     public int getMinimapColor() {
-        return 0xFFFFFFFF;
+        return Utils.colorForTeam(team);
     }
     
     @Override
@@ -103,7 +91,7 @@ public abstract class TurretShared extends Entity {
 
     @Override
     public String getClientClassName() {
-        // One class for both client and server.
-        return this.getClass().getName();
+        // turret client please :)
+        return TurretClient.class.getName();
     }
 }

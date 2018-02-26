@@ -8,6 +8,7 @@ import com.knightlore.utils.Vector2D;
 import com.knightlore.utils.pathfinding.PathFinder;
 
 public class AIManager {
+
     private final Map map;
     private final PathFinder pathFinder;
     

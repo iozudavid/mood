@@ -35,7 +35,6 @@ public abstract class Area {
                 }
             }
         }
-
         return costGrid;
     }
 

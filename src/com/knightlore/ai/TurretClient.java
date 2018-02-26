@@ -27,12 +27,18 @@ public final class TurretClient extends TurretShared {
     
     @Override
     protected void shoot() {
-        System.out.println("Ratatatatata");
+        
     }
 
     @Override
-    protected byte hasTarget() {
-        return targetByte;
+    protected boolean hasTarget() {
+        return targetByte == 1;
+    }
+
+    @Override
+    public void onUpdate() {
+        // TODO Auto-generated method stub
+        
     }
     
 }
