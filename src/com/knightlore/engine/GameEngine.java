@@ -10,8 +10,8 @@ import com.knightlore.network.server.ServerNetworkObjectManager;
 import com.knightlore.render.Camera;
 import com.knightlore.render.Renderer;
 import com.knightlore.render.Screen;
-import com.knightlore.world.GameWorld;
-import com.knightlore.world.TestWorld;
+import com.knightlore.game.world.GameWorld;
+import com.knightlore.game.world.TestWorld;
 
 /**
  * Game engine acting as sort of a 'hub' for each of the individual game

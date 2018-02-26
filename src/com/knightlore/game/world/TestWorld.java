@@ -1,4 +1,4 @@
-package com.knightlore.world;
+package com.knightlore.game.world;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,17 +18,13 @@ import com.knightlore.render.minimap.IMinimapObject;
 import com.knightlore.utils.Vector2D;
 
 public class TestWorld extends GameWorld {
-
-    private List<Entity> ents;
-    private List<IMinimapObject> minimapObjs;
+    private final List<Entity> ents = new ArrayList<>();
+    private final List<IMinimapObject> minimapObjs = new ArrayList<>();
 
     private GUICanvas gui;
 
     public TestWorld() {
         super();
-        // init all the variables
-        ents = new ArrayList<Entity>();
-        minimapObjs = new ArrayList<IMinimapObject>();
     }
 
     @Override
