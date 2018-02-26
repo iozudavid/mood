@@ -3,31 +3,26 @@ package com.knightlore.gui;
 import java.awt.Color;
 import java.awt.Graphics;
 
-import com.knightlore.render.graphic.Graphic;
-
 public class Button extends GUIObject {
-
-    Graphic activeGraphic = null;
+    private static final Color UP_COLOR = Color.LIGHT_GRAY;
+    private static final Color DOWN_COLOR = Color.DARK_GRAY;
+    private static final Color HOVER_COLOR = Color.WHITE;
 
     private SelectState state = SelectState.UP;
 
-    public Color upColour = Color.LIGHT_GRAY;
-    public Color downColour = Color.DARK_GRAY;
-    public Color hoverColour = Color.WHITE;
-
     public Color activeColor() {
         switch (state) {
-        case UP:
-            return upColour;
+            case UP:
+                return UP_COLOR;
 
-        case HOVER:
-            return hoverColour;
+            case HOVER:
+                return HOVER_COLOR;
 
-        case DOWN:
-            return downColour;
-
+            case DOWN:
+                return DOWN_COLOR;
         }
-        return upColour;
+
+        throw new IllegalStateException(state.toString() + "is not supported version of state");
     }
 
     public Button(int x, int y, int depth) {
@@ -36,14 +31,8 @@ public class Button extends GUIObject {
 
     @Override
     void Draw(Graphics g) {
-
-        if (activeGraphic != null) {
-
-        } else {
-            g.setColor(activeColor());
-            g.fillRect(rect.x, rect.y, rect.width, rect.height);
-        }
-
+        g.setColor(activeColor());
+        g.fillRect(rect.x, rect.y, rect.width, rect.height);
     }
 
     @Override
@@ -81,5 +70,4 @@ public class Button extends GUIObject {
     boolean isSelectable() {
         return true;
     }
-
 }
