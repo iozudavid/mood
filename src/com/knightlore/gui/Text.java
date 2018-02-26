@@ -6,8 +6,13 @@ public class Text extends GUIObject{
 	protected String text;
 	protected char[] rawChars;
 	
-	public Text(int x, int y, int depth, String text) {
-		super(x, y, depth);
+	public Text(int x, int y, int width, int height, String text) {
+		super(x, y, width, height,0);
+		SetText(text);
+	}
+	
+	public Text(int x, int y, int width, int height, int depth, String text) {
+		super(x, y, width, height,depth);
 		SetText(text);
 	}
 

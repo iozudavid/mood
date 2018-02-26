@@ -5,16 +5,22 @@ import java.awt.Rectangle;
 
 public abstract class GUIObject {
 	public int depth;
-	public Rectangle rect;
+	protected Rectangle rect;
 	
-	GUIObject(int x, int y, int depth) {
+	GUIObject(int x, int y, int width, int height, int depth) {
 		this.depth = depth;
 		rect = new Rectangle();
 		rect.x = x;
 		rect.y = y;
+		rect.width = width;
+		rect.height = height;
 	}
 	
 	abstract void Draw(Graphics g);
+	
+	public Rectangle getRectangle(){
+		return this.rect;
+	}
 	
 	boolean isSelectable () {
 		return false;

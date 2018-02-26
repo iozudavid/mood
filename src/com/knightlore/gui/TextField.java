@@ -14,8 +14,12 @@ public class TextField extends GUIObject {
 	private char[] rawChars;
 	private int insertPosition = 0;
 	
-	public TextField(int x, int y, int depth, String text) {
-		super(x, y, depth);
+	public TextField(int x, int y, int width, int height, String text) {
+		this(x, y, width, height, 0, text);
+	}
+	
+	public TextField(int x, int y, int width, int height, int depth, String text) {
+		super(x, y, width, height, depth);
 		SetText(text);
 		DisplayText(text);
 	}

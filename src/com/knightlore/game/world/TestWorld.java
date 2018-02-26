@@ -63,12 +63,8 @@ public class TestWorld extends GameWorld {
         if (GameSettings.isClient()) {
             // setup testing ui
             gui = new GUICanvas();
-            Button b = new Button(5, 5, 0);
-            b.rect.width = 100;
-            b.rect.height = 30;
-            TextField tf = new TextField(100, 100, 0, "Sample Text");
-            tf.rect.width = 150;
-            tf.rect.height = 30;
+            Button b = new Button(5, 5,100,30, 0);
+            TextField tf = new TextField(100, 100, 150, 30, 0, "Sample Text");
             gui.addGUIObject(tf);
             gui.addGUIObject(b);
             // Renderer.setGUI(gui);

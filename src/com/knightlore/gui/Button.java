@@ -25,8 +25,12 @@ public class Button extends GUIObject {
         throw new IllegalStateException(state.toString() + "is not supported version of state");
     }
 
-    public Button(int x, int y, int depth) {
-        super(x, y, depth);
+    public Button(int x, int y, int width, int height, int depth) {
+        super(x, y, width, height, depth);
+    }
+    
+    public Button(int x, int y, int width, int height) {
+        super(x, y, width, height, 0);
     }
 
     @Override
