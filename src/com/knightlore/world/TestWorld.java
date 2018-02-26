@@ -51,7 +51,7 @@ public class TestWorld extends GameWorld {
             ShotgunPickup shot = new ShotgunPickup(new Vector2D(8, 8));
             shot.init();
             ents.add(shot);
-            Zombie zom = new Zombie(1, new Vector2D(4, 5));
+            Zombie zom = new Zombie(new Vector2D(4, 5));
             zom.init();
             ents.add(zom);
             // add pickups

@@ -16,12 +16,12 @@ public class Zombie extends Entity {
         return obj;
     }
 
-    public Zombie(double size, Vector2D position) {
-        this(size, position, Vector2D.UP);
+    public Zombie(Vector2D position) {
+        this(position, Vector2D.UP);
     }
 
-    public Zombie(double size, Vector2D position, Vector2D direction) {
-        super(size, position, direction);
+    public Zombie(Vector2D position, Vector2D direction) {
+        super(0.25D, position, direction);
         zOffset = 100;
     }
 
