@@ -5,31 +5,31 @@ import com.knightlore.render.graphic.Graphic;
 import com.knightlore.render.graphic.texture.Texture;
 
 public class UndecidedTile extends Tile {
-	private static UndecidedTile instance = new UndecidedTile();
+    private static UndecidedTile instance = new UndecidedTile();
 
-	private UndecidedTile() {
-	}
+    private UndecidedTile() {
+    }
 
-	public static UndecidedTile getInstance() {
-		return instance;
-	}
+    public static UndecidedTile getInstance() {
+        return instance;
+    }
 
-	@Override
-	public Graphic getTexture() {
-		return Texture.AIR;
-	}
+    @Override
+    public Graphic getTexture() {
+        return Texture.AIR;
+    }
 
-	@Override
-	public void onShot() {
-	}
+    @Override
+    public void onShot() {
+    }
 
-	@Override
-	public void onEntered(Player p) {
-	}
+    @Override
+    public void onEntered(Player p) {
+    }
 
-	@Override
-	public char toChar() {
-		return '?';
-	}
+    @Override
+    public char toChar() {
+        return '?';
+    }
 
 }

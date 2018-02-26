@@ -44,7 +44,7 @@ public class PathFinder {
         return path;
     }
 
-    private List<SearchNode> getNeighbouringNodes(SearchNode node, Point goal, Set<Point> checkedPoints){
+    private List<SearchNode> getNeighbouringNodes(SearchNode node, Point goal, Set<Point> checkedPoints) {
         List<SearchNode> neighbours = new LinkedList<>();
         Point up = new Point(node.getPosition().x, node.getPosition().y - 1);
         if (isInBounds(up, costGrid) && !checkedPoints.contains(up)) {
