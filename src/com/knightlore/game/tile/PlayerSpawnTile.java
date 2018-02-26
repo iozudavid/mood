@@ -2,15 +2,16 @@ package com.knightlore.game.tile;
 
 import com.knightlore.engine.GameEngine;
 import com.knightlore.game.Player;
+import com.knightlore.game.Team;
 import com.knightlore.render.graphic.Graphic;
 import com.knightlore.render.graphic.texture.Texture;
 
 public class PlayerSpawnTile extends Tile {
 
-    private int teamNum = 0;
+    public Team team = Team.none;
 
-    public PlayerSpawnTile(int team) {
-        teamNum = team;
+    public PlayerSpawnTile(Team t) {
+        team = t;
     }
 
     @Override
@@ -44,24 +45,32 @@ public class PlayerSpawnTile extends Tile {
     }
 
     public char toChar() {
-        return (char) (teamNum + '0');
+        if (team == Team.none) {
+            return '0';
+        }else if(team == Team.blue) {
+            return '1';
+        }else {
+            return '2';
+        }
     }
 
     public Tile reflectTileX() {
-        if (teamNum == 1) {
-            return new PlayerSpawnTile(2);
+        if (team == Team.none) {
+            return new PlayerSpawnTile(Team.none);
+        } else if (team == Team.blue){
+            return new PlayerSpawnTile(Team.red);
         } else {
-            return new PlayerSpawnTile(0);
+            return new PlayerSpawnTile(Team.blue);
         }
     }
 
     public Tile reflectTileY() {
-        if (teamNum == 1) {
-            return new PlayerSpawnTile(3);
-        } else if (teamNum == 2) {
-            return new PlayerSpawnTile(4);
+        if (team == Team.none) {
+            return new PlayerSpawnTile(Team.none);
+        } else if (team == Team.blue) {
+            return new PlayerSpawnTile(Team.red);
         } else {
-            return new PlayerSpawnTile(0);
+            return new PlayerSpawnTile(Team.blue);
         }
     }
 

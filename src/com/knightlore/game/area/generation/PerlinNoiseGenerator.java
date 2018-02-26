@@ -75,7 +75,8 @@ public class PerlinNoiseGenerator {
         // return "interpolation" of influence vectors
         double interpolation12 = (influenceValue1 + influenceValue2) / 2;
         double interpolation34 = (influenceValue3 + influenceValue4) / 2;
-        return 1 + (interpolation12 + interpolation34) / 2;
+        // +2 to ensure A* is always optimistic
+        return 2 + (interpolation12 + interpolation34) / 2;
     }
 
     private double applyFade(double t) {

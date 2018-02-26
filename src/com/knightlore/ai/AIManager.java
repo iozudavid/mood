@@ -12,10 +12,7 @@ import com.knightlore.utils.pathfinding.PathFinder;
 public class AIManager {
     
     private static PathFinder pathFinder;
-    // Tom is convinced multiplying the solidity we get will
-    // make a difference
-    // private final static int SOLIDITY_COST_MULTIPLIER = 5;
-    
+
     public AIManager(Map map) {
         
         double[][] costGrid = new double[map.getWidth()][map.getHeight()];

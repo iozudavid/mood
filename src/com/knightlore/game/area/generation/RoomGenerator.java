@@ -4,6 +4,7 @@ import com.knightlore.game.Team;
 import com.knightlore.game.area.Room;
 import com.knightlore.game.tile.AirTile;
 import com.knightlore.game.tile.BrickTile;
+import com.knightlore.game.tile.PlayerSpawnTile;
 import com.knightlore.game.tile.Tile;
 import com.knightlore.game.tile.UndecidedTile;
 
@@ -22,9 +23,12 @@ public class RoomGenerator extends ProceduralAreaGenerator {
 
         resetGrid();
         fillGrid();
+        if(team != Team.none) {
+            grid[width/2][height/2] = new PlayerSpawnTile(team);
+        }
         Room room = new Room(grid);
         if(team != Team.none) {
-            //grid[grid.length/2][grid[0].length/2] = new PlayerSpawnTile(team); 
+            System.out.println("Spawn room:\n" + room.toString());
         }
         return room;
     }
