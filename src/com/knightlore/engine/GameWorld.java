@@ -44,12 +44,6 @@ public abstract class GameWorld {
 
     public abstract void removeEntity(Entity ent);
 
-    public abstract List<IMinimapObject> getMinimapObjs();
-
-    public abstract void addMinimapObj(IMinimapObject obj);
-
-    public abstract void removeMinimapObj(IMinimapObject obj);
-    
     public abstract Environment getEnvironment();
 
     public Map getMap() {

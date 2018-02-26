@@ -14,8 +14,6 @@ import com.knightlore.game.entity.Entity;
 import com.knightlore.network.NetworkObject;
 import com.knightlore.network.NetworkObjectManager;
 import com.knightlore.network.protocol.NetworkUtils;
-import com.knightlore.render.Camera;
-import com.knightlore.render.minimap.IMinimapObject;
 
 public class ClientNetworkObjectManager extends NetworkObjectManager {
     private Map<UUID, NetworkObject> networkObjects = new HashMap<>();
@@ -71,9 +69,6 @@ public class ClientNetworkObjectManager extends NetworkObjectManager {
             if (obj instanceof Entity) {
                 world.addEntity((Entity) obj);
             }
-            if (obj instanceof IMinimapObject) {
-                world.addMinimapObj((IMinimapObject) obj);
-            }
         } catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException
                 | InvocationTargetException e) {
             System.err.println("Error when attempting to call the static method build(UUID, ByteBuffer) on the class "
@@ -95,9 +90,6 @@ public class ClientNetworkObjectManager extends NetworkObjectManager {
             toBeDestroyedObject.destroy();
             if (toBeDestroyedObject instanceof Entity) {
                 world.removeEntity((Entity) toBeDestroyedObject);
-            }
-            if (toBeDestroyedObject instanceof IMinimapObject) {
-                world.removeMinimapObj((IMinimapObject) toBeDestroyedObject);
             }
         }
     }

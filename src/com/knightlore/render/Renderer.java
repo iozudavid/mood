@@ -91,22 +91,18 @@ public class Renderer implements IRenderable {
             if (position == null) {
                 this.networkObjPos.remove(obj);
                 entities.remove(this.networkObjMobs.get(obj));
-                this.minimap.removeMinimapObject(this.networkObjMobs.get(obj));
                 this.networkObjMobs.remove(obj);
             } else if (networkObjPos.containsKey(obj)) {
-                this.minimap.removeMinimapObject(this.networkObjMobs.get(obj));
                 this.networkObjPos.put(obj, position);
                 entities.remove(this.networkObjMobs.get(obj));
                 Zombie z = new Zombie(1D, position, direction);
                 this.networkObjMobs.put(obj, z);
                 entities.add(z);
-                this.minimap.addMinimapObject(this.networkObjMobs.get(obj));
             } else {
                 this.networkObjPos.put(obj, position);
                 Zombie z = new Zombie(1D, position, direction);
                 this.networkObjMobs.put(obj, z);
                 entities.add(z);
-                this.minimap.addMinimapObject(this.networkObjMobs.get(obj));
             }
         }
     }

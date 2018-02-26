@@ -120,27 +120,6 @@ public class TestWorld extends GameWorld {
     }
 
     @Override
-    public List<IMinimapObject> getMinimapObjs() {
-        synchronized (minimapObjs) {
-            return minimapObjs;
-        }
-    }
-
-    @Override
-    public void addMinimapObj(IMinimapObject obj) {
-        synchronized (minimapObjs) {
-            minimapObjs.add(obj);
-        }
-    }
-
-    @Override
-    public void removeMinimapObj(IMinimapObject obj) {
-        synchronized (minimapObjs) {
-            minimapObjs.remove(obj);
-        }
-    }
-    
-    @Override
     public Environment getEnvironment() {
         return Environment.DUNGEON;
     }

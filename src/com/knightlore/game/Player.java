@@ -98,6 +98,7 @@ public class Player extends Entity {
                     ACTION_MAPPINGS.get(entry.getKey()).run();
                     updated = true;
                 }
+
             if (updated) {
                 // updateMotionOffset();
             }

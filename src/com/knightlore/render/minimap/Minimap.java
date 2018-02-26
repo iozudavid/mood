@@ -66,8 +66,6 @@ public class Minimap implements TickListener {
     private Camera camera;
     private GameWorld world;
 
-    private List<IMinimapObject> minimapObjects;
-
     /**
      * We keep track of the previous position and direction so we know not to
      * re-render the minimap if nothing changes.
@@ -80,7 +78,6 @@ public class Minimap implements TickListener {
         recreatePixelMap();
 
         this.mask = new MinimapLightingMask(world.getEnvironment());
-        this.minimapObjects = new ArrayList<IMinimapObject>();
         this.display = new PixelBuffer(size, size);
 
         GameEngine.ticker.addTickListener(this);
@@ -150,15 +147,13 @@ public class Minimap implements TickListener {
     }
 
     private void drawMinimapObjects(double theta) {
-        synchronized (this.minimapObjects) {
-            for (IMinimapObject obj : minimapObjects) {
-                Vector2D pos = obj.getPosition();
-                pos = transform((int) (pos.getX() * SCALE), (int) (pos.getY() * SCALE), theta);
+        for (IMinimapObject obj : world.getEntities()) {
+            Vector2D pos = obj.getPosition();
+            pos = transform((int) (pos.getX() * SCALE), (int) (pos.getY() * SCALE), theta);
 
-                int color = obj.getMinimapColor();
-                color = mask.adjustForLighting(display, color, (int) pos.getX(), (int) pos.getY());
-                display.fillSquare(color, (int) pos.getX(), (int) pos.getY(), obj.getDrawSize());
-            }
+            int color = obj.getMinimapColor();
+            color = mask.adjustForLighting(display, color, (int) pos.getX(), (int) pos.getY());
+            display.fillSquare(color, (int) pos.getX(), (int) pos.getY(), obj.getDrawSize());
         }
     }
 
@@ -236,18 +231,6 @@ public class Minimap implements TickListener {
 
     public PixelBuffer getPixelBuffer() {
         return display;
-    }
-
-    public void addMinimapObject(IMinimapObject mo) {
-        synchronized (this.minimapObjects) {
-            this.minimapObjects.add(mo);
-        }
-    }
-
-    public void removeMinimapObject(IMinimapObject mo) {
-        synchronized (this.minimapObjects) {
-            this.minimapObjects.remove(mo);
-        }
     }
 
     public void setCamera(Camera camera) {
