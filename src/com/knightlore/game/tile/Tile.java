@@ -35,4 +35,8 @@ public abstract class Tile {
         return this;
     }
 
+    public boolean blockLOS() {
+        return false;
+    }
+
 }

@@ -38,5 +38,10 @@ public class BrickTile extends Tile {
     public char toChar() {
         return 'B';
     }
+    
+    @Override
+    public boolean blockLOS() {
+        return true;
+    }
 
 }
