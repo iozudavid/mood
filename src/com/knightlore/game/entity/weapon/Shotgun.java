@@ -4,8 +4,8 @@ import com.knightlore.render.graphic.GraphicSheet;
 
 public class Shotgun extends Weapon {
 
-	public Shotgun() {
-		super(GraphicSheet.SHOTGUN_SPRITES.graphicAt(0, 15));
-	}
+    public Shotgun() {
+        super(GraphicSheet.SHOTGUN_SPRITES.graphicAt(0, 15));
+    }
 
 }

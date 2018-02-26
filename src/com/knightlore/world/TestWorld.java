@@ -1,9 +1,16 @@
 package com.knightlore.world;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.knightlore.GameSettings;
 import com.knightlore.ai.AIManager;
 import com.knightlore.ai.TurretServer;
+import com.knightlore.ai.TurretShared;
+import com.knightlore.engine.GameWorld;
+import com.knightlore.game.Player;
 import com.knightlore.game.area.generation.MapGenerator;
+import com.knightlore.game.entity.Entity;
 import com.knightlore.game.entity.Zombie;
 import com.knightlore.game.entity.pickup.ShotgunPickup;
 import com.knightlore.gui.Button;
@@ -11,41 +18,57 @@ import com.knightlore.gui.GUICanvas;
 import com.knightlore.gui.TextField;
 import com.knightlore.render.Camera;
 import com.knightlore.render.Environment;
-import com.knightlore.render.graphic.sprite.DirectionalSprite;
+import com.knightlore.render.minimap.IMinimapObject;
 import com.knightlore.utils.Vector2D;
 
 public class TestWorld extends GameWorld {
-    private Camera mainCamera;
+    
+    private List<Entity> ents;
+    private List<IMinimapObject> minimapObjs;
+    
     private GUICanvas gui;
     private AIManager aiManager;
     
-    
     public TestWorld() {
-        super(Environment.DUNGEON);
+        super();
+        // init all the variables
+        ents = new ArrayList<Entity>();
+        minimapObjs = new ArrayList<IMinimapObject>();
     }
-
+    
     @Override
     public void initWorld() {
         // First create the map
         MapGenerator generator = new MapGenerator();
         // FIXME don't hardcode the seed...
-        map = generator.createMap(16, 16, 161803398875L);
+        this.map = generator.createMap(16, 16, 161803398875L);
         // FIXME hack hack hack, this is just for the demo
         GameSettings.spawnPos = map.getRandomSpawnPoint();
-
-        // now populate the world
-        Vector2D pos = GameSettings.spawnPos;
-        mainCamera = new Camera(pos.getX(), pos.getY(), 1, 0, 0, Camera.FIELD_OF_VIEW, map);
         
         // as of the moment, aiManager will do pathfinding for AI Bots
-        aiManager = new AIManager(map); 
+        aiManager = new AIManager(map);
+        new Camera(getMap());
     }
-
+    
     @Override
     public void populateWorld() {
-        // add the player and mobs
-        //entities.add(new ShotgunPickup(new Vector2D(20, 20)));
-        //entities.add(new Zombie(1, new Vector2D(21, 20)));
+
+        if (GameSettings.isServer()) {
+            // add the mobs
+            ShotgunPickup shot = new ShotgunPickup(new Vector2D(8, 8));
+            shot.init();
+            ents.add(shot);
+            Zombie zom = new Zombie(1, new Vector2D(4, 5));
+            zom.init();
+            ents.add(zom);
+            // add pickups
+            for (int i = 5; i < 9; i += 2) {
+                ShotgunPickup shotI = new ShotgunPickup(new Vector2D(i, 3));
+                shotI.init();
+                ents.add(shotI);
+            }
+            TurretShared tboi = new TurretServer(3, GameSettings.spawnPos, Vector2D.UP);
+        }
 
         if (GameSettings.isClient()) {
             // setup testing ui
@@ -60,30 +83,76 @@ public class TestWorld extends GameWorld {
             gui.addGUIObject(b);
             // Renderer.setGUI(gui);
         }
+        
+         
 
-        // add pickups
-        for (int i = 1; i < 5; i += 2) {
-            //entities.add(new ShotgunPickup(new Vector2D(i, 3)));
-        }
-        
-        TurretServer tboi = new TurretServer(3, DirectionalSprite.SHOTGUN_DIRECTIONAL_SPRITE, GameSettings.spawnPos, Vector2D.UP); 
-        
     }
-
+    
     @Override
     public void updateWorld() {
-
+        
     }
-
+    
     @Override
     public GameWorld loadFromFile(String fileName) {
         System.out.println("Loading Not implemented!");
         return null;
     }
-
+    
     @Override
     public boolean saveToFile(String fileName) {
         System.out.println("Saving Not implemented!");
         return false;
     }
+    
+    public List<Entity> getEntities() {
+        return ents;
+    }
+    
+    @Override
+    public Player createPlayer() {
+        Vector2D pos = getMap().getRandomSpawnPoint();
+        Player player = new Player(pos, Vector2D.UP);
+        player.init();
+        ents.add(player);
+        minimapObjs.add(player);
+        return player;
+    }
+    
+    @Override
+    public void addEntity(Entity ent) {
+        this.ents.add(ent);
+    }
+    
+    @Override
+    public void removeEntity(Entity ent) {
+        this.ents.remove(ent);
+    }
+    
+    @Override
+    public List<IMinimapObject> getMinimapObjs() {
+        synchronized (minimapObjs) {
+            return minimapObjs;
+        }
+    }
+    
+    @Override
+    public void addMinimapObj(IMinimapObject obj) {
+        synchronized (minimapObjs) {
+            minimapObjs.add(obj);
+        }
+    }
+    
+    @Override
+    public void removeMinimapObj(IMinimapObject obj) {
+        synchronized (minimapObjs) {
+            minimapObjs.remove(obj);
+        }
+    }
+    
+    @Override
+    public Environment getEnvironment() {
+        return Environment.DUNGEON;
+    }
+    
 }

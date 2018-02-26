@@ -1,30 +1,38 @@
 package com.knightlore.ai;
 
-import com.knightlore.render.graphic.sprite.DirectionalSprite;
+import java.nio.ByteBuffer;
+import java.util.UUID;
+
+import com.knightlore.network.NetworkObject;
 import com.knightlore.utils.Vector2D;
 
 public final class TurretClient extends TurretShared {
+    
+    protected TurretClient(double size, Vector2D position, Vector2D direction) {
+        super(size, position, direction);
+    }
+    
+    public TurretClient(UUID uuid, Vector2D one, Vector2D one2) {
+        super(uuid, one, one2);
+    }
+    
+    // Returns a new instance. See NetworkObject for details.
+    public static NetworkObject build(UUID uuid, ByteBuffer state) {
+        System.out.println("Player build, state size: " + state.remaining());
+        NetworkObject obj = new TurretClient(uuid, Vector2D.ONE, Vector2D.ONE);
+        obj.init();
+        obj.deserialize(state);
+        return obj;
+    }
+    
+    @Override
+    protected void shoot() {
+        System.out.println("Ratatatatata");
+    }
 
-	protected TurretClient(double size, DirectionalSprite dSprite, Vector2D position, Vector2D direction) {
-		super(size, dSprite, position, direction);
-		// TODO Auto-generated constructor stub
-	}
-
-	@Override
-	protected void shoot() {
-		System.out.println("Ratatatatata");
-	}
-
-	@Override
-	public int getDrawSize() {
-		// TODO Auto-generated method stub
-		return 0;
-	}
-
-	@Override
-	public int getMinimapColor() {
-		// TODO Auto-generated method stub
-		return 0;
-	}
-
+    @Override
+    protected byte hasTarget() {
+        return targetByte;
+    }
+    
 }

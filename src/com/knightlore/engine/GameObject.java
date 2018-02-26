@@ -30,12 +30,31 @@ public abstract class GameObject {
     public GameObject(Vector2D position) {
         this.position = position;
         exists = true;
+    }
 
+    public void init() {
+        exists = true;
         getGOM().addGameObject(this);
     }
 
     public Vector2D getPosition() {
         return position;
+    }
+
+    public double getxPos() {
+        return getPosition().getX();
+    }
+
+    public double getyPos() {
+        return getPosition().getY();
+    }
+
+    public void setxPos(double xPos) {
+        position = new Vector2D(xPos, position.getY());
+    }
+
+    public void setyPos(double yPos) {
+        position = new Vector2D(position.getX(), yPos);
     }
 
     public boolean exists() {

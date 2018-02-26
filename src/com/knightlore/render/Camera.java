@@ -1,17 +1,7 @@
 package com.knightlore.render;
 
-import java.util.HashMap;
-import java.util.Map.Entry;
-
-import com.knightlore.engine.GameEngine;
-import com.knightlore.engine.GameObject;
-import com.knightlore.engine.input.BasicController;
-import com.knightlore.engine.input.InputManager;
-import com.knightlore.engine.input.Keyboard;
-import com.knightlore.game.Player;
 import com.knightlore.game.area.Map;
-import com.knightlore.game.tile.Tile;
-import com.knightlore.network.protocol.ClientControl;
+import com.knightlore.game.entity.Entity;
 import com.knightlore.utils.Vector2D;
 
 /**
@@ -21,113 +11,37 @@ import com.knightlore.utils.Vector2D;
  * @author Joe Ellis
  *
  */
-public class Camera extends GameObject {
+public class Camera {
 
     /* -.66 is a good value. */
-    public static final double FIELD_OF_VIEW = -.66;
+    public static final double FIELD_OF_VIEW = .66;
 
     /* Variables concerning motion bob. */
     private static final double MOTION_BOB_AMOUNT = 7.0;
     private static final double MOTION_BOB_SPEED = 0.15;
-    private static final double MOVE_SPEED = .040 * 2;
-
-    // TODO: will be implemented
-    private static final double SPRINT_MULTIPLIER = 1.5D;
-    private static final double STRAFE_SPEED = .01;
-    private static final double ROTATION_SPEED = .025;
 
     private int motionOffset;
     private long moveTicks;
 
-    private final Map map;
-    private Player player;
-    private double xPos, yPos, xDir, yDir, xPlane, yPlane;
+    private Entity subject;
 
-    // Maps all inputs that the player could be making to their values.
-    private java.util.Map<ClientControl, Byte> inputState = new HashMap<>();
-    private java.util.Map<ClientControl, Runnable> ACTION_MAPPINGS = new HashMap<>();
-
-    private static Camera mainCam;
-
-    // TODO constructor takes a lot of parameters, maybe use Builder Pattern
-    // instead?
-    public Camera(double xPos, double yPos, double xDir, double yDir, double xPlane, double yPlane, Map map) {
+    public Camera(Map map) {
         super();
-
-        // Map possible inputs to the methods that handle them. Avoids long
-        // if-statement chain.
-        ACTION_MAPPINGS.put(ClientControl.FORWARD, Camera.this::moveForward);
-        ACTION_MAPPINGS.put(ClientControl.ROTATE_ANTI_CLOCKWISE, Camera.this::rotateAntiClockwise);
-        ACTION_MAPPINGS.put(ClientControl.BACKWARD, Camera.this::moveBackward);
-        ACTION_MAPPINGS.put(ClientControl.ROTATE_CLOCKWISE, Camera.this::rotateClockwise);
-        ACTION_MAPPINGS.put(ClientControl.LEFT, Camera.this::strafeLeft);
-        ACTION_MAPPINGS.put(ClientControl.RIGHT, Camera.this::strafeRight);
-
-        this.xPos = xPos;
-        this.yPos = yPos;
-        this.xDir = xDir;
-        this.yDir = yDir;
-        this.xPlane = xPlane;
-        this.yPlane = yPlane;
-        this.map = map;
 
         this.motionOffset = 0;
         this.moveTicks = 0;
-        if (mainCam == null) {
-            mainCam = this;
-        }
+
     }
 
-    /**
-     * 
-     * Returns the main camera. Note: This may be null if the main camera is
-     * destroyed.
-     */
-    public static Camera mainCamera() {
-        return mainCam;
+    public synchronized Vector2D getPosition() {
+        return subject.getPosition();
     }
 
-    @Override
-    public Vector2D getPosition() {
-        return new Vector2D(xPos, yPos);
+    public synchronized Vector2D getDirection() {
+        return subject.getDirection();
     }
 
-    public Vector2D getDirection() {
-        return new Vector2D(xDir, yDir);
-    }
-
-    @Override
-    public void onUpdate() {
-        synchronized (inputState) {
-            // Check whether each input is triggered - if it is, execute the
-            // respective method.
-            // DEBUG
-            boolean updated = false;
-            for (Entry<ClientControl, Byte> entry : inputState.entrySet())
-                // For boolean inputs (i.e. all current inputs), 0 represents
-                // false.
-                if (entry.getValue() != 0) {
-                    ACTION_MAPPINGS.get(entry.getKey()).run();
-                    updated = true;
-                }
-        }
-        if (GameEngine.getSingleton().HEADLESS)
-            return;
-
-        Keyboard keyboard = InputManager.getKeyboard();
-        BasicController c = new BasicController();
-        if (keyboard.isPressed(c.moveForward()) || keyboard.isPressed(c.moveBackward())
-                || keyboard.isPressed(c.moveLeft()) || keyboard.isPressed(c.moveRight())) {
-            updateMotionOffset();
-        }
-    }
-
-    public void setInputState(java.util.Map<ClientControl, Byte> inputState) {
-        synchronized (this.inputState) {
-            this.inputState = inputState;
-        }
-    }
-
+    // TODO: implement motion bob using offset
     private void updateMotionOffset() {
         moveTicks++;
         this.motionOffset = (int) (Math.abs(Math.sin(moveTicks * MOTION_BOB_SPEED) * MOTION_BOB_AMOUNT));
@@ -137,117 +51,52 @@ public class Camera extends GameObject {
         return motionOffset;
     }
 
-    private synchronized void moveForward() {
-        Tile xTile = map.getTile((int) (xPos + xDir * MOVE_SPEED), (int) yPos);
-        Tile yTile = map.getTile((int) xPos, (int) (yPos + yDir * MOVE_SPEED));
-        xPos += xDir * MOVE_SPEED * (1 - xTile.getSolidity());
-        yPos += yDir * MOVE_SPEED * (1 - yTile.getSolidity());
-    }
-
-    private synchronized void moveBackward() {
-        Tile xTile = map.getTile((int) (xPos - xDir * MOVE_SPEED), (int) yPos);
-        Tile yTile = map.getTile((int) xPos, (int) (yPos - yDir * MOVE_SPEED));
-        xPos -= xDir * MOVE_SPEED * (1 - xTile.getSolidity());
-        yPos -= yDir * MOVE_SPEED * (1 - yTile.getSolidity());
-    }
-
-    private synchronized void strafeLeft() {
-        Tile xTile = map.getTile((int) (xPos - yDir * STRAFE_SPEED), (int) (yPos));
-        Tile yTile = map.getTile((int) (xPos), (int) (yPos + xDir * STRAFE_SPEED));
-        xPos -= yDir * STRAFE_SPEED * (1 - xTile.getSolidity());
-        yPos -= -xDir * STRAFE_SPEED * (1 - yTile.getSolidity());
-    }
-
-    private synchronized void strafeRight() {
-        Tile xTile = map.getTile((int) (xPos + yDir * STRAFE_SPEED), (int) (yPos));
-        Tile yTile = map.getTile((int) (xPos), (int) (yPos + -xDir * STRAFE_SPEED));
-        xPos += yDir * STRAFE_SPEED * (1 - xTile.getSolidity());
-        yPos += -xDir * STRAFE_SPEED * (1 - yTile.getSolidity());
-    }
-
-    /**
-     * Rotation is simply multiplication by the rotation matrix. We take the
-     * position and plane vectors, then multiply them by the rotation matrix
-     * (whose parameter is ROTATION_SPEED). This lets us rotate.
-     */
-    private synchronized void rotateAntiClockwise() {
-        double oldxDir = xDir;
-        xDir = xDir * Math.cos(ROTATION_SPEED) - yDir * Math.sin(ROTATION_SPEED);
-        yDir = oldxDir * Math.sin(ROTATION_SPEED) + yDir * Math.cos(ROTATION_SPEED);
-        double oldxPlane = xPlane;
-        xPlane = xPlane * Math.cos(ROTATION_SPEED) - yPlane * Math.sin(ROTATION_SPEED);
-        yPlane = oldxPlane * Math.sin(ROTATION_SPEED) + yPlane * Math.cos(ROTATION_SPEED);
-    }
-
-    /**
-     * Same as rotating left but clockwise this time.
-     */
-    private synchronized void rotateClockwise() {
-        double oldxDir = xDir;
-        xDir = xDir * Math.cos(-ROTATION_SPEED) - yDir * Math.sin(-ROTATION_SPEED);
-        yDir = oldxDir * Math.sin(-ROTATION_SPEED) + yDir * Math.cos(-ROTATION_SPEED);
-        double oldxPlane = xPlane;
-        xPlane = xPlane * Math.cos(-ROTATION_SPEED) - yPlane * Math.sin(-ROTATION_SPEED);
-        yPlane = oldxPlane * Math.sin(-ROTATION_SPEED) + yPlane * Math.cos(-ROTATION_SPEED);
-    }
-
     public synchronized double getxPos() {
-        return xPos;
+        Vector2D pos = this.getPosition();
+        return pos.getX();
     }
 
     public synchronized double getyPos() {
-        return yPos;
-    }
-
-    public synchronized void setxPos(double xPos) {
-        this.xPos = xPos;
-    }
-
-    public synchronized void setyPos(double yPos) {
-        this.yPos = yPos;
+        Vector2D pos = this.getPosition();
+        return pos.getY();
     }
 
     public synchronized double getxDir() {
-        return xDir;
-    }
-
-    public synchronized void setxDir(double xDir) {
-        this.xDir = xDir;
+        Vector2D dir = this.getDirection();
+        return dir.getX();
     }
 
     public synchronized double getyDir() {
-        return yDir;
+        Vector2D dir = this.getDirection();
+        return dir.getY();
     }
 
-    public synchronized void setyDir(double yDir) {
-        this.yDir = yDir;
+    public synchronized Vector2D getPlane() {
+        Vector2D plane = subject.getPlane();
+        Vector2D fovAdjustedPlane = new Vector2D(plane.getX(), plane.getY() * FIELD_OF_VIEW);
+        return fovAdjustedPlane;
     }
 
     public synchronized double getxPlane() {
-        return xPlane;
-    }
-
-    public synchronized void setxPlane(double xPlane) {
-        this.xPlane = xPlane;
+        Vector2D plane = this.getPlane();
+        return plane.getX();
     }
 
     public synchronized double getyPlane() {
-        return yPlane;
+        Vector2D plane = this.getPlane();
+        return plane.getY();
     }
 
-    public synchronized void setyPlane(double yPlane) {
-        this.yPlane = yPlane;
+    public Entity getSubject() {
+        return subject;
     }
 
-    @Override
-    public void onCreate() {
-        // TODO Auto-generated method stub
-
+    public void setSubject(Entity subject) {
+        this.subject = subject;
     }
 
-    @Override
-    public void onDestroy() {
-        // TODO Auto-generated method stub
+    public boolean isSubjectSet() {
+        return subject != null;
     }
 
 }
