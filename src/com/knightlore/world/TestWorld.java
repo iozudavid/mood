@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.knightlore.GameSettings;
-import com.knightlore.engine.GameWorld;
 import com.knightlore.game.Player;
 import com.knightlore.game.area.generation.MapGenerator;
 import com.knightlore.game.entity.Entity;

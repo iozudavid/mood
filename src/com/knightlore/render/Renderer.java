@@ -5,7 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Stack;
 
-import com.knightlore.engine.GameWorld;
+import com.knightlore.world.GameWorld;
 import com.knightlore.game.area.Map;
 import com.knightlore.game.entity.Entity;
 import com.knightlore.game.entity.Zombie;

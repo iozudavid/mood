@@ -1,4 +1,4 @@
-package com.knightlore.engine;
+package com.knightlore.world;
 
 import java.util.List;
 
@@ -6,7 +6,6 @@ import com.knightlore.game.Player;
 import com.knightlore.game.area.Map;
 import com.knightlore.game.entity.Entity;
 import com.knightlore.render.Environment;
-import com.knightlore.render.minimap.IMinimapObject;
 
 public abstract class GameWorld {
 

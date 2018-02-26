@@ -8,7 +8,7 @@ import java.util.Map;
 import java.util.UUID;
 
 import com.knightlore.engine.GameEngine;
-import com.knightlore.engine.GameWorld;
+import com.knightlore.world.GameWorld;
 import com.knightlore.game.Player;
 import com.knightlore.game.entity.Entity;
 import com.knightlore.network.NetworkObject;
