@@ -121,7 +121,7 @@ public class TestWorld extends GameWorld {
 
     @Override
     public Environment getEnvironment() {
-        return Environment.DUNGEON;
+        return Environment.LIGHT_OUTDOORS;
     }
 
 }
