@@ -5,8 +5,8 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.UUID;
 
+import com.knightlore.engine.GameEngine;
 import com.knightlore.network.Connection;
-import com.knightlore.network.NetworkObjectManager;
 
 /**
  * Constantly checks for inactive client connections, and removes them from the
@@ -35,7 +35,7 @@ public class Pruner implements Runnable {
                     // if connection lost then remove the network object
                     // remove from connection list
                     // and inform other clients
-                    NetworkObjectManager.getSingleton().getNetworkObject(uuid).destroy();
+                    GameEngine.getSingleton().getNetworkObjectManager().getNetworkObject(uuid).destroy();
                     i.remove();
                 }
             }

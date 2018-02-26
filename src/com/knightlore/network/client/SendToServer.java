@@ -7,10 +7,10 @@ import java.nio.ByteBuffer;
 import java.util.Arrays;
 import java.util.UUID;
 
+import com.knightlore.engine.GameEngine;
 import com.knightlore.engine.input.InputManager;
 import com.knightlore.network.Connection;
 import com.knightlore.network.NetworkObject;
-import com.knightlore.network.NetworkObjectManager;
 import com.knightlore.network.protocol.ClientControl;
 import com.knightlore.network.protocol.ClientProtocol;
 import com.knightlore.network.protocol.NetworkUtils;
@@ -40,7 +40,7 @@ public class SendToServer implements Runnable {
     public SendToServer(Connection conn) {
         this.conn = conn;
         // this.lock = new Object();
-        this.manager = (ClientNetworkObjectManager) NetworkObjectManager.getSingleton();
+        this.manager = (ClientNetworkObjectManager) GameEngine.getSingleton().getNetworkObjectManager();
 
     }
 
@@ -131,5 +131,4 @@ public class SendToServer implements Runnable {
         }
 
     }
-
 }

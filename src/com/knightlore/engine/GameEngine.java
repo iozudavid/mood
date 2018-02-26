@@ -36,6 +36,7 @@ public class GameEngine implements Runnable {
 
     private GameWorld world;
     private GameObjectManager gameObjectManager;
+    private NetworkObjectManager networkObjectManager;
     private Camera camera;
     private Renderer renderer;
 
@@ -63,6 +64,10 @@ public class GameEngine implements Runnable {
     // FIXME: remove this
     public Renderer getRenderer() {
         return this.renderer;
+    }    
+
+    public NetworkObjectManager getNetworkObjectManager() {
+        return networkObjectManager;
     }
 
     /**
@@ -83,12 +88,11 @@ public class GameEngine implements Runnable {
         world = new TestWorld();
 
         System.out.println("Initialising NetworkObjectManager...");
-        NetworkObjectManager man = null;
         if (GameSettings.isClient())
-            man = new ClientNetworkObjectManager(world);
+            networkObjectManager = new ClientNetworkObjectManager(world);
         if (GameSettings.isServer())
-            man = new ServerNetworkObjectManager(world);
-        man.init();
+            networkObjectManager = new ServerNetworkObjectManager(world);
+        networkObjectManager.init();
         
         world.initWorld();
         System.out.println("Populating world...");

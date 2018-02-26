@@ -5,8 +5,8 @@ import java.util.UUID;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
+import com.knightlore.engine.GameEngine;
 import com.knightlore.network.Connection;
-import com.knightlore.network.NetworkObjectManager;
 
 public class SendToClient implements Runnable {
 
@@ -17,7 +17,7 @@ public class SendToClient implements Runnable {
 
     public SendToClient(Connection conn) {
         this.conn = conn;
-        this.manager = (ServerNetworkObjectManager) NetworkObjectManager.getSingleton();
+        this.manager = (ServerNetworkObjectManager) GameEngine.getSingleton().getNetworkObjectManager();
         this.uuid = manager.registerClientSender(this);
     }
 

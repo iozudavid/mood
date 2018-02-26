@@ -2,8 +2,8 @@ package com.knightlore.network.server;
 
 import java.nio.ByteBuffer;
 
+import com.knightlore.engine.GameEngine;
 import com.knightlore.network.Connection;
-import com.knightlore.network.NetworkObjectManager;
 
 public class Receive implements Runnable {
     private Connection conn;
@@ -17,7 +17,7 @@ public class Receive implements Runnable {
         ByteBuffer buf;
         try {
             while ((buf = conn.receive()) != null) {
-                NetworkObjectManager.getSingleton().processMessage(buf);
+                GameEngine.getSingleton().getNetworkObjectManager().processMessage(buf);
             }
         } catch (Exception e) {
             System.err.println("Error while receiving packet: ");

@@ -6,6 +6,7 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.function.Consumer;
 
+import com.knightlore.engine.GameEngine;
 import com.knightlore.engine.GameObject;
 import com.knightlore.network.protocol.NetworkUtils;
 import com.knightlore.utils.Vector2D;
@@ -23,6 +24,7 @@ public abstract class NetworkObject extends GameObject implements INetworkable {
      * they will likely be overwritten by deserialisation anyway.
      */
     private UUID objectUniqueID;
+    private NetworkObjectManager networkObjectManager = GameEngine.getSingleton().getNetworkObjectManager();
 
     protected Map<String, Consumer<ByteBuffer>> networkConsumers = new HashMap<>();
 
@@ -53,7 +55,7 @@ public abstract class NetworkObject extends GameObject implements INetworkable {
     @Override
     public void init() {
         super.init();
-        NetworkObjectManager.getSingleton().registerNetworkObject(this);
+        networkObjectManager.registerNetworkObject(this);
     }
 
     @Override
@@ -62,7 +64,7 @@ public abstract class NetworkObject extends GameObject implements INetworkable {
 
     @Override
     public void onDestroy() {
-        NetworkObjectManager.getSingleton().removeNetworkObject(this);
+        networkObjectManager.removeNetworkObject(this);
     }
 
     // Convenience method for implementors. Returns a new ByteBuffer prefixed

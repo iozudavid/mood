@@ -12,8 +12,6 @@ import com.knightlore.engine.GameWorld;
 import com.knightlore.network.protocol.NetworkUtils;
 
 public abstract class NetworkObjectManager implements INetworkable, Runnable {
-
-    private static NetworkObjectManager singleton;
     // This is a special UUID that refers to the NetworkObjectManager itself.
     public static final UUID MANAGER_UUID = UUID.fromString("00000000-0000-0000-0000-000000000000");
     protected Map<String, Consumer<ByteBuffer>> networkConsumers = new HashMap<>();
@@ -24,7 +22,6 @@ public abstract class NetworkObjectManager implements INetworkable, Runnable {
 
     public NetworkObjectManager(GameWorld world) {
         this.world = world;
-        singleton = this;
     }
 
     public void processMessage(ByteBuffer buffer) {
@@ -36,10 +33,6 @@ public abstract class NetworkObjectManager implements INetworkable, Runnable {
     public abstract void removeNetworkObject(NetworkObject obj);
 
     public abstract NetworkObject getNetworkObject(UUID uuid);
-
-    public static NetworkObjectManager getSingleton() {
-        return singleton;
-    }
 
     @Override
     public Map<String, Consumer<ByteBuffer>> getNetworkConsumers() {
