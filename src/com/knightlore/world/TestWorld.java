@@ -105,6 +105,7 @@ public class TestWorld extends GameWorld {
         player.init();
         ents.add(player);
         minimapObjs.add(player);
+        playerManager.addPlayer(player);
         return player;
     }
 

@@ -3,6 +3,7 @@ package com.knightlore.world;
 import java.util.List;
 
 import com.knightlore.game.Player;
+import com.knightlore.game.PlayerManager;
 import com.knightlore.game.area.Map;
 import com.knightlore.game.entity.Entity;
 import com.knightlore.render.Environment;
@@ -11,6 +12,7 @@ public abstract class GameWorld {
 
     // all worlds need a map
     protected Map map;
+    protected PlayerManager playerManager = new PlayerManager();
 
     /**
      * Called by the engine to initialise the world. This should be used to link
