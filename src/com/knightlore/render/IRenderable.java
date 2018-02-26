@@ -8,6 +8,6 @@ package com.knightlore.render;
  */
 public interface IRenderable {
 
-	void render(PixelBuffer pix, int x, int y);
+    void render(PixelBuffer pix, int x, int y);
 
 }

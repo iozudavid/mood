@@ -1,10 +1,11 @@
 package com.knightlore.network;
 
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.net.Socket;
-import java.net.SocketTimeoutException;
+import java.nio.ByteBuffer;
+import java.util.Arrays;
 
 /*
  * Basic network connection
@@ -13,14 +14,14 @@ import java.net.SocketTimeoutException;
 
 public class TCPConnection extends Connection {
 
-    private InputStream infoReceive;
-    private OutputStream infoSend;
+    private DataInputStream infoReceive;
+    private DataOutputStream infoSend;
 
     public TCPConnection(Socket socket) {
         try {
             socket.setSoTimeout(TIMEOUT_MILLIS);
-            this.infoReceive = socket.getInputStream();
-            this.infoSend = socket.getOutputStream();
+            this.infoReceive = new DataInputStream(socket.getInputStream());
+            this.infoSend = new DataOutputStream(socket.getOutputStream());
         } catch (IOException e) {
             System.err.println("The connection doesn't seem to work...");
             System.exit(1);
@@ -44,39 +45,48 @@ public class TCPConnection extends Connection {
     }
 
     @Override
-    public void send(byte[] data) {
-        try {
-            infoSend.write(data.length);
-            infoSend.write(data);
-            infoSend.flush();
-        } catch (IOException e) {
-            System.err.println("Communication broke...");
-            this.terminated = true;
-        }
+    public void send(ByteBuffer data) {
+        Object lock = new Object();
+        synchronized (lock) {
+            try {
+                int dataLength = data.position();
+                if (dataLength == 0) {
+                    System.err.println("Error: Trying to send an empty ByteBuffer!");
+                    return;
+                }
+                // Copy buffer contents to avoid rewinding buffer (which has
+                // side-effects and changes the pointer of the buffer).
+                byte[] tmp = Arrays.copyOfRange(data.array(), 0, dataLength);
 
+                infoSend.writeInt(dataLength);
+                infoSend.write(tmp);
+            } catch (IOException e) {
+                System.err.println("Communication broke...");
+                this.terminated = true;
+            }
+        }
     }
 
     @Override
-    public byte[] receiveBlocking() {
-        byte[] data = null;
-        try {
-            int len = infoReceive.read();
-            // Unexpected end of stream.
-            if (len == -1)
-                throw new IOException();
-            data = new byte[len];
-            int i, count = 0;
-            while (count < len && (i = infoReceive.read()) != -1) {
-                data[count++] = (byte) i;
+    public ByteBuffer receiveBlocking() {
+        Object lock = new Object();
+        synchronized (lock) {
+            try {
+                int size = infoReceive.readInt();
+                if (size == 0) {
+                    System.err.println("Error: Trying to receive an empty ByteBuffer!");
+                    return null;
+                }
+                byte[] tmp = new byte[size];
+                infoReceive.readFully(tmp);
+                ByteBuffer buf = ByteBuffer.wrap(tmp);
+                return buf;
+            } catch (IOException e) {
+                System.err.println("Communication broke...");
+                this.terminated = true;
+                return null;
             }
-        } catch (SocketTimeoutException e) {
-            System.err.println("Timed out while waiting to receive a packet.");
-            this.terminated = true;
-        } catch (IOException e) {
-            System.err.println("Communication broke...");
-            this.terminated = true;
         }
-        return data;
     }
 
 }

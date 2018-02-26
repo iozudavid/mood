@@ -4,10 +4,12 @@ import com.knightlore.GameSettings;
 import com.knightlore.MainWindow;
 import com.knightlore.engine.input.InputManager;
 import com.knightlore.engine.input.Mouse;
+import com.knightlore.network.NetworkObjectManager;
+import com.knightlore.network.client.ClientNetworkObjectManager;
+import com.knightlore.network.server.ServerNetworkObjectManager;
 import com.knightlore.render.Camera;
 import com.knightlore.render.Renderer;
 import com.knightlore.render.Screen;
-import com.knightlore.world.GameWorld;
 import com.knightlore.world.TestWorld;
 
 /**
@@ -34,6 +36,8 @@ public class GameEngine implements Runnable {
 
     private GameWorld world;
     private GameObjectManager gameObjectManager;
+    private NetworkObjectManager networkObjectManager;
+    private Camera camera;
     private Renderer renderer;
 
     private GameEngine() {
@@ -60,6 +64,10 @@ public class GameEngine implements Runnable {
     // FIXME: remove this
     public Renderer getRenderer() {
         return this.renderer;
+    }    
+
+    public NetworkObjectManager getNetworkObjectManager() {
+        return networkObjectManager;
     }
 
     /**
@@ -78,12 +86,22 @@ public class GameEngine implements Runnable {
         // ALSO TODO, UNHOOK TEST WORLD
         System.out.println("Initialising World...");
         world = new TestWorld();
-        System.out.println("initialising...");
+
+        System.out.println("Initialising NetworkObjectManager...");
+        if (GameSettings.isClient())
+            networkObjectManager = new ClientNetworkObjectManager(world);
+        if (GameSettings.isServer())
+            networkObjectManager = new ServerNetworkObjectManager(world);
+        networkObjectManager.init();
+        
         world.initWorld();
-        System.out.println("populating...");
+        System.out.println("Populating world...");
         world.populateWorld();
         System.out.println("World Initialised Successfully.");
-        this.renderer = new Renderer(Camera.mainCamera(), world);
+
+
+        camera = new Camera(world.getMap());
+        this.renderer = new Renderer(camera, world);
     }
 
     /**
@@ -132,7 +150,6 @@ public class GameEngine implements Runnable {
             long now = System.nanoTime();
             delta += (now - lastTime) / ns;
             lastTime = now;
-
             while (delta >= 1) {
                 gameObjectManager.updateObjects();
                 delta -= 1;
@@ -143,8 +160,8 @@ public class GameEngine implements Runnable {
                 screen.render(0, 0, renderer);
                 InputManager.clearMouse();
             }
-
         }
+        System.err.println("GameEngine finished running.");
     }
 
     /**
@@ -164,6 +181,14 @@ public class GameEngine implements Runnable {
         screen.addMouseMotionListener(mouse);
         screen.addMouseWheelListener(mouse);
         screen.requestFocus();
+    }
+    
+    public Camera getCamera() {
+        return camera;
+    }
+
+    public GameWorld getWorld() {
+        return world;
     }
 
 }

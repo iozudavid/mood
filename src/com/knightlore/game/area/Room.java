@@ -21,7 +21,7 @@ public class Room extends Area {
     public static boolean addConnection(RoomConnection connection) {
         Room source = connection.getSource();
         Room target = connection.getTarget();
-        return addConnection(source,target);
+        return addConnection(source, target);
     }
 
     public static boolean addConnection(Room r1, Room r2) {
@@ -39,9 +39,9 @@ public class Room extends Area {
     }
 
     public int getNumConnections() {
-    	return connections.size();
+        return connections.size();
     }
-    
+
     public List<Room> getConnections() {
         return connections;
     }
@@ -49,27 +49,27 @@ public class Room extends Area {
     public Point getPosition() {
         return position;
     }
-    
+
     public Point getCentre() {
-    	return new Point(position.x + width/2, position.y + height/2);
+        return new Point(position.x + width / 2, position.y + height / 2);
     }
 
     @Override
     public boolean equals(Object o) {
-    	if (this == o) {
-    		return true;
-    	}
-    	
-    	if (o == null) {
-    		return false;
-    	}
-    	
-    	if (!(o instanceof Room)) {
-    		return false;
-    	}
-    	
-    	Room r = (Room) o;
-    	return position.equals(r.position);
+        if (this == o) {
+            return true;
+        }
+
+        if (o == null) {
+            return false;
+        }
+
+        if (!(o instanceof Room)) {
+            return false;
+        }
+
+        Room r = (Room) o;
+        return position.equals(r.position);
     }
-    
+
 }
