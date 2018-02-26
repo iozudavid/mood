@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.knightlore.engine.GameEngine;
 import com.knightlore.game.Player;
+import com.knightlore.utils.Physics;
 import com.knightlore.utils.Vector2D;
 
 public final class TurretServer extends TurretShared {
@@ -56,6 +57,12 @@ public final class TurretServer extends TurretShared {
         if (target == null) {
             return;
         }
+        // can't shoot if there's something in the way
+        if(Physics.linecastQuick(this.position, target.getPosition(),50)) {
+            return;
+        }
+        System.out.println("!!! BANG !!!");
+        System.out.println("A player just got shot by a turret.");
     }
     
     @Override
