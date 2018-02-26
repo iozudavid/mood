@@ -14,7 +14,7 @@ import com.knightlore.utils.Vector2D;
 public class Camera {
 
     /* -.66 is a good value. */
-    public static final double FIELD_OF_VIEW = -.66;
+    public static final double FIELD_OF_VIEW = .66;
 
     /* Variables concerning motion bob. */
     private static final double MOTION_BOB_AMOUNT = 7.0;
@@ -72,7 +72,9 @@ public class Camera {
     }
 
     public synchronized Vector2D getPlane() {
-        return subject.getPlane();
+        Vector2D plane = subject.getPlane();
+        Vector2D fovAdjustedPlane = new Vector2D(plane.getX(), plane.getY() * FIELD_OF_VIEW);
+        return fovAdjustedPlane;
     }
 
     public synchronized double getxPlane() {
@@ -84,7 +86,7 @@ public class Camera {
         Vector2D plane = this.getPlane();
         return plane.getY();
     }
-    
+
     public Entity getSubject() {
         return subject;
     }
@@ -96,5 +98,5 @@ public class Camera {
     public boolean isSubjectSet() {
         return subject != null;
     }
-    
+
 }

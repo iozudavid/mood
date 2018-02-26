@@ -1,7 +1,7 @@
 package com.knightlore.utils;
 
 public final class Vector2D {
-    
+
     private double x;
     private double y;
 
@@ -14,6 +14,14 @@ public final class Vector2D {
 
     public static Vector2D add(Vector2D a, Vector2D b) {
         return new Vector2D(a.x + b.x, a.y + b.y);
+    }
+
+    public static Vector2D mul(Vector2D a, Vector2D b) {
+        return new Vector2D(a.x * b.x, a.y * b.y);
+    }
+
+    public static Vector2D mul(Vector2D a, double b) {
+        return new Vector2D(a.x * b, a.y * b);
     }
 
     public static Vector2D sub(Vector2D a, Vector2D b) {
