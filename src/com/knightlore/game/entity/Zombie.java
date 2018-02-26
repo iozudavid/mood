@@ -14,6 +14,7 @@ import com.knightlore.utils.Vector2D;
 import com.knightlore.utils.pathfinding.PathFinder;
 
 public class Zombie extends Entity {
+    private static final double DIRECTION_DIFFERENCE_TO_TURN = 0.1d;
     private static final long THINKING_FREQUENCY = 1000; // ms
 
     private final GameWorld world = GameEngine.getSingleton().getWorld();
@@ -74,9 +75,9 @@ public class Zombie extends Entity {
         }
 
         double turnDirection = nextPointDirection.cross(this.direction);
-        if (turnDirection < -0.1d) {
+        if (turnDirection < -DIRECTION_DIFFERENCE_TO_TURN) {
             rotateAntiClockwise();
-        } else if (turnDirection > 0.1d) {
+        } else if (turnDirection > DIRECTION_DIFFERENCE_TO_TURN) {
             rotateClockwise();
         } else {
             moveForward();
