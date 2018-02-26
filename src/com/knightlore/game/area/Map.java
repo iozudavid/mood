@@ -9,7 +9,6 @@ import com.knightlore.game.tile.Tile;
 import com.knightlore.utils.Vector2D;
 
 public class Map extends Area {
-
     // TODO: read in maps from file
     private final long seed;
 

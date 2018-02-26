@@ -51,7 +51,7 @@ public final class Vector2D {
     
     // allocates a new vector, does not modify the original
     public Vector2D subtract(Vector2D v) {
-        return new Vector2D(x + v.x, y + v.y);
+        return new Vector2D(x - v.x, y - v.y);
     }
     
     // allocates a new vector, does not modify the original
@@ -85,13 +85,19 @@ public final class Vector2D {
         return (x * x) + (y * y);
     }
     
+    public double sqrDistTo(Vector2D v) {
+        if (v == null) {
+            return 0D;
+        }
+        return ((x - v.x) * (x - v.x)) + ((y - v.y) * (y - v.y));
+    }
+    
     /**
      * Makes the vector have length 1, calls magnitude first.
      */
-    public void normalise() {
+    public Vector2D normalised() {
         double mag = magnitude();
-        x = x / mag;
-        y = y / mag;
+        return new Vector2D(x/mag,y/mag);
     }
     
     /**

@@ -1,5 +1,9 @@
 package com.knightlore.ai;
 
+import java.util.List;
+
+import com.knightlore.engine.GameEngine;
+import com.knightlore.game.Player;
 import com.knightlore.utils.Vector2D;
 
 public final class TurretServer extends TurretShared {
@@ -10,21 +14,53 @@ public final class TurretServer extends TurretShared {
     }
     
     @Override
+    public void onUpdate() {
+        // 60 ticks per second
+        long currentTime = GameEngine.ticker.getTime();
+        aim();
+        if (currentTime >= nextCheckTime) {
+            think();
+            shoot();
+            nextCheckTime = currentTime + TURRET_CHECK_DELAY;
+        }
+    }
+    
+    private void think() {
+        List<Player> players = GameEngine.getSingleton().getGameObjectManager().findObjectsOfType(Player.class);
+        for (Player player : players) {
+            double sqrDist = player.getPosition().sqrDistTo(this.getPosition());
+            if(sqrDist < sqrRange) {
+                target = player;
+                return;
+            }
+        }
+        target = null;
+        
+    }
+    
+    protected void aim() {
+        long currentTime = GameEngine.ticker.getTime();
+        if (!hasTarget()) {
+            this.direction = new Vector2D(Math.sin(currentTime / 90d), Math.cos(currentTime / 90d));
+            this.plane = this.direction.perpendicular();
+            return;
+        }
+        // we got a target, let's look at them
+        this.direction = target.getPosition().subtract(this.getPosition()).normalised();
+        this.plane = direction.perpendicular();
+        
+    }
+    
+    @Override
     protected void shoot() {
         if (target == null) {
-            System.out.println("No target");
             return;
         }
         System.out.println("Shooting at position " + target.getPosition());
     }
-
+    
     @Override
-    protected byte hasTarget() {
-        if(target == null) {
-            return 0;
-        }
-        else {
-            return 1;
-        }
+    protected boolean hasTarget() {
+        return target != null;
     }
 }

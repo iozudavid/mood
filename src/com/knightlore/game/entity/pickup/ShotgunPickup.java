@@ -28,11 +28,6 @@ public class ShotgunPickup extends PickupItem {
     }
 
     @Override
-    public int getDrawSize() {
-        return 5;
-    }
-
-    @Override
     public int getMinimapColor() {
         return 0xFF00FF;
     }
@@ -40,6 +35,12 @@ public class ShotgunPickup extends PickupItem {
     @Override
     public DirectionalSprite getDirectionalSprite() {
         return ShotgunSprite.SHOTGUN_DIRECTIONAL_SPRITE;
+    }
+
+    @Override
+    public String getClientClassName() {
+        // One class for both client and server.
+        return this.getClass().getName();
     }
 
 }

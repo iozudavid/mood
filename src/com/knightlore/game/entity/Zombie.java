@@ -5,7 +5,6 @@ import java.util.UUID;
 
 import com.knightlore.network.NetworkObject;
 import com.knightlore.render.graphic.sprite.DirectionalSprite;
-import com.knightlore.render.minimap.Minimap;
 import com.knightlore.utils.Vector2D;
 
 public class Zombie extends Entity {
@@ -32,11 +31,6 @@ public class Zombie extends Entity {
     }
 
     @Override
-    public int getDrawSize() {
-        return Minimap.SCALE / 2;
-    }
-
-    @Override
     public int getMinimapColor() {
         // make it white
         return 0xFFFFFF;
@@ -50,6 +44,12 @@ public class Zombie extends Entity {
     @Override
     public void onUpdate() {
 
+    }
+
+    @Override
+    public String getClientClassName() {
+        // One class for both client and server.
+        return this.getClass().getName();
     }
 
     // TODO TODO TODO
