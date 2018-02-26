@@ -13,7 +13,6 @@ import com.knightlore.network.NetworkObject;
 import com.knightlore.network.protocol.ClientControl;
 import com.knightlore.network.protocol.ClientProtocol;
 import com.knightlore.render.graphic.sprite.DirectionalSprite;
-import com.knightlore.render.minimap.Minimap;
 import com.knightlore.utils.Vector2D;
 
 public class Player extends Entity {
@@ -35,7 +34,7 @@ public class Player extends Entity {
     }
 
     public Player(UUID uuid, Vector2D pos, Vector2D dir) {
-        super(uuid, 0.33D, pos, dir);
+        super(uuid, 0.66D, pos, dir);
         this.currentWeapon = new Shotgun();
 
         // Map possible inputs to the methods that handle them. Avoids long
@@ -130,11 +129,6 @@ public class Player extends Entity {
     public void onDestroy() {
         // TODO Auto-generated method stub
 
-    }
-
-    @Override
-    public int getDrawSize() {
-        return Minimap.SCALE / 2;
     }
 
     @Override

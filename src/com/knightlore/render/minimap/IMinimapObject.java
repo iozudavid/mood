@@ -6,7 +6,7 @@ public interface IMinimapObject {
 
     public Vector2D getPosition();
 
-    public int getDrawSize();
+    public double getDrawSize();
 
     public int getMinimapColor();
 

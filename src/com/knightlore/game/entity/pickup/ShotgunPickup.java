@@ -28,11 +28,6 @@ public class ShotgunPickup extends PickupItem {
     }
 
     @Override
-    public int getDrawSize() {
-        return 5;
-    }
-
-    @Override
     public int getMinimapColor() {
         return 0xFF00FF;
     }
