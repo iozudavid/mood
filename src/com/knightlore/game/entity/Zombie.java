@@ -4,6 +4,7 @@ import java.awt.Point;
 import java.nio.ByteBuffer;
 import java.util.*;
 
+import com.knightlore.ai.AIManager;
 import com.knightlore.engine.GameEngine;
 import com.knightlore.game.Player;
 import com.knightlore.game.world.GameWorld;
@@ -16,7 +17,6 @@ public class Zombie extends Entity {
     private static final long THINKING_FREQUENCY = 1000; // ms
 
     private final GameWorld world = GameEngine.getSingleton().getWorld();
-    private final PathFinder pathFinder = new PathFinder(world.getMap().getCostGrid());
     private long lastThinkingTime = 0;
     private List<Point> currentPath = new LinkedList<>();
 
@@ -67,21 +67,18 @@ public class Zombie extends Entity {
             return;
         }
 
-        Vector2D nextPointDirection = Vector2D.sub(this.position, new Vector2D(currentPath.get(0)));
+        Vector2D nextPointDirection = Vector2D.sub( new Vector2D(currentPath.get(0)), this.position);
         if (Vector2D.ZERO.subtract(this.direction).isEqualTo(nextPointDirection)) {
             rotateClockwise();
             return;
         }
 
         double turnDirection = nextPointDirection.cross(this.direction);
-        if (turnDirection > 0) {
+        if (turnDirection < -0.1d) {
             rotateAntiClockwise();
-        } else {
+        } else if (turnDirection > 0.1d) {
             rotateClockwise();
-        }
-
-        double directionsDot = nextPointDirection.dot(this.direction);
-        if (directionsDot < 0) {
+        } else {
             moveForward();
         }
 
@@ -91,10 +88,9 @@ public class Zombie extends Entity {
     }
 
     private void think() {
-        pathFinder.setCostGrid(world.getMap().getCostGrid());
         List<Player> players = world.getPlayerManager().getPlayers();
         Optional<List<Point>> pathToClosestPlayer = players.stream()
-                .map(player -> pathFinder.findPath(this.position, player.getPosition()))
+                .map(player -> world.getAIManager().findPath(this.position, player.getPosition()))
                 .min(Comparator.comparing(List::size));
 
         pathToClosestPlayer.ifPresent(points -> currentPath = points);

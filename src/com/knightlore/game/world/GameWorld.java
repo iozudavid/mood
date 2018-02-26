@@ -52,6 +52,10 @@ public abstract class GameWorld {
         return playerManager;
     }
 
+    public AIManager getAIManager() {
+        return aiManager;
+    }
+
     public Map getMap() {
         return map;
     }
