@@ -1,5 +1,6 @@
 package com.knightlore.game.entity;
 
+import com.knightlore.game.Team;
 import java.nio.ByteBuffer;
 import java.util.UUID;
 
@@ -26,6 +27,10 @@ public abstract class Entity extends NetworkObject implements IMinimapObject {
     protected Vector2D direction = Vector2D.ONE;
     protected Vector2D plane = Vector2D.ONE;
 
+    // cannot have invalid values
+    // anyone can set a team and get a team
+    public Team team;
+    
     protected int zOffset;
 
     // Allow you to create an entity with a specified UUID. Useful for creating
@@ -39,9 +44,24 @@ public abstract class Entity extends NetworkObject implements IMinimapObject {
         map = GameEngine.getSingleton().getWorld().getMap();
     }
 
-    // Use a random UUID.
+    /**
+     * Creates an Entity with random UUID
+     * @param size - the collision size of the entity
+     * @param position
+     * @param direction
+     */
     protected Entity(double size, Vector2D position, Vector2D direction) {
         this(UUID.randomUUID(), size, position, direction);
+    }
+    
+    /**
+     * Entity collision size defaults to 1
+     * @param uuid
+     * @param position
+     * @param direction
+     */
+    protected Entity(UUID uuid, Vector2D position, Vector2D direction) {
+        this(uuid, 1, position, direction);
     }
 
     public Graphic getGraphic(Vector2D playerPos) {

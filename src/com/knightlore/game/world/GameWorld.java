@@ -2,6 +2,7 @@ package com.knightlore.game.world;
 
 import java.util.List;
 
+import com.knightlore.ai.AIManager;
 import com.knightlore.game.Player;
 import com.knightlore.game.PlayerManager;
 import com.knightlore.game.area.Map;
@@ -11,6 +12,7 @@ import com.knightlore.render.Environment;
 public abstract class GameWorld {
     // all worlds need a map
     protected Map map;
+    protected AIManager aiManager;
     protected final PlayerManager playerManager = new PlayerManager();
 
     /**
