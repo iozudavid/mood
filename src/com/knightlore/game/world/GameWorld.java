@@ -46,6 +46,10 @@ public abstract class GameWorld {
 
     public abstract Environment getEnvironment();
 
+    public PlayerManager getPlayerManager() {
+        return playerManager;
+    }
+
     public Map getMap() {
         return map;
     }
