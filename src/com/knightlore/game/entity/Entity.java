@@ -98,7 +98,7 @@ public abstract class Entity extends NetworkObject implements IMinimapObject {
         return zOffset;
     }
 
-    public synchronized void moveForward() {
+    protected synchronized void moveForward() {
         double xPos = position.getX(), yPos = position.getY();
         double xDir = direction.getX(), yDir = direction.getY();
         Tile xTile = map.getTile((int) (xPos + xDir * moveSpeed), (int) yPos);
@@ -108,7 +108,7 @@ public abstract class Entity extends NetworkObject implements IMinimapObject {
         position = new Vector2D(xPos, yPos);
     }
 
-    public synchronized void moveBackward() {
+    protected synchronized void moveBackward() {
         double xPos = position.getX(), yPos = position.getY();
         double xDir = direction.getX(), yDir = direction.getY();
         Tile xTile = map.getTile((int) (xPos - xDir * moveSpeed), (int) yPos);
@@ -118,7 +118,7 @@ public abstract class Entity extends NetworkObject implements IMinimapObject {
         position = new Vector2D(xPos, yPos);
     }
 
-    public synchronized void strafeLeft() {
+    protected synchronized void strafeLeft() {
         double xPos = position.getX(), yPos = position.getY();
         double xDir = direction.getX(), yDir = direction.getY();
         Tile xTile = map.getTile((int) (xPos - yDir * strafeSpeed), (int) (yPos));
@@ -128,7 +128,7 @@ public abstract class Entity extends NetworkObject implements IMinimapObject {
         position = new Vector2D(xPos, yPos);
     }
 
-    public synchronized void strafeRight() {
+    protected synchronized void strafeRight() {
         double xPos = position.getX(), yPos = position.getY();
         double xDir = direction.getX(), yDir = direction.getY();
         Tile xTile = map.getTile((int) (xPos + yDir * strafeSpeed), (int) (yPos));
@@ -143,7 +143,7 @@ public abstract class Entity extends NetworkObject implements IMinimapObject {
      * position and plane vectors, then multiply them by the rotation matrix
      * (whose parameter is ROTATION_SPEED). This lets us rotate.
      */
-    public synchronized void rotateAntiClockwise() {
+    protected synchronized void rotateAntiClockwise() {
         double xDir = direction.getX(), yDir = direction.getY();
         double xPlane = plane.getX(), yPlane = plane.getY();
         double oldxDir = xDir;
@@ -159,7 +159,7 @@ public abstract class Entity extends NetworkObject implements IMinimapObject {
     /**
      * Same as rotating left but clockwise this time.
      */
-    public synchronized void rotateClockwise() {
+    protected synchronized void rotateClockwise() {
         double xDir = direction.getX(), yDir = direction.getY();
         double xPlane = plane.getX(), yPlane = plane.getY();
         double oldxDir = xDir;
