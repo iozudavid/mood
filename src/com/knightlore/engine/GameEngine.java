@@ -40,6 +40,7 @@ public class GameEngine implements Runnable {
     private NetworkObjectManager networkObjectManager;
     private Camera camera;
     private Renderer renderer;
+    public GameState gameState;
 
     private GameEngine() {
         if (HEADLESS) {
@@ -103,6 +104,7 @@ public class GameEngine implements Runnable {
 
         camera = new Camera(world.getMap());
         this.renderer = new Renderer(camera, world);
+        this.gameState = GameState.StartMenu;
     }
 
     /**

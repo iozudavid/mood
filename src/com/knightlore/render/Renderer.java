@@ -4,12 +4,15 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Stack;
 
-import com.knightlore.game.world.GameWorld;
+import com.knightlore.engine.GameEngine;
+import com.knightlore.engine.GameState;
 import com.knightlore.game.area.Map;
 import com.knightlore.game.entity.Entity;
 import com.knightlore.game.tile.AirTile;
 import com.knightlore.game.tile.Tile;
+import com.knightlore.game.world.GameWorld;
 import com.knightlore.gui.GUICanvas;
+import com.knightlore.gui.StartMenu;
 import com.knightlore.render.graphic.Graphic;
 import com.knightlore.render.minimap.Minimap;
 import com.knightlore.utils.Vector2D;
@@ -29,11 +32,13 @@ public class Renderer implements IRenderable {
     private Minimap minimap;
 
     private GUICanvas gui;
+    private StartMenu startMenu;
 
     public Renderer(Camera camera, GameWorld world) {
         this.camera = camera;
         this.world = world;
         this.minimap = new Minimap(camera, world, 128);
+        this.startMenu = new StartMenu(Screen.getScreenResolution());
     }
 
     private final int BLOCKINESS = 3; // how 'old school' you want to look.
@@ -52,6 +57,11 @@ public class Renderer implements IRenderable {
         if (camera.getSubject().getDirection().isEqualTo(Vector2D.ZERO, 0.01))
             return;
 
+       if(GameEngine.getSingleton().gameState==GameState.StartMenu){
+        	this.startMenu.render(pix,x,y);
+       }
+    	else{
+        
         // Draw the environment, as specified by the world.
         world.getEnvironment().renderEnvironment(pix);
 
@@ -67,7 +77,7 @@ public class Renderer implements IRenderable {
 
         PixelBuffer minimapBuffer = minimap.getPixelBuffer();
         pix.composite(minimapBuffer, pix.getWidth() - minimapBuffer.getWidth() - 10, 5);
-
+        }
     }
 
     /*
