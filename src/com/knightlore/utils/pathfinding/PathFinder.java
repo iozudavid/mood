@@ -4,7 +4,7 @@ import java.awt.Point;
 import java.util.*;
 
 public class PathFinder {
-    private final double[][] costGrid;
+    private double[][] costGrid;
 
     public PathFinder(double[][] costGrid) {
         this.costGrid = costGrid;
@@ -75,5 +75,9 @@ public class PathFinder {
 
     private boolean isInBounds(Point p, double[][] grid) {
         return p.x >= 0 && p.x < grid.length && p.y >= 0 && p.y < grid[0].length;
+    }
+
+    public void setCostGrid(double[][] costGrid) {
+        this.costGrid = costGrid;
     }
 }
