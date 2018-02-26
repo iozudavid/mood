@@ -1,5 +1,6 @@
 package com.knightlore.game.area.generation;
 
+import com.knightlore.game.Team;
 import com.knightlore.game.area.Room;
 import com.knightlore.game.tile.AirTile;
 import com.knightlore.game.tile.BrickTile;
@@ -12,7 +13,7 @@ public class RoomGenerator extends ProceduralAreaGenerator {
     private static final int MIN_SIZE = 4;
     private static final int MAX_SIZE = 16;
 
-    public Room createRoom(long seed) {
+    public Room createRoom(long seed , Team team) {
         rand = new Random(seed);
 
         int width = getGaussianNum(MIN_SIZE, MAX_SIZE);
@@ -21,7 +22,11 @@ public class RoomGenerator extends ProceduralAreaGenerator {
 
         resetGrid();
         fillGrid();
-        return new Room(grid);
+        Room room = new Room(grid);
+        if(team != Team.none) {
+            //grid[grid.length/2][grid[0].length/2] = new PlayerSpawnTile(team); 
+        }
+        return room;
     }
 
     @Override

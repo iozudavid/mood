@@ -8,6 +8,7 @@ import java.util.PriorityQueue;
 import java.util.Queue;
 import java.util.Random;
 
+import com.knightlore.game.Team;
 import com.knightlore.game.area.Map;
 import com.knightlore.game.area.Room;
 import com.knightlore.game.tile.AirTile;
@@ -53,11 +54,11 @@ public class MapGenerator extends ProceduralAreaGenerator {
 
     private void generateRooms() {
         RoomGenerator roomGenerator = new RoomGenerator();
-        Room room = roomGenerator.createRoom(rand.nextLong());
+        Room room = roomGenerator.createRoom(rand.nextLong(),Team.blue);
 
         while (rooms.size() < MAX_ROOMS && setRoomPosition(room)) {
             rooms.add(room);
-            room = roomGenerator.createRoom(rand.nextLong());
+            room = roomGenerator.createRoom(rand.nextLong(),Team.none);
         }
     }
 
