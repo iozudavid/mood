@@ -103,7 +103,10 @@ public class GameEngine implements Runnable {
 
 
         camera = new Camera(world.getMap());
-        this.renderer = new Renderer(camera, world);
+        if(HEADLESS)
+        	this.renderer = new Renderer(camera, world);
+        else
+        	this.renderer = new Renderer(camera, world, screen);
         this.gameState = GameState.StartMenu;
     }
 

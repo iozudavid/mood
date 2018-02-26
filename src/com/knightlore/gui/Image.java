@@ -1,6 +1,5 @@
 package com.knightlore.gui;
 
-import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
@@ -33,8 +32,19 @@ public class Image extends GUIObject{
 
 	@Override
 	void Draw(Graphics g) {
-	//	g.fillRect(rect.x, rect.y, rect.width, rect.height);
-		g.drawImage(sheet, rect.x, rect.y, rect.width, rect.height, null);
+		BufferedImage imageResized = this.resize(sheet, rect.width,rect.height);
+		g.drawImage(imageResized, rect.x, rect.y, null);
 	}
 
+	private BufferedImage resize(BufferedImage img, int newW, int newH) { 
+	    java.awt.Image tmp = img.getScaledInstance(newW, newH, java.awt.Image.SCALE_SMOOTH);
+	    BufferedImage dimg = new BufferedImage(newW, newH, BufferedImage.TYPE_INT_ARGB);
+
+	    Graphics2D g2d = dimg.createGraphics();
+	    g2d.drawImage(tmp, 0, 0, null);
+	    g2d.dispose();
+
+	    return dimg;
+	}
+	
 }

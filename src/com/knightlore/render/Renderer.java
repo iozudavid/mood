@@ -34,11 +34,17 @@ public class Renderer implements IRenderable {
     private GUICanvas gui;
     private StartMenu startMenu;
 
+    public Renderer(Camera camera, GameWorld world, Screen screen) {
+        this.camera = camera;
+        this.world = world;
+        this.minimap = new Minimap(camera, world, 128);
+        this.startMenu = new StartMenu(screen.getHeight(), screen.getWidth());
+    }
+    
     public Renderer(Camera camera, GameWorld world) {
         this.camera = camera;
         this.world = world;
         this.minimap = new Minimap(camera, world, 128);
-        this.startMenu = new StartMenu(Screen.getScreenResolution());
     }
 
     private final int BLOCKINESS = 3; // how 'old school' you want to look.

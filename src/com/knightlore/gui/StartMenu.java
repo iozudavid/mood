@@ -1,51 +1,44 @@
 package com.knightlore.gui;
 
-import java.awt.Dimension;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 
 import com.knightlore.render.PixelBuffer;
-import com.knightlore.render.graphic.Graphic;
 
 public class StartMenu {
 
 	private GUICanvas gui;
-	private double height;
-	private double width;
-	private Image coverImage = new Image(0, 0, (int)width, (int)height, "res/graphics/knightlorecoverblur.png");
-	private Image name = new Image(0, 0, 500, 100, "res/graphics/logo.png");
+	private int screenHeight;
+	private int screenWidth;
+	private Image coverImage;
+	private Image name; 
 	
-	public StartMenu(Dimension dimension){
+	public StartMenu(int screenHeight, int screenWidth){
 		this.gui = new GUICanvas();
-		this.height=dimension.getHeight();
-		this.width=dimension.getWidth();
+		this.screenHeight = screenHeight;
+		this.screenWidth = screenWidth;
+		coverImage = new Image(0, 0, screenWidth, screenHeight, "res/graphics/knightlorecoverblur.png");
+		this.name = new Image(middleWidth(500), calculateHeight(10), 500, 100, "res/graphics/logo.png");
 	}
 	
+
 	public void render(PixelBuffer pix, int x, int y){
-		BufferedImage combined = new BufferedImage(pix.getWidth(), pix.getHeight(), BufferedImage.TYPE_INT_ARGB);
 
-		// paint both images
-		Graphics g = combined.getGraphics();
-		g.drawImage(coverImage.sheet, 0, 0, null);
-		int start = (int)(pix.getWidth() - name.getRectangle().getWidth());
-		start /= 2;
-		System.out.println(start);
-		BufferedImage resizedImage = resize(name.sheet, (int)name.getRectangle().getWidth(), (int)name.getRectangle().getHeight());
-		g.drawImage(resizedImage, start, (int)(0.1*pix.getHeight()), null);
+		Button singlePlayer = new Button(middleWidth(250), calculateHeight(35), 250, 40);
 		
-		pix.drawGraphic(new Graphic(combined), 0, 0);
+		gui.addGUIObject(coverImage);
+		gui.addGUIObject(name);
+		gui.addGUIObject(singlePlayer);
+		gui.render(pix, x, y);
 	}
 	
-	public static BufferedImage resize(BufferedImage img, int newW, int newH) { 
-	    java.awt.Image tmp = img.getScaledInstance(newW, newH, java.awt.Image.SCALE_SMOOTH);
-	    BufferedImage dimg = new BufferedImage(newW, newH, BufferedImage.TYPE_INT_ARGB);
-
-	    Graphics2D g2d = dimg.createGraphics();
-	    g2d.drawImage(tmp, 0, 0, null);
-	    g2d.dispose();
-
-	    return dimg;
-	}  
+	public int middleWidth(int objWidth){
+		int middle = this.screenWidth - objWidth;
+		return middle/2;
+	}
+	
+	public int calculateHeight(int procent){
+		double decimal = (double)procent/(double)100;
+		return (int)(decimal*this.screenHeight);
+	}
 		
 }
