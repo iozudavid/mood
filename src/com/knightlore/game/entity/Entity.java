@@ -201,4 +201,10 @@ public abstract class Entity extends NetworkObject implements IMinimapObject {
         plane = new Vector2D(planeX, planeY);
         // zOffset = buf.getInt();
     }
+
+    @Override
+    public double getDrawSize() {
+        return 2 * size;
+    }
+
 }

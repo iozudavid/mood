@@ -32,11 +32,6 @@ public class Zombie extends Entity {
     }
 
     @Override
-    public int getDrawSize() {
-        return Minimap.SCALE / 2;
-    }
-
-    @Override
     public int getMinimapColor() {
         // make it white
         return 0xFFFFFF;
