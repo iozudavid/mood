@@ -9,7 +9,6 @@ import com.knightlore.game.Player;
 import com.knightlore.game.world.GameWorld;
 import com.knightlore.network.NetworkObject;
 import com.knightlore.render.graphic.sprite.DirectionalSprite;
-import com.knightlore.render.minimap.Minimap;
 import com.knightlore.utils.Vector2D;
 import com.knightlore.utils.pathfinding.PathFinder;
 
@@ -29,23 +28,18 @@ public class Zombie extends Entity {
         return obj;
     }
 
-    public Zombie(double size, Vector2D position) {
-        this(size, position, Vector2D.UP);
+    public Zombie(Vector2D position) {
+        this(position, Vector2D.UP);
     }
 
-    public Zombie(double size, Vector2D position, Vector2D direction) {
-        super(size, position, direction);
+    public Zombie(Vector2D position, Vector2D direction) {
+        super(0.25D, position, direction);
         zOffset = 100;
     }
 
-    protected Zombie(UUID uuid, double size, Vector2D position, Vector2D direction) {
+    private Zombie(UUID uuid, double size, Vector2D position, Vector2D direction) {
         super(uuid, size, position, direction);
         zOffset = 100;
-    }
-
-    @Override
-    public int getDrawSize() {
-        return Minimap.SCALE / 2;
     }
 
     @Override
@@ -105,6 +99,12 @@ public class Zombie extends Entity {
 
         pathToClosestPlayer.ifPresent(points -> currentPath = points);
         lastThinkingTime = System.currentTimeMillis();
+    }
+
+    @Override
+    public String getClientClassName() {
+        // One class for both client and server.
+        return this.getClass().getName();
     }
 
     // TODO serialize

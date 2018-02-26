@@ -37,7 +37,7 @@ public class Minimap implements TickListener {
      * How zoomed in the minimap should appear. The higher this value, the more
      * zoomed in.
      */
-    public static final int SCALE = 8;
+    public double scale = 8;
 
     /**
      * The resolution of the minimap. This is the size to draw a single pixel. A
@@ -115,10 +115,10 @@ public class Minimap implements TickListener {
         prevDir = dir;
 
         // Find the positions to start rendering based on SCOPE.
-        int startX = (int) Math.max(0, pos.getX() * SCALE - SCOPE),
-                endX = (int) Math.min(width, pos.getX() * SCALE + SCOPE);
-        int startY = (int) Math.max(0, pos.getY() * SCALE - SCOPE),
-                endY = (int) Math.min(height, pos.getY() * SCALE + SCOPE);
+        int startX = (int) Math.max(0, pos.getX() * scale - SCOPE),
+                endX = (int) Math.min(width, pos.getX() * scale + SCOPE);
+        int startY = (int) Math.max(0, pos.getY() * scale - SCOPE),
+                endY = (int) Math.min(height, pos.getY() * scale + SCOPE);
 
         // make sure we always start on a multiple of resolution to avoid weird
         // stuttering.
@@ -146,11 +146,11 @@ public class Minimap implements TickListener {
     private void drawMinimapObjects(double theta) {
         for (IMinimapObject obj : world.getEntities()) {
             Vector2D pos = obj.getPosition();
-            pos = transform((int) (pos.getX() * SCALE), (int) (pos.getY() * SCALE), theta);
+            pos = transform((int) (pos.getX() * scale), (int) (pos.getY() * scale), theta);
 
             int color = obj.getMinimapColor();
             color = mask.adjustForLighting(display, color, (int) pos.getX(), (int) pos.getY());
-            display.fillSquare(color, (int) pos.getX(), (int) pos.getY(), obj.getDrawSize());
+            display.fillSquare(color, (int) pos.getX(), (int) pos.getY(), (int) (obj.getDrawSize() * scale));
         }
     }
 
@@ -158,8 +158,8 @@ public class Minimap implements TickListener {
         final int size = display.getWidth();
 
         double drawX = xx, drawY = yy;
-        drawX -= camera.getxPos() * SCALE;
-        drawY -= camera.getyPos() * SCALE;
+        drawX -= camera.getxPos() * scale;
+        drawY -= camera.getyPos() * scale;
 
         drawX += size / 2;
         drawY += size / 2;
@@ -185,7 +185,8 @@ public class Minimap implements TickListener {
         // draw the player.
         final int PLAYER_COLOR = 0xFFFFFF;
 
-        display.fillSquare(PLAYER_COLOR, display.getWidth() / 2, display.getWidth() / 2, SCALE / 2);
+        // display.fillSquare(PLAYER_COLOR, display.getWidth() / 2,
+        // display.getWidth() / 2, scale / 2);
     }
 
     /**
@@ -212,14 +213,14 @@ public class Minimap implements TickListener {
      */
     private void recreatePixelMap() {
         Map map = world.getMap();
-        this.width = map.getWidth() * SCALE;
-        this.height = map.getHeight() * SCALE;
+        this.width = (int) (map.getWidth() * scale);
+        this.height = (int) (map.getHeight() * scale);
         this.pixelMap = new int[width * height];
 
         final int base = world.getEnvironment().getMinimapBaseColor();
         for (int y = 0; y < height; y++) {
             for (int x = 0; x < width; x++) {
-                Tile t = map.getTile(x / SCALE, y / SCALE);
+                Tile t = map.getTile((int) (x / scale), (int) (y / scale));
                 int tileColor = t.getMinimapColor();
                 pixelMap[x + y * width] = tileColor != 0 ? tileColor : base;
             }

@@ -88,10 +88,12 @@ public abstract class Entity extends NetworkObject implements IMinimapObject {
 
     public void setxDir(double xDir) {
         direction = new Vector2D(xDir, direction.getY());
+        plane = direction.perpendicular();
     }
 
     public void setyDir(double yDir) {
         direction = new Vector2D(direction.getX(), yDir);
+        plane = direction.perpendicular();
     }
 
     public Vector2D getPlane() {
@@ -108,10 +110,12 @@ public abstract class Entity extends NetworkObject implements IMinimapObject {
 
     public void setxPlane(double xPlane) {
         plane = new Vector2D(xPlane, plane.getY());
+        direction = plane.perpendicular();
     }
 
     public void setyPlane(double yPlane) {
         plane = new Vector2D(plane.getX(), yPlane);
+        direction = plane.perpendicular();
     }
 
     public int getzOffset() {
@@ -165,15 +169,11 @@ public abstract class Entity extends NetworkObject implements IMinimapObject {
      */
     protected synchronized void rotateAntiClockwise() {
         double xDir = direction.getX(), yDir = direction.getY();
-        double xPlane = plane.getX(), yPlane = plane.getY();
         double oldxDir = xDir;
         xDir = xDir * Math.cos(rotationSpeed) - yDir * Math.sin(rotationSpeed);
         yDir = oldxDir * Math.sin(rotationSpeed) + yDir * Math.cos(rotationSpeed);
-        double oldxPlane = xPlane;
-        xPlane = xPlane * Math.cos(rotationSpeed) - yPlane * Math.sin(rotationSpeed);
-        yPlane = oldxPlane * Math.sin(rotationSpeed) + yPlane * Math.cos(rotationSpeed);
         direction = new Vector2D(xDir, yDir);
-        plane = new Vector2D(xPlane, yPlane);
+        plane = direction.perpendicular();
     }
 
     /**
@@ -181,15 +181,11 @@ public abstract class Entity extends NetworkObject implements IMinimapObject {
      */
     protected synchronized void rotateClockwise() {
         double xDir = direction.getX(), yDir = direction.getY();
-        double xPlane = plane.getX(), yPlane = plane.getY();
         double oldxDir = xDir;
         xDir = xDir * Math.cos(-rotationSpeed) - yDir * Math.sin(-rotationSpeed);
         yDir = oldxDir * Math.sin(-rotationSpeed) + yDir * Math.cos(-rotationSpeed);
-        double oldxPlane = xPlane;
-        xPlane = xPlane * Math.cos(-rotationSpeed) - yPlane * Math.sin(-rotationSpeed);
-        yPlane = oldxPlane * Math.sin(-rotationSpeed) + yPlane * Math.cos(-rotationSpeed);
         direction = new Vector2D(xDir, yDir);
-        plane = new Vector2D(xPlane, yPlane);
+        plane = direction.perpendicular();
     }
 
     @Override
@@ -220,5 +216,10 @@ public abstract class Entity extends NetworkObject implements IMinimapObject {
         double planeY = buf.getDouble();
         plane = new Vector2D(planeX, planeY);
         // zOffset = buf.getInt();
+    }
+
+    @Override
+    public double getDrawSize() {
+        return 2 * size;
     }
 }

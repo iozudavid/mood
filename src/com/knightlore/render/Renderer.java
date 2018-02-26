@@ -1,18 +1,15 @@
 package com.knightlore.render;
 
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Stack;
 
 import com.knightlore.game.world.GameWorld;
 import com.knightlore.game.area.Map;
 import com.knightlore.game.entity.Entity;
-import com.knightlore.game.entity.Zombie;
 import com.knightlore.game.tile.AirTile;
 import com.knightlore.game.tile.Tile;
 import com.knightlore.gui.GUICanvas;
-import com.knightlore.network.NetworkObject;
 import com.knightlore.render.graphic.Graphic;
 import com.knightlore.render.minimap.Minimap;
 import com.knightlore.utils.Vector2D;
@@ -33,18 +30,10 @@ public class Renderer implements IRenderable {
 
     private GUICanvas gui;
 
-    private java.util.Map<NetworkObject, Vector2D> networkObjPos;
-    // consider other players as mobs for now
-    // in order to render them
-    private java.util.Map<NetworkObject, Entity> networkObjMobs;
-
     public Renderer(Camera camera, GameWorld world) {
         this.camera = camera;
         this.world = world;
         this.minimap = new Minimap(camera, world, 128);
-
-        this.networkObjPos = new HashMap<>();
-        this.networkObjMobs = new HashMap<>();
     }
 
     private final int BLOCKINESS = 3; // how 'old school' you want to look.
@@ -79,32 +68,6 @@ public class Renderer implements IRenderable {
         PixelBuffer minimapBuffer = minimap.getPixelBuffer();
         pix.composite(minimapBuffer, pix.getWidth() - minimapBuffer.getWidth() - 10, 5);
 
-    }
-
-    public void updateNetworkObjectPos(NetworkObject obj, Vector2D position, Vector2D direction) {
-        if (camera == null)
-            return;
-
-        List<Entity> entities = world.getEntities();
-
-        synchronized (entities) {
-            if (position == null) {
-                this.networkObjPos.remove(obj);
-                entities.remove(this.networkObjMobs.get(obj));
-                this.networkObjMobs.remove(obj);
-            } else if (networkObjPos.containsKey(obj)) {
-                this.networkObjPos.put(obj, position);
-                entities.remove(this.networkObjMobs.get(obj));
-                Zombie z = new Zombie(1D, position, direction);
-                this.networkObjMobs.put(obj, z);
-                entities.add(z);
-            } else {
-                this.networkObjPos.put(obj, position);
-                Zombie z = new Zombie(1D, position, direction);
-                this.networkObjMobs.put(obj, z);
-                entities.add(z);
-            }
-        }
     }
 
     /*
