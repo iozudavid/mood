@@ -330,4 +330,8 @@ public class Renderer implements IRenderable {
         // propagate to minimap
         minimap.setCamera(cam);
     }
+    
+    public void setGUI(GUICanvas gui) {
+        this.gui = gui;
+    }
 }

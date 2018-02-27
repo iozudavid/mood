@@ -21,6 +21,21 @@ public class GUIPanel extends GUIObject {
     
     public void AddGUIObject(GUIObject obj) {
         children.add(obj);
+        sort();
+    }
+    
+    // lower depths are first, therefore, draw in order.
+    // deeper things are drawn first
+    private void sort() {
+        for (int i = 1; i < children.size(); i++) {
+            GUIObject left = children.get(i);
+            GUIObject right = children.get(i-1);
+            // swap
+            if (left.depth < right.depth) {
+                children.set(i, right);
+                children.set(i-1, left);
+            }
+        }
     }
     
     public void RemoveGUIObject(GUIObject obj) {
@@ -31,6 +46,11 @@ public class GUIPanel extends GUIObject {
     void Draw(Graphics g,Rectangle parentRect) {
         if(!isVisible) {
             return;
+        }
+        // because sorted low -> high depth
+        // standard iteration will draw them in order. lowest first
+        for(int i=0;i<children.size();i++){
+            children.get(i).Draw(g,rect);
         }
     }
     
