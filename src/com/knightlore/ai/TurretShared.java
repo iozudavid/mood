@@ -86,7 +86,7 @@ public abstract class TurretShared extends Entity {
     
     @Override
     public DirectionalSprite getDirectionalSprite() {
-        return DirectionalSprite.SHOTGUN_DIRECTIONAL_SPRITE;
+        return DirectionalSprite.TURRET_DIRECTIONAL_SPRITE;
     }
 
     @Override
