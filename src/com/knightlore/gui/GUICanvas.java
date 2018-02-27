@@ -22,7 +22,7 @@ public class GUICanvas extends GameObject implements IRenderable {
 	private static final int TEMP_SIZE = 200;
 	private static final Color BACKGROUND_COLOR = new Color(0xFF000000,true);
 
-	private static TextField activeTextField;
+	static TextField activeTextField;
 
 	private final List<GUIObject> guis;
 	private final Graphic canvasGraphic;
