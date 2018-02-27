@@ -75,7 +75,7 @@ public class SpriteSheetMaker {
                 System.out.println("Failed to read image "+fileName+", see above error ^");
                 return;
             }
-
+/*
             // wipe alpha out of the image
             for (int x = 0; x < width; x++) {
                 for (int y = 0; y < height; y++) {
@@ -89,7 +89,7 @@ public class SpriteSheetMaker {
                     }
                 }
             }
-
+*/
             // calc position
             int yPos = i * height;
             // splat image outside
