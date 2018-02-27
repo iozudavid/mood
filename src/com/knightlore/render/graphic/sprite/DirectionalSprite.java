@@ -10,6 +10,7 @@ public class DirectionalSprite {
 
     public static final PlayerSprite PLAYER_DIRECTIONAL_SPRITE = new PlayerSprite();
     public static final ShotgunSprite SHOTGUN_DIRECTIONAL_SPRITE = new ShotgunSprite();
+    public static final TurretSprite TURRET_DIRECTIONAL_SPRITE = new TurretSprite();
 
     private List<Graphic> angles;
 

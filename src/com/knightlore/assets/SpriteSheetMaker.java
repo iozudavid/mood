@@ -72,7 +72,7 @@ public class SpriteSheetMaker {
                 img = ImageIO.read(file);
             } catch (Exception e) {
                 System.err.println(e);
-                System.out.println("Failed to read images, see above error ^");
+                System.out.println("Failed to read image "+fileName+", see above error ^");
                 return;
             }
 
