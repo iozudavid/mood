@@ -55,7 +55,11 @@ public class MapGenerator extends ProceduralAreaGenerator {
         RoomGenerator roomGenerator = new RoomGenerator();
         // place spawn room first
         Room room = roomGenerator.createRoom(rand.nextLong(), Team.blue);
-
+        setRoomPosition(room , grid.length/4, grid[0].length/4);
+        rooms.add(room);
+        
+        room = roomGenerator.createRoom(rand.nextLong(),Team.none);
+        
         while (rooms.size() < MAX_ROOMS && setRoomPosition(room)) {
             rooms.add(room);
             room = roomGenerator.createRoom(rand.nextLong(),Team.none);
@@ -66,6 +70,27 @@ public class MapGenerator extends ProceduralAreaGenerator {
         List<Point> candidates = new ArrayList<Point>();
         for (int x = 0; x < grid.length - room.getWidth(); x++) {
             for (int y = 0; y < grid[0].length - room.getHeight(); y++) {
+                room.setRoomPosition(new Point(x, y));
+                if (canBePlaced(room)) {
+                    candidates.add(new Point(x, y));
+                }
+            }
+        }
+
+        if (candidates.isEmpty()) {
+            return false;
+        } else {
+            int index = rand.nextInt(candidates.size());
+            room.setRoomPosition(candidates.get(index));
+            placeRoom(room);
+            return true;
+        }
+    }
+    
+    private boolean setRoomPosition(Room room, int maxX, int maxY) {
+        List<Point> candidates = new ArrayList<Point>();
+        for (int x = 0; x < maxX; x++) {
+            for (int y = 0; y < maxY; y++) {
                 room.setRoomPosition(new Point(x, y));
                 if (canBePlaced(room)) {
                     candidates.add(new Point(x, y));
@@ -109,12 +134,11 @@ public class MapGenerator extends ProceduralAreaGenerator {
         int yPos = r.getPosition().y;
         for (int x = xPos; x < xPos + r.getWidth(); x++) {
             for (int y = yPos; y < yPos + r.getHeight(); y++) {
-                if(r.getTile(x - xPos, y - yPos).toChar() == '1') {
-                    grid[x][y] = r.getTile(x - xPos, y - yPos);
-                }else {
+                // place appropriate room tile
                 grid[x][y] = r.getTile(x - xPos, y - yPos);
-                // costGrid[x][y] = Double.MAX_VALUE;
-                }
+                // modify cost grid
+                //costGrid[x][y] = Double.MAX_VALUE;
+                costGrid[x][y] = costGrid[x][y] * 5; // arbitrary value of 5
             }
         }
     }
@@ -167,7 +191,7 @@ public class MapGenerator extends ProceduralAreaGenerator {
                 possibleConnections.add(new RoomConnection(room, target));
             }
 
-            while (room.getNumConnections() < Room.MIN_CONNECTIONS) {
+            while (room.getNumConnections() < room.getMinConnections()) {
                 RoomConnection connection = possibleConnections.poll();
                 Room.addConnection(connection);
             }
@@ -200,13 +224,13 @@ public class MapGenerator extends ProceduralAreaGenerator {
         Room rightmost = rooms.get(0);
         Room secondRightmost = rooms.get(0);
         for (Room room : rooms) {
-            if (room.getCentre().getY() > rightmost.getCentre().getY()) {
+            if (room.getCentre().getX() > rightmost.getCentre().getX()) {
                 rightmost = room;
             }
         }
         for (Room room : rooms) {
             if (!room.equals(rightmost)) {
-                if (room.getCentre().getY() > secondRightmost.getCentre().getY()) {
+                if (room.getCentre().getX() > secondRightmost.getCentre().getX()) {
                     secondRightmost = room;
                 }
             }
@@ -216,12 +240,16 @@ public class MapGenerator extends ProceduralAreaGenerator {
         int height = grid[0].length;
 
         PathFinder pathFinder = new PathFinder(costGrid);
+        
         Point start = rightmost.getCentre();
-        Point goal = new Point(width - 1, 1 + rand.nextInt(height-2));
+        int centreY = start.y;
+        Point goal = new Point(width - 1, centreY - 2 + rand.nextInt(3));
         List<Point> path = pathFinder.findPath(start, goal);
         placePath(path);
+        
         start = secondRightmost.getCentre();
-        goal = new Point(width - 1, rand.nextInt(height));
+        centreY = start.y;
+        goal = new Point(width - 1, centreY - 2 + rand.nextInt(3));
         path = pathFinder.findPath(start, goal);
         placePath(path);
 

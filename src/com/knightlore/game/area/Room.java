@@ -8,9 +8,12 @@ import java.util.LinkedList;
 import java.util.List;
 
 public class Room extends Area {
-    public static final int MIN_CONNECTIONS = 2;
-    public static final int MAX_CONNECTIONS = 6;
+    //public static final int MIN_CONNECTIONS = 2;
+    //public static final int MAX_CONNECTIONS = 6;
 
+    private int minConnections = 2;
+    private int maxConnections = 6;
+    
     private Point position;
     private final List<Room> connections = new LinkedList<>();
 
@@ -18,6 +21,12 @@ public class Room extends Area {
         super(grid);
     }
 
+    public Room(Tile[][] grid, int minCon, int maxCon) {
+        super(grid);
+        minConnections = minCon;
+        maxConnections = maxCon;
+    }
+    
     public static boolean addConnection(RoomConnection connection) {
         Room source = connection.getSource();
         Room target = connection.getTarget();
@@ -25,7 +34,7 @@ public class Room extends Area {
     }
 
     public static boolean addConnection(Room r1, Room r2) {
-        if (r1.connections.size() < MAX_CONNECTIONS && r2.connections.size() < MAX_CONNECTIONS) {
+        if (r1.connections.size() < r1.getMaxConnections() && r2.connections.size() < r2.getMaxConnections()) {
             r1.connections.add(r2);
             r2.connections.add(r1);
             return true;
@@ -38,6 +47,14 @@ public class Room extends Area {
         this.position = position;
     }
 
+    public int getMinConnections() {
+        return minConnections;
+    }
+    
+    public int getMaxConnections() {
+        return maxConnections;
+    }
+    
     public int getNumConnections() {
         return connections.size();
     }
