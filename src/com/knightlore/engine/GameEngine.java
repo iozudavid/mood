@@ -84,8 +84,7 @@ public class GameEngine implements Runnable {
         }
 
         System.out.println("Engine Initialised Successfully.");
-        // TODO maybe refactor this into a make world method
-        // ALSO TODO, UNHOOK TEST WORLD
+        // ALSO TODO, UNHOOK HARD CODED WORLDS
         System.out.println("Initialising World...");
 
         if (GameSettings.isServer()) {
@@ -94,8 +93,14 @@ public class GameEngine implements Runnable {
         }
         if (GameSettings.isClient()) {
             world = new ClientWorld();
+            
+            System.out.println("Initialising Renderer...");
+            camera = new Camera(world.getMap());
+            this.renderer = new Renderer(camera, (ClientWorld) world);
+            System.out.println("Renderer initialised successfully.");
             networkObjectManager = new ClientNetworkObjectManager((ClientWorld) world);
         }
+        System.out.println("Setting up World...");
         world.setUpWorld();
 
         System.out.println("Initialising NetworkObjectManager...");
@@ -103,10 +108,6 @@ public class GameEngine implements Runnable {
 
         System.out.println("World Initialised Successfully.");
 
-        if (GameSettings.isClient()) {
-            camera = new Camera(world.getMap());
-            this.renderer = new Renderer(camera, (ClientWorld) world);
-        }
     }
 
     /**
