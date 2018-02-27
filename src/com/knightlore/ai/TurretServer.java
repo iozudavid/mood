@@ -61,8 +61,8 @@ public final class TurretServer extends TurretShared {
         if(Physics.linecastQuick(this.position, target.getPosition(),50)) {
             return;
         }
-        System.out.println("!!! BANG !!!");
-        System.out.println("A player just got shot by a turret.");
+//        System.out.println("!!! BANG !!!");
+//        System.out.println("A player just got shot by a turret.");
     }
     
     @Override

@@ -51,7 +51,7 @@ public class ClientNetworkObjectManager extends NetworkObjectManager {
     // Called remotely when a new network object is created on the server.
     // WARNING: dank reflection in this method.
     @SuppressWarnings("unchecked")
-    public void newObjCreated(ByteBuffer buf) {
+    public synchronized void newObjCreated(ByteBuffer buf) {
         System.out.println("Receiving new object details from server");
         String className = NetworkUtils.getStringFromBuf(buf);
         UUID objID = UUID.fromString(NetworkUtils.getStringFromBuf(buf));
@@ -99,7 +99,7 @@ public class ClientNetworkObjectManager extends NetworkObjectManager {
 
     // Called remotely when we receive a message from the server to tell us what
     // our UUID is.
-    public void registerPlayerIdentity(ByteBuffer buf) {
+    public synchronized void registerPlayerIdentity(ByteBuffer buf) {
         System.out.println("Registering player identity");
         myPlayerUUID = UUID.fromString(NetworkUtils.getStringFromBuf(buf));
         // wait until the network object

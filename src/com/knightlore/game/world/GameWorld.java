@@ -6,9 +6,12 @@ import java.util.List;
 import com.knightlore.game.area.Map;
 import com.knightlore.game.area.generation.MapGenerator;
 import com.knightlore.game.entity.Entity;
+import com.knightlore.utils.pruner.Pruner;
 
 public abstract class GameWorld {
     
+    public static final int TEST_XSIZE = 16;
+    public static final int TEST_YSIZE = 16;
     public static final long TEST_SEED = 161803398874L;
     
     protected Map map;
@@ -16,13 +19,15 @@ public abstract class GameWorld {
     
     public GameWorld() {
         this.ents = new ArrayList<Entity>();
-        generateMap(16, 16, TEST_SEED);
+        this.map = generateMap(TEST_XSIZE, TEST_YSIZE, TEST_SEED);
+    }
+    
+    public void update() {
+        Pruner.prune(ents);
     }
 
-    protected void generateMap(int xSize, int ySize, long seed) {
-        // First create the map
-        MapGenerator generator = new MapGenerator();
-        this.map = generator.createMap(xSize, ySize, seed);
+    private Map generateMap(int xSize, int ySize, long seed) {
+        return new MapGenerator().createMap(xSize, ySize, seed);
     }
     
     public Map getMap() {

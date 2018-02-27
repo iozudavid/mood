@@ -44,6 +44,18 @@ public class ServerWorld extends GameWorld {
         tboi.init();
     }
 
+    @Override
+    public void update() {
+        super.update();
+        for (Player player : playerManager.getPlayers()) {
+            for (Entity ent : ents) {
+                if (player.getBoundingRectangle().intersects(ent.getBoundingRectangle())) {
+                    ent.onCollide(player);
+                }
+            }
+        }
+    }
+
     public Player createPlayer() {
         Vector2D pos = map.getRandomSpawnPoint();
         Player player = new Player(pos, Vector2D.UP);

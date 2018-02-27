@@ -12,8 +12,9 @@ import com.knightlore.render.graphic.Graphic;
 import com.knightlore.render.graphic.sprite.DirectionalSprite;
 import com.knightlore.render.minimap.IMinimapObject;
 import com.knightlore.utils.Vector2D;
+import com.knightlore.utils.pruner.Prunable;
 
-public abstract class Entity extends NetworkObject implements IMinimapObject {
+public abstract class Entity extends NetworkObject implements IMinimapObject, Prunable {
 
     protected double moveSpeed = .040;
     protected double strafeSpeed = .01;
