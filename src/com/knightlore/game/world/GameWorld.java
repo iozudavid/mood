@@ -32,5 +32,10 @@ public abstract class GameWorld {
     public List<Entity> getEntities() {
         return ents;
     }
+    
+    /**
+     * Populate the world with things initially.
+     */
+    public abstract void setUpWorld();
 
 }
