@@ -95,5 +95,4 @@ public class Button extends GUIObject {
     boolean isSelectable() {
         return true;
     }
-    
 }

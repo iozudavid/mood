@@ -5,7 +5,9 @@ import java.awt.Rectangle;
 
 import com.knightlore.render.graphic.Graphic;
 
-public class Image extends GUIObject{
+public class Image extends GUIObject {
+    public Graphic graphic;
+
 
     public Image(int x, int y, int width, int height, int depth) {
         super(x,y,width,height,depth);
@@ -15,11 +17,9 @@ public class Image extends GUIObject{
         super(x,y,width,height);
     }
 
-	public Graphic graphic;
 
 	@Override
 	void Draw(Graphics g, Rectangle parentRect) {
-		
-	}
 
+	}
 }

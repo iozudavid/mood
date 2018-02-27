@@ -3,14 +3,14 @@ package com.knightlore.gui;
 import java.awt.Graphics;
 import java.awt.Rectangle;
 
-public abstract class GUIObject {
-	
+public abstract class GUIObject {	
     // these should be change-able at runtime by other classes
     // no getter and setter required
 	public int depth;
 	public Rectangle rect;
     public boolean isVisible;
 	
+
 	GUIObject(int x, int y,int width, int height, int depth){
 		this.depth = depth;
 		rect = new Rectangle(x,y,width,height);
@@ -27,27 +27,27 @@ public abstract class GUIObject {
 		return false;
 	}
 	 
-	void OnClick(){
+	void OnClick() {
 		
 	}
 	
-	void OnMouseExit(){
+	void OnMouseExit() {
 		
 	}
 	
-	void onMouseEnter(){
+	void onMouseEnter() {
 		
 	}
 	
-	void onMouseOver(){
+	void onMouseOver() {
 		
 	}
 	
-	void onMouseUp(){
+	void onMouseUp() {
 		
 	}
 	
-	void onMouseDown(){
+	void onMouseDown() {
 		
 	}
 

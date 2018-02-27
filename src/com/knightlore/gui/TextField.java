@@ -5,17 +5,16 @@ import java.awt.Graphics;
 import java.awt.Rectangle;
 
 public class TextField extends GUIObject {
-	
+    private static final Color upColour = Color.LIGHT_GRAY;
+    private static final Color downColour = Color.DARK_GRAY;
+    private static final Color hoverColour = Color.WHITE;
+
 	private SelectState state = SelectState.UP;
 	private String text;
 	private String insertString;
 	private char[] rawChars;
 	private int insertPosition = 0;
-	
-	public Color upColour = Color.LIGHT_GRAY;
-	public Color downColour = Color.DARK_GRAY;
-	public Color hoverColour = Color.WHITE;
-	
+		
 	public TextField(int x, int y, int width, int height) {
         super(x, y, width, height);
     }
@@ -37,19 +36,19 @@ public class TextField extends GUIObject {
 		rawChars = t.toCharArray();
 	}
 	
-	public Color activeColor (){
+	public Color activeColor () {
 		switch(state){
-		case UP:
-			return upColour;
-			
-		case HOVER:
-			return hoverColour;
-			
-		case DOWN:
-			return downColour;
-			
+			case UP:
+				return upColour;
+
+			case HOVER:
+				return hoverColour;
+
+			case DOWN:
+				return downColour;
 		}
-		return upColour;
+
+		throw new IllegalStateException("State " + state + " is not legal");
 	}
 	
 	@Override
@@ -64,19 +63,19 @@ public class TextField extends GUIObject {
 	}
 	
 	@Override
-	boolean isSelectable(){
+	boolean isSelectable() {
 		return true;
 	}
 	
 	@Override
-	void onGainedFocus(){
+	void onGainedFocus() {
 		System.out.println("GAINED FOCUS");
-		GUICanvas.activeTextField = this;
+		GUICanvas.setActiveTextField(this);
 		
 	}
 	
 	@Override
-	void onLostFocus(){
+	void onLostFocus() {
 		System.out.println("LOST FOCUS");
 		GUICanvas.activeTextField = null;
 		displayText(text);
@@ -90,11 +89,12 @@ public class TextField extends GUIObject {
 		displayText(insertString);
 	}
 	
-	void onLeftArrow(){
+	void onLeftArrow() {
 		insertPosition --;
 		if(insertPosition < 0){
 			insertPosition = 0;
 		}
+
 		insertString = text.substring(0, insertPosition)+'|'+text.substring(insertPosition);
 		displayText(insertString);
 	}
@@ -109,28 +109,28 @@ public class TextField extends GUIObject {
 	}
 	
 	@Override
-	void onMouseEnter(){
+	void onMouseEnter() {
 		state = SelectState.HOVER;
 	}
 	
-	void onMouseOver(){
-		if(state == SelectState.UP){
+	void onMouseOver() {
+		if(state == SelectState.UP) {
 			state = SelectState.HOVER;
 		}
 	}
 	
 	@Override
-	void OnMouseExit(){
+	void OnMouseExit() {
 		state = SelectState.UP;
 	}
 	
 	@Override
-	void onMouseDown(){
+	void onMouseDown() {
 		state = SelectState.DOWN;
 	}
 	
 	@Override
-	void onMouseUp(){
+	void onMouseUp() {
 		state = SelectState.UP;
 	}
 }

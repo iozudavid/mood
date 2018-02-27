@@ -1,14 +1,21 @@
 package com.knightlore.game.area.generation;
 
+import java.awt.Point;
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.PriorityQueue;
+import java.util.Queue;
+import java.util.Random;
+
+import com.knightlore.game.Team;
 import com.knightlore.game.area.Map;
 import com.knightlore.game.area.Room;
-import com.knightlore.game.tile.*;
-import com.knightlore.render.Environment;
-import com.knightlore.utils.Vector2D;
+import com.knightlore.game.tile.AirTile;
+import com.knightlore.game.tile.BrickTile;
+import com.knightlore.game.tile.Tile;
+import com.knightlore.game.tile.UndecidedTile;
 import com.knightlore.utils.pathfinding.PathFinder;
-
-import java.awt.Point;
-import java.util.*;
 
 public class MapGenerator extends ProceduralAreaGenerator {
     private static final int MAX_ROOMS = 5;
@@ -19,12 +26,12 @@ public class MapGenerator extends ProceduralAreaGenerator {
     public MapGenerator() {
     }
 
-    public Map createMap(int width, int height, Environment env) {
+    public Map createMap(int width, int height) {
         Random rand = new Random();
-        return createMap(width, height, env, rand.nextLong());
+        return createMap(width, height, rand.nextLong());
     }
 
-    public Map createMap(int width, int height, Environment env, long seed) {
+    public Map createMap(int width, int height, long seed) {
         rand = new Random(seed);
         grid = new Tile[width][height];
         PerlinNoiseGenerator perlinGenerator = new PerlinNoiseGenerator(width, height, seed);
@@ -32,7 +39,7 @@ public class MapGenerator extends ProceduralAreaGenerator {
         // optimal
         costGrid = perlinGenerator.createPerlinNoise();
         fillGrid();
-        return new Map(grid, env, seed);
+        return new Map(grid, seed);
     }
 
     @Override
@@ -46,18 +53,44 @@ public class MapGenerator extends ProceduralAreaGenerator {
 
     private void generateRooms() {
         RoomGenerator roomGenerator = new RoomGenerator();
-        Room room = roomGenerator.createRoom(rand.nextLong());
-
+        // place spawn room first
+        Room room = roomGenerator.createRoom(rand.nextLong(), Team.blue);
+        setRoomPosition(room , grid.length/4, grid[0].length/4);
+        rooms.add(room);
+        
+        room = roomGenerator.createRoom(rand.nextLong(),Team.none);
+        
         while (rooms.size() < MAX_ROOMS && setRoomPosition(room)) {
             rooms.add(room);
-            room = roomGenerator.createRoom(rand.nextLong());
+            room = roomGenerator.createRoom(rand.nextLong(),Team.none);
         }
     }
-
+    
     private boolean setRoomPosition(Room room) {
-        List<Point> candidates = new ArrayList<>();
+        List<Point> candidates = new ArrayList<Point>();
         for (int x = 0; x < grid.length - room.getWidth(); x++) {
             for (int y = 0; y < grid[0].length - room.getHeight(); y++) {
+                room.setRoomPosition(new Point(x, y));
+                if (canBePlaced(room)) {
+                    candidates.add(new Point(x, y));
+                }
+            }
+        }
+
+        if (candidates.isEmpty()) {
+            return false;
+        } else {
+            int index = rand.nextInt(candidates.size());
+            room.setRoomPosition(candidates.get(index));
+            placeRoom(room);
+            return true;
+        }
+    }
+    
+    private boolean setRoomPosition(Room room, int maxX, int maxY) {
+        List<Point> candidates = new ArrayList<Point>();
+        for (int x = 0; x < maxX; x++) {
+            for (int y = 0; y < maxY; y++) {
                 room.setRoomPosition(new Point(x, y));
                 if (canBePlaced(room)) {
                     candidates.add(new Point(x, y));
@@ -80,10 +113,20 @@ public class MapGenerator extends ProceduralAreaGenerator {
         int rightWallX = leftWallX + room.getWidth();
         int topWallY = room.getPosition().y;
         int bottomWallY = topWallY + room.getHeight();
+        /*
         return grid[leftWallX][topWallY] == UndecidedTile.getInstance()
                 && grid[leftWallX][bottomWallY] == UndecidedTile.getInstance()
                 && grid[rightWallX][topWallY] == UndecidedTile.getInstance()
                 && grid[rightWallX][topWallY] == UndecidedTile.getInstance();
+        */
+        for(int i=leftWallX; i < rightWallX; i++) {
+            for(int j=topWallY; j < bottomWallY; j++) {
+                if(grid[i][j] != UndecidedTile.getInstance()) {
+                    return false;
+                }
+            }
+        }
+        return true;
     }
 
     private void placeRoom(Room r) {
@@ -91,8 +134,11 @@ public class MapGenerator extends ProceduralAreaGenerator {
         int yPos = r.getPosition().y;
         for (int x = xPos; x < xPos + r.getWidth(); x++) {
             for (int y = yPos; y < yPos + r.getHeight(); y++) {
+                // place appropriate room tile
                 grid[x][y] = r.getTile(x - xPos, y - yPos);
-                // costGrid[x][y] = Double.MAX_VALUE;
+                // modify cost grid
+                //costGrid[x][y] = Double.MAX_VALUE;
+                costGrid[x][y] = costGrid[x][y] * 5; // arbitrary value of 5
             }
         }
     }
@@ -145,7 +191,7 @@ public class MapGenerator extends ProceduralAreaGenerator {
                 possibleConnections.add(new RoomConnection(room, target));
             }
 
-            while (room.getNumConnections() < Room.MIN_CONNECTIONS) {
+            while (room.getNumConnections() < room.getMinConnections()) {
                 RoomConnection connection = possibleConnections.poll();
                 Room.addConnection(connection);
             }
@@ -156,7 +202,13 @@ public class MapGenerator extends ProceduralAreaGenerator {
 
     private void placePath(List<Point> path) {
         for (Point p : path) {
-            grid[p.x][p.y] = AirTile.getInstance();
+            if(grid[p.x][p.y].toChar() == '?' ||
+               grid[p.x][p.y].toChar() == 'B') {
+                grid[p.x][p.y] = AirTile.getInstance();
+                // changing cost grid, also...
+                // using arbitrary number 3
+                costGrid[p.x][p.y] = costGrid[p.x][p.y] * 3;
+            }
         }
     }
 
@@ -175,13 +227,13 @@ public class MapGenerator extends ProceduralAreaGenerator {
         Room rightmost = rooms.get(0);
         Room secondRightmost = rooms.get(0);
         for (Room room : rooms) {
-            if (room.getCentre().getY() > rightmost.getCentre().getY()) {
+            if (room.getCentre().getX() > rightmost.getCentre().getX()) {
                 rightmost = room;
             }
         }
         for (Room room : rooms) {
             if (!room.equals(rightmost)) {
-                if (room.getCentre().getY() > secondRightmost.getCentre().getY()) {
+                if (room.getCentre().getX() > secondRightmost.getCentre().getX()) {
                     secondRightmost = room;
                 }
             }
@@ -191,15 +243,28 @@ public class MapGenerator extends ProceduralAreaGenerator {
         int height = grid[0].length;
 
         PathFinder pathFinder = new PathFinder(costGrid);
+        
         Point start = rightmost.getCentre();
-        Point goal = new Point(width - 1, rand.nextInt(height));
+        int centreY = start.y;
+        Point goal = new Point(width - 1, centreY - 2 + rand.nextInt(3));
+        // have to set this manually so pathfinder doesn't complain
+        grid[goal.x][goal.y] = AirTile.getInstance();
+        // pathfinder can handle this goal
+        goal = new Point(goal.x - 1, goal.y);
         List<Point> path = pathFinder.findPath(start, goal);
         placePath(path);
+        
         start = secondRightmost.getCentre();
-        goal = new Point(width - 1, rand.nextInt(height));
+        centreY = start.y;
+        goal = new Point(width - 1, centreY - 2 + rand.nextInt(3));
+        // have to set this manually so pathfinder doesn't complain
+        grid[goal.x][goal.y] = AirTile.getInstance();
+        // pathfinder can handle this goal
+        goal = new Point(goal.x - 1, goal.y);
         path = pathFinder.findPath(start, goal);
         placePath(path);
 
+        // now flip
         Tile[][] symMap = new Tile[width * 2][height];
         for (int i = 0; i < width; i++) {
             for (int j = 0; j < height; j++) {
@@ -215,16 +280,11 @@ public class MapGenerator extends ProceduralAreaGenerator {
     // TODO delete
     public static void main(String[] args) {
         MapGenerator genr = new MapGenerator();
-        Map map = genr.createMap(48, 32, Environment.LIGHT_OUTDOORS);
+        Map map = genr.createMap(48, 32);
 
         System.out.println("--------------");
         System.out.println(map.toString());
         System.out.println("Num rooms: " + genr.rooms.size());
-
     }
-
-	public Vector2D getDemoSpawnPos() {
-		Point p = rooms.get(0).getCentre();
-		return new Vector2D(p.x,p.y);
-	}
+    
 }

@@ -1,78 +1,64 @@
-package com.knightlore.engine;
+package com.knightlore.render;
 
-import java.util.ArrayList;
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Stack;
 
+import com.knightlore.game.world.GameWorld;
 import com.knightlore.game.area.Map;
 import com.knightlore.game.entity.Entity;
-import com.knightlore.game.entity.Zombie;
-import com.knightlore.game.entity.pickup.ShotgunPickup;
 import com.knightlore.game.tile.AirTile;
 import com.knightlore.game.tile.Tile;
 import com.knightlore.gui.GUICanvas;
-import com.knightlore.network.NetworkObject;
-import com.knightlore.network.NetworkObjectManager;
-import com.knightlore.render.Camera;
-import com.knightlore.render.ColorUtils;
-import com.knightlore.render.IRenderable;
-import com.knightlore.render.PerspectiveRenderItem;
-import com.knightlore.render.PixelBuffer;
-import com.knightlore.render.RaycasterUtils;
 import com.knightlore.render.graphic.Graphic;
 import com.knightlore.render.minimap.Minimap;
 import com.knightlore.utils.Vector2D;
 
 public class Renderer implements IRenderable {
 
+    /**
+     * Viewport into the world. Can be bound to any entity.
+     */
     private Camera camera;
-    private Map map;
+
+    /**
+     * The world to render.
+     */
+    private GameWorld world;
+
     private Minimap minimap;
-    private static GUICanvas gui = null;
 
-    private java.util.Map<NetworkObject, Vector2D> networkObjPos;
-    // consider other players as mobs for now
-    // in order to render them
-    private java.util.Map<NetworkObject, Entity> networkObjMobs;
+    private GUICanvas gui;
 
-    private List<Entity> mobsToRender;
-
-    public Renderer(Camera camera, Map map) {
+    public Renderer(Camera camera, GameWorld world) {
         this.camera = camera;
-        this.map = map;
-        this.minimap = null;
-
-        this.networkObjPos = new HashMap<>();
-        this.networkObjMobs = new HashMap<>();
-        // FIXME: create this elsewhere.....
-        new NetworkObjectManager();
+        this.world = world;
+        this.minimap = new Minimap(camera, world, 128);
     }
 
-    public void setMap(Map m) {
-        this.map = m;
-    }
-
-    public static void setGUI(GUICanvas g) {
-        gui = g;
-    }
-
-    private final int BLOCKINESS = 1; // how 'old school' you want to look.
+    private final int BLOCKINESS = 3; // how 'old school' you want to look.
 
     @Override
     public void render(PixelBuffer pix, int x, int y) {
-        while (camera == null || minimap == null) {
-            // wait till minimap and camera not null
-            // Sleep thread to allow references to update.
-            try {
-                Thread.sleep(5);
-            } catch (InterruptedException e) {
-            }
+        // FIXME: HACK
+        // if (camera == null || minimap == null) {
+        // return;
+        // }
+        // Can't render without a camera.
+        if (camera == null || !camera.isSubjectSet()) {
+            return;
         }
-        map.getEnvironment().renderEnvironment(pix);
+
+        if (camera.getSubject().getDirection().isEqualTo(Vector2D.ZERO, 0.01))
+            return;
+
+        // Draw the environment, as specified by the world.
+        world.getEnvironment().renderEnvironment(pix);
+
+        // draw the perspective and the crosshairs
         drawPerspective(pix);
         drawCrosshair(pix);
+
         if (gui != null) {
             gui.render(pix, x, y);
         }
@@ -81,33 +67,7 @@ public class Renderer implements IRenderable {
 
         PixelBuffer minimapBuffer = minimap.getPixelBuffer();
         pix.composite(minimapBuffer, pix.getWidth() - minimapBuffer.getWidth() - 10, 5);
-    }
 
-    public void updateNetworkObjectPos(NetworkObject obj, Vector2D position, Vector2D direction) {
-        if (camera == null)
-            return;
-        synchronized (this.mobsToRender) {
-            if (position == null) {
-                this.networkObjPos.remove(obj);
-                this.mobsToRender.remove(this.networkObjMobs.get(obj));
-                this.minimap.removeMinimapObject(this.networkObjMobs.get(obj));
-                this.networkObjMobs.remove(obj);
-            } else if (networkObjPos.containsKey(obj)) {
-                this.minimap.removeMinimapObject(this.networkObjMobs.get(obj));
-                this.networkObjPos.put(obj, position);
-                this.mobsToRender.remove(this.networkObjMobs.get(obj));
-                Zombie z = new Zombie(1D, position, direction);
-                this.networkObjMobs.put(obj, z);
-                this.mobsToRender.add(z);
-                this.minimap.addMinimapObject(this.networkObjMobs.get(obj));
-            } else {
-                this.networkObjPos.put(obj, position);
-                Zombie z = new Zombie(1D, position, direction);
-                this.networkObjMobs.put(obj, z);
-                this.mobsToRender.add(z);
-                this.minimap.addMinimapObject(this.networkObjMobs.get(obj));
-            }
-        }
     }
 
     /*
@@ -120,15 +80,19 @@ public class Renderer implements IRenderable {
 
     private void drawPerspective(PixelBuffer pix) {
 
-        if (camera == null)
-            return;
+        Map map = world.getMap();
 
         final int width = pix.getWidth(), height = pix.getHeight();
         double[] zbuffer = new double[width];
 
-        for (int xx = 0; xx < width; xx += BLOCKINESS) {
-            Stack<PerspectiveRenderItem> renderStack = new Stack<PerspectiveRenderItem>();
+        /*
+         * SEE: PerspectiveRenderItem.java for how this works. In short: we keep
+         * adding new render items to a stack until we reach an opaque block.
+         * The stack is then popped and rendered in turn.
+         */
+        Stack<PerspectiveRenderItem> renderStack = new Stack<PerspectiveRenderItem>();
 
+        for (int xx = 0; xx < width; xx += BLOCKINESS) {
             // Calculate direction of the ray based on camera direction.
             double cameraX = 2 * xx / (double) (width) - 1;
             double rayX = camera.getxDir() + camera.getxPlane() * cameraX;
@@ -147,8 +111,9 @@ public class Renderer implements IRenderable {
 
             double distanceToWall;
 
-            boolean hit = false;
-            boolean side = false; // wall facing x-direction vs y-direction?
+            // hit = true when the ray has hit a wall.
+            // side = true or false depending on the side.
+            boolean hit = false, side = false;
 
             // find x and y components of the ray vector.
             int stepX, stepY;
@@ -252,25 +217,26 @@ public class Renderer implements IRenderable {
             int drawY = yy + camera.getMotionOffset();
             color = ColorUtils.mixColor(pix.pixelAt(p.xx, drawY), color, p.opacity);
 
-            color = ColorUtils.darken(color, map.getEnvironment().getDarkness(), p.distanceToWall);
+            color = ColorUtils.darken(color, world.getEnvironment().getDarkness(), p.distanceToWall);
             pix.fillRect(color, p.xx, drawY, BLOCKINESS, 1);
         }
     }
 
     private void drawSprites(PixelBuffer pix, double[] zbuffer) {
-        synchronized (mobsToRender) {
-            mobsToRender.sort(new Comparator<Entity>() {
+        List<Entity> entities = world.getEntities();
+        synchronized (entities) {
+            entities.sort(new Comparator<Entity>() {
 
                 @Override
                 public int compare(Entity o1, Entity o2) {
-                    final double distance1 = camera.getPosition().distance(o1.position);
-                    final double distance2 = camera.getPosition().distance(o2.position);
+                    final double distance1 = camera.getPosition().distance(o1.getPosition());
+                    final double distance2 = camera.getPosition().distance(o2.getPosition());
                     return Double.compare(distance2, distance1);
                 }
 
             });
 
-            for (Entity m : mobsToRender) {
+            for (Entity m : entities) {
                 double spriteX = m.getPosition().getX() - camera.getxPos();
                 double spriteY = m.getPosition().getY() - camera.getyPos();
 
@@ -326,7 +292,7 @@ public class Renderer implements IRenderable {
                             if (color == PixelBuffer.CHROMA_KEY)
                                 continue;
 
-                            color = ColorUtils.darken(color, map.getEnvironment().getDarkness(),
+                            color = ColorUtils.darken(color, world.getEnvironment().getDarkness(),
                                     camera.getPosition().distance(m.getPosition()));
 
                             int drawY = y + camera.getMotionOffset();
@@ -349,18 +315,18 @@ public class Renderer implements IRenderable {
 
     // FIXME
     public Map getMap() {
-        return map;
+        return world.getMap();
     }
 
     public void setCamera(Camera cam) {
-        this.mobsToRender = new ArrayList<Entity>();
+        // this.mobsToRender = new ArrayList<Entity>();
         this.camera = cam;
         // FIXME: put all this in the constructor when we get a camera on objet
         // creation.
-        ShotgunPickup p = new ShotgunPickup(cam.getPosition());
-        mobsToRender.add(p);
-        this.minimap = new Minimap(camera, map, 128);
-        this.minimap.addMinimapObject(p);
+        // ShotgunPickup p = new ShotgunPickup(cam.getPosition());
+        // mobsToRender.add(p);
+        this.minimap = new Minimap(camera, world, 128);
+        // this.minimap.addMinimapObject(p);
         // propagate to minimap
         minimap.setCamera(cam);
     }

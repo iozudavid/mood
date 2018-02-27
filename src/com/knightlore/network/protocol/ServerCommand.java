@@ -8,30 +8,30 @@ import java.util.UUID;
 
 public class ServerCommand {
 
-	private long timeSent;
-	private UUID objectId;
-	private Map<ServerControl, Double> objectStats;
-	
-	public ServerCommand(long timeSent, UUID objectId, Map<ServerControl, Double> objectStats){
-		this.timeSent = timeSent;
-		this.objectId = objectId;
-		this.objectStats = objectStats;
-	}
-	
-	public long getTimeSent(){
-		return this.timeSent;
-	}
-	
-	public UUID getObjectId(){
-		return this.objectId;
-	}
-	
-	// Returns null if no value exists for this key.
-	public Double getValueByControl(ServerControl aControl) {
-		return this.objectStats.get(aControl);
-	}
-	
-	public static ServerCommand decodePacket(byte[] packet) {
+    private long timeSent;
+    private UUID objectId;
+    private Map<ServerControl, Double> objectStats;
+
+    public ServerCommand(long timeSent, UUID objectId, Map<ServerControl, Double> objectStats) {
+        this.timeSent = timeSent;
+        this.objectId = objectId;
+        this.objectStats = objectStats;
+    }
+
+    public long getTimeSent() {
+        return this.timeSent;
+    }
+
+    public UUID getObjectId() {
+        return this.objectId;
+    }
+
+    // Returns null if no value exists for this key.
+    public Double getValueByControl(ServerControl aControl) {
+        return this.objectStats.get(aControl);
+    }
+
+    public static ServerCommand decodePacket(byte[] packet) {
         try {
             // creating the initial map
             Map<ServerControl, Double> objectStats = new HashMap<ServerControl, Double>();
@@ -51,12 +51,10 @@ public class ServerCommand {
 
             int position = 0;
             while (buf.hasRemaining()) {
-                ServerControl currentControl = ServerProtocol
-                        .getControlByPosition(position);
+                ServerControl currentControl = ServerProtocol.getControlByPosition(position);
                 double valueOfCurrentControl = buf.getDouble(buf.position());
                 objectStats.put(currentControl, valueOfCurrentControl);
-                buf.position(
-                        buf.position() + ServerProtocol.DOUBLE_TO_BYTES_LENGTH);
+                buf.position(buf.position() + ServerProtocol.DOUBLE_TO_BYTES_LENGTH);
                 position++;
             }
             return new ServerCommand(timeSent, objectID, objectStats);
@@ -65,6 +63,6 @@ public class ServerCommand {
             System.err.println("Bad index...");
         }
         return null;
-	}
-	
+    }
+
 }

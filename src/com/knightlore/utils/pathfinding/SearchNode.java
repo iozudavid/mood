@@ -3,11 +3,11 @@ package com.knightlore.utils.pathfinding;
 import java.awt.Point;
 import java.util.Optional;
 
-class SearchNode implements Comparable<SearchNode>{
-	private final Point position;
-	private final double heuristic;
-	private final double costSoFar;
-	private final Optional<SearchNode> predecessor;
+class SearchNode implements Comparable<SearchNode> {
+    private final Point position;
+    private final double heuristic;
+    private final double costSoFar;
+    private final Optional<SearchNode> predecessor;
 
     SearchNode(Point position, Point goal) {
         this.position = position;
@@ -16,7 +16,7 @@ class SearchNode implements Comparable<SearchNode>{
         this.predecessor = Optional.empty();
     }
 
-	SearchNode(Point position, Point goal, double stateCost, SearchNode predecessor) {
+    SearchNode(Point position, Point goal, double stateCost, SearchNode predecessor) {
         this.position = position;
         this.heuristic = position.distance(goal); // use manhattan heuristic
         this.costSoFar = predecessor.getCostSoFar() + stateCost;

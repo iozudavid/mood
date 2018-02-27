@@ -6,32 +6,32 @@ import com.knightlore.render.graphic.texture.Texture;
 
 // it's a singleton to avoid having multiple copies of air
 public class AirTile extends Tile {
-	
-	private static AirTile instance = new AirTile();
 
-	private AirTile() {
-	}
+    private static AirTile instance = new AirTile();
 
-	public static AirTile getInstance() {
-		return instance;
-	}
+    private AirTile() {
+    }
 
-	@Override
-	public Graphic getTexture() {
-		return Texture.AIR;
-	}
+    public static AirTile getInstance() {
+        return instance;
+    }
 
-	@Override
-	public double getSolidity() {
-		return 0D;
-	}
-	
-	@Override
-	public void onShot() {
-	}
+    @Override
+    public Graphic getTexture() {
+        return Texture.AIR;
+    }
 
-	@Override
-	public void onEntered(Player p) {
-	}
+    @Override
+    public double getSolidity() {
+        return 0D;
+    }
+
+    @Override
+    public void onShot() {
+    }
+
+    @Override
+    public void onEntered(Player p) {
+    }
 
 }

@@ -3,33 +3,65 @@ package com.knightlore.engine;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Timekeeper for the game engine. Keeps track of the current tick value and
+ * allows other objects to be registered as TickListeners so that they can
+ * receive updates on a fixed schedule.
+ * 
+ * @author Joe Ellis
+ *
+ */
 public class Ticker {
 
-	private long tick;
-	private final long TICK_MAX = 10000 * 60;
+    /**
+     * The current tick value. One tick corresponds to a single game update.
+     */
+    private long tick;
 
-	private List<TickListener> tickListeners;
+    /**
+     * Somewhat left in as a joke because this will never happen. Assuming that
+     * we have 60 updates per second, it'll take 4,874,520,144 years for this to
+     * ever overflow.
+     */
+    private final long TICK_MAX = Long.MAX_VALUE - 1337;
 
-	protected Ticker() {
-		tick = 0;
-		tickListeners = new ArrayList<TickListener>();
-	}
+    private List<TickListener> tickListeners;
 
-	public void addTickListener(TickListener t) {
-		tickListeners.add(t);
-	}
+    protected Ticker() {
+        tick = 0;
+        tickListeners = new ArrayList<TickListener>();
+    }
 
-	public long getTime() {
-		return tick;
-	}
+    /**
+     * Register a tick listener to receive regular updates.
+     * 
+     * @param t
+     *            the tick listener to receive updates.
+     */
+    public void addTickListener(TickListener t) {
+        tickListeners.add(t);
+    }
 
-	protected void tick() {
-		tick = (tick + 1) % TICK_MAX;
-		for (TickListener t : tickListeners) {
-			if (tick % t.interval() == 0) {
-				t.onTick();
-			}
-		}
-	}
+    /**
+     * Gets the current time in ticks.
+     * 
+     * @return the current time in ticks.
+     */
+    public long getTime() {
+        return tick;
+    }
+
+    /**
+     * Tick! This is called from the game engine. On each tick, the tick counter
+     * is incremented. All tick listeners are run if it is their time.
+     */
+    protected void tick() {
+        tick++;
+        for (TickListener t : tickListeners) {
+            if (tick % t.interval() == 0) {
+                t.onTick();
+            }
+        }
+    }
 
 }

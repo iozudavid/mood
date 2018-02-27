@@ -3,9 +3,7 @@ package com.knightlore.gui;
 import java.awt.Graphics;
 import java.awt.Rectangle;
 
-
 public class Text extends GUIObject{
-	
 	protected String text;
 	protected char[] rawChars;
 	
@@ -17,7 +15,7 @@ public class Text extends GUIObject{
         super(x,y,width,height);
     }
 
-	public void SetText(String newText){
+	public void SetText(String newText) {
 		text = newText;
 		rawChars = text.toCharArray();
 	}
@@ -28,5 +26,4 @@ public class Text extends GUIObject{
 		// draw the characters of the string
 		g.drawChars(rawChars, 0, rawChars.length, rect.x, rect.y + hOffset);
 	}
-
 }
