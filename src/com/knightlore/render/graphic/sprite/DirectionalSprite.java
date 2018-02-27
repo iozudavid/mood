@@ -4,12 +4,22 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.knightlore.render.graphic.Graphic;
+import com.knightlore.render.graphic.GraphicSheet;
 import com.knightlore.utils.Vector2D;
 
 public class DirectionalSprite {
 
-    public static final PlayerSprite PLAYER_DIRECTIONAL_SPRITE = new PlayerSprite();
-    public static final ShotgunSprite SHOTGUN_DIRECTIONAL_SPRITE = new ShotgunSprite();
+    public static final PlayerSprite PLAYER_DIRECTIONAL_SPRITE = new PlayerSprite(GraphicSheet.PLAYER_SPRITES);
+    public static final PlayerSprite RED_PLAYER_DIRECTIONAL_SPRITE = new PlayerSprite(GraphicSheet.RED_PLAYER_SPRITES);
+    public static final PlayerSprite BLUE_PLAYER_DIRECTIONAL_SPRITE = new PlayerSprite(
+            GraphicSheet.BLUE_PLAYER_SPRITES);
+
+    public static final ShotgunSprite SHOTGUN_DIRECTIONAL_SPRITE = new ShotgunSprite(GraphicSheet.SHOTGUN_SPRITES);
+    public static final ShotgunSprite RED_SHOTGUN_DIRECTIONAL_SPRITE = new ShotgunSprite(
+            GraphicSheet.RED_SHOTGUN_SPRITES);
+    public static final ShotgunSprite BLUE_SHOTGUN_DIRECTIONAL_SPRITE = new ShotgunSprite(
+            GraphicSheet.BLUE_SHOTGUN_SPRITES);
+    
     public static final TurretSprite TURRET_DIRECTIONAL_SPRITE = new TurretSprite();
 
     private List<Graphic> angles;

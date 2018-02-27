@@ -24,7 +24,7 @@ public class ShotgunPickup extends PickupItem {
 
     public ShotgunPickup(Vector2D position) {
         super(position);
-        sprite = DirectionalSprite.SHOTGUN_DIRECTIONAL_SPRITE;
+        sprite = DirectionalSprite.RED_SHOTGUN_DIRECTIONAL_SPRITE; // TODO
     }
 
     @Override
@@ -34,7 +34,7 @@ public class ShotgunPickup extends PickupItem {
 
     @Override
     public DirectionalSprite getDirectionalSprite() {
-        return ShotgunSprite.SHOTGUN_DIRECTIONAL_SPRITE;
+        return ShotgunSprite.RED_SHOTGUN_DIRECTIONAL_SPRITE;
     }
 
     @Override
