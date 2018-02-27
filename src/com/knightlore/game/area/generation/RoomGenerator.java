@@ -32,7 +32,7 @@ public class RoomGenerator extends ProceduralAreaGenerator {
             return new Room(grid, 1 , 2);
         }
 
-        return new Room(grid);
+        return new Room(grid, 2, 6);
     }
 
     @Override

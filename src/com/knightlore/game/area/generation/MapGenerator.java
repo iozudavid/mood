@@ -205,6 +205,9 @@ public class MapGenerator extends ProceduralAreaGenerator {
             if(grid[p.x][p.y].toChar() == '?' ||
                grid[p.x][p.y].toChar() == 'B') {
                 grid[p.x][p.y] = AirTile.getInstance();
+                // changing cost grid, also...
+                // using arbitrary number 3
+                costGrid[p.x][p.y] = costGrid[p.x][p.y] * 3;
             }
         }
     }
@@ -244,15 +247,24 @@ public class MapGenerator extends ProceduralAreaGenerator {
         Point start = rightmost.getCentre();
         int centreY = start.y;
         Point goal = new Point(width - 1, centreY - 2 + rand.nextInt(3));
+        // have to set this manually so pathfinder doesn't complain
+        grid[goal.x][goal.y] = AirTile.getInstance();
+        // pathfinder can handle this goal
+        goal = new Point(goal.x - 1, goal.y);
         List<Point> path = pathFinder.findPath(start, goal);
         placePath(path);
         
         start = secondRightmost.getCentre();
         centreY = start.y;
         goal = new Point(width - 1, centreY - 2 + rand.nextInt(3));
+        // have to set this manually so pathfinder doesn't complain
+        grid[goal.x][goal.y] = AirTile.getInstance();
+        // pathfinder can handle this goal
+        goal = new Point(goal.x - 1, goal.y);
         path = pathFinder.findPath(start, goal);
         placePath(path);
 
+        // now flip
         Tile[][] symMap = new Tile[width * 2][height];
         for (int i = 0; i < width; i++) {
             for (int j = 0; j < height; j++) {
