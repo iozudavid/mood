@@ -2,16 +2,18 @@ package com.knightlore.game.entity;
 
 import java.awt.Point;
 import java.nio.ByteBuffer;
-import java.util.*;
+import java.util.Comparator;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 
-import com.knightlore.ai.AIManager;
 import com.knightlore.engine.GameEngine;
 import com.knightlore.game.Player;
 import com.knightlore.game.world.GameWorld;
 import com.knightlore.network.NetworkObject;
 import com.knightlore.render.graphic.sprite.DirectionalSprite;
 import com.knightlore.utils.Vector2D;
-import com.knightlore.utils.pathfinding.PathFinder;
 
 public class Zombie extends Entity {
     private static final double DIRECTION_DIFFERENCE_TO_TURN = 0.1d;
@@ -89,13 +91,13 @@ public class Zombie extends Entity {
     }
 
     private void think() {
-        List<Player> players = world.getPlayerManager().getPlayers();
-        Optional<List<Point>> pathToClosestPlayer = players.stream()
-                .map(player -> world.getAIManager().findPath(this.position, player.getPosition()))
-                .min(Comparator.comparing(List::size));
-
-        pathToClosestPlayer.ifPresent(points -> currentPath = points);
-        lastThinkingTime = System.currentTimeMillis();
+//        List<Player> players = world.getPlayerManager().getPlayers();
+//        Optional<List<Point>> pathToClosestPlayer = players.stream()
+//                .map(player -> world.getAIManager().findPath(this.position, player.getPosition()))
+//                .min(Comparator.comparing(List::size));
+//
+//        pathToClosestPlayer.ifPresent(points -> currentPath = points);
+//        lastThinkingTime = System.currentTimeMillis();
     }
 
     @Override

@@ -8,9 +8,9 @@ import java.util.Map;
 import java.util.UUID;
 
 import com.knightlore.engine.GameEngine;
-import com.knightlore.game.world.GameWorld;
 import com.knightlore.game.Player;
 import com.knightlore.game.entity.Entity;
+import com.knightlore.game.world.ClientWorld;
 import com.knightlore.network.NetworkObject;
 import com.knightlore.network.NetworkObjectManager;
 import com.knightlore.network.protocol.NetworkUtils;
@@ -18,9 +18,12 @@ import com.knightlore.network.protocol.NetworkUtils;
 public class ClientNetworkObjectManager extends NetworkObjectManager {
     private Map<UUID, NetworkObject> networkObjects = new HashMap<>();
     private UUID myPlayerUUID = null;
+    
+    private ClientWorld clientWorld;
 
-    public ClientNetworkObjectManager(GameWorld world) {
-        super(world);
+    public ClientNetworkObjectManager(ClientWorld world) {
+        super();
+        this.clientWorld = world;
         setNetworkConsumers();
     }
 
@@ -67,7 +70,7 @@ public class ClientNetworkObjectManager extends NetworkObjectManager {
             NetworkObject obj = (NetworkObject) method.invoke(null, objID, buf);
             // Entities need to exist in the world.
             if (obj instanceof Entity) {
-                world.addEntity((Entity) obj);
+                clientWorld.addEntity((Entity) obj);
             }
         } catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException
                 | InvocationTargetException e) {
@@ -89,7 +92,7 @@ public class ClientNetworkObjectManager extends NetworkObjectManager {
             this.networkObjects.remove(objID);
             toBeDestroyedObject.destroy();
             if (toBeDestroyedObject instanceof Entity) {
-                world.removeEntity((Entity) toBeDestroyedObject);
+                clientWorld.removeEntity((Entity) toBeDestroyedObject);
             }
         }
     }
