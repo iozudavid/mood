@@ -3,6 +3,7 @@ package com.knightlore.ai;
 import java.nio.ByteBuffer;
 import java.util.UUID;
 
+import com.knightlore.game.Player;
 import com.knightlore.network.NetworkObject;
 import com.knightlore.utils.Vector2D;
 
@@ -23,6 +24,10 @@ public final class TurretClient extends TurretShared {
         obj.init();
         obj.deserialize(state);
         return obj;
+    }
+    
+    @Override
+    public void onCollide(Player player) {
     }
     
     @Override

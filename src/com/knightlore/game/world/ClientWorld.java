@@ -8,6 +8,10 @@ public class ClientWorld extends GameWorld {
     public ClientWorld() {
         super();
     }
+    
+    @Override
+    public void update() {
+    }
 
     public void addEntity(Entity ent) {
         this.ents.add(ent);

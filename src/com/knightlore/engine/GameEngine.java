@@ -157,6 +157,7 @@ public class GameEngine implements Runnable {
             lastTime = now;
             while (delta >= 1) {
                 gameObjectManager.updateObjects();
+                world.update();
                 delta -= 1;
                 ticker.tick();
             }

@@ -103,6 +103,10 @@ public class Player extends Entity {
             }
         }
     }
+    
+    @Override
+    public void onCollide(Player player) {
+    }
 
     // TODO: serialize weapon etc.
     @Override

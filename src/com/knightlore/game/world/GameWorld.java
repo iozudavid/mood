@@ -25,6 +25,8 @@ public abstract class GameWorld {
     public void update() {
         Pruner.prune(ents);
     }
+    
+    public abstract void update();
 
     private Map generateMap(int xSize, int ySize, long seed) {
         return new MapGenerator().createMap(xSize, ySize, seed);

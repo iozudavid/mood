@@ -1,10 +1,12 @@
 package com.knightlore.game.entity;
 
-import com.knightlore.game.Team;
+import java.awt.geom.Rectangle2D;
 import java.nio.ByteBuffer;
 import java.util.UUID;
 
 import com.knightlore.engine.GameEngine;
+import com.knightlore.game.Player;
+import com.knightlore.game.Team;
 import com.knightlore.game.area.Map;
 import com.knightlore.game.tile.Tile;
 import com.knightlore.network.NetworkObject;
@@ -31,7 +33,7 @@ public abstract class Entity extends NetworkObject implements IMinimapObject, Pr
     // cannot have invalid values
     // anyone can set a team and get a team
     public Team team;
-    
+
     protected int zOffset;
 
     // Allow you to create an entity with a specified UUID. Useful for creating
@@ -47,16 +49,19 @@ public abstract class Entity extends NetworkObject implements IMinimapObject, Pr
 
     /**
      * Creates an Entity with random UUID
-     * @param size - the collision size of the entity
+     * 
+     * @param size
+     *            - the collision size of the entity
      * @param position
      * @param direction
      */
     protected Entity(double size, Vector2D position, Vector2D direction) {
         this(UUID.randomUUID(), size, position, direction);
     }
-    
+
     /**
      * Entity collision size defaults to 1
+     * 
      * @param uuid
      * @param position
      * @param direction
@@ -64,6 +69,8 @@ public abstract class Entity extends NetworkObject implements IMinimapObject, Pr
     protected Entity(UUID uuid, Vector2D position, Vector2D direction) {
         this(uuid, 1, position, direction);
     }
+
+    public abstract void onCollide(Player player);
 
     public Graphic getGraphic(Vector2D playerPos) {
         return getDirectionalSprite().getCurrentGraphic(position, direction, playerPos);
@@ -77,6 +84,10 @@ public abstract class Entity extends NetworkObject implements IMinimapObject, Pr
 
     public Vector2D getDirection() {
         return direction;
+    }
+
+    public Rectangle2D.Double getBoundingRectangle() {
+        return new Rectangle2D.Double(getxPos(), getyPos(), size, size);
     }
 
     public double getxDir() {
