@@ -4,11 +4,11 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Stack;
 
-import com.knightlore.game.world.GameWorld;
 import com.knightlore.game.area.Map;
 import com.knightlore.game.entity.Entity;
 import com.knightlore.game.tile.AirTile;
 import com.knightlore.game.tile.Tile;
+import com.knightlore.game.world.ClientWorld;
 import com.knightlore.gui.GUICanvas;
 import com.knightlore.render.graphic.Graphic;
 import com.knightlore.render.minimap.Minimap;
@@ -24,13 +24,13 @@ public class Renderer implements IRenderable {
     /**
      * The world to render.
      */
-    private GameWorld world;
+    private ClientWorld world;
 
     private Minimap minimap;
 
     private GUICanvas gui;
 
-    public Renderer(Camera camera, GameWorld world) {
+    public Renderer(Camera camera, ClientWorld world) {
         this.camera = camera;
         this.world = world;
         this.minimap = new Minimap(camera, world, 128);

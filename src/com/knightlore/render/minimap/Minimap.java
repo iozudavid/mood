@@ -1,10 +1,10 @@
 package com.knightlore.render.minimap;
 
 import com.knightlore.engine.GameEngine;
-import com.knightlore.game.world.GameWorld;
 import com.knightlore.engine.TickListener;
 import com.knightlore.game.area.Map;
 import com.knightlore.game.tile.Tile;
+import com.knightlore.game.world.ClientWorld;
 import com.knightlore.render.Camera;
 import com.knightlore.render.PixelBuffer;
 import com.knightlore.utils.Vector2D;
@@ -61,7 +61,7 @@ public class Minimap implements TickListener {
     private MinimapLightingMask mask;
 
     private Camera camera;
-    private GameWorld world;
+    private ClientWorld world;
 
     /**
      * We keep track of the previous position and direction so we know not to
@@ -69,7 +69,7 @@ public class Minimap implements TickListener {
      */
     private Vector2D prevPos, prevDir;
 
-    public Minimap(Camera camera, GameWorld world, int size) {
+    public Minimap(Camera camera, ClientWorld world, int size) {
         this.camera = camera;
         this.world = world;
         recreatePixelMap();
