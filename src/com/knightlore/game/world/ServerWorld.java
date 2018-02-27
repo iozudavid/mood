@@ -5,6 +5,7 @@ import com.knightlore.ai.TurretServer;
 import com.knightlore.ai.TurretShared;
 import com.knightlore.game.Player;
 import com.knightlore.game.PlayerManager;
+import com.knightlore.game.entity.Entity;
 import com.knightlore.game.entity.Zombie;
 import com.knightlore.game.entity.pickup.ShotgunPickup;
 import com.knightlore.utils.Vector2D;
@@ -38,11 +39,22 @@ public class ServerWorld extends GameWorld {
         tboi.init();
     }
 
+    @Override
+    public void update() {
+        for (Player player : playerManager.getPlayers()) {
+            for (Entity ent : ents) {
+                if (player.getBoundingRectangle().intersects(ent.getBoundingRectangle())) {
+                    ent.onCollide(player);
+                }
+            }
+        }
+    }
+
     public Player createPlayer() {
         Vector2D pos = map.getRandomSpawnPoint();
         Player player = new Player(pos, Vector2D.UP);
         player.init();
-        ents.add(player);
+        // ents.add(player);
         playerManager.addPlayer(player);
         return player;
     }

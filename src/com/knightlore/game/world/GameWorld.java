@@ -18,6 +18,8 @@ public abstract class GameWorld {
         this.ents = new ArrayList<Entity>();
         generateMap(16, 16, TEST_SEED);
     }
+    
+    public abstract void update();
 
     protected void generateMap(int xSize, int ySize, long seed) {
         // First create the map

@@ -2,10 +2,8 @@ package com.knightlore.game.entity;
 
 import java.awt.Point;
 import java.nio.ByteBuffer;
-import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 import com.knightlore.engine.GameEngine;
@@ -16,6 +14,7 @@ import com.knightlore.render.graphic.sprite.DirectionalSprite;
 import com.knightlore.utils.Vector2D;
 
 public class Zombie extends Entity {
+    
     private static final double DIRECTION_DIFFERENCE_TO_TURN = 0.1d;
     private static final long THINKING_FREQUENCY = 1000; // ms
 
@@ -63,6 +62,10 @@ public class Zombie extends Entity {
         }
 
         move();
+    }
+    
+    @Override
+    public void onCollide(Player player) {
     }
 
     private void move() {

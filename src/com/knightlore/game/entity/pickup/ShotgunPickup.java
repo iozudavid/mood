@@ -3,6 +3,7 @@ package com.knightlore.game.entity.pickup;
 import java.nio.ByteBuffer;
 import java.util.UUID;
 
+import com.knightlore.game.Player;
 import com.knightlore.network.NetworkObject;
 import com.knightlore.render.graphic.sprite.DirectionalSprite;
 import com.knightlore.render.graphic.sprite.ShotgunSprite;
@@ -41,6 +42,11 @@ public class ShotgunPickup extends PickupItem {
     public String getClientClassName() {
         // One class for both client and server.
         return this.getClass().getName();
+    }
+
+    @Override
+    public void onCollide(Player player) {
+        setExists(false);
     }
 
 }

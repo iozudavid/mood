@@ -6,7 +6,10 @@ import java.nio.charset.StandardCharsets;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
-public abstract class Connection implements Runnable {
+import com.knightlore.utils.pruner.Prunable;
+
+public abstract class Connection implements Runnable, Prunable {
+    
     public static final Charset CHARSET = StandardCharsets.UTF_8;
     // Wait 5 seconds without receiving packets before disconnecting.
     protected static int TIMEOUT_MILLIS = 500 * 1000;
@@ -55,4 +58,10 @@ public abstract class Connection implements Runnable {
             }
         }
     }
+    
+    @Override
+    public boolean exists() {
+        return terminated;
+    }
+    
 }
