@@ -63,9 +63,9 @@ public class Renderer implements IRenderable {
         if (camera.getSubject().getDirection().isEqualTo(Vector2D.ZERO, 0.01))
             return;
 
-       if(GameEngine.getSingleton().gameState==GameState.StartMenu){
+        if(GameEngine.getSingleton().gameState==GameState.StartMenu){
         	this.startMenu.render(pix,x,y);
-       }
+        }
     	else{
         
         // Draw the environment, as specified by the world.

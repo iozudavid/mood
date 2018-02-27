@@ -7,6 +7,7 @@ public class Button extends GUIObject {
     private static final Color UP_COLOR = Color.LIGHT_GRAY;
     private static final Color DOWN_COLOR = Color.DARK_GRAY;
     private static final Color HOVER_COLOR = Color.WHITE;
+    private Text textArea;
 
     private SelectState state = SelectState.UP;
 
@@ -30,13 +31,23 @@ public class Button extends GUIObject {
     }
     
     public Button(int x, int y, int width, int height) {
-        super(x, y, width, height, 0);
+        this(x, y, width, height, 0);
+    }
+    
+    public Button(int x, int y, int width, int height, Text text){
+    	this(x, y, width, height, 0, text);
+    }
+    
+    public Button(int x, int y, int width, int height, int depth, Text text){
+    	this(x, y, width, height, depth);
+    	this.textArea = text;
     }
 
     @Override
     void Draw(Graphics g) {
         g.setColor(activeColor());
         g.fillRect(rect.x, rect.y, rect.width, rect.height);
+        g.setColor(Color.black);
     }
 
     @Override
