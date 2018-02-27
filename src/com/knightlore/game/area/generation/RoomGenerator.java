@@ -6,31 +6,33 @@ import com.knightlore.game.tile.AirTile;
 import com.knightlore.game.tile.BrickTile;
 import com.knightlore.game.tile.PlayerSpawnTile;
 import com.knightlore.game.tile.Tile;
+import com.knightlore.game.tile.TurretTile;
 import com.knightlore.game.tile.UndecidedTile;
 
 import java.util.Random;
 
 public class RoomGenerator extends ProceduralAreaGenerator {
-    private static final int MIN_SIZE = 4;
+    private static final int MIN_SIZE = 6;
     private static final int MAX_SIZE = 16;
 
     public Room createRoom(long seed , Team team) {
         rand = new Random(seed);
 
-        int width = getGaussianNum(MIN_SIZE, MAX_SIZE);
         int height = getGaussianNum(MIN_SIZE, MAX_SIZE);
+        int width = getGaussianNum(MIN_SIZE, MAX_SIZE);
         grid = new Tile[width][height];
 
         resetGrid();
         fillGrid();
         if(team != Team.none) {
             grid[width/2][height/2] = new PlayerSpawnTile(team);
+            //turrets too!
+            grid[2][height/2] = new TurretTile(team);
+            grid[width-2][height/2] = new TurretTile(team);
+            return new Room(grid, 1 , 2);
         }
-        Room room = new Room(grid);
-        if(team != Team.none) {
-            //System.out.println("Spawn room:\n" + room.toString());
-        }
-        return room;
+
+        return new Room(grid, 2, 6);
     }
 
     @Override
