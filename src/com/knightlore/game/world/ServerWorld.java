@@ -19,8 +19,14 @@ public class ServerWorld extends GameWorld {
         this.playerManager = new PlayerManager();
         this.aiManager = new AIManager(map);
     }
+    
 
-    public void populateWorld() {
+    @Override
+    public void setUpWorld() {
+        buildEntities();
+    }
+
+    public void buildEntities() {
         // add the mobs
         ShotgunPickup shot = new ShotgunPickup(new Vector2D(8, 8));
         shot.init();
@@ -46,5 +52,4 @@ public class ServerWorld extends GameWorld {
         playerManager.addPlayer(player);
         return player;
     }
-
 }

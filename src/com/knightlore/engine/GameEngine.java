@@ -91,14 +91,12 @@ public class GameEngine implements Runnable {
         if (GameSettings.isServer()) {
             world = new ServerWorld();
             networkObjectManager = new ServerNetworkObjectManager((ServerWorld) world);
-            System.out.println("Populating world...");
-            ((ServerWorld) world).populateWorld();
         }
-
         if (GameSettings.isClient()) {
             world = new ClientWorld();
             networkObjectManager = new ClientNetworkObjectManager((ClientWorld) world);
         }
+        world.setUpWorld();
 
         System.out.println("Initialising NetworkObjectManager...");
         networkObjectManager.init();

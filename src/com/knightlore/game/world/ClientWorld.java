@@ -21,4 +21,12 @@ public class ClientWorld extends GameWorld {
         return Environment.LIGHT_OUTDOORS;
     }
 
+    @Override
+    public void setUpWorld() {
+        buildGUI();
+    }
+
+    public void buildGUI() {
+    }
+
 }
