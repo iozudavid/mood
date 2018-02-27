@@ -32,4 +32,14 @@ public class TurretTile extends Tile {
         return 'T';
     }
 
+    @Override
+    public TileType getTileType() {
+        return TileType.turret;
+    }
+
+    @Override
+    public Team getTeam() {
+        return team;
+    }
+    
 }

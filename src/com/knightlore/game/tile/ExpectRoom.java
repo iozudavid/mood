@@ -34,4 +34,9 @@ public class ExpectRoom extends Tile {
         return direction;
     }
 
+    @Override
+    public TileType getTileType() {
+        return TileType.expect;
+    }
+
 }
