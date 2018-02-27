@@ -10,9 +10,9 @@ import java.util.UUID;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import com.knightlore.engine.GameEngine;
-import com.knightlore.game.world.GameWorld;
 import com.knightlore.engine.TickListener;
 import com.knightlore.game.Player;
+import com.knightlore.game.world.ServerWorld;
 import com.knightlore.network.NetworkObject;
 import com.knightlore.network.NetworkObjectManager;
 import com.knightlore.network.protocol.NetworkUtils;
@@ -29,9 +29,12 @@ public class ServerNetworkObjectManager extends NetworkObjectManager {
     private List<SendToClient> clientSenders = new CopyOnWriteArrayList<>();
     // Counter for REGULAR_UPDATE_FREQ
     private int updateCount = 1;
+    
+    private ServerWorld serverWorld;
 
-    public ServerNetworkObjectManager(GameWorld world) {
-        super(world);
+    public ServerNetworkObjectManager(ServerWorld world) {
+        super();
+        this.serverWorld = world;
     }
 
     @Override
@@ -107,7 +110,7 @@ public class ServerNetworkObjectManager extends NetworkObjectManager {
         // First, tell the client what objects are on the server.
         notifyOfAllObjs(sender);
 
-        Player newPlayer = world.createPlayer();
+        Player newPlayer = serverWorld.createPlayer();
         System.out.println("sending player identity" + System.currentTimeMillis());
         // Now, tell the player who they are.
         ByteBuffer buf = ByteBuffer.allocate(NetworkObject.BYTE_BUFFER_DEFAULT_SIZE);
