@@ -48,7 +48,7 @@ public class Player extends Entity {
 
         setNetworkConsumers();
 
-        zOffset = 8;
+        zOffset = 100;
         moveSpeed = 0.120;
         strafeSpeed = 0.08;
         rotationSpeed = 0.06;
@@ -103,7 +103,7 @@ public class Player extends Entity {
             }
         }
     }
-    
+
     @Override
     public void onCollide(Player player) {
     }
