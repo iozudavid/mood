@@ -41,6 +41,7 @@ public class GameEngine implements Runnable {
     private NetworkObjectManager networkObjectManager;
     private Camera camera;
     private Renderer renderer;
+    public GameState gameState;
 
     private GameEngine() {
         if (HEADLESS) {
@@ -96,7 +97,7 @@ public class GameEngine implements Runnable {
             
             System.out.println("Initialising Renderer...");
             camera = new Camera(world.getMap());
-            this.renderer = new Renderer(camera, (ClientWorld) world);
+            this.renderer = new Renderer(camera, (ClientWorld) world, screen);
             System.out.println("Renderer initialised successfully.");
             networkObjectManager = new ClientNetworkObjectManager((ClientWorld) world);
         }
@@ -108,6 +109,7 @@ public class GameEngine implements Runnable {
 
         System.out.println("World Initialised Successfully.");
 
+        this.gameState = GameState.StartMenu;
     }
 
     /**

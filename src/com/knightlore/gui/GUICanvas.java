@@ -9,6 +9,7 @@ import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.knightlore.MainWindow;
 import com.knightlore.engine.GameObject;
 import com.knightlore.engine.input.InputManager;
 import com.knightlore.render.IRenderable;
@@ -18,8 +19,9 @@ import com.knightlore.utils.Physics;
 import com.knightlore.utils.Vector2D;
 
 public class GUICanvas extends GameObject implements IRenderable {
-	// TODO remove this and make it screen size
-	private static final int TEMP_SIZE = 200;
+
+	private static final int WIDTH = MainWindow.WIDTH;
+	private static final int HEIGHT = MainWindow.HEIGHT;
 	private static final Color BACKGROUND_COLOR = new Color(0xFF000000,true);
 
 	static TextField activeTextField;
@@ -41,8 +43,7 @@ public class GUICanvas extends GameObject implements IRenderable {
 	public GUICanvas (){
 		super();
 		guis = new ArrayList<GUIObject>();
-		rect = new Rectangle(0,0,TEMP_SIZE,TEMP_SIZE);
-		canvasImage = new BufferedImage(TEMP_SIZE,TEMP_SIZE, BufferedImage.TYPE_INT_ARGB);
+		canvasImage = new BufferedImage(WIDTH,HEIGHT, BufferedImage.TYPE_INT_ARGB);
 		canvasG2D = canvasImage.createGraphics();
 		canvasG2D.setComposite(AlphaComposite.SrcOver);
 		canvasGraphic = new Graphic(canvasImage);
@@ -77,14 +78,13 @@ public class GUICanvas extends GameObject implements IRenderable {
 	
 	@Override
 	public void render(PixelBuffer pix, int x, int y) {
-		canvasG2D.setColor(BACKGROUND_COLOR);
-		canvasG2D.fillRect(x, y, TEMP_SIZE, TEMP_SIZE);
-		
+		canvasG2D.setColor(BACKGROUND_COLOR);		
 		for(int i=0;i<guis.size();i++){
 			guis.get(i).Draw(canvasG2D,rect);
+
 		}
 
-		canvasImage.getRGB(0, 0, TEMP_SIZE, TEMP_SIZE, drawPixels, 0, TEMP_SIZE);
+		canvasImage.getRGB(0, 0, WIDTH, HEIGHT, drawPixels, 0, WIDTH);
 		pix.drawGraphic(canvasGraphic, x, y);
 	}
 

@@ -8,14 +8,25 @@ import com.knightlore.render.graphic.Graphic;
 import com.knightlore.utils.funcptrs.VoidFunction;
 
 public class Button extends GUIObject {
-    
-    public Button(int x, int y, int width, int height) {
-        super(x, y, width, height);
-    }
-    
-    Button(int x, int y, int width, int height, int depth) {
+
+    public Button(int x, int y, int width, int height, int depth) {
         super(x, y, width, height, depth);
     }
+    
+    public Button(int x, int y, int width, int height) {
+        this(x, y, width, height, 0);
+    }
+    
+    public Button(int x, int y, int width, int height, Text text){
+    	this(x, y, width, height, 0, text);
+    }
+    
+    public Button(int x, int y, int width, int height, int depth, Text text){
+    	this(x, y, width, height, depth);
+    	this.textArea = text;
+    }
+
+    private Text textArea;
 
     private Graphic activeGraphic = null;
     
@@ -54,7 +65,6 @@ public class Button extends GUIObject {
             g.setColor(activeColor());
             g.fillRect(rect.x, rect.y, rect.width, rect.height);
         }
-        
     }
     
     @Override

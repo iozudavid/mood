@@ -23,6 +23,10 @@ public abstract class GUIObject {
 	
 	abstract void Draw(Graphics g, Rectangle parentRect);
 	
+	public Rectangle getRectangle(){
+		return this.rect;
+	}
+	
 	boolean isSelectable () {
 		return false;
 	}

@@ -23,8 +23,19 @@ public class TextField extends GUIObject {
         super(x, y, width, height, depth);
     }
 	
-	public void setText(String newText){
-		text = newText;
+    public TextField(int x, int y, int width, int height, String text) {
+    	this(x, y, width, height, 0, text);
+    }
+
+    public void setText(String newText){
+    	text = newText;
+    	displayText(text);
+   	}
+
+	
+	public TextField(int x, int y, int width, int height, int depth, String text) {
+		super(x, y, width, height, depth);
+		setText(text);
 		displayText(text);
 	}
 	
