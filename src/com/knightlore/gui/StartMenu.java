@@ -1,6 +1,7 @@
 package com.knightlore.gui;
 
 import com.knightlore.render.PixelBuffer;
+import com.knightlore.render.graphic.GraphicSheet;
 
 public class StartMenu {
 
@@ -20,7 +21,11 @@ public class StartMenu {
 		this.coverImage = new Image(0, 0, screenWidth, screenHeight, "res/graphics/knightlorecoverblur.png");
 		this.name = new Image(middleWidth(500), calculateHeight(10), 500, 100, "res/graphics/logo.png");
 		this.singlePlayerButton = new Button(middleWidth(300), calculateHeight(35), 300, 40, "Single Player",20);
+		this.singlePlayerButton.setGraphic(new Image(0,0,0,0,"res/graphics/shotgun_to_right.png").graphic);
+		this.singlePlayerButton.setGraphic2(new Image(0,0,0,0,"res/graphics/shotgun_to_left.png").graphic);
 		this.multiPlayerButton = new Button(middleWidth(300), calculateHeight(45), 300, 40, "Multiplayer",20);
+		this.multiPlayerButton.setGraphic(new Image(0,0,0,0,"res/graphics/multiplayer_to_right.png").graphic);
+		this.multiPlayerButton.setGraphic2(new Image(0,0,0,0,"res/graphics/multiplayer_to_left.png").graphic);
 		gui.addGUIObject(coverImage);
 		gui.addGUIObject(name);
 		gui.addGUIObject(singlePlayerButton);

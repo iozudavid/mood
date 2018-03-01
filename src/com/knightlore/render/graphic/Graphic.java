@@ -8,12 +8,18 @@ public class Graphic {
 
     protected int width, height;
     protected int[] pixels;
+    private BufferedImage img;
 
     public Graphic(BufferedImage img) {
         this.width = img.getWidth();
         this.height = img.getHeight();
         this.pixels = new int[width * height];
         img.getRGB(0, 0, width, height, pixels, 0, width);
+        this.img = img;
+    }
+    
+    public BufferedImage getImage(){
+    	return this.img;
     }
 
     public int[] getPixels() {

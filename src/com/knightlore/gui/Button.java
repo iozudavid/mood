@@ -3,6 +3,7 @@ package com.knightlore.gui;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Rectangle;
+import java.awt.image.BufferedImage;
 
 import com.knightlore.render.graphic.Graphic;
 import com.knightlore.utils.funcptrs.VoidFunction;
@@ -31,6 +32,7 @@ public class Button extends GUIObject {
     private int fontSize;
 
     private Graphic activeGraphic = null;
+    private Graphic activeGraphic2 = null;
     
     private SelectState state = SelectState.UP_PHASE_1;
     
@@ -68,14 +70,26 @@ public class Button extends GUIObject {
       
     }
     
+    public void setGraphic(Graphic g){
+    	this.activeGraphic = g;
+    }
     
+    public void setGraphic2(Graphic g){
+    	this.activeGraphic2 = g;
+    }
     
     @Override
     void Draw(Graphics g, Rectangle parentRect) {
         
-        if (activeGraphic != null) {
-        	
-        } else {
+    	g.setColor(Color.BLACK);
+        if (state!=SelectState.UP_PHASE_1 && state!=SelectState.UP_PHASE_2 && activeGraphic != null) {
+        	BufferedImage resized = Image.resize(activeGraphic.getImage(), 50, 50);
+        	g.drawImage(resized, rect.x-60, rect.y, null);
+        }
+        if (state!=SelectState.UP_PHASE_1 && state!=SelectState.UP_PHASE_2 && activeGraphic2 != null) {
+        	BufferedImage resized = Image.resize(activeGraphic2.getImage(), 50, 50);
+        	g.drawImage(resized, (int) (rect.x+rect.getWidth()), rect.y, null);
+        }
         	g.setColor(Color.DARK_GRAY);
         	g.fillRect(rect.x-2, rect.y-2, rect.width+2, rect.height+2);
         	g.setColor(Color.BLACK);
@@ -125,7 +139,6 @@ public class Button extends GUIObject {
             height += fontSize/2;
             g.drawString(textArea, rect.x+width, rect.y+height);
             
-        }
     }
     
     @Override
