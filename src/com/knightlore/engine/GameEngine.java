@@ -4,14 +4,15 @@ import com.knightlore.GameSettings;
 import com.knightlore.MainWindow;
 import com.knightlore.engine.input.InputManager;
 import com.knightlore.engine.input.Mouse;
+import com.knightlore.game.world.ClientWorld;
+import com.knightlore.game.world.GameWorld;
+import com.knightlore.game.world.ServerWorld;
 import com.knightlore.network.NetworkObjectManager;
 import com.knightlore.network.client.ClientNetworkObjectManager;
 import com.knightlore.network.server.ServerNetworkObjectManager;
 import com.knightlore.render.Camera;
 import com.knightlore.render.Renderer;
 import com.knightlore.render.Screen;
-import com.knightlore.game.world.GameWorld;
-import com.knightlore.game.world.TestWorld;
 
 /**
  * Game engine acting as sort of a 'hub' for each of the individual game
@@ -65,7 +66,7 @@ public class GameEngine implements Runnable {
     // FIXME: remove this
     public Renderer getRenderer() {
         return this.renderer;
-    }    
+    }
 
     public NetworkObjectManager getNetworkObjectManager() {
         return networkObjectManager;
@@ -86,23 +87,26 @@ public class GameEngine implements Runnable {
         // TODO maybe refactor this into a make world method
         // ALSO TODO, UNHOOK TEST WORLD
         System.out.println("Initialising World...");
-        world = new TestWorld();
+
+        if (GameSettings.isServer()) {
+            world = new ServerWorld();
+            networkObjectManager = new ServerNetworkObjectManager((ServerWorld) world);
+        }
+        if (GameSettings.isClient()) {
+            world = new ClientWorld();
+            networkObjectManager = new ClientNetworkObjectManager((ClientWorld) world);
+        }
+        world.setUpWorld();
 
         System.out.println("Initialising NetworkObjectManager...");
-        if (GameSettings.isClient())
-            networkObjectManager = new ClientNetworkObjectManager(world);
-        if (GameSettings.isServer())
-            networkObjectManager = new ServerNetworkObjectManager(world);
         networkObjectManager.init();
-        
-        world.initWorld();
-        System.out.println("Populating world...");
-        world.populateWorld();
+
         System.out.println("World Initialised Successfully.");
 
-
-        camera = new Camera(world.getMap());
-        this.renderer = new Renderer(camera, world);
+        if (GameSettings.isClient()) {
+            camera = new Camera(world.getMap());
+            this.renderer = new Renderer(camera, (ClientWorld) world);
+        }
     }
 
     /**
@@ -153,6 +157,7 @@ public class GameEngine implements Runnable {
             lastTime = now;
             while (delta >= 1) {
                 gameObjectManager.updateObjects();
+                world.update();
                 delta -= 1;
                 ticker.tick();
             }
@@ -183,7 +188,7 @@ public class GameEngine implements Runnable {
         screen.addMouseWheelListener(mouse);
         screen.requestFocus();
     }
-    
+
     public Camera getCamera() {
         return camera;
     }

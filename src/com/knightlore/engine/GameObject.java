@@ -1,6 +1,7 @@
 package com.knightlore.engine;
 
 import com.knightlore.utils.Vector2D;
+import com.knightlore.utils.pruner.Prunable;
 
 /**
  * A game object is any structure/entity in the game that has a 2D position.
@@ -10,7 +11,7 @@ import com.knightlore.utils.Vector2D;
  * @author James Adey
  *
  */
-public abstract class GameObject {
+public abstract class GameObject implements Prunable {
 
     /**
      * The position of the game object.
@@ -57,6 +58,7 @@ public abstract class GameObject {
         position = new Vector2D(position.getX(), yPos);
     }
 
+    @Override
     public boolean exists() {
         return exists;
     }

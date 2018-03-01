@@ -59,5 +59,16 @@ public class Map extends Area {
         }
         return positions;
     }
-    
+
+    @Override
+    public String toString() {
+        StringBuilder builder = new StringBuilder();
+        for(int x = 0; x < width; x++) {
+            for(int y = 0; y < height; y++) {
+                Tile theTile = getTile(x, y);
+                builder.append(String.format("%d %d %d", x, y, 0));
+            }
+        }
+        return builder.toString();
+    }
 }
