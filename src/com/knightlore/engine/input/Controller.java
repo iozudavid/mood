@@ -2,20 +2,20 @@ package com.knightlore.engine.input;
 
 public interface Controller {
 
-	public int moveForward();
+    public int moveForward();
 
-	public int moveBackward();
+    public int moveBackward();
 
-	public int moveLeft();
+    public int moveLeft();
 
-	public int moveRight();
-	
-	public int sprint();
+    public int moveRight();
 
-	public int rotateClockwise();
+    public int sprint();
 
-	public int rotateAntiClockwise();
+    public int rotateClockwise();
 
-	public int shoot();
+    public int rotateAntiClockwise();
+
+    public int shoot();
 
 }

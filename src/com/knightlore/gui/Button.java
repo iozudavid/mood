@@ -3,70 +3,71 @@ package com.knightlore.gui;
 import java.awt.Color;
 import java.awt.Graphics;
 
-import com.knightlore.render.graphic.Graphic;
-
 public class Button extends GUIObject {
-	
-	Graphic activeGraphic = null;
-	
-	private ButtonState state = ButtonState.UP;
-	
-	public Color upColour = Color.LIGHT_GRAY;
-	public Color downColour = Color.DARK_GRAY;
-	public Color hoverColour = Color.WHITE;
-	
-	public Color activeColor (){
-		switch(state){
-		case UP:
-			return upColour;
-			
-		case HOVER:
-			return hoverColour;
-			
-		case DOWN:
-			return downColour;
-			
-		}
-		return upColour;
-	}
-	
-	public Button(int x, int y, int depth) {
-		super(x, y, depth);
-		// TODO Auto-generated constructor stub
-	}
-	
-	@Override
-	void Draw(Graphics g) {
-		// TODO Auto-generated method stub
-		if(activeGraphic != null){
-			
-		}
-		else{
-			g.setColor(activeColor());
-			g.fillRect(rect.x, rect.y, rect.width, rect.height);
-		}
-		
-	}
-	
-	@Override
-	void OnClick(){
-		state = ButtonState.DOWN;
-		System.out.println("Button clicked");
-	}
-	
-	@Override
-	void OnMouseEnter(){
-		state = ButtonState.HOVER;
-	}
-	
-	@Override
-	void OnMouseExit(){
-		state = ButtonState.UP;
-	}
-	
-	@Override
-	boolean isSelectable(){
-		return true;
-	}
+    private static final Color UP_COLOR = Color.LIGHT_GRAY;
+    private static final Color DOWN_COLOR = Color.DARK_GRAY;
+    private static final Color HOVER_COLOR = Color.WHITE;
 
+    private SelectState state = SelectState.UP;
+
+    public Color activeColor() {
+        switch (state) {
+            case UP:
+                return UP_COLOR;
+
+            case HOVER:
+                return HOVER_COLOR;
+
+            case DOWN:
+                return DOWN_COLOR;
+        }
+
+        throw new IllegalStateException(state.toString() + "is not supported version of state");
+    }
+
+    public Button(int x, int y, int depth) {
+        super(x, y, depth);
+    }
+
+    @Override
+    void Draw(Graphics g) {
+        g.setColor(activeColor());
+        g.fillRect(rect.x, rect.y, rect.width, rect.height);
+    }
+
+    @Override
+    void OnClick() {
+        System.out.println("Button clicked");
+    }
+
+    @Override
+    void onMouseEnter() {
+        state = SelectState.HOVER;
+    }
+
+    void onMouseOver() {
+        if (state == SelectState.UP) {
+            state = SelectState.HOVER;
+        }
+    }
+
+    @Override
+    void OnMouseExit() {
+        state = SelectState.UP;
+    }
+
+    @Override
+    void onMouseDown() {
+        state = SelectState.DOWN;
+    }
+
+    @Override
+    void onMouseUp() {
+        state = SelectState.UP;
+    }
+
+    @Override
+    boolean isSelectable() {
+        return true;
+    }
 }

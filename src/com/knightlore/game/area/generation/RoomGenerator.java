@@ -1,27 +1,38 @@
 package com.knightlore.game.area.generation;
 
+import com.knightlore.game.Team;
 import com.knightlore.game.area.Room;
 import com.knightlore.game.tile.AirTile;
 import com.knightlore.game.tile.BrickTile;
+import com.knightlore.game.tile.PlayerSpawnTile;
 import com.knightlore.game.tile.Tile;
+import com.knightlore.game.tile.TurretTile;
 import com.knightlore.game.tile.UndecidedTile;
 
 import java.util.Random;
 
 public class RoomGenerator extends ProceduralAreaGenerator {
-    private static final int MIN_SIZE = 4;
+    private static final int MIN_SIZE = 6;
     private static final int MAX_SIZE = 16;
 
-    public Room createRoom(long seed) {
+    public Room createRoom(long seed , Team team) {
         rand = new Random(seed);
 
-        int width = getGaussianNum(MIN_SIZE, MAX_SIZE);
         int height = getGaussianNum(MIN_SIZE, MAX_SIZE);
+        int width = getGaussianNum(MIN_SIZE, MAX_SIZE);
         grid = new Tile[width][height];
 
         resetGrid();
         fillGrid();
-        return new Room(grid);
+        if(team != Team.none) {
+            grid[width/2][height/2] = new PlayerSpawnTile(team);
+            //turrets too!
+            grid[2][height/2] = new TurretTile(team);
+            grid[width-2][height/2] = new TurretTile(team);
+            return new Room(grid, 1 , 2);
+        }
+
+        return new Room(grid, 2, 6);
     }
 
     @Override
@@ -49,7 +60,7 @@ public class RoomGenerator extends ProceduralAreaGenerator {
     protected void fillUndecidedTiles() {
         for (int x = 0; x < grid.length; x++) {
             for (int y = 0; y < grid[0].length; y++) {
-                if(grid[x][y] == UndecidedTile.getInstance()) {
+                if (grid[x][y] == UndecidedTile.getInstance()) {
                     grid[x][y] = AirTile.getInstance();
                 }
             }

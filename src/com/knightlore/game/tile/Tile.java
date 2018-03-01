@@ -5,34 +5,38 @@ import com.knightlore.render.graphic.Graphic;
 
 public abstract class Tile {
 
-	public abstract Graphic getTexture();
+    public abstract Graphic getTexture();
 
-	public double getOpacity() {
-		return 1D;
-	}
+    public double getOpacity() {
+        return 1D;
+    }
 
-	public double getSolidity() {
-		return 1D;
-	}
-	
-	public int getMinimapColor() {
-		return 0;
-	}
+    public double getSolidity() {
+        return 1D;
+    }
 
-	public abstract void onShot();
+    public int getMinimapColor() {
+        return 0;
+    }
 
-	public abstract void onEntered(Player player);
-	
-	public char toChar() {
-		return ' ';
-	}
+    public abstract void onShot();
 
-	public Tile reflectTileX() {
-		return this;
-	}
+    public abstract void onEntered(Player player);
 
-	public Tile reflectTileY() {
-		return this;
-	}
+    public char toChar() {
+        return ' ';
+    }
+
+    public Tile reflectTileX() {
+        return this;
+    }
+
+    public Tile reflectTileY() {
+        return this;
+    }
+
+    public boolean blockLOS() {
+        return false;
+    }
 
 }

@@ -8,41 +8,42 @@ import com.knightlore.utils.Vector2D;
 
 public class DirectionalSprite {
 
-	public static final ShotgunSprite SHOTGUN_DIRECTIONAL_SPRITE = new ShotgunSprite();
+    public static final PlayerSprite PLAYER_DIRECTIONAL_SPRITE = new PlayerSprite();
+    public static final ShotgunSprite SHOTGUN_DIRECTIONAL_SPRITE = new ShotgunSprite();
 
-	private List<Graphic> angles;
+    private List<Graphic> angles;
 
-	public DirectionalSprite() {
-		this(new ArrayList<Graphic>());
-	}
+    public DirectionalSprite() {
+        this(new ArrayList<Graphic>());
+    }
 
-	public DirectionalSprite(ArrayList<Graphic> angles) {
-		this.angles = angles;
-	}
+    public DirectionalSprite(ArrayList<Graphic> angles) {
+        this.angles = angles;
+    }
 
-	public Graphic getCurrentGraphic(Vector2D myPosition, Vector2D myDirection, Vector2D viewPosition) {
+    public Graphic getCurrentGraphic(Vector2D myPosition, Vector2D myDirection, Vector2D viewPosition) {
 
-		Vector2D displacement = Vector2D.sub(myPosition, viewPosition);
+        Vector2D displacement = Vector2D.sub(myPosition, viewPosition);
 
-		double dot = myDirection.dot(displacement);
-		double det = myDirection.getX() * displacement.getY() - displacement.getX() * myDirection.getY();
-		double theta = Math.atan2(det, dot);
-		theta += Math.PI;
+        double dot = myDirection.dot(displacement);
+        double det = myDirection.getX() * displacement.getY() - displacement.getX() * myDirection.getY();
+        double theta = Math.atan2(det, dot);
+        theta += Math.PI;
 
-		double c = (2 * Math.PI) / angles.size();
-		int i = (int) (Math.floor(theta / c));
+        double c = (2 * Math.PI) / angles.size();
+        int i = (int) (Math.floor(theta / c));
 
-		//FIXME
-		//quick fix
-		//must be REMOVED
-		if(i>=angles.size())
-			return angles.get(angles.size()-1);
-		
-		return angles.get(i);
-	}
+        // FIXME
+        // quick fix
+        // must be REMOVED
+        if (i >= angles.size())
+            return angles.get(angles.size() - 1);
 
-	public void addGraphic(Graphic g) {
-		angles.add(g);
-	}
+        return angles.get(i);
+    }
+
+    public void addGraphic(Graphic g) {
+        angles.add(g);
+    }
 
 }

@@ -15,109 +15,126 @@ import javax.swing.SwingUtilities;
  * @author Joe Ellis
  *
  */
-public class Mouse implements MouseListener, MouseMotionListener, MouseWheelListener {
+public final class Mouse implements MouseListener, MouseMotionListener, MouseWheelListener {
 
-	protected volatile int x, y;
-	protected volatile int scroll;
+    private volatile int x, y;
+    private volatile int scroll;
 
-	protected boolean leftHeld, rightHeld;
+    private boolean leftHeld, rightHeld;
+    private boolean lastLeftHeld, lastRightHeld;
+    private boolean leftClick, rightClick;
 
-	public void mouseDragged(MouseEvent e) {
-		x = e.getX();
-		y = e.getY();
-		leftHeld = SwingUtilities.isLeftMouseButton(e);
-		rightHeld = SwingUtilities.isRightMouseButton(e);
-	}
+    public void mouseDragged(MouseEvent e) {
+        x = e.getX();
+        y = e.getY();
+        leftHeld = SwingUtilities.isLeftMouseButton(e);
+        rightHeld = SwingUtilities.isRightMouseButton(e);
+    }
 
-	public void mouseMoved(MouseEvent e) {
-		x = e.getX();
-		y = e.getY();
-	}
+    public void mouseMoved(MouseEvent e) {
+        x = e.getX();
+        y = e.getY();
+    }
 
-	public void mouseClicked(MouseEvent e) {
-		x = e.getX();
-		y = e.getY();
-		leftHeld = SwingUtilities.isLeftMouseButton(e);
-		rightHeld = SwingUtilities.isRightMouseButton(e);
-	}
+    public void mouseClicked(MouseEvent e) {
+        x = e.getX();
+        y = e.getY();
+        leftClick = SwingUtilities.isLeftMouseButton(e);
+        rightClick = SwingUtilities.isRightMouseButton(e);
+    }
 
-	public void mouseReleased(MouseEvent e) {
-		x = e.getX();
-		y = e.getY();
+    public void mouseReleased(MouseEvent e) {
+        x = e.getX();
+        y = e.getY();
 
-		if (SwingUtilities.isLeftMouseButton(e)) {
-			leftHeld = false;
-		} else {
-			rightHeld = false;
-		}
-	}
+        if (SwingUtilities.isLeftMouseButton(e)) {
+            leftHeld = false;
+        } else {
+            rightHeld = false;
+        }
+    }
 
-	public void mouseWheelMoved(MouseWheelEvent e) {
-		scroll += e.getWheelRotation();
-	}
+    public void clearButtons() {
+        leftClick = false;
+        rightClick = false;
+    }
 
-	/**
-	 * Get the current x position of the mouse.
-	 * 
-	 * @return int The current x position of the mouse.
-	 */
-	public int getX() {
-		return x;
-	}
+    public void mouseWheelMoved(MouseWheelEvent e) {
+        scroll += e.getWheelRotation();
+    }
 
-	/**
-	 * Get the current y position of the mouse.
-	 * 
-	 * @return int The current y position of the mouse.
-	 */
-	public int getY() {
-		return y;
-	}
+    /**
+     * Get the current x position of the mouse.
+     * 
+     * @return int The current x position of the mouse.
+     */
+    public int getX() {
+        return x;
+    }
 
-	/**
-	 * Get the number of scroll wheel clicks since the last time this function
-	 * was called.
-	 * 
-	 * @return int The number of scroll wheel clicks. Negative values if the
-	 *         mouse wheel was rotated up/away from the user, and positive
-	 *         values if the mouse wheel was rotated down/towards the user.
-	 */
-	public int getScroll() {
-		int retVal = scroll;
-		scroll = 0;
-		return retVal;
-	}
+    /**
+     * Get the current y position of the mouse.
+     * 
+     * @return int The current y position of the mouse.
+     */
+    public int getY() {
+        return y;
+    }
 
-	/**
-	 * Get a boolean value representing whether the left mouse button is pressed
-	 * or not.
-	 * 
-	 * @return boolean A boolean representing the current state of the left
-	 *         mouse button.
-	 */
-	public boolean isLeftHeld() {
-		return leftHeld;
-	}
+    /**
+     * Get the number of scroll wheel clicks since the last time this function
+     * was called.
+     * 
+     * @return int The number of scroll wheel clicks. Negative values if the
+     *         mouse wheel was rotated up/away from the user, and positive
+     *         values if the mouse wheel was rotated down/towards the user.
+     */
+    public int getScroll() {
+        int retVal = scroll;
+        scroll = 0;
+        return retVal;
+    }
 
-	/**
-	 * Get a boolean value representing whether the right mouse button is
-	 * pressed or not.
-	 * 
-	 * @return boolean A boolean representing the current state of the right
-	 *         mouse button.
-	 */
-	public boolean isRightHeld() {
-		return rightHeld;
-	}
+    /**
+     * Get a boolean value representing whether the left mouse button is pressed
+     * or not.
+     * 
+     * @return boolean A boolean representing the current state of the left
+     *         mouse button.
+     */
+    public boolean isLeftHeld() {
+        return leftHeld;
+    }
 
-	/* UNUSED */
-	public void mouseEntered(MouseEvent e) {
-	}
+    public boolean isLeftClick() {
+        return leftClick;
+    }
 
-	public void mouseExited(MouseEvent e) {
-	}
+    /**
+     * Get a boolean value representing whether the right mouse button is
+     * pressed or not.
+     * 
+     * @return boolean A boolean representing the current state of the right
+     *         mouse button.
+     */
+    public boolean isRightHeld() {
+        return rightHeld;
+    }
 
-	public void mousePressed(MouseEvent e) {
-	}
+    /* UNUSED */
+    public void mouseEntered(MouseEvent e) {
+    }
+
+    public void mouseExited(MouseEvent e) {
+    }
+
+    public void mousePressed(MouseEvent e) {
+        if (SwingUtilities.isLeftMouseButton(e)) {
+            leftHeld = true;
+        }
+        if (SwingUtilities.isRightMouseButton(e)) {
+            rightHeld = true;
+        }
+    }
 
 }

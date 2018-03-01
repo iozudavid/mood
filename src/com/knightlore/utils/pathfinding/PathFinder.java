@@ -1,13 +1,19 @@
 package com.knightlore.utils.pathfinding;
 
+import com.knightlore.utils.Vector2D;
+
 import java.awt.Point;
 import java.util.*;
 
 public class PathFinder {
-    private final double[][] costGrid;
+    private double[][] costGrid;
 
     public PathFinder(double[][] costGrid) {
         this.costGrid = costGrid;
+    }
+
+    public List<Point> findPath(Vector2D start, Vector2D goal) {
+        return findPath(start.toPoint(), goal.toPoint());
     }
 
     public List<Point> findPath(Point start, Point goal) {
@@ -44,7 +50,7 @@ public class PathFinder {
         return path;
     }
 
-    private List<SearchNode> getNeighbouringNodes(SearchNode node, Point goal, Set<Point> checkedPoints){
+    private List<SearchNode> getNeighbouringNodes(SearchNode node, Point goal, Set<Point> checkedPoints) {
         List<SearchNode> neighbours = new LinkedList<>();
         Point up = new Point(node.getPosition().x, node.getPosition().y - 1);
         if (isInBounds(up, costGrid) && !checkedPoints.contains(up)) {
@@ -74,6 +80,13 @@ public class PathFinder {
     }
 
     private boolean isInBounds(Point p, double[][] grid) {
-        return p.x >= 0 && p.x < grid.length && p.y >= 0 && p.y < grid[0].length;
+        // modifying this because we don't want our path to 
+        // be on the very edge of the map
+        //return p.x >= 0 && p.x < grid.length && p.y >= 0 && p.y < grid[0].length;
+        return p.x >= 1 && p.x < grid.length - 1 && p.y >= 1 && p.y < grid[0].length - 1;  
+    }
+
+    public void setCostGrid(double[][] costGrid) {
+        this.costGrid = costGrid;
     }
 }
