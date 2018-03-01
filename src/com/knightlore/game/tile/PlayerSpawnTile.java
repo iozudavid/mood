@@ -78,5 +78,15 @@ public class PlayerSpawnTile extends Tile {
     public boolean blockLOS() {
         return true;
     }
+    
+    @Override
+    public Team getTeam() {
+        return team;
+    }
+
+    @Override
+    public TileType getTileType() {
+        return TileType.spawn;
+    }
 
 }

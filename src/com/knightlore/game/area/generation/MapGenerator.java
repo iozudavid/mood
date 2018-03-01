@@ -14,6 +14,7 @@ import com.knightlore.game.area.Room;
 import com.knightlore.game.tile.AirTile;
 import com.knightlore.game.tile.BrickTile;
 import com.knightlore.game.tile.Tile;
+import com.knightlore.game.tile.TileType;
 import com.knightlore.game.tile.UndecidedTile;
 import com.knightlore.utils.pathfinding.PathFinder;
 
@@ -55,7 +56,7 @@ public class MapGenerator extends ProceduralAreaGenerator {
         RoomGenerator roomGenerator = new RoomGenerator();
         // place spawn room first
         Room room = roomGenerator.createRoom(rand.nextLong(), Team.blue);
-        setRoomPosition(room , grid.length/4, grid[0].length/4);
+        setRoomPosition(room , grid.length/8, grid[0].length/8);
         rooms.add(room);
         
         room = roomGenerator.createRoom(rand.nextLong(),Team.none);
@@ -121,7 +122,8 @@ public class MapGenerator extends ProceduralAreaGenerator {
         */
         for(int i=leftWallX; i < rightWallX; i++) {
             for(int j=topWallY; j < bottomWallY; j++) {
-                if(grid[i][j] != UndecidedTile.getInstance()) {
+                //if(grid[i][j] != UndecidedTile.getInstance()) {
+                if(grid[i][j].getTileType() != TileType.undecided) {
                     return false;
                 }
             }
@@ -202,8 +204,11 @@ public class MapGenerator extends ProceduralAreaGenerator {
 
     private void placePath(List<Point> path) {
         for (Point p : path) {
-            if(grid[p.x][p.y].toChar() == '?' ||
-               grid[p.x][p.y].toChar() == 'B') {
+            Tile currentTile = grid[p.x][p.y];
+            //if(grid[p.x][p.y].toChar() == '?' ||
+            //  grid[p.x][p.y].toChar() == 'B') {
+            if(currentTile.getTileType() == TileType.undecided
+               || currentTile.getTileType() == TileType.brick) {
                 grid[p.x][p.y] = AirTile.getInstance();
                 // changing cost grid, also...
                 // using arbitrary number 3
