@@ -1,26 +1,17 @@
 package com.knightlore.game.world;
 
-import com.knightlore.ai.AIManager;
 import com.knightlore.ai.TurretServer;
 import com.knightlore.ai.TurretShared;
 import com.knightlore.game.Player;
-import com.knightlore.game.PlayerManager;
 import com.knightlore.game.entity.Entity;
 import com.knightlore.game.entity.Zombie;
 import com.knightlore.game.entity.pickup.ShotgunPickup;
 import com.knightlore.utils.Vector2D;
 
 public class ServerWorld extends GameWorld {
-
-    private PlayerManager playerManager;
-    private AIManager aiManager;
-
     public ServerWorld() {
         super();
-        this.playerManager = new PlayerManager();
-        this.aiManager = new AIManager(map);
     }
-    
 
     @Override
     public void setUpWorld() {
