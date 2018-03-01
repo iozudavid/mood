@@ -44,4 +44,9 @@ public class BrickTile extends Tile {
         return true;
     }
 
+    @Override
+    public TileType getTileType() {
+        return TileType.brick;
+    }
+
 }

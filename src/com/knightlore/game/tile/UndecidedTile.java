@@ -32,4 +32,9 @@ public class UndecidedTile extends Tile {
         return '?';
     }
 
+    @Override
+    public TileType getTileType() {
+        return TileType.undecided;
+    }
+
 }

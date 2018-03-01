@@ -1,6 +1,7 @@
 package com.knightlore.game.tile;
 
 import com.knightlore.game.Player;
+import com.knightlore.game.Team;
 import com.knightlore.render.graphic.Graphic;
 
 public abstract class Tile {
@@ -39,4 +40,10 @@ public abstract class Tile {
         return false;
     }
 
+    public Team getTeam() {
+        return Team.none;
+    }
+    
+    public abstract TileType getTileType();
+    
 }

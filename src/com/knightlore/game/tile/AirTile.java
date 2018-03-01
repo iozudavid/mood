@@ -34,4 +34,9 @@ public class AirTile extends Tile {
     public void onEntered(Player p) {
     }
 
+    @Override
+    public TileType getTileType() {
+        return TileType.air;
+    }
+
 }
