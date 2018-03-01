@@ -10,7 +10,7 @@ public class StartMenu {
 	private Image coverImage;
 	private Image name; 
 	private Button singlePlayerButton;
-	private Text singlePlayerText;
+	private Button multiPlayerButton;
 	
 	public StartMenu(int screenHeight, int screenWidth){
 		this.gui = new GUICanvas();
@@ -19,12 +19,12 @@ public class StartMenu {
 		this.screenWidth = screenWidth;
 		this.coverImage = new Image(0, 0, screenWidth, screenHeight, "res/graphics/knightlorecoverblur.png");
 		this.name = new Image(middleWidth(500), calculateHeight(10), 500, 100, "res/graphics/logo.png");
-		this.singlePlayerButton = new Button(middleWidth(250), calculateHeight(35), 250, 40, this.singlePlayerText);
-		this.singlePlayerText = new Text(middleWidth(250), calculateHeight(35), 250, 40, "Single player");
+		this.singlePlayerButton = new Button(middleWidth(300), calculateHeight(35), 300, 40, "Single Player",20);
+		this.multiPlayerButton = new Button(middleWidth(300), calculateHeight(45), 300, 40, "Multiplayer",20);
 		gui.addGUIObject(coverImage);
 		gui.addGUIObject(name);
 		gui.addGUIObject(singlePlayerButton);
-		gui.addGUIObject(singlePlayerText);
+		gui.addGUIObject(multiPlayerButton);
 	}
 	
 
