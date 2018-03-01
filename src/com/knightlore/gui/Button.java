@@ -37,12 +37,11 @@ public class Button extends GUIObject {
     private SelectState state = SelectState.UP_PHASE_1;
     
     // no harm in changing these externally
-    public Color upColour1 = Color.LIGHT_GRAY;
-    public Color upColour2 = Color.WHITE;
-    public Color hoverColour1 = new Color(0,101,0);
-    //lighter green
-    public Color hoverColour2 = new Color(0, 221, 0);
-    public Color downColour = Color.BLACK;
+    public Color upColour1 = new Color(177,177,177);
+    public Color upColour2 = new Color(191,191,191);
+    public Color hoverColour1 = new Color(209,209,209);
+    public Color hoverColour2 = new Color(230, 230, 230);
+    public Color downColour = new Color(250, 250, 250);
     
     
     public VoidFunction clickFunction;
@@ -83,11 +82,11 @@ public class Button extends GUIObject {
         
     	g.setColor(Color.BLACK);
         if (state!=SelectState.UP_PHASE_1 && state!=SelectState.UP_PHASE_2 && activeGraphic != null) {
-        	BufferedImage resized = Image.resize(activeGraphic.getImage(), 50, 50);
-        	g.drawImage(resized, rect.x-60, rect.y, null);
+        	BufferedImage resized = Image.resize(activeGraphic.getImage(), (int)(rect.getHeight()+10), (int)(rect.getHeight()+10));
+        	g.drawImage(resized, (int)(rect.x-rect.getHeight()-20), rect.y, null);
         }
         if (state!=SelectState.UP_PHASE_1 && state!=SelectState.UP_PHASE_2 && activeGraphic2 != null) {
-        	BufferedImage resized = Image.resize(activeGraphic2.getImage(), 50, 50);
+        	BufferedImage resized = Image.resize(activeGraphic2.getImage(), (int)(rect.getHeight()+10), (int)(rect.getHeight()+10));
         	g.drawImage(resized, (int) (rect.x+rect.getWidth()), rect.y, null);
         }
         	g.setColor(Color.DARK_GRAY);
@@ -118,9 +117,9 @@ public class Button extends GUIObject {
             		}
             		else if(state==SelectState.UP_PHASE_2){
             			if(!(x1%2==0 || y1%2==0)){
-            				g.setColor(upColour1);
-            			}else{
             				g.setColor(upColour2);
+            			}else{
+            				g.setColor(upColour1);
             			}
             			g.fillRect(x1, y1, 1, 1);
             		}
