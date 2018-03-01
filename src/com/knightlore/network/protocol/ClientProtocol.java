@@ -15,27 +15,28 @@ public final class ClientProtocol {
     // position in the byte array - key map
     // convention of the client
     // to create the packet
-    private static final Map<Integer, ClientControl> indexAction;
+    private static final Map<Integer, ClientController> indexAction;
     static {
-        indexAction = new HashMap<Integer, ClientControl>();
-        indexAction.put(0, ClientControl.FORWARD);
-        indexAction.put(1, ClientControl.LEFT);
-        indexAction.put(2, ClientControl.BACKWARD);
-        indexAction.put(3, ClientControl.RIGHT);
-        indexAction.put(4, ClientControl.ROTATE_ANTI_CLOCKWISE);
-        indexAction.put(5, ClientControl.ROTATE_CLOCKWISE);
+        indexAction = new HashMap<Integer, ClientController>();
+        indexAction.put(0, ClientController.FORWARD);
+        indexAction.put(1, ClientController.LEFT);
+        indexAction.put(2, ClientController.BACKWARD);
+        indexAction.put(3, ClientController.RIGHT);
+        indexAction.put(4, ClientController.ROTATE_ANTI_CLOCKWISE);
+        indexAction.put(5, ClientController.ROTATE_CLOCKWISE);
+        indexAction.put(6, ClientController.SHOOT);
         // just this for now
     }
 
     // get the key by passing index in the array
-    public static ClientControl getByIndex(int i) throws IOException {
+    public static ClientController getByIndex(int i) throws IOException {
         if (!indexAction.containsKey(i))
             throw new IOException();
         return indexAction.get(i);
     }
 
     // get the index by passing the key
-    public static int getByKey(ClientControl key) throws IOException {
+    public static int getByKey(ClientController key) throws IOException {
         if (!indexAction.containsValue(key))
             throw new IOException();
         for (int i : indexAction.keySet()) {
@@ -45,7 +46,7 @@ public final class ClientProtocol {
         return -1;
     }
 
-    public static Map<Integer, ClientControl> getIndexActionMap() {
+    public static Map<Integer, ClientController> getIndexActionMap() {
         return indexAction;
     }
 

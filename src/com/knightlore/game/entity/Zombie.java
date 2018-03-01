@@ -6,19 +6,16 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.UUID;
 
-import com.knightlore.engine.GameEngine;
 import com.knightlore.game.Player;
-import com.knightlore.game.world.GameWorld;
 import com.knightlore.network.NetworkObject;
 import com.knightlore.render.graphic.sprite.DirectionalSprite;
 import com.knightlore.utils.Vector2D;
 
 public class Zombie extends Entity {
-    
+
     private static final double DIRECTION_DIFFERENCE_TO_TURN = 0.1d;
     private static final long THINKING_FREQUENCY = 1000; // ms
 
-    private final GameWorld world = GameEngine.getSingleton().getWorld();
     private long lastThinkingTime = 0;
     private List<Point> currentPath = new LinkedList<>();
 
@@ -63,7 +60,7 @@ public class Zombie extends Entity {
 
         move();
     }
-    
+
     @Override
     public void onCollide(Player player) {
     }
@@ -73,7 +70,7 @@ public class Zombie extends Entity {
             return;
         }
 
-        Vector2D nextPointDirection = Vector2D.sub( new Vector2D(currentPath.get(0)), this.position);
+        Vector2D nextPointDirection = Vector2D.sub(new Vector2D(currentPath.get(0)), this.position);
         if (Vector2D.ZERO.subtract(this.direction).isEqualTo(nextPointDirection)) {
             rotateClockwise();
             return;
@@ -94,13 +91,14 @@ public class Zombie extends Entity {
     }
 
     private void think() {
-//        List<Player> players = world.getPlayerManager().getPlayers();
-//        Optional<List<Point>> pathToClosestPlayer = players.stream()
-//                .map(player -> world.getAIManager().findPath(this.position, player.getPosition()))
-//                .min(Comparator.comparing(List::size));
-//
-//        pathToClosestPlayer.ifPresent(points -> currentPath = points);
-//        lastThinkingTime = System.currentTimeMillis();
+        // List<Player> players = world.getPlayerManager().getPlayers();
+        // Optional<List<Point>> pathToClosestPlayer = players.stream()
+        // .map(player -> world.getAIManager().findPath(this.position,
+        // player.getPosition()))
+        // .min(Comparator.comparing(List::size));
+        //
+        // pathToClosestPlayer.ifPresent(points -> currentPath = points);
+        // lastThinkingTime = System.currentTimeMillis();
     }
 
     @Override
