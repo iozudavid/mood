@@ -4,7 +4,8 @@ import com.knightlore.ai.TurretServer;
 import com.knightlore.ai.TurretShared;
 import com.knightlore.game.Player;
 import com.knightlore.game.entity.Entity;
-import com.knightlore.game.entity.Zombie;
+import com.knightlore.game.entity.ZombieServer;
+import com.knightlore.game.entity.ZombieShared;
 import com.knightlore.game.entity.pickup.ShotgunPickup;
 import com.knightlore.utils.Vector2D;
 
@@ -23,7 +24,7 @@ public class ServerWorld extends GameWorld {
         ShotgunPickup shot = new ShotgunPickup(new Vector2D(8, 8));
         shot.init();
         ents.add(shot);
-        Zombie zom = new Zombie(new Vector2D(4, 5));
+        ZombieServer zom = new ZombieServer(new Vector2D(4, 5));
         zom.init();
         ents.add(zom);
         // add pickups
