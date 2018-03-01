@@ -10,11 +10,13 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JSplitPane;
 
+import com.knightlore.game.area.Map;
 import com.knightlore.game.area.generation.MapGenerator;
+import com.knightlore.game.tile.TileType;
 
 public class LevelEditorWindow extends JFrame {
 
-    public static Pen pen = new Pen(Pen.ETile.BRICK);
+    public static Pen pen = new Pen(TileType.brick);
 
     public static final String TITLE = "KnightLore Level Editor";
     public static final int WIDTH = 1000;
@@ -56,7 +58,10 @@ public class LevelEditorWindow extends JFrame {
     private void openRandomMap() {
         Random rand = new Random();
         panel.removeAll();
-        panel.initialise(new MapGenerator().createMap(32, 32, rand.nextLong()));
+        
+        Map m = new MapGenerator().createMap(32, 32, rand.nextLong());
+        panel.initialise(m);
+        System.out.println(m.toString());
         panel.revalidate();
         panel.repaint();
     }

@@ -37,14 +37,14 @@ public class Map extends Area {
         int index = rand.nextInt(candidates.size());
         return candidates.get(index);
     }
-    
-    public List<Vector2D> getTilePoints(Team team, TileType type){
-        
+
+    public List<Vector2D> getTilePoints(Team team, TileType type) {
+
         List<Vector2D> positions = new ArrayList<>();
         for (int i = 0; i < getWidth(); i++) {
             for (int j = 0; j < getHeight(); j++) {
-                
-                Tile tile = getTile(i,j);
+
+                Tile tile = getTile(i, j);
                 // guard clauses
                 if (tile.getTileType() != type) {
                     continue;
@@ -52,9 +52,9 @@ public class Map extends Area {
                 if (tile.getTeam() != team) {
                     continue;
                 }
-                
-                positions.add(new Vector2D(i,j));
-                
+
+                positions.add(new Vector2D(i, j));
+
             }
         }
         return positions;
@@ -63,10 +63,10 @@ public class Map extends Area {
     @Override
     public String toString() {
         StringBuilder builder = new StringBuilder();
-        for(int x = 0; x < width; x++) {
-            for(int y = 0; y < height; y++) {
+        for (int x = 0; x < width; x++) {
+            for (int y = 0; y < height; y++) {
                 Tile theTile = getTile(x, y);
-                builder.append(String.format("%d %d %d", x, y, 0));
+                builder.append(String.format("%d %d %s\n", x, y, theTile.getTileType().name()));
             }
         }
         return builder.toString();

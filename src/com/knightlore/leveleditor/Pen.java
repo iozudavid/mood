@@ -4,16 +4,13 @@ import com.knightlore.game.tile.AirTile;
 import com.knightlore.game.tile.BrickTile;
 import com.knightlore.game.tile.BushTile;
 import com.knightlore.game.tile.Tile;
+import com.knightlore.game.tile.TileType;
 
 public class Pen {
 
-    enum ETile {
-        AIR, BRICK, BUSH
-    }
+    protected TileType stroke;
 
-    protected ETile stroke;
-
-    public Pen(ETile stroke) {
+    public Pen(TileType stroke) {
         this.stroke = stroke;
     }
 
@@ -21,13 +18,13 @@ public class Pen {
         return getTile(stroke);
     }
 
-    public Tile getTile(ETile e) {
+    public Tile getTile(TileType e) {
         switch (stroke) {
-        case AIR:
+        case air:
             return AirTile.getInstance();
-        case BRICK:
+        case brick:
             return new BrickTile();
-        case BUSH:
+        case bush:
             return new BushTile();
         default:
             return AirTile.getInstance();

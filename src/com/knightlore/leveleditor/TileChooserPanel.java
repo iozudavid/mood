@@ -7,7 +7,7 @@ import javax.swing.Box;
 import javax.swing.JButton;
 import javax.swing.JPanel;
 
-import com.knightlore.leveleditor.Pen.ETile;
+import com.knightlore.game.tile.TileType;
 
 public class TileChooserPanel extends JPanel {
 
@@ -15,8 +15,8 @@ public class TileChooserPanel extends JPanel {
         super();
         Box box = Box.createVerticalBox();
 
-        ETile[] options = Pen.ETile.values();
-        for (ETile o : options) {
+        TileType[] options = TileType.values();
+        for (TileType o : options) {
             JButton button = new JButton(o.name());
             button.addActionListener(new ActionListener() {
 
