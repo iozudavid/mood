@@ -18,6 +18,7 @@ public class SendToClient implements Runnable {
     public SendToClient(Connection conn) {
         this.conn = conn;
         this.manager = (ServerNetworkObjectManager) GameEngine.getSingleton().getNetworkObjectManager();
+        System.out.println("registering client sender");
         this.uuid = manager.registerClientSender(this);
     }
 

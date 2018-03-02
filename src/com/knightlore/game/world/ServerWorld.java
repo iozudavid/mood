@@ -5,17 +5,14 @@ import com.knightlore.ai.TurretShared;
 import com.knightlore.game.Player;
 import com.knightlore.game.entity.Entity;
 import com.knightlore.game.entity.ZombieServer;
-import com.knightlore.game.entity.ZombieShared;
 import com.knightlore.game.entity.pickup.ShotgunPickup;
 import com.knightlore.utils.Vector2D;
 
 public class ServerWorld extends GameWorld {
-    public ServerWorld() {
-        super();
-    }
 
     @Override
-    public void setUpWorld() {
+    public void setUpWorld(Long mapSeed) {
+        super.setUpWorld(mapSeed);
         buildEntities();
     }
 
