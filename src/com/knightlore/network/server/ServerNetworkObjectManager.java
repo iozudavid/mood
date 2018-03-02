@@ -101,9 +101,6 @@ public class ServerNetworkObjectManager extends NetworkObjectManager {
     }
 
     public UUID registerClientSender(SendToClient sender) {
-        synchronized (this.clientSenders) {
-            this.clientSenders.add(sender);
-        }
         // Tell the player the seed to generate the map from.
         sendMapSeed(sender);
         Player newPlayer = serverWorld.createPlayer();
@@ -113,6 +110,10 @@ public class ServerNetworkObjectManager extends NetworkObjectManager {
         sendPlayerIdentity(sender, newPlayer);
         // Tell the player they're now ready to start.
         sendReadySignal(sender);
+
+        synchronized (this.clientSenders) {
+            this.clientSenders.add(sender);
+        }
 
         return newPlayer.getObjectId();
     }
