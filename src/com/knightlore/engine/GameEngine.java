@@ -96,15 +96,13 @@ public class GameEngine implements Runnable {
             ServerManager networkManager = new ServerManager();
             new Thread(networkManager).start();
             world = new ServerWorld();
-            networkObjectManager = new ServerNetworkObjectManager(
-                    (ServerWorld) world);
+            networkObjectManager = new ServerNetworkObjectManager((ServerWorld) world);
         }
         if (GameSettings.isClient()) {
             ClientManager networkManager = new ClientManager();
             new Thread(networkManager).start();
             world = new ClientWorld();
-            networkObjectManager = new ClientNetworkObjectManager(
-                    (ClientWorld) world);
+            networkObjectManager = new ClientNetworkObjectManager((ClientWorld) world);
         }
 
         System.out.println("Initialising NetworkObjectManager...");

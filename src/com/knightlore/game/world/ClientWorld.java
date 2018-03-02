@@ -4,7 +4,7 @@ import com.knightlore.game.entity.Entity;
 import com.knightlore.render.Environment;
 
 public class ClientWorld extends GameWorld {
-    
+
     @Override
     public void update() {
     }
@@ -18,7 +18,7 @@ public class ClientWorld extends GameWorld {
     }
 
     public Environment getEnvironment() {
-        return Environment.LIGHT_OUTDOORS;
+        return Environment.DARK_OUTDOORS;
     }
 
     @Override
