@@ -4,10 +4,6 @@ import com.knightlore.game.entity.Entity;
 import com.knightlore.render.Environment;
 
 public class ClientWorld extends GameWorld {
-
-    public ClientWorld() {
-        super();
-    }
     
     @Override
     public void update() {
@@ -26,11 +22,11 @@ public class ClientWorld extends GameWorld {
     }
 
     @Override
-    public void setUpWorld() {
+    public void setUpWorld(Long mapSeed) {
+        super.setUpWorld(mapSeed);
         buildGUI();
     }
 
     public void buildGUI() {
     }
-
 }

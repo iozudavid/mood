@@ -33,6 +33,7 @@ public class MapGenerator extends ProceduralAreaGenerator {
     }
 
     public Map createMap(int width, int height, long seed) {
+        System.out.println("Creating map with seed: " + seed);
         rand = new Random(seed);
         grid = new Tile[width][height];
         PerlinNoiseGenerator perlinGenerator = new PerlinNoiseGenerator(width, height, seed);

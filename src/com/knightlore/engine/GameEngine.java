@@ -8,7 +8,9 @@ import com.knightlore.game.world.ClientWorld;
 import com.knightlore.game.world.GameWorld;
 import com.knightlore.game.world.ServerWorld;
 import com.knightlore.network.NetworkObjectManager;
+import com.knightlore.network.client.ClientManager;
 import com.knightlore.network.client.ClientNetworkObjectManager;
+import com.knightlore.network.server.ServerManager;
 import com.knightlore.network.server.ServerNetworkObjectManager;
 import com.knightlore.render.Camera;
 import com.knightlore.render.Renderer;
@@ -88,15 +90,22 @@ public class GameEngine implements Runnable {
         // ALSO TODO, UNHOOK TEST WORLD
         System.out.println("Initialising World...");
 
+        // The NetworkObjectManager will call setUpWorld() on the world when
+        // it's ready to do so.
         if (GameSettings.isServer()) {
+            ServerManager networkManager = new ServerManager();
+            new Thread(networkManager).start();
             world = new ServerWorld();
-            networkObjectManager = new ServerNetworkObjectManager((ServerWorld) world);
+            networkObjectManager = new ServerNetworkObjectManager(
+                    (ServerWorld) world);
         }
         if (GameSettings.isClient()) {
+            ClientManager networkManager = new ClientManager();
+            new Thread(networkManager).start();
             world = new ClientWorld();
-            networkObjectManager = new ClientNetworkObjectManager((ClientWorld) world);
+            networkObjectManager = new ClientNetworkObjectManager(
+                    (ClientWorld) world);
         }
-        world.setUpWorld();
 
         System.out.println("Initialising NetworkObjectManager...");
         networkObjectManager.init();
@@ -104,7 +113,6 @@ public class GameEngine implements Runnable {
         System.out.println("World Initialised Successfully.");
 
         if (GameSettings.isClient()) {
-            camera = new Camera(world.getMap());
             this.renderer = new Renderer(camera, (ClientWorld) world);
         }
     }
@@ -191,6 +199,10 @@ public class GameEngine implements Runnable {
 
     public Camera getCamera() {
         return camera;
+    }
+
+    public void setCamera(Camera camera) {
+        this.camera = camera;
     }
 
     public GameWorld getWorld() {
