@@ -44,6 +44,10 @@ public abstract class Area {
         }
         return grid[x][y];
     }
+    
+    public void setTile(Tile tile, int x, int y) {
+        this.grid[x][y] = tile;
+    }
 
     public double[][] getCostGrid() {
         return costGrid;

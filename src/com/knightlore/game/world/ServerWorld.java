@@ -1,28 +1,18 @@
 package com.knightlore.game.world;
 
-import com.knightlore.ai.AIManager;
 import com.knightlore.ai.TurretServer;
 import com.knightlore.ai.TurretShared;
 import com.knightlore.game.Player;
-import com.knightlore.game.PlayerManager;
-import com.knightlore.game.entity.Zombie;
+import com.knightlore.game.entity.Entity;
+import com.knightlore.game.entity.ZombieServer;
 import com.knightlore.game.entity.pickup.ShotgunPickup;
 import com.knightlore.utils.Vector2D;
 
 public class ServerWorld extends GameWorld {
 
-    private PlayerManager playerManager;
-    private AIManager aiManager;
-
-    public ServerWorld() {
-        super();
-        this.playerManager = new PlayerManager();
-        this.aiManager = new AIManager(map);
-    }
-    
-
     @Override
-    public void setUpWorld() {
+    public void setUpWorld(Long mapSeed) {
+        super.setUpWorld(mapSeed);
         buildEntities();
     }
 
@@ -31,7 +21,7 @@ public class ServerWorld extends GameWorld {
         ShotgunPickup shot = new ShotgunPickup(new Vector2D(8, 8));
         shot.init();
         ents.add(shot);
-        Zombie zom = new Zombie(new Vector2D(4, 5));
+        ZombieServer zom = new ZombieServer(new Vector2D(4, 5));
         zom.init();
         ents.add(zom);
         // add pickups
@@ -44,11 +34,23 @@ public class ServerWorld extends GameWorld {
         tboi.init();
     }
 
+    @Override
+    public void update() {
+        super.update();
+        for (Player player : playerManager.getPlayers()) {
+            for (Entity ent : ents) {
+                if (player.getBoundingRectangle().intersects(ent.getBoundingRectangle())) {
+                    ent.onCollide(player);
+                }
+            }
+        }
+    }
+
     public Player createPlayer() {
         Vector2D pos = map.getRandomSpawnPoint();
         Player player = new Player(pos, Vector2D.UP);
         player.init();
-        ents.add(player);
+        // ents.add(player);
         playerManager.addPlayer(player);
         return player;
     }

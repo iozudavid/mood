@@ -10,18 +10,20 @@ import com.knightlore.game.entity.Entity;
 import com.knightlore.game.entity.weapon.Shotgun;
 import com.knightlore.game.entity.weapon.Weapon;
 import com.knightlore.network.NetworkObject;
-import com.knightlore.network.protocol.ClientControl;
+import com.knightlore.network.protocol.ClientController;
 import com.knightlore.network.protocol.ClientProtocol;
 import com.knightlore.render.graphic.sprite.DirectionalSprite;
 import com.knightlore.utils.Vector2D;
 
 public class Player extends Entity {
 
+    private final int MAX_HEALTH = 100;
+    private int health = MAX_HEALTH;
     private Weapon currentWeapon;
 
     // Maps all inputs that the player could be making to their values.
-    private java.util.Map<ClientControl, Runnable> ACTION_MAPPINGS = new HashMap<>();
-    private java.util.Map<ClientControl, Byte> inputState = new HashMap<>();
+    private java.util.Map<ClientController, Runnable> ACTION_MAPPINGS = new HashMap<>();
+    private java.util.Map<ClientController, Byte> inputState = new HashMap<>();
     // private volatile boolean finished = false;
 
     // Returns a new instance. See NetworkObject for details.
@@ -39,16 +41,17 @@ public class Player extends Entity {
 
         // Map possible inputs to the methods that handle them. Avoids long
         // if-statement chain.
-        ACTION_MAPPINGS.put(ClientControl.FORWARD, this::moveForward);
-        ACTION_MAPPINGS.put(ClientControl.ROTATE_ANTI_CLOCKWISE, this::rotateAntiClockwise);
-        ACTION_MAPPINGS.put(ClientControl.BACKWARD, this::moveBackward);
-        ACTION_MAPPINGS.put(ClientControl.ROTATE_CLOCKWISE, this::rotateClockwise);
-        ACTION_MAPPINGS.put(ClientControl.LEFT, this::strafeLeft);
-        ACTION_MAPPINGS.put(ClientControl.RIGHT, this::strafeRight);
+        ACTION_MAPPINGS.put(ClientController.FORWARD, this::moveForward);
+        ACTION_MAPPINGS.put(ClientController.ROTATE_ANTI_CLOCKWISE, this::rotateAntiClockwise);
+        ACTION_MAPPINGS.put(ClientController.BACKWARD, this::moveBackward);
+        ACTION_MAPPINGS.put(ClientController.ROTATE_CLOCKWISE, this::rotateClockwise);
+        ACTION_MAPPINGS.put(ClientController.LEFT, this::strafeLeft);
+        ACTION_MAPPINGS.put(ClientController.RIGHT, this::strafeRight);
+        ACTION_MAPPINGS.put(ClientController.SHOOT, this::shoot);
 
         setNetworkConsumers();
 
-        zOffset = 8;
+        zOffset = 100;
         moveSpeed = 0.120;
         strafeSpeed = 0.08;
         rotationSpeed = 0.06;
@@ -70,7 +73,7 @@ public class Player extends Entity {
                 // take the control
                 // using client protocol
                 // to fetch the order
-                ClientControl control = null;
+                ClientController control = null;
                 try {
                     control = ClientProtocol.getByIndex(buf.getInt());
                 } catch (IOException e) {
@@ -90,7 +93,7 @@ public class Player extends Entity {
             // respective method.
             // DEBUG
             boolean updated = false;
-            for (Entry<ClientControl, Byte> entry : inputState.entrySet())
+            for (Entry<ClientController, Byte> entry : inputState.entrySet())
                 // For boolean inputs (i.e. all current inputs), 0 represents
                 // false.
                 if (entry.getValue() != 0) {
@@ -102,6 +105,14 @@ public class Player extends Entity {
                 // updateMotionOffset();
             }
         }
+    }
+
+    private void shoot() {
+        System.out.println("SHOOT");
+    }
+
+    @Override
+    public void onCollide(Player player) {
     }
 
     // TODO: serialize weapon etc.
@@ -138,7 +149,7 @@ public class Player extends Entity {
 
     @Override
     public DirectionalSprite getDirectionalSprite() {
-        return DirectionalSprite.PLAYER_DIRECTIONAL_SPRITE;
+        return DirectionalSprite.RED_PLAYER_DIRECTIONAL_SPRITE;
     }
 
     @Override

@@ -23,7 +23,7 @@ public class ServerManager implements Runnable {
     @Override
     public void run() {
         System.out.println("Server started");
-        Thread pruner = new Thread(new Pruner(connections));
+        Thread pruner = new Thread(new ConnectionPruner(connections));
         pruner.start();
 
         // DEBUG
