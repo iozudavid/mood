@@ -69,14 +69,14 @@ public class Player extends Entity {
     public void render(PixelBuffer pix, int x, int y, double distanceTraveled) {
         super.render(pix, x, y, distanceTraveled);
 
-        final int SCALE = 6;
+        final int SCALE = 5;
         Graphic g = currentWeapon.getGraphic();
         final int width = g.getWidth() * SCALE, height = g.getHeight() * SCALE;
 
         final int weaponBobX = 20, weaponBobY = 30;
 
         int xx = x + (pix.getWidth() - width) / 2;
-        int yy = pix.getHeight() - height + 52 * SCALE;
+        int yy = pix.getHeight() - height + 28 * SCALE;
 
         int xOffset = (int) (Math.cos(distanceTraveled) * weaponBobX);
         int yOffset = (int) (Math.abs(Math.sin(distanceTraveled) * weaponBobY));

@@ -18,7 +18,7 @@ public class ClientWorld extends GameWorld {
     }
 
     public Environment getEnvironment() {
-        return Environment.DUNGEON;
+        return Environment.DARK_OUTDOORS;
     }
 
     @Override

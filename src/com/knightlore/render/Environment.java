@@ -4,7 +4,7 @@ import com.knightlore.render.graphic.Graphic;
 import com.knightlore.render.graphic.texture.Texture;
 
 public enum Environment {
-    DARK_OUTDOORS(15, Texture.BRICK, Texture.BRICK) {
+    DARK_OUTDOORS(15, Texture.WOOD, Texture.MUD) {
         @Override
         public int getMinimapBaseColor() {
             return 0x33333;
@@ -38,11 +38,11 @@ public enum Environment {
     public int getDarkness() {
         return darkness;
     }
-    
+
     public Graphic getFloorTexture() {
         return floorTexture;
     }
-    
+
     public Graphic getCeilingTexture() {
         return ceilingTexture;
     }
