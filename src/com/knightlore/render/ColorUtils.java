@@ -30,4 +30,8 @@ public class ColorUtils {
         return new Color(red, green, blue).getRGB();
     }
 
+    public static int quickDarken(int color) {
+        return (color >> 1) & 0x7F7F7F;
+    }
+
 }

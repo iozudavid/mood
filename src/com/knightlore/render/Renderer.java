@@ -51,10 +51,10 @@ public class Renderer implements IRenderable {
 
         if (camera.getSubject().getDirection().isEqualTo(Vector2D.ZERO, 0.01))
             return;
-        
+
         // Draw the environment, as specified by the world.
         world.getEnvironment().renderEnvironment(pix);
-        
+
         // draw the perspective and the crosshairs
         int offset = camera.getMotionBobOffset();
         drawPerspective(pix, offset);
@@ -85,7 +85,7 @@ public class Renderer implements IRenderable {
 
         final int width = pix.getWidth(), height = pix.getHeight();
         double[] zbuffer = new double[width];
-        
+
         /*
          * SEE: PerspectiveRenderItem.java for how this works. In short: we keep
          * adding new render items to a stack until we reach an opaque block.
@@ -189,7 +189,7 @@ public class Renderer implements IRenderable {
                     }
 
                     PerspectiveRenderItem p = new PerspectiveRenderItem(opacity, drawStart, drawEnd, lineHeight,
-                            texture, texX, distanceToWall, xx);
+                            texture, texX, distanceToWall, xx, side);
                     renderStack.push(p);
                     zbuffer[xx] = p.distanceToWall;
 
@@ -219,6 +219,7 @@ public class Renderer implements IRenderable {
             color = ColorUtils.mixColor(pix.pixelAt(p.xx, drawY), color, p.opacity);
 
             color = ColorUtils.darken(color, world.getEnvironment().getDarkness(), p.distanceToWall);
+            if (p.side) color = ColorUtils.quickDarken(color);
             pix.fillRect(color, p.xx, drawY, BLOCKINESS, 1);
         }
     }

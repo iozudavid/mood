@@ -20,18 +20,12 @@ public class Camera {
     private static final double MOTION_BOB_AMOUNT = 10.0;
     private static final double MOTION_BOB_SPEED = 0.15 * 10;
 
-    private int motionOffset;
-    private long moveTicks;
-
     private Entity subject;
     private Vector2D lastPos;
     private double distanceTraveled;
 
     public Camera(Map map) {
         super();
-
-        this.motionOffset = 0;
-        this.moveTicks = 0;
         this.lastPos = new Vector2D(0, 0);
     }
 
@@ -58,16 +52,6 @@ public class Camera {
 
     public synchronized Vector2D getDirection() {
         return subject.getDirection();
-    }
-
-    public void updateMotionOffset() {
-        System.out.println(moveTicks);
-        moveTicks++;
-        this.motionOffset = (int) (Math.abs(Math.sin(moveTicks * MOTION_BOB_SPEED) * MOTION_BOB_AMOUNT));
-    }
-
-    public int getMotionOffset() {
-        return motionOffset;
     }
 
     public synchronized double getxPos() {
@@ -112,6 +96,7 @@ public class Camera {
 
     public void setSubject(Entity subject) {
         this.subject = subject;
+        this.lastPos = subject.getPosition();
     }
 
     public boolean isSubjectSet() {
