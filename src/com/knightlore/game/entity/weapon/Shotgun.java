@@ -8,7 +8,7 @@ import com.knightlore.utils.Vector2D;
 public class Shotgun extends Weapon {
 
     public Shotgun() {
-        super(GraphicSheet.SHOTGUN_SPRITES.graphicAt(0, 15), false, (int) (0.75 * GameEngine.UPDATES_PER_SECOND));
+        super(GraphicSheet.SHOTGUN_SPRITES.graphicAt(0, 16), false, (int) (0.75 * GameEngine.UPDATES_PER_SECOND));
     }
     
     public void shoot(Player shooter) {

@@ -12,6 +12,8 @@ import com.knightlore.game.entity.weapon.Weapon;
 import com.knightlore.network.NetworkObject;
 import com.knightlore.network.protocol.ClientController;
 import com.knightlore.network.protocol.ClientProtocol;
+import com.knightlore.render.PixelBuffer;
+import com.knightlore.render.graphic.Graphic;
 import com.knightlore.render.graphic.sprite.DirectionalSprite;
 import com.knightlore.utils.Vector2D;
 
@@ -61,6 +63,25 @@ public class Player extends Entity {
 
     public Player(Vector2D pos, Vector2D dir) {
         this(UUID.randomUUID(), pos, dir);
+    }
+
+    @Override
+    public void render(PixelBuffer pix, int x, int y, double distanceTraveled) {
+        super.render(pix, x, y, distanceTraveled);
+
+        final int SCALE = 6;
+        Graphic g = currentWeapon.getGraphic();
+        final int width = g.getWidth() * SCALE, height = g.getHeight() * SCALE;
+
+        final int weaponBobX = 20, weaponBobY = 30;
+
+        int xx = x + (pix.getWidth() - width) / 2;
+        int yy = pix.getHeight() - height + 52 * SCALE;
+
+        int xOffset = (int) (Math.cos(distanceTraveled) * weaponBobX);
+        int yOffset = (int) (Math.abs(Math.sin(distanceTraveled) * weaponBobY));
+
+        pix.drawGraphic(g, xx + xOffset, yy + yOffset, SCALE, SCALE);
     }
 
     private void setNetworkConsumers() {

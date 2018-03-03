@@ -11,7 +11,7 @@ import com.knightlore.utils.Vector2D;
  * @author Joe Ellis
  *
  */
-public class Camera {
+public class Camera implements IRenderable {
 
     /* -.66 is a good value. */
     public static final double FIELD_OF_VIEW = .66;
@@ -28,7 +28,12 @@ public class Camera {
         super();
         this.lastPos = new Vector2D(0, 0);
     }
-
+    
+    @Override
+    public void render(PixelBuffer pix, int x, int y) {
+        subject.render(pix, x, y, getDistanceTraveled());
+    }
+    
     private double getDisplacementDelta() {
         Vector2D current = subject.getPosition();
         double displacement = current.subtract(lastPos).magnitude();

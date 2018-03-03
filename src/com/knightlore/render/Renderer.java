@@ -56,12 +56,14 @@ public class Renderer implements IRenderable {
         // draw the perspective and the crosshairs
         int offset = camera.getMotionBobOffset();
         drawPerspective(pix, offset);
+        
+        camera.render(pix, x, y);
         drawCrosshair(pix);
 
         if (gui != null) {
             gui.render(pix, x, y);
         }
-
+        
         minimap.render();
 
         PixelBuffer minimapBuffer = minimap.getPixelBuffer();

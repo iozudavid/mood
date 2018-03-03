@@ -16,7 +16,7 @@ public enum Environment {
             return 0x074A00;
         }
     },
-    DUNGEON(20, Texture.SLAB, Texture.MUD) {
+    DUNGEON(20, Texture.WOOD, Texture.MUD) {
         @Override
         public int getMinimapBaseColor() {
             return 0x000000;
