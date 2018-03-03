@@ -120,10 +120,10 @@ public class GameEngine implements Runnable {
      */
     private void createWindow() {
         if (GameSettings.FULLSCREEN) {
+            window = new MainWindow(MainWindow.TITLE);
+        } else {
             final int w = MainWindow.WIDTH, h = MainWindow.HEIGHT;
             window = new MainWindow(MainWindow.TITLE, w, h);
-        } else {
-            window = new MainWindow(MainWindow.TITLE);
         }
         window.finalise();
         this.screen = window.getScreen();

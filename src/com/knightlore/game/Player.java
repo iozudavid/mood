@@ -69,7 +69,13 @@ public class Player extends Entity {
     public void render(PixelBuffer pix, int x, int y, double distanceTraveled) {
         super.render(pix, x, y, distanceTraveled);
 
-        final int SCALE = 5;
+        // Used a linear equation to get the expression below.
+        // With a screen height of 558, we want a scale of 5.
+        // With a screen height of 800, we want a scale of 6.
+        // The linear equation relating is therefore y = 1/242 * (h - 558),
+        // hence below
+        final int SCALE = (int) (5 + 1 / 242D * (pix.getHeight() - 558));
+
         Graphic g = currentWeapon.getGraphic();
         final int width = g.getWidth() * SCALE, height = g.getHeight() * SCALE;
 

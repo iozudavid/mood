@@ -236,7 +236,7 @@ public class Renderer implements IRenderable {
         distWall = distanceToWall;
         distPlayer = 0.0;
 
-        int h = MainWindow.HEIGHT;
+        int h = pix.getHeight();
         drawEnd = drawEnd < 0 ? h : drawEnd;
 
         Graphic floor = world.getEnvironment().getFloorTexture();
