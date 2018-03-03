@@ -4,7 +4,6 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Stack;
 
-import com.knightlore.MainWindow;
 import com.knightlore.game.area.Map;
 import com.knightlore.game.entity.Entity;
 import com.knightlore.game.tile.AirTile;
@@ -37,7 +36,7 @@ public class Renderer implements IRenderable {
         this.minimap = new Minimap(camera, world, 128);
     }
 
-    private final int BLOCKINESS = 3; // how 'old school' you want to look.
+    private final int BLOCKINESS = 10; // how 'old school' you want to look.
 
     @Override
     public void render(PixelBuffer pix, int x, int y) {
