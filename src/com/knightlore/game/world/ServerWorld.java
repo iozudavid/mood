@@ -1,11 +1,16 @@
 package com.knightlore.game.world;
 
+
+import java.util.List;
+
 import com.knightlore.ai.TurretServer;
 import com.knightlore.ai.TurretShared;
 import com.knightlore.game.Player;
 import com.knightlore.game.entity.Entity;
 import com.knightlore.game.entity.ZombieServer;
 import com.knightlore.game.entity.pickup.ShotgunPickup;
+import com.knightlore.utils.RaycastHit;
+import com.knightlore.utils.RaycastHitType;
 import com.knightlore.utils.Vector2D;
 
 public class ServerWorld extends GameWorld {
@@ -44,6 +49,74 @@ public class ServerWorld extends GameWorld {
                 }
             }
         }
+    }
+    
+    @Override
+    /**
+     * Casts a ray against all world, entities and players
+     */
+    public RaycastHit raycast(Vector2D pos, Vector2D direction, int segments, double maxDist) {
+        if (segments <= 0) {
+            System.err.println("can't raycast with <= 0 segments");
+            return null;
+        }
+        
+        Vector2D step = Vector2D.mul(direction.normalised(), maxDist / segments);
+        
+        Vector2D p = pos;
+        int x, y;
+        
+        for (int i = 0; i < segments; i++) {
+            x = (int) p.getX();
+            y = (int) p.getY();
+            if (map.getTile(x, y).blockLOS()) {
+                return new RaycastHit(RaycastHitType.wall, p, null);
+            }
+            
+            double sqrDist;
+            double sqrSize;
+            
+            // cast against players
+            List<Player> playerList = playerManager.getPlayers();
+            for(int n=0;n<playerList.size();n++) {
+                sqrSize = playerList.get(n).getSize() * playerList.get(n).getSize();
+                sqrDist = playerList.get(n).getPosition().sqrDistTo(p);
+                if(sqrDist < sqrSize) {
+                    return new RaycastHit(RaycastHitType.entity, p, playerList.get(n));
+                }
+            }
+            
+            // now against entities
+            for (int n = 0; n < ents.size(); n++) {
+                sqrSize = ents.get(n).getSize() * ents.get(n).getSize();
+                sqrDist = ents.get(n).getPosition().sqrDistTo(p);
+                if(sqrDist < sqrSize) {
+                    return new RaycastHit(RaycastHitType.entity, p, ents.get(n));
+                }
+            }
+            // FIXME? for some reason bounding rectangles don't work properly?
+            // i can't visualise them to help debug the ray...
+            // they should collide, but don't.
+            // i think it's due to the fact that these are GUI rectangles. not actual squares.
+            // the x,y is in one corner, with a width and a height for the other corner
+            // this means that the bounding rectangle isn't centered on the player
+            /*
+            for (int n = 0; n < ents.size(); n++) {
+                if (Physics.pointInRectangleDoubleTest(p, ents.get(n).getBoundingRectangle())) {
+                    return new RaycastHit(RaycastHitType.entity, p, ents.get(n));
+                }
+            }
+            
+            List<Player> playerList = playerManager.getPlayers();
+            for(int n=0;n<playerList.size();n++) {
+                if (Physics.pointInRectangleDoubleTest(p, playerList.get(n).getBoundingRectangle())) {
+                    return new RaycastHit(RaycastHitType.entity, p, playerList.get(n));
+                }
+            }*/
+            p = p.add(step);
+        }
+        
+        return new RaycastHit(RaycastHitType.nothing,Vector2D.ZERO,null);
     }
 
     public Player createPlayer() {
