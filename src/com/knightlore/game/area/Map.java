@@ -37,14 +37,14 @@ public class Map extends Area {
         int index = rand.nextInt(candidates.size());
         return candidates.get(index);
     }
-    
-    public List<Vector2D> getTilePoints(Team team, TileType type){
-        
+
+    public List<Vector2D> getTilePoints(Team team, TileType type) {
+
         List<Vector2D> positions = new ArrayList<>();
         for (int i = 0; i < getWidth(); i++) {
             for (int j = 0; j < getHeight(); j++) {
-                
-                Tile tile = getTile(i,j);
+
+                Tile tile = getTile(i, j);
                 // guard clauses
                 if (tile.getTileType() != type) {
                     continue;
@@ -52,12 +52,12 @@ public class Map extends Area {
                 if (tile.getTeam() != team) {
                     continue;
                 }
-                
-                positions.add(new Vector2D(i,j));
-                
+
+                positions.add(new Vector2D(i, j));
+
             }
         }
         return positions;
     }
-    
+
 }

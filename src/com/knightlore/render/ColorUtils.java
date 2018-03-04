@@ -30,4 +30,22 @@ public class ColorUtils {
         return new Color(red, green, blue).getRGB();
     }
 
+    public static int quickDarken(int color) {
+        return (color >> 1) & 0x7F7F7F;
+    }
+
+    public static int averageColor(int[] pixels) {
+        int r = 0, g = 0, b = 0;
+        for (int p : pixels) {
+            r += (p >> 16) & 255;
+            g += (p >> 8) & 255;
+            b += p & 255;
+        }
+        r /= pixels.length;
+        g /= pixels.length;
+        b /= pixels.length;
+
+        return (r << 16) + (g << 8) + b;
+    }
+
 }

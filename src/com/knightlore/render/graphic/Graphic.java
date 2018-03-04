@@ -1,6 +1,11 @@
 package com.knightlore.render.graphic;
 
 import java.awt.image.BufferedImage;
+import java.util.HashMap;
+import java.util.Map;
+
+import com.knightlore.render.PixelBuffer;
+import com.knightlore.render.graphic.filter.ColorFilter;
 
 public class Graphic {
 
@@ -8,12 +13,27 @@ public class Graphic {
 
     protected int width, height;
     protected int[] pixels;
-
+    
     public Graphic(BufferedImage img) {
+        this(img, null);
+    }
+
+    public Graphic(BufferedImage img, ColorFilter filter) {
         this.width = img.getWidth();
         this.height = img.getHeight();
         this.pixels = new int[width * height];
+        
         img.getRGB(0, 0, width, height, pixels, 0, width);
+        
+        if(filter != null) {
+            filter.apply(pixels, PixelBuffer.CHROMA_KEY);
+        }
+    }
+
+    public Graphic(int width, int height, int[] pixels) {
+        this.width = width;
+        this.height = height;
+        this.pixels = pixels;
     }
 
     public int[] getPixels() {

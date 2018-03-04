@@ -13,6 +13,7 @@ import com.knightlore.game.area.Map;
 import com.knightlore.game.area.Room;
 import com.knightlore.game.tile.AirTile;
 import com.knightlore.game.tile.BrickTile;
+import com.knightlore.game.tile.MossBrickTile;
 import com.knightlore.game.tile.Tile;
 import com.knightlore.game.tile.TileType;
 import com.knightlore.game.tile.UndecidedTile;
@@ -33,6 +34,7 @@ public class MapGenerator extends ProceduralAreaGenerator {
     }
 
     public Map createMap(int width, int height, long seed) {
+        System.out.println("Creating map with seed: " + seed);
         rand = new Random(seed);
         grid = new Tile[width][height];
         PerlinNoiseGenerator perlinGenerator = new PerlinNoiseGenerator(width, height, seed);
@@ -222,7 +224,7 @@ public class MapGenerator extends ProceduralAreaGenerator {
         for (int x = 0; x < grid.length; x++) {
             for (int y = 0; y < grid[0].length; y++) {
                 if (grid[x][y] == UndecidedTile.getInstance()) {
-                    grid[x][y] = new BrickTile();
+                    grid[x][y] = Math.random() < 0.75 ? new BrickTile() : new MossBrickTile();
                 }
             }
         }

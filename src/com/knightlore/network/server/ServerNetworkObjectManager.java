@@ -10,9 +10,9 @@ import java.util.UUID;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import com.knightlore.engine.GameEngine;
-import com.knightlore.game.world.GameWorld;
 import com.knightlore.engine.TickListener;
 import com.knightlore.game.Player;
+import com.knightlore.game.world.ServerWorld;
 import com.knightlore.network.NetworkObject;
 import com.knightlore.network.NetworkObjectManager;
 import com.knightlore.network.protocol.NetworkUtils;
@@ -30,8 +30,11 @@ public class ServerNetworkObjectManager extends NetworkObjectManager {
     // Counter for REGULAR_UPDATE_FREQ
     private int updateCount = 1;
 
-    public ServerNetworkObjectManager(GameWorld world) {
-        super(world);
+    private ServerWorld serverWorld;
+
+    public ServerNetworkObjectManager(ServerWorld world) {
+        super();
+        this.serverWorld = world;
     }
 
     @Override
@@ -62,15 +65,11 @@ public class ServerNetworkObjectManager extends NetworkObjectManager {
     }
 
     private ByteBuffer getObjectDestroyMessage(NetworkObject obj) {
-        // Leave room for the state (1 full buffer size), and the additional
-        // overhead as well.
         ByteBuffer buf = ByteBuffer.allocate(BYTE_BUFFER_DEFAULT_SIZE);
         // Send the message to the ClientNetworkObjectManager.
         NetworkUtils.putStringIntoBuf(buf, MANAGER_UUID.toString());
         // The remote method to call.
         NetworkUtils.putStringIntoBuf(buf, "objDestroyed");
-        // Let the client know which class it needs to instantiate.
-        NetworkUtils.putStringIntoBuf(buf, obj.getClass().getName());
         // UUID of object to instantiate.
         NetworkUtils.putStringIntoBuf(buf, obj.getObjectId().toString());
         return buf;
@@ -79,7 +78,8 @@ public class ServerNetworkObjectManager extends NetworkObjectManager {
     // Notify a particular client of all existing objects.
     private synchronized void notifyOfAllObjs(SendToClient sender) {
         System.out.println("Notifying new client of all objects");
-        for (Entry<UUID, Tuple<NetworkObject, ByteBuffer>> e : networkObjects.entrySet()) {
+        for (Entry<UUID, Tuple<NetworkObject, ByteBuffer>> e : networkObjects
+                .entrySet()) {
             NetworkObject obj = e.getValue().x;
             ByteBuffer msg = getObjectCreationMessage(obj);
             sender.send(msg);
@@ -101,21 +101,47 @@ public class ServerNetworkObjectManager extends NetworkObjectManager {
     }
 
     public UUID registerClientSender(SendToClient sender) {
+        // Tell the player the seed to generate the map from.
+        sendMapSeed(sender);
+        Player newPlayer = serverWorld.createPlayer();
+        // First, tell the client what objects are on the server.
+        notifyOfAllObjs(sender);
+        // Now, tell the player who they are.
+        sendPlayerIdentity(sender, newPlayer);
+        // Tell the player they're now ready to start.
+        sendReadySignal(sender);
+
         synchronized (this.clientSenders) {
             this.clientSenders.add(sender);
         }
-        // First, tell the client what objects are on the server.
-        notifyOfAllObjs(sender);
 
-        Player newPlayer = world.createPlayer();
-        System.out.println("sending player identity" + System.currentTimeMillis());
-        // Now, tell the player who they are.
-        ByteBuffer buf = ByteBuffer.allocate(NetworkObject.BYTE_BUFFER_DEFAULT_SIZE);
+        return newPlayer.getObjectId();
+    }
+
+    private void sendReadySignal(SendToClient sender) {
+        ByteBuffer buf = ByteBuffer.allocate(BYTE_BUFFER_DEFAULT_SIZE);
+        NetworkUtils.putStringIntoBuf(buf, MANAGER_UUID.toString());
+        NetworkUtils.putStringIntoBuf(buf, "receiveReadySignal");
+        sender.send(buf);
+    }
+
+    private void sendMapSeed(SendToClient sender) {
+        System.out.println("Sending map seed");
+        ByteBuffer buf = ByteBuffer.allocate(BYTE_BUFFER_DEFAULT_SIZE);
+        NetworkUtils.putStringIntoBuf(buf, MANAGER_UUID.toString());
+        NetworkUtils.putStringIntoBuf(buf, "receiveMapSeed");
+        buf.putLong(serverWorld.getMap().getSeed());
+        sender.send(buf);
+    }
+
+    public void sendPlayerIdentity(SendToClient sender, Player player) {
+        System.out.println("sending player identity " + player.getObjectId());
+        ByteBuffer buf = ByteBuffer
+                .allocate(NetworkObject.BYTE_BUFFER_DEFAULT_SIZE);
         NetworkUtils.putStringIntoBuf(buf, MANAGER_UUID.toString());
         NetworkUtils.putStringIntoBuf(buf, "registerPlayerIdentity");
-        NetworkUtils.putStringIntoBuf(buf, newPlayer.getObjectId().toString());
+        NetworkUtils.putStringIntoBuf(buf, player.getObjectId().toString());
         sender.send(buf);
-        return newPlayer.getObjectId();
     }
 
     public void removeClientSender(SendToClient obj) {
@@ -126,7 +152,6 @@ public class ServerNetworkObjectManager extends NetworkObjectManager {
 
     public void init() {
         super.init();
-        System.out.println("made it here");
 
         GameEngine.ticker.addTickListener(new TickListener() {
 
@@ -141,12 +166,15 @@ public class ServerNetworkObjectManager extends NetworkObjectManager {
             }
 
         });
+        // Initialise the world without specifying a seed.
+        serverWorld.setUpWorld(null);
     }
 
     private synchronized void syncStates() {
         // Iterate through each networkable object. If its state
         // has changed, send the new state to each client.
-        for (Entry<UUID, Tuple<NetworkObject, ByteBuffer>> t : networkObjects.entrySet()) {
+        for (Entry<UUID, Tuple<NetworkObject, ByteBuffer>> t : networkObjects
+                .entrySet()) {
             ByteBuffer newState = t.getValue().x.serialize();
             // Send state either if we're due a regular update, or if the
             // state has changed.
@@ -154,7 +182,8 @@ public class ServerNetworkObjectManager extends NetworkObjectManager {
                 // check if they are equal
                 // by transforming into arrays
                 // and use the standard library
-                if (updateCount >= REGULAR_UPDATE_FREQ || !Arrays.equals(newState.array(), t.getValue().y.array())) {
+                if (updateCount >= REGULAR_UPDATE_FREQ || !Arrays
+                        .equals(newState.array(), t.getValue().y.array())) {
                     this.sendToClients(newState);
                     // networkObjects.put(t.getKey(), new
                     // Tuple<>(t.getValue().x, newState));
@@ -172,7 +201,8 @@ public class ServerNetworkObjectManager extends NetworkObjectManager {
     public synchronized NetworkObject getNetworkObject(UUID uuid) {
         if (networkObjects.containsKey(uuid))
             return networkObjects.get(uuid).x;
-        System.err.println("No network object with UUID " + uuid + " could be found on this client.");
+        System.err.println("No network object with UUID " + uuid
+                + " could be found on this client.");
         return null;
 
     }

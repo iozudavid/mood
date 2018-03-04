@@ -8,7 +8,6 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.function.Consumer;
 
-import com.knightlore.game.world.GameWorld;
 import com.knightlore.network.protocol.NetworkUtils;
 
 public abstract class NetworkObjectManager implements INetworkable, Runnable {
@@ -17,12 +16,6 @@ public abstract class NetworkObjectManager implements INetworkable, Runnable {
     protected Map<String, Consumer<ByteBuffer>> networkConsumers = new HashMap<>();
 
     protected BlockingQueue<ByteBuffer> messages = new LinkedBlockingQueue<>();
-
-    protected GameWorld world;
-
-    public NetworkObjectManager(GameWorld world) {
-        this.world = world;
-    }
 
     public void processMessage(ByteBuffer buffer) {
         this.messages.add(buffer);
@@ -86,10 +79,6 @@ public abstract class NetworkObjectManager implements INetworkable, Runnable {
             // rest of the ByteBuffer as input.
             cons.accept(buf);
         }
-    }
-
-    public void setWorld(GameWorld world) {
-        this.world = world;
     }
 
 }

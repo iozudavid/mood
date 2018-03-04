@@ -10,18 +10,22 @@ import com.knightlore.game.entity.Entity;
 import com.knightlore.game.entity.weapon.Shotgun;
 import com.knightlore.game.entity.weapon.Weapon;
 import com.knightlore.network.NetworkObject;
-import com.knightlore.network.protocol.ClientControl;
+import com.knightlore.network.protocol.ClientController;
 import com.knightlore.network.protocol.ClientProtocol;
+import com.knightlore.render.PixelBuffer;
+import com.knightlore.render.graphic.Graphic;
 import com.knightlore.render.graphic.sprite.DirectionalSprite;
 import com.knightlore.utils.Vector2D;
 
 public class Player extends Entity {
 
+    private final int MAX_HEALTH = 100;
+    private int health = MAX_HEALTH;
     private Weapon currentWeapon;
 
     // Maps all inputs that the player could be making to their values.
-    private java.util.Map<ClientControl, Runnable> ACTION_MAPPINGS = new HashMap<>();
-    private java.util.Map<ClientControl, Byte> inputState = new HashMap<>();
+    private java.util.Map<ClientController, Runnable> ACTION_MAPPINGS = new HashMap<>();
+    private java.util.Map<ClientController, Byte> inputState = new HashMap<>();
     // private volatile boolean finished = false;
 
     // Returns a new instance. See NetworkObject for details.
@@ -39,16 +43,17 @@ public class Player extends Entity {
 
         // Map possible inputs to the methods that handle them. Avoids long
         // if-statement chain.
-        ACTION_MAPPINGS.put(ClientControl.FORWARD, this::moveForward);
-        ACTION_MAPPINGS.put(ClientControl.ROTATE_ANTI_CLOCKWISE, this::rotateAntiClockwise);
-        ACTION_MAPPINGS.put(ClientControl.BACKWARD, this::moveBackward);
-        ACTION_MAPPINGS.put(ClientControl.ROTATE_CLOCKWISE, this::rotateClockwise);
-        ACTION_MAPPINGS.put(ClientControl.LEFT, this::strafeLeft);
-        ACTION_MAPPINGS.put(ClientControl.RIGHT, this::strafeRight);
+        ACTION_MAPPINGS.put(ClientController.FORWARD, this::moveForward);
+        ACTION_MAPPINGS.put(ClientController.ROTATE_ANTI_CLOCKWISE, this::rotateAntiClockwise);
+        ACTION_MAPPINGS.put(ClientController.BACKWARD, this::moveBackward);
+        ACTION_MAPPINGS.put(ClientController.ROTATE_CLOCKWISE, this::rotateClockwise);
+        ACTION_MAPPINGS.put(ClientController.LEFT, this::strafeLeft);
+        ACTION_MAPPINGS.put(ClientController.RIGHT, this::strafeRight);
+        ACTION_MAPPINGS.put(ClientController.SHOOT, this::shoot);
 
         setNetworkConsumers();
 
-        zOffset = 8;
+        zOffset = 100;
         moveSpeed = 0.120;
         strafeSpeed = 0.08;
         rotationSpeed = 0.06;
@@ -58,6 +63,35 @@ public class Player extends Entity {
 
     public Player(Vector2D pos, Vector2D dir) {
         this(UUID.randomUUID(), pos, dir);
+    }
+
+    @Override
+    public void render(PixelBuffer pix, int x, int y, double distanceTraveled) {
+        super.render(pix, x, y, distanceTraveled);
+
+        // Used a linear equation to get the expression below.
+        // With a screen height of 558, we want a scale of 5.
+        // With a screen height of 800, we want a scale of 6.
+        // The linear equation relating is therefore y = 1/242 * (h - 558),
+        // hence below
+        final int SCALE = (int) (5 + 1 / 242D * (pix.getHeight() - 558));
+
+        Graphic g = currentWeapon.getGraphic();
+        final int width = g.getWidth() * SCALE, height = g.getHeight() * SCALE;
+
+        final int weaponBobX = 20, weaponBobY = 30;
+
+        int xx = x + (pix.getWidth() - width) / 2;
+        int yy = pix.getHeight() - height + 28 * SCALE;
+
+        int xOffset = (int) (Math.cos(distanceTraveled) * weaponBobX);
+        int yOffset = (int) (Math.abs(Math.sin(distanceTraveled) * weaponBobY));
+
+        final double p = 0.1;
+        inertiaOffsetX += (int) (p * -inertiaOffsetX);
+        inertiaOffsetY += (int) (p * -inertiaOffsetY);
+
+        pix.drawGraphic(g, xx + xOffset + inertiaOffsetX, yy + yOffset + inertiaOffsetY, SCALE, SCALE);
     }
 
     private void setNetworkConsumers() {
@@ -70,7 +104,7 @@ public class Player extends Entity {
                 // take the control
                 // using client protocol
                 // to fetch the order
-                ClientControl control = null;
+                ClientController control = null;
                 try {
                     control = ClientProtocol.getByIndex(buf.getInt());
                 } catch (IOException e) {
@@ -90,7 +124,7 @@ public class Player extends Entity {
             // respective method.
             // DEBUG
             boolean updated = false;
-            for (Entry<ClientControl, Byte> entry : inputState.entrySet())
+            for (Entry<ClientController, Byte> entry : inputState.entrySet())
                 // For boolean inputs (i.e. all current inputs), 0 represents
                 // false.
                 if (entry.getValue() != 0) {
@@ -104,15 +138,52 @@ public class Player extends Entity {
         }
     }
 
+    private void shoot() {
+        System.out.println("SHOOT");
+    }
+
+    @Override
+    public void onCollide(Player player) {
+    }
+
     // TODO: serialize weapon etc.
     @Override
     public ByteBuffer serialize() {
-        return super.serialize();
+        ByteBuffer bb = super.serialize();
+        return bb;
     }
+
+    private Vector2D prevPos, prevDir;
+    private int inertiaOffsetX = 0, inertiaOffsetY = 0;;
 
     @Override
     public void deserialize(ByteBuffer buffer) {
         super.deserialize(buffer);
+        if (prevPos != null && prevDir != null) {
+
+            Vector2D displacement = position.subtract(prevPos);
+            Vector2D temp = new Vector2D(plane.getX() / plane.magnitude(), plane.getY() / plane.magnitude());
+            double orthProjection = displacement.dot(temp);
+            inertiaOffsetX -= orthProjection * 125;
+
+            temp = new Vector2D(direction.getX() / direction.magnitude(), direction.getY() / direction.magnitude());
+            orthProjection = displacement.dot(temp);
+            inertiaOffsetY += orthProjection * 35;
+
+            double prevDirTheta = Math.atan2(prevDir.getY(), prevDir.getX());
+            double directionTheta = Math.atan2(direction.getY(), direction.getX());
+            double diff = directionTheta - prevDirTheta;
+            if (diff > Math.PI) {
+                diff -= 2 * Math.PI;
+            } else if (diff < -Math.PI) {
+                diff += 2 * Math.PI;
+            }
+
+            inertiaOffsetX += 150 * diff;
+        }
+
+        prevPos = position;
+        prevDir = direction;
     }
 
     public Weapon getCurrentWeapon() {
@@ -138,13 +209,23 @@ public class Player extends Entity {
 
     @Override
     public DirectionalSprite getDirectionalSprite() {
-        return DirectionalSprite.PLAYER_DIRECTIONAL_SPRITE;
+        return DirectionalSprite.RED_PLAYER_DIRECTIONAL_SPRITE;
     }
 
     @Override
     public String getClientClassName() {
         // One class for both client and server.
         return this.getClass().getName();
+    }
+
+    @Override
+    protected synchronized void rotateClockwise() {
+        super.rotateClockwise();
+    }
+
+    @Override
+    protected synchronized void rotateAntiClockwise() {
+        super.rotateAntiClockwise();
     }
 
 }

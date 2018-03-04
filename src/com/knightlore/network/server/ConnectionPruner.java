@@ -14,12 +14,12 @@ import com.knightlore.network.Connection;
  * 
  * @author Will
  */
-public class Pruner implements Runnable {
+public class ConnectionPruner implements Runnable {
     // The time to wait, in milliseconds, between checks for terminated threads.
     private static int PERIOD_MILLIS = 1000;
     private Map<UUID, Connection> conns;
 
-    public Pruner(Map<UUID, Connection> conns) {
+    public ConnectionPruner(Map<UUID, Connection> conns) {
         this.conns = conns;
     }
 
