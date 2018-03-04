@@ -11,9 +11,11 @@ import java.util.Random;
 import com.knightlore.game.Team;
 import com.knightlore.game.area.Map;
 import com.knightlore.game.area.Room;
+import com.knightlore.game.area.RoomType;
 import com.knightlore.game.tile.AirTile;
 import com.knightlore.game.tile.BrickTile;
 import com.knightlore.game.tile.MossBrickTile;
+import com.knightlore.game.tile.PathTile;
 import com.knightlore.game.tile.Tile;
 import com.knightlore.game.tile.TileType;
 import com.knightlore.game.tile.UndecidedTile;
@@ -57,15 +59,16 @@ public class MapGenerator extends ProceduralAreaGenerator {
     private void generateRooms() {
         RoomGenerator roomGenerator = new RoomGenerator();
         // place spawn room first
-        Room room = roomGenerator.createRoom(rand.nextLong(), Team.blue);
+        Room room = roomGenerator.createRoom(rand.nextLong(), RoomType.spawn);
         setRoomPosition(room , grid.length/8, grid[0].length/8);
         rooms.add(room);
         
-        room = roomGenerator.createRoom(rand.nextLong(),Team.none);
+        // TODO: Produce a list of room types to have!
+        room = roomGenerator.createRoom(rand.nextLong(), RoomType.weapon);
         
         while (rooms.size() < MAX_ROOMS && setRoomPosition(room)) {
             rooms.add(room);
-            room = roomGenerator.createRoom(rand.nextLong(),Team.none);
+            room = roomGenerator.createRoom(rand.nextLong(), Team.none);
         }
     }
     
@@ -153,6 +156,10 @@ public class MapGenerator extends ProceduralAreaGenerator {
 
         // place paths
         PathFinder pathFinder = new PathFinder(costGrid);
+        
+        // TODO: give a room a way to give us potential starting points for a path
+        // (allowing us to populate rooms with interesting features)
+        
         for (Room source : rooms) {
             for (Room target : source.getConnections()) {
                 List<Point> path = pathFinder.findPath(source.getCentre(), target.getCentre());
@@ -206,16 +213,25 @@ public class MapGenerator extends ProceduralAreaGenerator {
 
     private void placePath(List<Point> path) {
         for (Point p : path) {
-            Tile currentTile = grid[p.x][p.y];
-            //if(grid[p.x][p.y].toChar() == '?' ||
-            //  grid[p.x][p.y].toChar() == 'B') {
-            if(currentTile.getTileType() == TileType.undecided
-               || currentTile.getTileType() == TileType.brick) {
-                grid[p.x][p.y] = AirTile.getInstance();
-                // changing cost grid, also...
-                // using arbitrary number 3
-                costGrid[p.x][p.y] = costGrid[p.x][p.y] * 3;
+            TileType currentType = grid[p.x][p.y].getTileType();
+            if(currentType == TileType.air) {
+                continue;
             }
+            if(currentType == TileType.spawn) {
+                continue;
+            }
+            if(currentType == TileType.weapon) {
+                continue;
+            }
+            
+            if(currentType == TileType.breakible) {
+                continue;
+            }
+            
+            grid[p.x][p.y] = PathTile.getInstance();
+            // changing cost grid, also...
+            // using arbitrary number 3
+            costGrid[p.x][p.y] = costGrid[p.x][p.y] * 3;
         }
     }
 
@@ -290,7 +306,7 @@ public class MapGenerator extends ProceduralAreaGenerator {
         Map map = genr.createMap(48, 32);
 
         System.out.println("--------------");
-        System.out.println(map.toString());
+        System.out.println(map.toDebugString());
         System.out.println("Num rooms: " + genr.rooms.size());
     }
     

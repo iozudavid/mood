@@ -6,9 +6,15 @@ import com.knightlore.render.graphic.texture.Texture;
 
 public class BrickTile extends Tile {
 
+    private static BrickTile instance = new BrickTile();
+    
     public BrickTile() {
     }
 
+    public static BrickTile getInstance() {
+        return instance;
+    }
+    
     @Override
     public Graphic getTexture() {
         return Texture.BRICK;

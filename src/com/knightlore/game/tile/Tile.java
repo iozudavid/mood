@@ -28,7 +28,7 @@ public abstract class Tile {
     public abstract void onEntered(Player player);
 
     public char toChar() {
-        return ' ';
+        return '?';
     }
 
     public Tile reflectTileX() {

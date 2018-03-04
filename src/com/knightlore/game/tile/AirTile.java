@@ -39,4 +39,8 @@ public class AirTile extends Tile {
         return TileType.air;
     }
 
+    public char toChar() {
+        return ' ';
+    }
+    
 }

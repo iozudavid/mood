@@ -2,13 +2,18 @@ package com.knightlore.game.tile;
 
 import com.knightlore.game.Player;
 import com.knightlore.render.graphic.Graphic;
-import com.knightlore.render.graphic.texture.Texture;
 
-public class MossBrickTile extends Tile {
+public class PathTile extends Tile {
 
+    private static PathTile instance = new PathTile();
+    
+    public static PathTile getInstance() {
+        return instance;
+    }
+    
     @Override
     public Graphic getTexture() {
-        return Texture.MOSSY_BRICK;
+        return AirTile.getInstance().getTexture();
     }
 
     @Override
@@ -21,11 +26,12 @@ public class MossBrickTile extends Tile {
 
     @Override
     public TileType getTileType() {
-        return null;
-    }
-    
-    public char toChar() {
-        return 'M';
+        return TileType.path;
     }
 
+    @Override
+    public char toChar() {
+        return '-';
+    }
+    
 }

@@ -2,13 +2,13 @@ package com.knightlore.game.tile;
 
 import com.knightlore.game.Player;
 import com.knightlore.render.graphic.Graphic;
-import com.knightlore.render.graphic.texture.Texture;
 
-public class MossBrickTile extends Tile {
-
+public class LavaTile extends Tile {
+    
     @Override
     public Graphic getTexture() {
-        return Texture.MOSSY_BRICK;
+        // TODO: Some lava texture
+        return AirTile.getInstance().getTexture();
     }
 
     @Override
@@ -17,15 +17,18 @@ public class MossBrickTile extends Tile {
 
     @Override
     public void onEntered(Player player) {
+        // TODO: Damage player
+
     }
 
     @Override
     public TileType getTileType() {
-        return null;
-    }
-    
-    public char toChar() {
-        return 'M';
+        return TileType.lava;
     }
 
+    @Override
+    public char toChar() {
+        return 'L';
+    }
+    
 }

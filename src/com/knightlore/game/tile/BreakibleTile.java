@@ -2,17 +2,21 @@ package com.knightlore.game.tile;
 
 import com.knightlore.game.Player;
 import com.knightlore.render.graphic.Graphic;
-import com.knightlore.render.graphic.texture.Texture;
 
-public class MossBrickTile extends Tile {
+public class BreakibleTile extends Tile {
 
+    private int health = 100;
+    
     @Override
     public Graphic getTexture() {
-        return Texture.MOSSY_BRICK;
+        // TODO: Add a texture for breakible tiles
+        return BrickTile.getInstance().getTexture();
     }
 
     @Override
     public void onShot() {
+        // TODO: Deal damage to tile
+
     }
 
     @Override
@@ -21,11 +25,12 @@ public class MossBrickTile extends Tile {
 
     @Override
     public TileType getTileType() {
-        return null;
+        return TileType.breakible;
     }
     
+    @Override
     public char toChar() {
-        return 'M';
+        return 'b';
     }
 
 }

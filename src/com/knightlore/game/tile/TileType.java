@@ -2,7 +2,7 @@ package com.knightlore.game.tile;
 
 public enum TileType {
 
-    air, brick, bush, expect, spawn, turret, undecided;
+    air, brick, bush, expect, spawn, turret, undecided, lava, weapon, path, breakible;
 
     public static Tile fromTileType(TileType t) {
         switch (t) {

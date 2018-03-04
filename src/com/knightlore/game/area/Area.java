@@ -61,7 +61,7 @@ public abstract class Area {
         return height;
     }
 
-    public String toString() {
+    public String toDebugString() {
         StringBuilder sBuilder = new StringBuilder("AREA\n" + "WIDTH = " + width + "\n" + "HEIGHT = " + height + "\n");
         for (int j = 0; j < height; j++) {
             for (int i = 0; i < width; i++) {
