@@ -2,13 +2,13 @@ package com.knightlore.game.entity.weapon;
 
 import com.knightlore.engine.GameEngine;
 import com.knightlore.game.Player;
-import com.knightlore.render.graphic.GraphicSheet;
+import com.knightlore.render.graphic.sprite.WeaponSprite;
 import com.knightlore.utils.Vector2D;
 
 public class Shotgun extends Weapon {
 
     public Shotgun() {
-        super(GraphicSheet.SHOTGUN_SPRITES.graphicAt(0, 15), false, (int) (0.75 * GameEngine.UPDATES_PER_SECOND));
+        super(WeaponSprite.SHOTGUN, false, (int) (0.75 * GameEngine.UPDATES_PER_SECOND));
     }
     
     public void shoot(Player shooter) {

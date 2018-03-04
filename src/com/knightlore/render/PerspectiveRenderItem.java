@@ -28,9 +28,10 @@ public class PerspectiveRenderItem {
     public int texX;
     public double distanceToWall;
     public int xx;
+    public boolean side;
 
     public PerspectiveRenderItem(double opacity, int drawStart, int drawEnd, int lineHeight, Graphic texture, int texX,
-            double distanceToWall, int xx) {
+            double distanceToWall, int xx, boolean side) {
         this.opacity = opacity;
         this.drawStart = drawStart;
         this.drawEnd = drawEnd;
@@ -39,6 +40,7 @@ public class PerspectiveRenderItem {
         this.texX = texX;
         this.distanceToWall = distanceToWall;
         this.xx = xx;
+        this.side = side;
     }
 
 }

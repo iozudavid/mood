@@ -8,6 +8,7 @@ import com.knightlore.game.area.Map;
 
 public class LevelEditorPanel extends JPanel {
 
+    private Map map;
     private TileButton[][] tileButtons;
 
     public LevelEditorPanel(Map map) {
@@ -16,6 +17,7 @@ public class LevelEditorPanel extends JPanel {
     }
     
     public void initialise(Map map) {
+        this.map = map;
         this.tileButtons = new TileButton[map.getHeight()][map.getWidth()];
 
         setLayout(new GridLayout(map.getHeight(), map.getWidth()));
@@ -26,5 +28,9 @@ public class LevelEditorPanel extends JPanel {
             }
         }
     }
-
+    
+    public Map getMap() {
+        return map;
+    }
+    
 }

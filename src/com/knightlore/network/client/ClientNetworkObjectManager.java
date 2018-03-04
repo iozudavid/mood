@@ -14,11 +14,14 @@ import com.knightlore.game.world.ClientWorld;
 import com.knightlore.network.NetworkObject;
 import com.knightlore.network.NetworkObjectManager;
 import com.knightlore.network.protocol.NetworkUtils;
+import com.knightlore.render.Camera;
 
 public class ClientNetworkObjectManager extends NetworkObjectManager {
     private Map<UUID, NetworkObject> networkObjects = new HashMap<>();
-    private UUID myPlayerUUID = null;
-    
+    private Player myPlayer = null;
+    // Whether we've received enough information to start the game.
+    private boolean finishedSetUp = false;
+
     private ClientWorld clientWorld;
 
     public ClientNetworkObjectManager(ClientWorld world) {
@@ -28,9 +31,12 @@ public class ClientNetworkObjectManager extends NetworkObjectManager {
     }
 
     private void setNetworkConsumers() {
-        networkConsumers.put("registerPlayerIdentity", this::registerPlayerIdentity);
+        networkConsumers.put("registerPlayerIdentity",
+                this::registerPlayerIdentity);
         networkConsumers.put("newObjCreated", this::newObjCreated);
         networkConsumers.put("objDestroyed", this::objDestroyed);
+        networkConsumers.put("receiveMapSeed", this::receiveMapSeed);
+        networkConsumers.put("receiveReadySignal", this::receiveReadySignal);
     }
 
     @Override
@@ -44,8 +50,8 @@ public class ClientNetworkObjectManager extends NetworkObjectManager {
         networkObjects.remove(obj.getObjectId());
     }
 
-    public UUID getMyPlayerUUID() {
-        return myPlayerUUID;
+    public Player getMyPlayer() {
+        return myPlayer;
     }
 
     // Called remotely when a new network object is created on the server.
@@ -55,15 +61,14 @@ public class ClientNetworkObjectManager extends NetworkObjectManager {
         System.out.println("Receiving new object details from server");
         String className = NetworkUtils.getStringFromBuf(buf);
         UUID objID = UUID.fromString(NetworkUtils.getStringFromBuf(buf));
-        synchronized (this.networkObjects) {
-            if (networkObjects.containsKey(objID))
-                // We already know about this object.
-                return;
-        }
+        if (networkObjects.containsKey(objID))
+            // We already know about this object.
+            return;
         try {
             Class<Entity> cls = (Class<Entity>) Class.forName(className);
             // Build the new object.
-            Method method = cls.getMethod("build", UUID.class, ByteBuffer.class);
+            Method method = cls.getMethod("build", UUID.class,
+                    ByteBuffer.class);
             // Static method, so pass null for object reference. The remainder
             // of the ByteBuffer constitutes
             // the state of the object.
@@ -72,49 +77,46 @@ public class ClientNetworkObjectManager extends NetworkObjectManager {
             if (obj instanceof Entity) {
                 clientWorld.addEntity((Entity) obj);
             }
-        } catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException
+        } catch (NoSuchMethodException | SecurityException
+                | IllegalAccessException | IllegalArgumentException
                 | InvocationTargetException e) {
-            System.err.println("Error when attempting to call the static method build(UUID, ByteBuffer) on the class "
-                    + className + ". Are you sure you implemented it? See NetworkObject for details.");
+            System.err.println(
+                    "Error when attempting to call the static method build(UUID, ByteBuffer) on the class "
+                            + className
+                            + ". Are you sure you implemented it? See NetworkObject for details.");
             e.printStackTrace();
         } catch (ClassNotFoundException e) {
-            System.err.println("The specified class " + className + " could not be found.");
+            System.err.println("The specified class " + className
+                    + " could not be found.");
             e.printStackTrace();
         }
     }
 
-    public void objDestroyed(ByteBuffer buf) {
+    public synchronized void objDestroyed(ByteBuffer buf) {
         System.out.println("Receiving new object details from server");
-        String className = NetworkUtils.getStringFromBuf(buf);
         UUID objID = UUID.fromString(NetworkUtils.getStringFromBuf(buf));
-        synchronized (this.networkObjects) {
-            NetworkObject toBeDestroyedObject = this.getNetworkObject(objID);
-            this.networkObjects.remove(objID);
-            toBeDestroyedObject.destroy();
-            if (toBeDestroyedObject instanceof Entity) {
-                clientWorld.removeEntity((Entity) toBeDestroyedObject);
-            }
+        NetworkObject toBeDestroyedObject = this.getNetworkObject(objID);
+        this.networkObjects.remove(objID);
+        toBeDestroyedObject.destroy();
+        if (toBeDestroyedObject instanceof Entity) {
+            clientWorld.removeEntity((Entity) toBeDestroyedObject);
         }
+    }
+
+    // Called remotely when we receive a message from the server to tell us what
+    // the seed for the map to generate is.
+    public synchronized void receiveMapSeed(ByteBuffer buf) {
+        System.out.println("received map seed");
+        long seed = buf.getLong();
+        clientWorld.setUpWorld(seed);
     }
 
     // Called remotely when we receive a message from the server to tell us what
     // our UUID is.
     public synchronized void registerPlayerIdentity(ByteBuffer buf) {
         System.out.println("Registering player identity");
-        myPlayerUUID = UUID.fromString(NetworkUtils.getStringFromBuf(buf));
-        // wait until the network object
-        // is added to the list
-        // this will avoid getting a null value as the player
-        while (!networkObjects.containsKey(myPlayerUUID)) {
-            try {
-                Thread.sleep(5);
-            } catch (InterruptedException e) {
-                System.err.println(
-                        "Unexpected interruption while waiting for network obj to be registered " + e.getMessage());
-            }
-        }
-        Player player = (Player) getNetworkObject(myPlayerUUID);
-        GameEngine.getSingleton().getCamera().setSubject(player);
+        UUID myPlayerUUID = UUID.fromString(NetworkUtils.getStringFromBuf(buf));
+        myPlayer = (Player) networkObjects.get(myPlayerUUID);
         System.out.println("Created and set player.");
     }
 
@@ -124,12 +126,34 @@ public class ClientNetworkObjectManager extends NetworkObjectManager {
             if (networkObjects.containsKey(uuid))
                 return networkObjects.get(uuid);
         }
-        System.err.println("No network object with UUID " + uuid + " could be found on this client.");
+        System.err.println("No network object with UUID " + uuid
+                + " could be found on this client.");
         return null;
     }
 
-    public boolean isPlayerReady() {
-        return myPlayerUUID != null;
+    public synchronized void receiveReadySignal(ByteBuffer buf) {
+        Camera camera = new Camera(clientWorld.getMap());
+        camera.setSubject(myPlayer);
+        GameEngine.getSingleton().setCamera(camera);
+        // We can now start the game.
+        this.finishedSetUp = true;
+    }
+
+    @Override
+    public void init() {
+        super.init();
+
+        // Wait for all information to be received - e.g., map seed, object
+        // details, player identity.
+        while (!finishedSetUp) {
+            try {
+                Thread.sleep(5);
+            } catch (InterruptedException e) {
+                System.err.println(
+                        "Unexpected interruption while waiting for game to be ready."
+                                + e.getMessage());
+            }
+        }
     }
 
 }

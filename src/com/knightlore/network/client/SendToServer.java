@@ -9,6 +9,7 @@ import java.util.UUID;
 
 import com.knightlore.engine.GameEngine;
 import com.knightlore.engine.input.InputManager;
+import com.knightlore.game.Player;
 import com.knightlore.network.Connection;
 import com.knightlore.network.NetworkObject;
 import com.knightlore.network.protocol.ClientController;
@@ -105,7 +106,8 @@ public class SendToServer implements Runnable {
         double freq = (UPDATE_TICK_FREQ / 1000d);
         long delay = (long) (1 / freq);
 
-        while ((this.myUUID = manager.getMyPlayerUUID()) == null)
+        Player player;
+        while ((player = manager.getMyPlayer()) == null)
             // Wait for UUID to be set.
             try {
                 Thread.sleep(delay);
@@ -113,6 +115,8 @@ public class SendToServer implements Runnable {
                 // TODO Auto-generated catch block
                 e1.printStackTrace();
             }
+        this.myUUID = player.getObjectId();
+        
         this.currentState = getCurrentControlState();
         this.lastState = this.currentState;
 

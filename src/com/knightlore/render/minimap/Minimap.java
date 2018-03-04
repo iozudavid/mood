@@ -63,12 +63,6 @@ public class Minimap implements TickListener {
     private Camera camera;
     private ClientWorld world;
 
-    /**
-     * We keep track of the previous position and direction so we know not to
-     * re-render the minimap if nothing changes.
-     */
-    private Vector2D prevPos, prevDir;
-
     public Minimap(Camera camera, ClientWorld world, int size) {
         this.camera = camera;
         this.world = world;
@@ -110,9 +104,6 @@ public class Minimap implements TickListener {
         // }
 
         display.flood(0x000000);
-
-        prevPos = pos;
-        prevDir = dir;
 
         // Find the positions to start rendering based on SCOPE.
         int startX = (int) Math.max(0, pos.getX() * scale - SCOPE),

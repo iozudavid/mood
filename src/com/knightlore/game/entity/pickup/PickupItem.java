@@ -40,5 +40,10 @@ public abstract class PickupItem extends Entity {
         double yprime = direction.getX() * Math.sin(ROTATION_SPEED) + direction.getY() * Math.cos(ROTATION_SPEED);
         direction = new Vector2D(xprime, yprime);
     }
+    
+    @Override
+    public DirectionalSprite getDirectionalSprite() {
+        return sprite;
+    }
 
 }

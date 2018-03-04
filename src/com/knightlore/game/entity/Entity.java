@@ -10,6 +10,7 @@ import com.knightlore.game.Team;
 import com.knightlore.game.area.Map;
 import com.knightlore.game.tile.Tile;
 import com.knightlore.network.NetworkObject;
+import com.knightlore.render.PixelBuffer;
 import com.knightlore.render.graphic.Graphic;
 import com.knightlore.render.graphic.sprite.DirectionalSprite;
 import com.knightlore.render.minimap.IMinimapObject;
@@ -69,6 +70,10 @@ public abstract class Entity extends NetworkObject implements IMinimapObject, Pr
     protected Entity(UUID uuid, Vector2D position, Vector2D direction) {
         this(uuid, 1, position, direction);
     }
+    
+    public void render(PixelBuffer pix, int x, int y, double distanceTraveled) {
+        /* ONLY CALLED IF THIS ENTITY IS THE CAMERA SUBJECT */
+    }
 
     public abstract void onCollide(Player player);
 
@@ -77,7 +82,7 @@ public abstract class Entity extends NetworkObject implements IMinimapObject, Pr
     }
 
     public abstract DirectionalSprite getDirectionalSprite();
-
+    
     public double getSize() {
         return size;
     }

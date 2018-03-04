@@ -2,9 +2,12 @@ package com.knightlore.game.tile;
 
 import com.knightlore.game.Player;
 import com.knightlore.game.Team;
+import com.knightlore.render.ColorUtils;
 import com.knightlore.render.graphic.Graphic;
 
 public abstract class Tile {
+
+    private int minimapColor = ColorUtils.averageColor(getTexture().getPixels());
 
     public abstract Graphic getTexture();
 
@@ -17,7 +20,7 @@ public abstract class Tile {
     }
 
     public int getMinimapColor() {
-        return 0;
+        return minimapColor;
     }
 
     public abstract void onShot();
@@ -43,7 +46,7 @@ public abstract class Tile {
     public Team getTeam() {
         return Team.none;
     }
-    
+
     public abstract TileType getTileType();
-    
+
 }

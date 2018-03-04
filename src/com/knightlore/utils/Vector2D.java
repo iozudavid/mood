@@ -29,7 +29,7 @@ public final class Vector2D {
     public static Vector2D sub(Vector2D a, Vector2D b) {
         return new Vector2D(a.x - b.x, a.y - b.y);
     }
-
+    
     public Vector2D(Point p) {
         this((double)p.x, (double)p.y);
     }
@@ -56,6 +56,10 @@ public final class Vector2D {
     // allocates a new vector, does not modify the original
     public Vector2D subtract(Vector2D v) {
         return new Vector2D(x - v.x, y - v.y);
+    }
+    
+    public Vector2D mul(Vector2D v) {
+        return new Vector2D(x * v.x, y * v.y);
     }
     
     // allocates a new vector, does not modify the original

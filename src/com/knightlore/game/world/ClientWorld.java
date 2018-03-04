@@ -5,10 +5,6 @@ import com.knightlore.render.Environment;
 
 public class ClientWorld extends GameWorld {
 
-    public ClientWorld() {
-        super();
-    }
-    
     @Override
     public void update() {
     }
@@ -22,15 +18,15 @@ public class ClientWorld extends GameWorld {
     }
 
     public Environment getEnvironment() {
-        return Environment.LIGHT_OUTDOORS;
+        return Environment.DARK_OUTDOORS;
     }
 
     @Override
-    public void setUpWorld() {
+    public void setUpWorld(Long mapSeed) {
+        super.setUpWorld(mapSeed);
         buildGUI();
     }
 
     public void buildGUI() {
     }
-
 }

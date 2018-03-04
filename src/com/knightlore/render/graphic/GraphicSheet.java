@@ -12,6 +12,8 @@ import com.knightlore.render.graphic.filter.ColorFilter;
 public class GraphicSheet {
 
     public final static GraphicSheet TEXTURES = new GraphicSheet("res/graphics/textures.png", 16);
+    public final static GraphicSheet WEAPONS = new GraphicSheet("res/graphics/weapon_sprites.png", 128);
+    
     public final static GraphicSheet GENERAL_SPRITES = new GraphicSheet("res/graphics/sprites.png", 64);
 
     public final static GraphicSheet PLAYER_SPRITES = new GraphicSheet("res/models/player_sprites.png", 128);
