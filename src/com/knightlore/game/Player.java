@@ -6,6 +6,9 @@ import java.util.HashMap;
 import java.util.Map.Entry;
 import java.util.UUID;
 
+import com.knightlore.ai.InputModule;
+import com.knightlore.ai.RemoteInput;
+import com.knightlore.engine.GameEngine;
 import com.knightlore.game.entity.Entity;
 import com.knightlore.game.entity.weapon.Shotgun;
 import com.knightlore.game.entity.weapon.Weapon;
@@ -20,12 +23,13 @@ import com.knightlore.utils.Vector2D;
 public class Player extends Entity {
 
     private final int MAX_HEALTH = 100;
-    private int health = MAX_HEALTH;
+    private int currentHealth = MAX_HEALTH;
     private Weapon currentWeapon;
 
     // Maps all inputs that the player could be making to their values.
     private java.util.Map<ClientController, Runnable> ACTION_MAPPINGS = new HashMap<>();
     private java.util.Map<ClientController, Byte> inputState = new HashMap<>();
+    private InputModule inputModule = null;
     // private volatile boolean finished = false;
 
     // Returns a new instance. See NetworkObject for details.
@@ -40,6 +44,7 @@ public class Player extends Entity {
     public Player(UUID uuid, Vector2D pos, Vector2D dir) {
         super(uuid, 0.25D, pos, dir);
         this.currentWeapon = new Shotgun();
+        this.inputModule = new RemoteInput();
 
         // Map possible inputs to the methods that handle them. Avoids long
         // if-statement chain.
@@ -119,19 +124,23 @@ public class Player extends Entity {
 
     @Override
     public void onUpdate() {
+        
         synchronized (inputState) {
+            inputState = inputModule.updateInput(inputState);
             // Check whether each input is triggered - if it is, execute the
             // respective method.
             // DEBUG
             boolean updated = false;
-            for (Entry<ClientController, Byte> entry : inputState.entrySet())
+            for (Entry<ClientController, Byte> entry : inputState.entrySet()) {
                 // For boolean inputs (i.e. all current inputs), 0 represents
                 // false.
                 if (entry.getValue() != 0) {
                     ACTION_MAPPINGS.get(entry.getKey()).run();
                     updated = true;
                 }
-
+            }
+            
+            
             if (updated) {
                 // updateMotionOffset();
             }
@@ -139,7 +148,9 @@ public class Player extends Entity {
     }
 
     private void shoot() {
-        System.out.println("SHOOT");
+        if(currentWeapon != null) {
+            currentWeapon.fire(this);
+        }
     }
 
     @Override
@@ -226,6 +237,19 @@ public class Player extends Entity {
     @Override
     protected synchronized void rotateAntiClockwise() {
         super.rotateAntiClockwise();
+    }
+
+    @Override
+    public void takeDamage(int damage) {
+        currentHealth -= damage;
+        if(currentHealth <=0) {
+            this.position = GameEngine.getSingleton().getWorld().getMap().getRandomSpawnPoint();
+            currentHealth = MAX_HEALTH;
+        }
+    }
+
+    public void setInputModule(InputModule inp) {
+        this.inputModule = inp;
     }
 
 }
