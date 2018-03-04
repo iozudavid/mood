@@ -66,7 +66,7 @@ public abstract class GameWorld {
         playerManager = new PlayerManager();
     }
     
-    public RaycastHit raycast(Vector2D pos, Vector2D direction, int segments, double maxDist) {
+    public RaycastHit raycast(Vector2D pos, Vector2D direction, int segments, double maxDist, Entity ignore) {
         if (segments <= 0) {
             System.err.println("can't raycast with <= 0 segments");
             return null;
@@ -85,6 +85,9 @@ public abstract class GameWorld {
                 return new RaycastHit(RaycastHitType.wall, p, null);
             } else {
                 for (int n = 0; n < ents.size(); n++) {
+                    if(ents.get(n) == ignore) {
+                        continue;
+                    }
                     if (Physics.pointInRectangleDoubleTest(p, ents.get(n).getBoundingRectangle())) {
                         return new RaycastHit(RaycastHitType.entity, p, ents.get(n));
                     }

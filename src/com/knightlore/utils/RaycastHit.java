@@ -26,6 +26,10 @@ public final class RaycastHit {
         return hitType != RaycastHitType.nothing;
     }
     
+    public boolean didHitEntity() {
+        return entity != null;
+    }
+    
     public Vector2D getHitPos() {
         return hitPos;
     }

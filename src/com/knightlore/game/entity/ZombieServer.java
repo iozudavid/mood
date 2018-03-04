@@ -12,10 +12,12 @@ import java.util.List;
 public class ZombieServer extends ZombieShared {
     private static final double DIRECTION_DIFFERENCE_TO_TURN = 0.1d;
     private static final long THINKING_FREQUENCY = 1000; // ms
+    private static final int MAX_HEALTH = 10;
 
     private final GameWorld world = GameEngine.getSingleton().getWorld();
     private long lastThinkingTime = 0;
     private List<Point> currentPath = new LinkedList<>();
+    private int currentHealth = MAX_HEALTH;
 
     public ZombieServer(Vector2D position) {
         super(position);
@@ -76,5 +78,14 @@ public class ZombieServer extends ZombieShared {
 
     @Override
     public void onCollide(Player player) {
+    }
+    
+    @Override
+    public void takeDamage(int damage) {
+        currentHealth -= damage;
+        if(currentHealth <=0) {
+            this.position = GameEngine.getSingleton().getWorld().getMap().getRandomSpawnPoint();
+            currentHealth = MAX_HEALTH;
+        }
     }
 }
