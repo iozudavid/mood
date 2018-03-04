@@ -243,8 +243,12 @@ public class Renderer implements IRenderable {
         Graphic floor = world.getEnvironment().getFloorTexture();
         Graphic ceil = world.getEnvironment().getCeilingTexture();
 
+        // stops us from getting weird rendering artifacts, since
+        // we start drawing a pixel after drawEnd to avoid indexing errors.
+        pix.fillRect(0x000000, xx, drawEnd + offset, BLOCKINESS, 1);
+
         // draw from drawEnd to the bottom of the screen
-        for (int y = drawEnd; y < h; y++) {
+        for (int y = drawEnd + 1; y < h; y++) {
             // TODO: maybe add a lookup table here for speed?
             currentDist = h / (2.0 * y - h);
 

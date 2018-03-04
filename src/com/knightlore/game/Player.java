@@ -18,6 +18,7 @@ import com.knightlore.network.protocol.ClientProtocol;
 import com.knightlore.render.PixelBuffer;
 import com.knightlore.render.graphic.Graphic;
 import com.knightlore.render.graphic.sprite.DirectionalSprite;
+import com.knightlore.render.graphic.sprite.WeaponSprite;
 import com.knightlore.utils.Vector2D;
 
 public class Player extends Entity {
@@ -95,6 +96,12 @@ public class Player extends Entity {
         final double p = 0.1;
         inertiaOffsetX += (int) (p * -inertiaOffsetX);
         inertiaOffsetY += (int) (p * -inertiaOffsetY);
+        
+        if(inertiaOffsetX < -120) {
+            g = WeaponSprite.SHOTGUN_LEFT;
+        } else if(inertiaOffsetX > 120) {
+            g = WeaponSprite.SHOTGUN_RIGHT;
+        }
 
         pix.drawGraphic(g, xx + xOffset + inertiaOffsetX, yy + yOffset + inertiaOffsetY, SCALE, SCALE);
     }
@@ -130,19 +137,12 @@ public class Player extends Entity {
             // Check whether each input is triggered - if it is, execute the
             // respective method.
             // DEBUG
-            boolean updated = false;
             for (Entry<ClientController, Byte> entry : inputState.entrySet()) {
                 // For boolean inputs (i.e. all current inputs), 0 represents
                 // false.
                 if (entry.getValue() != 0) {
                     ACTION_MAPPINGS.get(entry.getKey()).run();
-                    updated = true;
                 }
-            }
-            
-            
-            if (updated) {
-                // updateMotionOffset();
             }
         }
     }

@@ -9,5 +9,10 @@ public class MossBrickTile extends BrickTile {
     public Graphic getTexture() {
         return Texture.MOSSY_BRICK;
     }
+    
+    @Override
+    public int getMinimapColor() {
+        return super.getMinimapColor();
+    }
 
 }
