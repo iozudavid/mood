@@ -86,8 +86,11 @@ public class Player extends Entity {
 
         int xOffset = (int) (Math.cos(distanceTraveled) * weaponBobX);
         int yOffset = (int) (Math.abs(Math.sin(distanceTraveled) * weaponBobY));
-        
-        pix.drawGraphic(g, xx + xOffset, yy + yOffset, SCALE, SCALE);
+
+        final double p = 0.1;
+        inertiaOffset += (int) (p * -inertiaOffset);
+
+        pix.drawGraphic(g, xx + xOffset + inertiaOffset, yy + yOffset, SCALE, SCALE);
     }
 
     private void setNetworkConsumers() {
@@ -149,9 +152,26 @@ public class Player extends Entity {
         return bb;
     }
 
+    private Vector2D prevDir;
+    private int inertiaOffset = 0;
+
     @Override
     public void deserialize(ByteBuffer buffer) {
         super.deserialize(buffer);
+        if (prevDir != null && !prevDir.isEqualTo(direction)) {
+            double prevDirTheta = Math.atan2(prevDir.getY(), prevDir.getX());
+            double directionTheta = Math.atan2(direction.getY(), direction.getX());
+            double diff = directionTheta - prevDirTheta;
+            if(diff > Math.PI) {
+                diff -= 2 * Math.PI;
+            } else if(diff < -Math.PI) {
+                diff += 2 * Math.PI;
+            }
+            inertiaOffset += 150 * diff;
+        }
+        prevDir = direction;
+        double prevDirTheta = Math.atan2(prevDir.getY(), prevDir.getX());
+        System.out.println(prevDirTheta);
     }
 
     public Weapon getCurrentWeapon() {
@@ -185,12 +205,12 @@ public class Player extends Entity {
         // One class for both client and server.
         return this.getClass().getName();
     }
-    
+
     @Override
     protected synchronized void rotateClockwise() {
         super.rotateClockwise();
     }
-    
+
     @Override
     protected synchronized void rotateAntiClockwise() {
         super.rotateAntiClockwise();

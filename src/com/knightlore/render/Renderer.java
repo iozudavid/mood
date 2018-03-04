@@ -15,6 +15,12 @@ import com.knightlore.render.graphic.Graphic;
 import com.knightlore.render.minimap.Minimap;
 import com.knightlore.utils.Vector2D;
 
+/**
+ * Renders the game content.
+ * 
+ * @author Joe Ellis
+ *
+ */
 public class Renderer implements IRenderable {
 
     /**

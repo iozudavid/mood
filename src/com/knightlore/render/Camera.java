@@ -28,12 +28,12 @@ public class Camera implements IRenderable {
         super();
         this.lastPos = new Vector2D(0, 0);
     }
-    
+
     @Override
     public void render(PixelBuffer pix, int x, int y) {
         subject.render(pix, x, y, getDistanceTraveled());
     }
-    
+
     private double getDisplacementDelta() {
         Vector2D current = subject.getPosition();
         double displacement = current.subtract(lastPos).magnitude();
