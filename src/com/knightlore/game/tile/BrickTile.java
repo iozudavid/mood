@@ -19,10 +19,10 @@ public class BrickTile extends Tile {
         return 1D;
     }
 
-    @Override
-    public int getMinimapColor() {
-        return 0x8C4100;
-    }
+//    @Override
+//    public int getMinimapColor() {
+//        return 0x8C4100;
+//    }
 
     @Override
     public void onShot() {

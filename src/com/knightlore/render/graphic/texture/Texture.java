@@ -11,6 +11,7 @@ public class Texture {
     public static final Graphic MUD = GraphicSheet.TEXTURES.graphicAt(2, 0);
     public static final Graphic WOOD = GraphicSheet.TEXTURES.graphicAt(3, 0);
     public static final Graphic SLAB = GraphicSheet.TEXTURES.graphicAt(0, 1);
+    public static final Graphic MOSSY_BRICK = GraphicSheet.TEXTURES.graphicAt(1, 1);
 
     private Texture() {
     }

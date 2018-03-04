@@ -88,9 +88,10 @@ public class Player extends Entity {
         int yOffset = (int) (Math.abs(Math.sin(distanceTraveled) * weaponBobY));
 
         final double p = 0.1;
-        inertiaOffset += (int) (p * -inertiaOffset);
+        inertiaOffsetX += (int) (p * -inertiaOffsetX);
+        inertiaOffsetY += (int) (p * -inertiaOffsetY);
 
-        pix.drawGraphic(g, xx + xOffset + inertiaOffset, yy + yOffset, SCALE, SCALE);
+        pix.drawGraphic(g, xx + xOffset + inertiaOffsetX, yy + yOffset + inertiaOffsetY, SCALE, SCALE);
     }
 
     private void setNetworkConsumers() {
@@ -153,7 +154,7 @@ public class Player extends Entity {
     }
 
     private Vector2D prevPos, prevDir;
-    private int inertiaOffset = 0;
+    private int inertiaOffsetX = 0, inertiaOffsetY = 0;;
 
     @Override
     public void deserialize(ByteBuffer buffer) {
@@ -163,7 +164,11 @@ public class Player extends Entity {
             Vector2D displacement = position.subtract(prevPos);
             Vector2D temp = new Vector2D(plane.getX() / plane.magnitude(), plane.getY() / plane.magnitude());
             double orthProjection = displacement.dot(temp);
-            inertiaOffset -= orthProjection * 125;
+            inertiaOffsetX -= orthProjection * 125;
+
+            temp = new Vector2D(direction.getX() / direction.magnitude(), direction.getY() / direction.magnitude());
+            orthProjection = displacement.dot(temp);
+            inertiaOffsetY += orthProjection * 35;
 
             double prevDirTheta = Math.atan2(prevDir.getY(), prevDir.getX());
             double directionTheta = Math.atan2(direction.getY(), direction.getX());
@@ -174,13 +179,11 @@ public class Player extends Entity {
                 diff += 2 * Math.PI;
             }
 
-            inertiaOffset += 150 * diff;
+            inertiaOffsetX += 150 * diff;
         }
 
         prevPos = position;
         prevDir = direction;
-        double prevDirTheta = Math.atan2(prevDir.getY(), prevDir.getX());
-        System.out.println(prevDirTheta);
     }
 
     public Weapon getCurrentWeapon() {
