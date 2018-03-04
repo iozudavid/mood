@@ -39,7 +39,7 @@ public final class TurretServer extends TurretShared {
             if (sqrDist < sqrRange) {
                 // compute dir to check
                 Vector2D checkDir = player.getPosition().subtract(this.position);
-                RaycastHit hit = GameEngine.getSingleton().getWorld().raycast(position, checkDir, 50, range);
+                RaycastHit hit = GameEngine.getSingleton().getWorld().raycast(position, checkDir, 50, range,this);
                 // did we hit anything?
                 if (hit.getHitType() == RaycastHitType.entity) {
                     target = hit.getEntity();

@@ -2,6 +2,7 @@ package com.knightlore.game.entity.weapon;
 
 import com.knightlore.engine.TickListener;
 import com.knightlore.game.Player;
+import com.knightlore.game.entity.Entity;
 import com.knightlore.render.graphic.Graphic;
 
 public abstract class Weapon implements TickListener {
@@ -16,13 +17,9 @@ public abstract class Weapon implements TickListener {
         this.fireRate = fireRate;
     }
     
-    public abstract int damageInflicted(Player shooter, Player target);
+    public abstract int damageInflicted(Player shooter, Entity target);
     
-    public void fire(Player shooter) {
-        timer = 0;
-        // TODO: find the player that was hit somehow.
-        Player shot;
-    }
+    public abstract void fire(Player shooter);
     
     public boolean canFire() {
         return timer >= fireRate;
@@ -41,5 +38,4 @@ public abstract class Weapon implements TickListener {
     public long interval() {
         return 1L;
     }
-
 }
