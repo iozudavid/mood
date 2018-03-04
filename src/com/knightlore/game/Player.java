@@ -152,23 +152,32 @@ public class Player extends Entity {
         return bb;
     }
 
-    private Vector2D prevDir;
+    private Vector2D prevPos, prevDir;
     private int inertiaOffset = 0;
 
     @Override
     public void deserialize(ByteBuffer buffer) {
         super.deserialize(buffer);
-        if (prevDir != null && !prevDir.isEqualTo(direction)) {
+        if (prevPos != null && prevDir != null) {
+
+            Vector2D displacement = position.subtract(prevPos);
+            Vector2D temp = new Vector2D(plane.getX() / plane.magnitude(), plane.getY() / plane.magnitude());
+            double orthProjection = displacement.dot(temp);
+            inertiaOffset -= orthProjection * 125;
+
             double prevDirTheta = Math.atan2(prevDir.getY(), prevDir.getX());
             double directionTheta = Math.atan2(direction.getY(), direction.getX());
             double diff = directionTheta - prevDirTheta;
-            if(diff > Math.PI) {
+            if (diff > Math.PI) {
                 diff -= 2 * Math.PI;
-            } else if(diff < -Math.PI) {
+            } else if (diff < -Math.PI) {
                 diff += 2 * Math.PI;
             }
+
             inertiaOffset += 150 * diff;
         }
+
+        prevPos = position;
         prevDir = direction;
         double prevDirTheta = Math.atan2(prevDir.getY(), prevDir.getX());
         System.out.println(prevDirTheta);
