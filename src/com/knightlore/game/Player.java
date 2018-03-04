@@ -154,7 +154,7 @@ public class Player extends Entity {
     }
 
     private Vector2D prevPos, prevDir;
-    private int inertiaOffsetX = 0, inertiaOffsetY = 0;;
+    private int inertiaOffsetX = 0, inertiaOffsetY = 500;
 
     @Override
     public void deserialize(ByteBuffer buffer) {
