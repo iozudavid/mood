@@ -18,4 +18,5 @@ public final class GameSettings {
     public static boolean isServer() {
         return server;
     }
+    
 }

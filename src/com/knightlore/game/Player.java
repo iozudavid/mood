@@ -86,7 +86,7 @@ public class Player extends Entity {
 
         int xOffset = (int) (Math.cos(distanceTraveled) * weaponBobX);
         int yOffset = (int) (Math.abs(Math.sin(distanceTraveled) * weaponBobY));
-
+        
         pix.drawGraphic(g, xx + xOffset, yy + yOffset, SCALE, SCALE);
     }
 
@@ -145,7 +145,8 @@ public class Player extends Entity {
     // TODO: serialize weapon etc.
     @Override
     public ByteBuffer serialize() {
-        return super.serialize();
+        ByteBuffer bb = super.serialize();
+        return bb;
     }
 
     @Override
@@ -183,6 +184,16 @@ public class Player extends Entity {
     public String getClientClassName() {
         // One class for both client and server.
         return this.getClass().getName();
+    }
+    
+    @Override
+    protected synchronized void rotateClockwise() {
+        super.rotateClockwise();
+    }
+    
+    @Override
+    protected synchronized void rotateAntiClockwise() {
+        super.rotateAntiClockwise();
     }
 
 }

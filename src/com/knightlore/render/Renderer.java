@@ -4,6 +4,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Stack;
 
+import com.knightlore.MainWindow;
 import com.knightlore.game.area.Map;
 import com.knightlore.game.entity.Entity;
 import com.knightlore.game.tile.AirTile;
@@ -40,11 +41,6 @@ public class Renderer implements IRenderable {
 
     @Override
     public void render(PixelBuffer pix, int x, int y) {
-        // FIXME: HACK
-        // if (camera == null || minimap == null) {
-        // return;
-        // }
-        // Can't render without a camera.
         if (camera == null || !camera.isSubjectSet()) {
             return;
         }
@@ -55,14 +51,14 @@ public class Renderer implements IRenderable {
         // draw the perspective and the crosshairs
         int offset = camera.getMotionBobOffset();
         drawPerspective(pix, offset);
-        
+
         camera.render(pix, x, y);
         drawCrosshair(pix);
 
         if (gui != null) {
             gui.render(pix, x, y);
         }
-        
+
         minimap.render();
 
         PixelBuffer minimapBuffer = minimap.getPixelBuffer();

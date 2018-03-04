@@ -11,8 +11,8 @@ import com.knightlore.game.entity.Entity;
 import com.knightlore.utils.pruner.Pruner;
 
 public abstract class GameWorld {
-    protected static final int TEST_XSIZE = 16;
-    protected static final int TEST_YSIZE = 16;
+    protected static final int TEST_XSIZE = 64;
+    protected static final int TEST_YSIZE = 64;
     protected static final long TEST_SEED = 161803398874L;
 
     protected Map map;

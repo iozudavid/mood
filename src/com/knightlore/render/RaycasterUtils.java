@@ -4,8 +4,7 @@ public class RaycasterUtils {
 
     public static double getWallHitPosition(Camera camera, double rayX, double rayY, int mapX, int mapY, boolean side,
             int stepX, int stepY) {
-        // add a texture
-        double wallX;// Exact position of where wall was hit
+        double wallX;
         if (side) {// If its a y-axis wall
             wallX = (camera.getxPos() + ((mapY - camera.getyPos() + (1 - stepY) / 2) / rayY) * rayX);
         } else {// X-axis wall
