@@ -1,6 +1,8 @@
 package com.knightlore.utils;
 
 import java.awt.Rectangle;
+import java.awt.geom.Rectangle2D;
+import java.awt.geom.Rectangle2D.Double;
 
 import com.knightlore.engine.GameEngine;
 import com.knightlore.game.area.Map;
@@ -222,6 +224,10 @@ public class Physics {
         }
         
         return false;
+    }
+
+    public static boolean pointInRectangleDoubleTest(Vector2D p, Rectangle2D.Double boundingRectangle) {
+        return boundingRectangle.contains(p.getX(), p.getY());
     }
     
 }

@@ -19,7 +19,8 @@ public abstract class TurretShared extends Entity {
     
     protected Entity target = null;
     protected byte targetByte = 0;
-    protected double sqrRange = 25;
+    protected final double sqrRange = 25;
+    protected final double range = 5;
     
     protected TurretShared(double size, Vector2D position, Vector2D direction) {
         super(size, position, direction);
