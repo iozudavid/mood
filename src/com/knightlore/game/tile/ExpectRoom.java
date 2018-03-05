@@ -5,7 +5,6 @@ import com.knightlore.render.graphic.Graphic;
 import com.knightlore.render.graphic.texture.Texture;
 
 public class ExpectRoom extends Tile {
-
     private char direction;
 
     public static final char RIGHT = 'r';
@@ -35,8 +34,7 @@ public class ExpectRoom extends Tile {
     }
 
     @Override
-    public TileType getTileType() {
-        return TileType.expect;
+    public Tile copy() {
+        return new ExpectRoom(direction);
     }
-
 }

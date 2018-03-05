@@ -2,9 +2,7 @@ package com.knightlore.leveleditor;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.File;
-import java.io.IOException;
-import java.io.PrintWriter;
+import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -19,13 +17,12 @@ import javax.swing.JOptionPane;
 import javax.swing.JSplitPane;
 
 import com.knightlore.game.area.Map;
-import com.knightlore.game.area.MapSerializer;
 import com.knightlore.game.area.generation.MapGenerator;
-import com.knightlore.game.tile.TileType;
+import com.knightlore.game.tile.BrickTile;
 
 public class LevelEditorWindow extends JFrame {
 
-    public static Pen pen = new Pen(TileType.brick);
+    public static Pen pen = new Pen(new BrickTile());
 
     public static final String TITLE = "KnightLore Level Editor";
     public static final int WIDTH = 1000;
@@ -101,17 +98,12 @@ public class LevelEditorWindow extends JFrame {
         if (response != JFileChooser.APPROVE_OPTION)
             return;
 
-        PrintWriter writer = null;
-        try {
-            File file = fc.getSelectedFile();
-            writer = new PrintWriter(file);
-            String serialized = MapSerializer.mapToString(panel.getMap());
-            writer.print(serialized);
+        try (FileOutputStream fos = new FileOutputStream(fc.getSelectedFile());
+             ObjectOutputStream objectOut = new ObjectOutputStream(fos)) {
+            objectOut.writeObject(panel.getMap());
         } catch (IOException e) {
             JOptionPane.showMessageDialog(this, "Something went wrong trying to save the map.", "Failed to Save Map",
                     JOptionPane.ERROR_MESSAGE);
-        } finally {
-            writer.close();
         }
     }
 
@@ -121,21 +113,18 @@ public class LevelEditorWindow extends JFrame {
         if (response != JFileChooser.APPROVE_OPTION)
             return;
 
-        Map m = null;
-        try {
-            String text = new String(Files.readAllBytes(Paths.get(fc.getSelectedFile().getAbsolutePath())),
-                    StandardCharsets.UTF_8);
-            m = MapSerializer.mapFromString(text);
-        } catch (IOException e) {
+        try (FileInputStream fis = new FileInputStream(fc.getSelectedFile());
+             ObjectInputStream objectIn = new ObjectInputStream(fis)) {
+            Map m = (Map) objectIn.readObject();
+            panel.removeAll();
+            panel.initialise(m);
+            panel.revalidate();
+            panel.repaint();
+        } catch (IOException | ClassNotFoundException e) {
             JOptionPane.showMessageDialog(this, "Something went wrong trying to open the map.", "Failed to Open Map",
                     JOptionPane.ERROR_MESSAGE);
             e.printStackTrace();
         }
-        
-        panel.removeAll();
-        panel.initialise(m);
-        panel.revalidate();
-        panel.repaint();
     }
 
 }

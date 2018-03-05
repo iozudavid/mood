@@ -7,11 +7,10 @@ import com.knightlore.render.graphic.Graphic;
 import com.knightlore.render.graphic.texture.Texture;
 
 public class PlayerSpawnTile extends Tile {
+    private final Team team;
 
-    public Team team = Team.none;
-
-    public PlayerSpawnTile(Team t) {
-        team = t;
+    public PlayerSpawnTile(Team team) {
+        this.team = team;
     }
 
     @Override
@@ -21,8 +20,7 @@ public class PlayerSpawnTile extends Tile {
 
     @Override
     public double getOpacity() {
-        double opacity = 0.5 + (Math.sin(GameEngine.ticker.getTime() * 0.05)) / 4;
-        return opacity;
+        return 0.5 + (Math.sin(GameEngine.ticker.getTime() * 0.05)) / 4;
     }
 
     @Override
@@ -84,8 +82,7 @@ public class PlayerSpawnTile extends Tile {
     }
 
     @Override
-    public TileType getTileType() {
-        return TileType.spawn;
+    public Tile copy() {
+        return new PlayerSpawnTile(team);
     }
-
 }

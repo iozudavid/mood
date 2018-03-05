@@ -7,7 +7,6 @@ import java.util.Random;
 import com.knightlore.game.Team;
 import com.knightlore.game.tile.AirTile;
 import com.knightlore.game.tile.Tile;
-import com.knightlore.game.tile.TileType;
 import com.knightlore.utils.Vector2D;
 
 public class Map extends Area {
@@ -38,8 +37,8 @@ public class Map extends Area {
         return candidates.get(index);
     }
 
-    public List<Vector2D> getTilePoints(Team team, TileType type) {
-        List<Vector2D> positions = new ArrayList<>();
+    public List<Vector2D> getTilePoints(Team team/*, TileType type*/) {
+        /*List<Vector2D> positions = new ArrayList<>();
         for (int i = 0; i < getWidth(); i++) {
             for (int j = 0; j < getHeight(); j++) {
 
@@ -56,6 +55,7 @@ public class Map extends Area {
 
             }
         }
-        return positions;
+        return positions;*/
+        return new ArrayList<>();
     }
 }
