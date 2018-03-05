@@ -5,7 +5,6 @@ import com.knightlore.game.Player;
 import com.knightlore.game.entity.Entity;
 import com.knightlore.render.graphic.sprite.WeaponSprite;
 import com.knightlore.utils.RaycastHit;
-import com.knightlore.utils.RaycastHitType;
 import com.knightlore.utils.Vector2D;
 
 public class Shotgun extends Weapon {
