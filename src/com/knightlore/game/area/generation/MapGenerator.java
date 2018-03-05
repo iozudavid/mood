@@ -22,8 +22,10 @@ import com.knightlore.game.tile.UndecidedTile;
 import com.knightlore.utils.pathfinding.PathFinder;
 
 public class MapGenerator extends ProceduralAreaGenerator {
-    private static final int MAX_ROOMS = 5;
-
+    private static final int ROOM_RANGE_MIN = 4;
+    private static final int ROOM_RANGE_MAX = 8;
+    private int maxRooms;
+    
     private final List<Room> rooms = new LinkedList<>();
     private double[][] costGrid;
 
@@ -39,6 +41,8 @@ public class MapGenerator extends ProceduralAreaGenerator {
         System.out.println("Creating map with seed: " + seed);
         rand = new Random(seed);
         grid = new Tile[width][height];
+        // maybe make this correspond to map size
+        maxRooms = ROOM_RANGE_MIN + rand.nextInt(ROOM_RANGE_MAX - ROOM_RANGE_MIN);
         PerlinNoiseGenerator perlinGenerator = new PerlinNoiseGenerator(width, height, seed);
         // Initialize costGrid with perlin noise to make generated paths less optimal
         costGrid = perlinGenerator.createPerlinNoise();
@@ -51,8 +55,8 @@ public class MapGenerator extends ProceduralAreaGenerator {
         resetGrid();
         generateRooms();
         generatePaths();
-        fillUndecidedTiles();
         makeSymY();
+        fillUndecidedTiles();
     }
 
     private void generateRooms() {
@@ -65,7 +69,7 @@ public class MapGenerator extends ProceduralAreaGenerator {
         // TODO: Produce a list of room types to have!
         room = roomGenerator.createRoom(rand.nextLong(), RoomType.weapon);
         
-        while (rooms.size() < MAX_ROOMS && setRoomPosition(room)) {
+        while (rooms.size() < maxRooms && setRoomPosition(room)) {
             rooms.add(room);
             room = roomGenerator.createRoom(rand.nextLong(), RoomType.normal);
         }
@@ -239,6 +243,9 @@ public class MapGenerator extends ProceduralAreaGenerator {
             for (int y = 0; y < grid[0].length; y++) {
                 if (grid[x][y] == UndecidedTile.getInstance()) {
                     grid[x][y] = Math.random() < 0.75 ? new BrickTile() : new MossBrickTile();
+                }
+                if (grid[x][y] == PathTile.getInstance()) {
+                    grid[x][y] = AirTile.getInstance();
                 }
             }
         }
