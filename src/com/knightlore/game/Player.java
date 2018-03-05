@@ -10,6 +10,7 @@ import com.knightlore.ai.InputModule;
 import com.knightlore.ai.RemoteInput;
 import com.knightlore.engine.GameEngine;
 import com.knightlore.game.entity.Entity;
+import com.knightlore.game.entity.weapon.Shotgun;
 import com.knightlore.game.entity.weapon.Weapon;
 import com.knightlore.network.NetworkObject;
 import com.knightlore.network.protocol.ClientController;
@@ -24,7 +25,7 @@ public class Player extends Entity {
 
     private final int MAX_HEALTH = 100;
     private int currentHealth = MAX_HEALTH;
-    private Weapon currentWeapon = null;
+    private Weapon currentWeapon;
 
     // Maps all inputs that the player could be making to their values.
     private java.util.Map<ClientController, Runnable> ACTION_MAPPINGS = new HashMap<>();
@@ -43,7 +44,7 @@ public class Player extends Entity {
 
     public Player(UUID uuid, Vector2D pos, Vector2D dir) {
         super(uuid, 0.25D, pos, dir);
-        // this.currentWeapon = new Shotgun();
+        this.currentWeapon = new Shotgun();
         this.inputModule = new RemoteInput();
 
         // Map possible inputs to the methods that handle them. Avoids long

@@ -4,15 +4,12 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Stack;
 
-import com.knightlore.MainWindow;
 import com.knightlore.game.area.Map;
 import com.knightlore.game.entity.Entity;
 import com.knightlore.game.tile.AirTile;
 import com.knightlore.game.tile.Tile;
 import com.knightlore.game.world.ClientWorld;
-import com.knightlore.gui.GUICanvas;
 import com.knightlore.render.graphic.Graphic;
-import com.knightlore.render.minimap.Minimap;
 import com.knightlore.utils.Vector2D;
 
 /**
@@ -21,7 +18,9 @@ import com.knightlore.utils.Vector2D;
  * @author Joe Ellis
  *
  */
-public class Renderer implements IRenderable {
+public class Renderer {
+    
+    private PixelBuffer pix;
 
     /**
      * Viewport into the world. Can be bound to any entity.
@@ -33,20 +32,15 @@ public class Renderer implements IRenderable {
      */
     private ClientWorld world;
 
-    private Minimap minimap;
-
-    private GUICanvas gui;
-
-    public Renderer(Camera camera, ClientWorld world) {
+    public Renderer(int width, int height, Camera camera, ClientWorld world) {
+        this.pix = new PixelBuffer(width, height);
         this.camera = camera;
         this.world = world;
-        this.minimap = new Minimap(camera, world, 128);
     }
 
     private final int BLOCKINESS = 10; // how 'old school' you want to look.
 
-    @Override
-    public void render(PixelBuffer pix, int x, int y) {
+    public void render() {
         if (camera == null || !camera.isSubjectSet()) {
             return;
         }
@@ -58,18 +52,8 @@ public class Renderer implements IRenderable {
         int offset = camera.getMotionBobOffset();
         drawPerspective(pix, offset);
 
-        camera.render(pix, x, y);
+        camera.render(pix, 0, 0);
         drawCrosshair(pix);
-
-        if (gui != null) {
-            gui.render(pix, x, y);
-        }
-
-        minimap.render();
-
-        PixelBuffer minimapBuffer = minimap.getPixelBuffer();
-        pix.composite(minimapBuffer, pix.getWidth() - minimapBuffer.getWidth() - 10, 5);
-
     }
 
     /*
@@ -380,6 +364,10 @@ public class Renderer implements IRenderable {
         final int w = pix.getWidth() / 2, h = pix.getHeight() / 2;
         pix.fillRect(CROSSHAIR_COLOR, w - CROSSHAIR_SIZE, h - CROSSHAIR_WIDTH / 2, CROSSHAIR_SIZE * 2, CROSSHAIR_WIDTH);
         pix.fillRect(CROSSHAIR_COLOR, w - CROSSHAIR_WIDTH / 2, h - CROSSHAIR_SIZE, CROSSHAIR_WIDTH, CROSSHAIR_SIZE * 2);
+    }
+    
+    public PixelBuffer getPixelBuffer() {
+        return pix;
     }
 
 }

@@ -225,7 +225,7 @@ public class Minimap implements TickListener {
     public void setCamera(Camera camera) {
         this.camera = camera;
     }
-
+    
     @Override
     public void onTick() {
         recreatePixelMap();
