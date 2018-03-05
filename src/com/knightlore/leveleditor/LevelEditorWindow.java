@@ -1,11 +1,6 @@
 package com.knightlore.leveleditor;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.io.*;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.Random;
 
 import javax.swing.JFileChooser;
@@ -39,32 +34,13 @@ public class LevelEditorWindow extends JFrame {
         JMenu file = new JMenu("File");
 
         JMenuItem open = new JMenuItem("Open Map from File");
-        open.addActionListener(new ActionListener() {
-
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                openMapFromFile();
-            }
-        });
+        open.addActionListener(e -> openMapFromFile());
 
         JMenuItem openRand = new JMenuItem("Generate Random Map");
-        openRand.addActionListener(new ActionListener() {
-
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                openRandomMap();
-            }
-        });
+        openRand.addActionListener(e -> openRandomMap());
 
         JMenuItem save = new JMenuItem("Save Current Map");
-        save.addActionListener(new ActionListener() {
-
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                saveMapToFile();
-            }
-
-        });
+        save.addActionListener(e -> saveMapToFile());
 
         file.add(open);
         file.add(openRand);
