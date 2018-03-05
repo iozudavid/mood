@@ -65,11 +65,6 @@ public class GameEngine implements Runnable {
         return gameObjectManager;
     }
 
-    // FIXME: remove this
-    public Renderer getRenderer() {
-        return this.renderer;
-    }
-
     public NetworkObjectManager getNetworkObjectManager() {
         return networkObjectManager;
     }
