@@ -12,18 +12,20 @@ public class Fire extends Buff{
     public void onApply(Player p) {
         // TODO: Apply some fiery effect on the player's display
         p.applyDamage(FIRE_DAMAGE);
+        counter++;
     }
 
     @Override
     public void periodicEffect(Player p) {
+        // TODO: Potentially muck about with the ticker
+        // and maybe only apply damage on certain ticks
         if(counter >= MAX_ITERATIONS) {
             // tell the player to remove this buff
             p.removeBuff(this);
             return;
-        }else {
-            p.applyDamage(FIRE_DAMAGE);
-            counter++;
         }
+        p.applyDamage(FIRE_DAMAGE);
+        counter++;
         
     }
 
