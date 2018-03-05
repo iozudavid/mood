@@ -1,5 +1,7 @@
 package com.knightlore.render;
 
+import java.util.Arrays;
+
 import com.knightlore.render.graphic.Graphic;
 
 /**
@@ -256,9 +258,7 @@ public class PixelBuffer {
      *            the integer array that you want to copy the buffer into.
      */
     public void copy(int[] c) {
-        for (int i = 0; i < WIDTH * HEIGHT; i++) {
-            c[i] = pixels[i];
-        }
+        System.arraycopy(pixels, 0, c, 0, WIDTH * HEIGHT);
     }
 
     /**

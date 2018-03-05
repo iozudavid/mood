@@ -10,7 +10,6 @@ import com.knightlore.ai.InputModule;
 import com.knightlore.ai.RemoteInput;
 import com.knightlore.engine.GameEngine;
 import com.knightlore.game.entity.Entity;
-import com.knightlore.game.entity.weapon.Shotgun;
 import com.knightlore.game.entity.weapon.Weapon;
 import com.knightlore.network.NetworkObject;
 import com.knightlore.network.protocol.ClientController;
@@ -25,7 +24,7 @@ public class Player extends Entity {
 
     private final int MAX_HEALTH = 100;
     private int currentHealth = MAX_HEALTH;
-    private Weapon currentWeapon;
+    private Weapon currentWeapon = null;
 
     // Maps all inputs that the player could be making to their values.
     private java.util.Map<ClientController, Runnable> ACTION_MAPPINGS = new HashMap<>();
@@ -44,7 +43,7 @@ public class Player extends Entity {
 
     public Player(UUID uuid, Vector2D pos, Vector2D dir) {
         super(uuid, 0.25D, pos, dir);
-        this.currentWeapon = new Shotgun();
+        // this.currentWeapon = new Shotgun();
         this.inputModule = new RemoteInput();
 
         // Map possible inputs to the methods that handle them. Avoids long
@@ -64,7 +63,6 @@ public class Player extends Entity {
         strafeSpeed = 0.08;
         rotationSpeed = 0.06;
 
-        // Player.this.finished = true;
     }
 
     public Player(Vector2D pos, Vector2D dir) {
@@ -82,6 +80,10 @@ public class Player extends Entity {
         // hence below
         final int SCALE = (int) (5 + 1 / 242D * (pix.getHeight() - 558));
 
+        if (currentWeapon == null) {
+            System.out.println(currentWeapon + " is null...");
+            return;
+        }
         Graphic g = currentWeapon.getGraphic();
         final int width = g.getWidth() * SCALE, height = g.getHeight() * SCALE;
 
@@ -96,10 +98,10 @@ public class Player extends Entity {
         final double p = 0.1;
         inertiaOffsetX += (int) (p * -inertiaOffsetX);
         inertiaOffsetY += (int) (p * -inertiaOffsetY);
-        
-        if(inertiaOffsetX < -120) {
+
+        if (inertiaOffsetX < -120) {
             g = WeaponSprite.SHOTGUN_LEFT;
-        } else if(inertiaOffsetX > 120) {
+        } else if (inertiaOffsetX > 120) {
             g = WeaponSprite.SHOTGUN_RIGHT;
         }
 
@@ -131,7 +133,7 @@ public class Player extends Entity {
 
     @Override
     public void onUpdate() {
-        
+
         synchronized (inputState) {
             inputState = inputModule.updateInput(inputState);
             // Check whether each input is triggered - if it is, execute the
@@ -148,7 +150,7 @@ public class Player extends Entity {
     }
 
     private void shoot() {
-        if(currentWeapon != null) {
+        if (currentWeapon != null) {
             currentWeapon.fire(this);
         }
     }
@@ -242,7 +244,7 @@ public class Player extends Entity {
     @Override
     public void takeDamage(int damage) {
         currentHealth -= damage;
-        if(currentHealth <=0) {
+        if (currentHealth <= 0) {
             this.position = GameEngine.getSingleton().getWorld().getMap().getRandomSpawnPoint();
             currentHealth = MAX_HEALTH;
         }
@@ -250,6 +252,10 @@ public class Player extends Entity {
 
     public void setInputModule(InputModule inp) {
         this.inputModule = inp;
+    }
+
+    public void setCurrentWeapon(Weapon currentWeapon) {
+        this.currentWeapon = currentWeapon;
     }
 
 }
