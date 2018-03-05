@@ -88,12 +88,15 @@ public class PixelBuffer {
      * @param scaleY
      *            the scaling in the y-direction.
      */
-    public void drawGraphic(Graphic graphic, int x, int y, int scaleX, int scaleY) {
-        for (int yy = 0; yy < graphic.getHeight() * scaleY; yy++) {
-            for (int xx = 0; xx < graphic.getWidth() * scaleX; xx++) {
+    public void drawGraphic(Graphic graphic, int x, int y, int width, int height) {
+        for (int yy = 0; yy < height; yy++) {
+            for (int xx = 0; xx < width; xx++) {
                 int drawX = x + xx;
                 int drawY = y + yy;
-                int color = graphic.getPixels()[xx / scaleX + (yy / scaleY) * graphic.getWidth()];
+                
+                int texX = (int) ((xx / (double) width) * graphic.getWidth());
+                int texY = (int) ((yy / (double) height) * graphic.getHeight());
+                int color = graphic.getPixels()[texY * graphic.getHeight() + texX];
                 fillPixel(color, drawX, drawY);
             }
         }
@@ -256,9 +259,7 @@ public class PixelBuffer {
      *            the integer array that you want to copy the buffer into.
      */
     public void copy(int[] c) {
-        for (int i = 0; i < WIDTH * HEIGHT; i++) {
-            c[i] = pixels[i];
-        }
+        System.arraycopy(pixels, 0, c, 0, WIDTH * HEIGHT);
     }
 
     /**

@@ -18,9 +18,10 @@ import com.knightlore.utils.Vector2D;
 import com.knightlore.utils.pruner.Pruner;
 
 public abstract class GameWorld {
-    protected static final int TEST_XSIZE = 32;
+
+    protected static final int TEST_XSIZE = 16;
     protected static final int TEST_YSIZE = 32;
-    protected static final long TEST_SEED = 314L;
+    protected static final long TEST_SEED = 25L;
     
     protected Map map;
     protected PlayerManager playerManager;

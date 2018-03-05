@@ -41,7 +41,6 @@ public class PlayerSpawnTile extends Tile {
 
     @Override
     public void onEntered(Player p) {
-
     }
 
     public char toChar() {

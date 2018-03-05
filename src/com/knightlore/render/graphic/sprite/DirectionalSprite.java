@@ -44,17 +44,21 @@ public class DirectionalSprite {
         double c = (2 * Math.PI) / angles.size();
         int i = (int) (Math.floor(theta / c));
 
-        // FIXME
-        // quick fix
-        // must be REMOVED
-        if (i >= angles.size())
-            return angles.get(angles.size() - 1);
+//        // FIXME
+//        // quick fix
+//        // must be REMOVED
+//        if (i >= angles.size())
+//            return angles.get(angles.size() - 1);
 
         return angles.get(i);
     }
 
     public void addGraphic(Graphic g) {
         angles.add(g);
+    }
+    
+    public List<Graphic> getAngles() {
+        return angles;
     }
 
 }

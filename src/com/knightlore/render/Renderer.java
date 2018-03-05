@@ -4,15 +4,12 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Stack;
 
-import com.knightlore.MainWindow;
 import com.knightlore.game.area.Map;
 import com.knightlore.game.entity.Entity;
 import com.knightlore.game.tile.AirTile;
 import com.knightlore.game.tile.Tile;
 import com.knightlore.game.world.ClientWorld;
-import com.knightlore.gui.GUICanvas;
 import com.knightlore.render.graphic.Graphic;
-import com.knightlore.render.minimap.Minimap;
 import com.knightlore.utils.Vector2D;
 
 /**
@@ -21,7 +18,9 @@ import com.knightlore.utils.Vector2D;
  * @author Joe Ellis
  *
  */
-public class Renderer implements IRenderable {
+public class Renderer {
+
+    private PixelBuffer pix;
 
     /**
      * Viewport into the world. Can be bound to any entity.
@@ -33,20 +32,15 @@ public class Renderer implements IRenderable {
      */
     private ClientWorld world;
 
-    private Minimap minimap;
-
-    private GUICanvas gui;
-
-    public Renderer(Camera camera, ClientWorld world) {
+    public Renderer(int width, int height, Camera camera, ClientWorld world) {
+        this.pix = new PixelBuffer(width, height);
         this.camera = camera;
         this.world = world;
-        this.minimap = new Minimap(camera, world, 128);
     }
 
     private final int BLOCKINESS = 10; // how 'old school' you want to look.
 
-    @Override
-    public void render(PixelBuffer pix, int x, int y) {
+    public void render() {
         if (camera == null || !camera.isSubjectSet()) {
             return;
         }
@@ -58,27 +52,9 @@ public class Renderer implements IRenderable {
         int offset = camera.getMotionBobOffset();
         drawPerspective(pix, offset);
 
-        camera.render(pix, x, y);
+        camera.render(pix, 0, 0);
         drawCrosshair(pix);
-
-        if (gui != null) {
-            gui.render(pix, x, y);
-        }
-
-        minimap.render();
-
-        PixelBuffer minimapBuffer = minimap.getPixelBuffer();
-        pix.composite(minimapBuffer, pix.getWidth() - minimapBuffer.getWidth() - 10, 5);
-
     }
-
-    /*
-     * NOTE: THIS ONLY AFFECTS THE RENDERING SIZE OF A TILE. If you change this
-     * variable, tiles will be drawn differently but the player will still move
-     * at their usual speed over a single tile. You might want to compensate a
-     * change here with a change in player move speed.
-     */
-    private final float TILE_SIZE = 1F;
 
     private void drawPerspective(PixelBuffer pix, int offset) {
 
@@ -162,7 +138,7 @@ public class Renderer implements IRenderable {
                         hit = true;
 
                     distanceToWall = RaycasterUtils.getImpactDistance(camera, rayX, rayY, mapX, mapY, side, stepX,
-                            stepY, TILE_SIZE);
+                            stepY);
                     int lineHeight = RaycasterUtils.getDrawHeight(height, distanceToWall);
 
                     // calculate lowest and highest pixel to fill in current
@@ -243,8 +219,12 @@ public class Renderer implements IRenderable {
         Graphic floor = world.getEnvironment().getFloorTexture();
         Graphic ceil = world.getEnvironment().getCeilingTexture();
 
+        // stops us from getting weird rendering artifacts, since
+        // we start drawing a pixel after drawEnd to avoid indexing errors.
+        pix.fillRect(0x000000, xx, drawEnd + offset, BLOCKINESS, 1);
+
         // draw from drawEnd to the bottom of the screen
-        for (int y = drawEnd; y < h; y++) {
+        for (int y = drawEnd + 1; y < h; y++) {
             // TODO: maybe add a lookup table here for speed?
             currentDist = h / (2.0 * y - h);
 
@@ -376,6 +356,10 @@ public class Renderer implements IRenderable {
         final int w = pix.getWidth() / 2, h = pix.getHeight() / 2;
         pix.fillRect(CROSSHAIR_COLOR, w - CROSSHAIR_SIZE, h - CROSSHAIR_WIDTH / 2, CROSSHAIR_SIZE * 2, CROSSHAIR_WIDTH);
         pix.fillRect(CROSSHAIR_COLOR, w - CROSSHAIR_WIDTH / 2, h - CROSSHAIR_SIZE, CROSSHAIR_WIDTH, CROSSHAIR_SIZE * 2);
+    }
+
+    public PixelBuffer getPixelBuffer() {
+        return pix;
     }
 
 }

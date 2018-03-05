@@ -13,7 +13,7 @@ public class GraphicSheet {
 
     public final static GraphicSheet TEXTURES = new GraphicSheet("res/graphics/textures.png", 16);
     public final static GraphicSheet WEAPONS = new GraphicSheet("res/graphics/weapon_sprites.png", 128);
-    
+
     public final static GraphicSheet GENERAL_SPRITES = new GraphicSheet("res/graphics/sprites.png", 64);
 
     public final static GraphicSheet PLAYER_SPRITES = new GraphicSheet("res/models/player_sprites.png", 128);
@@ -60,7 +60,6 @@ public class GraphicSheet {
         BufferedImage subImg = sheet.getSubimage(x * cellSize, y * cellSize, xx * cellSize, yy * cellSize);
         Graphic graphic = new Graphic(subImg);
         if (filter != null) {
-            System.out.println("applying filter");
             filter.apply(graphic.getPixels(), PixelBuffer.CHROMA_KEY);
         }
         return graphic;

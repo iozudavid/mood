@@ -16,7 +16,6 @@ import com.knightlore.network.NetworkObject;
 import com.knightlore.network.protocol.ClientController;
 import com.knightlore.network.protocol.ClientProtocol;
 import com.knightlore.render.PixelBuffer;
-import com.knightlore.render.graphic.Graphic;
 import com.knightlore.render.graphic.sprite.DirectionalSprite;
 import com.knightlore.utils.Vector2D;
 
@@ -65,7 +64,6 @@ public class Player extends Entity {
         strafeSpeed = 0.08;
         rotationSpeed = 0.06;
 
-        // Player.this.finished = true;
     }
 
     public Player(Vector2D pos, Vector2D dir) {
@@ -76,29 +74,8 @@ public class Player extends Entity {
     public void render(PixelBuffer pix, int x, int y, double distanceTraveled) {
         super.render(pix, x, y, distanceTraveled);
 
-        // Used a linear equation to get the expression below.
-        // With a screen height of 558, we want a scale of 5.
-        // With a screen height of 800, we want a scale of 6.
-        // The linear equation relating is therefore y = 1/242 * (h - 558),
-        // hence below
-        final int SCALE = (int) (5 + 1 / 242D * (pix.getHeight() - 558));
-
-        Graphic g = currentWeapon.getGraphic();
-        final int width = g.getWidth() * SCALE, height = g.getHeight() * SCALE;
-
-        final int weaponBobX = 20, weaponBobY = 30;
-
-        int xx = x + (pix.getWidth() - width) / 2;
-        int yy = pix.getHeight() - height + 28 * SCALE;
-
-        int xOffset = (int) (Math.cos(distanceTraveled) * weaponBobX);
-        int yOffset = (int) (Math.abs(Math.sin(distanceTraveled) * weaponBobY));
-
-        final double p = 0.1;
-        inertiaOffsetX += (int) (p * -inertiaOffsetX);
-        inertiaOffsetY += (int) (p * -inertiaOffsetY);
-
-        pix.drawGraphic(g, xx + xOffset + inertiaOffsetX, yy + yOffset + inertiaOffsetY, SCALE, SCALE);
+        if (currentWeapon != null)
+            currentWeapon.render(pix, x, y, inertiaX, inertiaY, distanceTraveled);
     }
 
     private void setNetworkConsumers() {
@@ -126,31 +103,28 @@ public class Player extends Entity {
 
     @Override
     public void onUpdate() {
-        
+
         synchronized (inputState) {
             inputState = inputModule.updateInput(inputState, this);
             // Check whether each input is triggered - if it is, execute the
             // respective method.
             // DEBUG
-            boolean updated = false;
             for (Entry<ClientController, Byte> entry : inputState.entrySet()) {
                 // For boolean inputs (i.e. all current inputs), 0 represents
                 // false.
                 if (entry.getValue() != 0) {
                     ACTION_MAPPINGS.get(entry.getKey()).run();
-                    updated = true;
                 }
             }
-            
-            
-            if (updated) {
-                // updateMotionOffset();
-            }
         }
+
+        final double p = 0.1D;
+        inertiaX += (int) (p * -inertiaX);
+        inertiaY += (int) (p * -inertiaY);
     }
 
     private void shoot() {
-        if(currentWeapon != null) {
+        if (currentWeapon != null) {
             currentWeapon.fire(this);
         }
     }
@@ -167,8 +141,9 @@ public class Player extends Entity {
     }
 
     private Vector2D prevPos, prevDir;
-    private int inertiaOffsetX = 0, inertiaOffsetY = 0;
-    
+
+    private int inertiaX = 0, inertiaY = 500;
+
 
     @Override
     public void deserialize(ByteBuffer buffer) {
@@ -178,11 +153,11 @@ public class Player extends Entity {
             Vector2D displacement = position.subtract(prevPos);
             Vector2D temp = new Vector2D(plane.getX() / plane.magnitude(), plane.getY() / plane.magnitude());
             double orthProjection = displacement.dot(temp);
-            inertiaOffsetX -= orthProjection * 125;
+            inertiaX -= orthProjection * currentWeapon.getInertiaCoeffX();
 
             temp = new Vector2D(direction.getX() / direction.magnitude(), direction.getY() / direction.magnitude());
             orthProjection = displacement.dot(temp);
-            inertiaOffsetY += orthProjection * 35;
+            inertiaY += orthProjection * currentWeapon.getInertiaCoeffY();
 
             double prevDirTheta = Math.atan2(prevDir.getY(), prevDir.getX());
             double directionTheta = Math.atan2(direction.getY(), direction.getX());
@@ -193,7 +168,7 @@ public class Player extends Entity {
                 diff += 2 * Math.PI;
             }
 
-            inertiaOffsetX += 150 * diff;
+            inertiaX += 150 * diff;
         }
 
         prevPos = position;
@@ -233,16 +208,6 @@ public class Player extends Entity {
     }
 
     @Override
-    protected synchronized void rotateClockwise() {
-        super.rotateClockwise();
-    }
-
-    @Override
-    protected synchronized void rotateAntiClockwise() {
-        super.rotateAntiClockwise();
-    }
-
-    @Override
     public void takeDamage(int damage) {
         currentHealth -= damage;
         if(currentHealth <=0) {
@@ -270,4 +235,16 @@ public class Player extends Entity {
         this.name = name;
     }
 
+    public void setCurrentWeapon(Weapon currentWeapon) {
+        this.currentWeapon = currentWeapon;
+    }
+
+    public int getCurrentHealth() {
+        return currentHealth;
+    }
+
+    public int getMaxHealth() {
+        return MAX_HEALTH;
+    }
 }
+
