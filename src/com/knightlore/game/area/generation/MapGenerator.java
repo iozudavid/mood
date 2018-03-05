@@ -38,8 +38,7 @@ public class MapGenerator extends ProceduralAreaGenerator {
         rand = new Random(seed);
         grid = new Tile[width][height];
         PerlinNoiseGenerator perlinGenerator = new PerlinNoiseGenerator(width, height, seed);
-        // initialize costGrid with perlin noise to make generated paths less
-        // optimal
+        // Initialize costGrid with perlin noise to make generated paths less optimal
         costGrid = perlinGenerator.createPerlinNoise();
         fillGrid();
         return new Map(grid, seed);
@@ -116,20 +115,15 @@ public class MapGenerator extends ProceduralAreaGenerator {
         int rightWallX = leftWallX + room.getWidth();
         int topWallY = room.getPosition().y;
         int bottomWallY = topWallY + room.getHeight();
-        /*
-        return grid[leftWallX][topWallY] == UndecidedTile.getInstance()
-                && grid[leftWallX][bottomWallY] == UndecidedTile.getInstance()
-                && grid[rightWallX][topWallY] == UndecidedTile.getInstance()
-                && grid[rightWallX][topWallY] == UndecidedTile.getInstance();
-        */
         for(int i=leftWallX; i < rightWallX; i++) {
             for(int j=topWallY; j < bottomWallY; j++) {
                 //if(grid[i][j] != UndecidedTile.getInstance()) {
-                if(grid[i][j].getTileType() != TileType.undecided) {
+                if (grid[i][j].getTileType() != TileType.undecided) {
                     return false;
                 }
             }
         }
+
         return true;
     }
 
@@ -207,14 +201,10 @@ public class MapGenerator extends ProceduralAreaGenerator {
     private void placePath(List<Point> path) {
         for (Point p : path) {
             Tile currentTile = grid[p.x][p.y];
-            //if(grid[p.x][p.y].toChar() == '?' ||
-            //  grid[p.x][p.y].toChar() == 'B') {
             if(currentTile.getTileType() == TileType.undecided
                || currentTile.getTileType() == TileType.brick) {
                 grid[p.x][p.y] = AirTile.getInstance();
-                // changing cost grid, also...
-                // using arbitrary number 3
-                costGrid[p.x][p.y] = costGrid[p.x][p.y] * 3;
+                costGrid[p.x][p.y] = costGrid[p.x][p.y];
             }
         }
     }
@@ -238,11 +228,10 @@ public class MapGenerator extends ProceduralAreaGenerator {
                 rightmost = room;
             }
         }
+
         for (Room room : rooms) {
-            if (!room.equals(rightmost)) {
-                if (room.getCentre().getX() > secondRightmost.getCentre().getX()) {
-                    secondRightmost = room;
-                }
+            if (!room.equals(rightmost) && room.getCentre().getX() > secondRightmost.getCentre().getX()) {
+                secondRightmost = room;
             }
         }
 
@@ -293,5 +282,4 @@ public class MapGenerator extends ProceduralAreaGenerator {
         System.out.println(map.toString());
         System.out.println("Num rooms: " + genr.rooms.size());
     }
-    
 }

@@ -39,7 +39,6 @@ public class Map extends Area {
     }
 
     public List<Vector2D> getTilePoints(Team team, TileType type) {
-
         List<Vector2D> positions = new ArrayList<>();
         for (int i = 0; i < getWidth(); i++) {
             for (int j = 0; j < getHeight(); j++) {
@@ -59,5 +58,4 @@ public class Map extends Area {
         }
         return positions;
     }
-
 }
