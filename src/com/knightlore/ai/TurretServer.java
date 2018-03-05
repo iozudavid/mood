@@ -6,11 +6,12 @@ import com.knightlore.engine.GameEngine;
 import com.knightlore.game.Player;
 import com.knightlore.utils.Physics;
 import com.knightlore.utils.RaycastHit;
-import com.knightlore.utils.RaycastHitType;
 import com.knightlore.utils.Vector2D;
 
 public final class TurretServer extends TurretShared {
     
+    private static final int DAMAGE = 5;
+
     public TurretServer(double size, Vector2D position, Vector2D direction) {
         super(size, position, direction);
         // TODO Auto-generated constructor stub
@@ -72,8 +73,8 @@ public final class TurretServer extends TurretShared {
         if (Physics.linecastQuick(this.position, target.getPosition(), 50)) {
             return;
         }
-        // System.out.println("!!! BANG !!!");
-        // System.out.println("A player just got shot by a turret.");
+        // just deal 15 damage
+        target.takeDamage(DAMAGE);
     }
     
     @Override
