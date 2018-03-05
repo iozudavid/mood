@@ -13,6 +13,7 @@ public final class Vector2D {
     public static final Vector2D LEFT = new Vector2D(-1, 0);
     public static final Vector2D RIGHT = new Vector2D(1, 0);
     public static final Vector2D ONE = new Vector2D(1, 1);
+    public static final Vector2D HALF = new Vector2D(0.5, 0.5);
     
     public static Vector2D add(Vector2D a, Vector2D b) {
         return new Vector2D(a.x + b.x, a.y + b.y);
@@ -124,6 +125,14 @@ public final class Vector2D {
     @Override
     public String toString() {
         return String.format("(%.20f, %.20f)", x, y);
+    }
+
+    public static Vector2D fromTilePoint(Point point) {
+        return new Vector2D(point.x+0.5,point.y+0.5);
+    }
+    
+    public static Vector2D fromPoint(Point point) {
+        return new Vector2D(point.x,point.y);
     }
     
 }

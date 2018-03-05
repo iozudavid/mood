@@ -18,12 +18,12 @@ public class Shotgun extends Weapon {
     
     @Override
     public void fire(Player shooter) {
-        System.out.println("fired shotgun");
+        //System.out.println("fired shotgun");
         RaycastHit hit = GameEngine.getSingleton().getWorld().raycast(shooter.getPosition(), shooter.getDirection(), 100,sqrRange,shooter);
-        System.out.println(hit.getHitType());
-        System.out.println(hit.getEntity());
+        //System.out.println(hit.getHitType());
+        //System.out.println(hit.getEntity());
         if(hit.didHitEntity()) {
-            System.out.println("hit entity");
+            //System.out.println("hit entity");
             // take damage!
             hit.getEntity().takeDamage(damageInflicted(shooter,hit.getEntity()));
         }
