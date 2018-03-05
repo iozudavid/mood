@@ -150,7 +150,7 @@ public class MapGenerator extends ProceduralAreaGenerator {
 
         // place paths
         PathFinder pathFinder = new PathFinder(costGrid);
-        
+        pathFinder.setIsForMap(true);
         // TODO: give a room a way to give us potential starting points for a path
         // (allowing us to populate rooms with interesting features)
         
@@ -263,12 +263,13 @@ public class MapGenerator extends ProceduralAreaGenerator {
         int height = grid[0].length;
 
         PathFinder pathFinder = new PathFinder(costGrid);
+        pathFinder.setIsForMap(true);
         
         Point start = rightmost.getCentre();
         int centreY = start.y;
         Point goal = new Point(width - 1, centreY - 2 + rand.nextInt(3));
         // have to set this manually so pathfinder doesn't complain
-        grid[goal.x][goal.y] = AirTile.getInstance();
+        grid[goal.x][goal.y] = PathTile.getInstance();
         // pathfinder can handle this goal
         goal = new Point(goal.x - 1, goal.y);
         List<Point> path = pathFinder.findPath(start, goal);
@@ -278,7 +279,7 @@ public class MapGenerator extends ProceduralAreaGenerator {
         centreY = start.y;
         goal = new Point(width - 1, centreY - 2 + rand.nextInt(3));
         // have to set this manually so pathfinder doesn't complain
-        grid[goal.x][goal.y] = AirTile.getInstance();
+        grid[goal.x][goal.y] = PathTile.getInstance();
         // pathfinder can handle this goal
         goal = new Point(goal.x - 1, goal.y);
         path = pathFinder.findPath(start, goal);
