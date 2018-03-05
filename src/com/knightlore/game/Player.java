@@ -16,9 +16,7 @@ import com.knightlore.network.NetworkObject;
 import com.knightlore.network.protocol.ClientController;
 import com.knightlore.network.protocol.ClientProtocol;
 import com.knightlore.render.PixelBuffer;
-import com.knightlore.render.graphic.Graphic;
 import com.knightlore.render.graphic.sprite.DirectionalSprite;
-import com.knightlore.render.graphic.sprite.WeaponSprite;
 import com.knightlore.utils.Vector2D;
 
 public class Player extends Entity {
@@ -74,40 +72,8 @@ public class Player extends Entity {
     public void render(PixelBuffer pix, int x, int y, double distanceTraveled) {
         super.render(pix, x, y, distanceTraveled);
 
-        // Used a linear equation to get the expression below.
-        // With a screen height of 558, we want a scale of 5.
-        // With a screen height of 800, we want a scale of 6.
-        // The linear equation relating is therefore y = 1/242 * (h - 558),
-        // hence below
-        final int SCALE = (int) (5 + 1 / 242D * (pix.getHeight() - 558));
-
-        if (currentWeapon == null) {
-            System.out.println(currentWeapon + " is null...");
-            return;
-        }
-        Graphic g = currentWeapon.getGraphic();
-        final int width = g.getWidth() * SCALE, height = g.getHeight() * SCALE;
-
-        final int weaponBobX = 20, weaponBobY = 30;
-
-        int xx = x + (pix.getWidth() - width) / 2;
-        int yy = pix.getHeight() - height + 28 * SCALE;
-
-        int xOffset = (int) (Math.cos(distanceTraveled) * weaponBobX);
-        int yOffset = (int) (Math.abs(Math.sin(distanceTraveled) * weaponBobY));
-
-        final double p = 0.1;
-        inertiaOffsetX += (int) (p * -inertiaOffsetX);
-        inertiaOffsetY += (int) (p * -inertiaOffsetY);
-
-        if (inertiaOffsetX < -120) {
-            g = WeaponSprite.SHOTGUN_LEFT;
-        } else if (inertiaOffsetX > 120) {
-            g = WeaponSprite.SHOTGUN_RIGHT;
-        }
-
-        pix.drawGraphic(g, xx + xOffset + inertiaOffsetX, yy + yOffset + inertiaOffsetY, SCALE * g.getWidth(),
-                SCALE * g.getHeight());
+        if (currentWeapon != null)
+            currentWeapon.render(pix, x, y, inertiaX, inertiaY, distanceTraveled);
     }
 
     private void setNetworkConsumers() {
@@ -149,6 +115,10 @@ public class Player extends Entity {
                 }
             }
         }
+
+        final double p = 0.1D;
+        inertiaX += (int) (p * -inertiaX);
+        inertiaY += (int) (p * -inertiaY);
     }
 
     private void shoot() {
@@ -169,7 +139,7 @@ public class Player extends Entity {
     }
 
     private Vector2D prevPos, prevDir;
-    private int inertiaOffsetX = 0, inertiaOffsetY = 500;
+    private int inertiaX = 0, inertiaY = 500;
 
     @Override
     public void deserialize(ByteBuffer buffer) {
@@ -179,11 +149,11 @@ public class Player extends Entity {
             Vector2D displacement = position.subtract(prevPos);
             Vector2D temp = new Vector2D(plane.getX() / plane.magnitude(), plane.getY() / plane.magnitude());
             double orthProjection = displacement.dot(temp);
-            inertiaOffsetX -= orthProjection * 125;
+            inertiaX -= orthProjection * currentWeapon.getInertiaCoeffX();
 
             temp = new Vector2D(direction.getX() / direction.magnitude(), direction.getY() / direction.magnitude());
             orthProjection = displacement.dot(temp);
-            inertiaOffsetY += orthProjection * 35;
+            inertiaY += orthProjection * currentWeapon.getInertiaCoeffY();
 
             double prevDirTheta = Math.atan2(prevDir.getY(), prevDir.getX());
             double directionTheta = Math.atan2(direction.getY(), direction.getX());
@@ -194,7 +164,7 @@ public class Player extends Entity {
                 diff += 2 * Math.PI;
             }
 
-            inertiaOffsetX += 150 * diff;
+            inertiaX += 150 * diff;
         }
 
         prevPos = position;

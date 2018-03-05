@@ -38,7 +38,7 @@ public class Renderer {
         this.world = world;
     }
 
-    private final int BLOCKINESS = 20; // how 'old school' you want to look.
+    private final int BLOCKINESS = 10; // how 'old school' you want to look.
 
     public void render() {
         if (camera == null || !camera.isSubjectSet()) {
@@ -55,14 +55,6 @@ public class Renderer {
         camera.render(pix, 0, 0);
         drawCrosshair(pix);
     }
-
-    /*
-     * NOTE: THIS ONLY AFFECTS THE RENDERING SIZE OF A TILE. If you change this
-     * variable, tiles will be drawn differently but the player will still move
-     * at their usual speed over a single tile. You might want to compensate a
-     * change here with a change in player move speed.
-     */
-    private final float TILE_SIZE = 1F;
 
     private void drawPerspective(PixelBuffer pix, int offset) {
 
@@ -146,7 +138,7 @@ public class Renderer {
                         hit = true;
 
                     distanceToWall = RaycasterUtils.getImpactDistance(camera, rayX, rayY, mapX, mapY, side, stepX,
-                            stepY, TILE_SIZE);
+                            stepY);
                     int lineHeight = RaycasterUtils.getDrawHeight(height, distanceToWall);
 
                     // calculate lowest and highest pixel to fill in current
