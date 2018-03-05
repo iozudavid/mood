@@ -106,7 +106,8 @@ public class Player extends Entity {
             g = WeaponSprite.SHOTGUN_RIGHT;
         }
 
-        pix.drawGraphic(g, xx + xOffset + inertiaOffsetX, yy + yOffset + inertiaOffsetY, SCALE, SCALE);
+        pix.drawGraphic(g, xx + xOffset + inertiaOffsetX, yy + yOffset + inertiaOffsetY, SCALE * g.getWidth(),
+                SCALE * g.getHeight());
     }
 
     private void setNetworkConsumers() {
@@ -230,16 +231,6 @@ public class Player extends Entity {
     public String getClientClassName() {
         // One class for both client and server.
         return this.getClass().getName();
-    }
-
-    @Override
-    protected synchronized void rotateClockwise() {
-        super.rotateClockwise();
-    }
-
-    @Override
-    protected synchronized void rotateAntiClockwise() {
-        super.rotateAntiClockwise();
     }
 
     @Override

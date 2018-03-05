@@ -56,5 +56,9 @@ public class DirectionalSprite {
     public void addGraphic(Graphic g) {
         angles.add(g);
     }
+    
+    public List<Graphic> getAngles() {
+        return angles;
+    }
 
 }

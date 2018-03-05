@@ -38,7 +38,7 @@ public class Renderer {
         this.world = world;
     }
 
-    private final int BLOCKINESS = 10; // how 'old school' you want to look.
+    private final int BLOCKINESS = 20; // how 'old school' you want to look.
 
     public void render() {
         if (camera == null || !camera.isSubjectSet()) {
