@@ -68,7 +68,7 @@ public class MapGenerator extends ProceduralAreaGenerator {
         
         while (rooms.size() < MAX_ROOMS && setRoomPosition(room)) {
             rooms.add(room);
-            room = roomGenerator.createRoom(rand.nextLong(), Team.none);
+            room = roomGenerator.createRoom(rand.nextLong(), RoomType.normal);
         }
     }
     
@@ -225,6 +225,10 @@ public class MapGenerator extends ProceduralAreaGenerator {
             }
             
             if(currentType == TileType.breakible) {
+                continue;
+            }
+            
+            if(currentType == TileType.turret) {
                 continue;
             }
             

@@ -2,10 +2,15 @@ package com.knightlore.game;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map.Entry;
 import java.util.UUID;
 
+import com.knightlore.engine.GameEngine;
+import com.knightlore.engine.TickListener;
+import com.knightlore.game.buff.Buff;
+import com.knightlore.game.buff.BuffType;
 import com.knightlore.game.entity.Entity;
 import com.knightlore.game.entity.weapon.Shotgun;
 import com.knightlore.game.entity.weapon.Weapon;
@@ -17,12 +22,14 @@ import com.knightlore.render.graphic.Graphic;
 import com.knightlore.render.graphic.sprite.DirectionalSprite;
 import com.knightlore.utils.Vector2D;
 
-public class Player extends Entity {
+public class Player extends Entity implements TickListener{
 
     private final int MAX_HEALTH = 100;
     private int health = MAX_HEALTH;
     private Weapon currentWeapon;
 
+    private ArrayList<Buff> buffList = new ArrayList<Buff>();
+    
     // Maps all inputs that the player could be making to their values.
     private java.util.Map<ClientController, Runnable> ACTION_MAPPINGS = new HashMap<>();
     private java.util.Map<ClientController, Byte> inputState = new HashMap<>();
@@ -58,6 +65,10 @@ public class Player extends Entity {
         strafeSpeed = 0.08;
         rotationSpeed = 0.06;
 
+        // add tick listener to game engine
+        // as some buffs will affect the player periodically
+        GameEngine.ticker.addTickListener(this);
+        
         // Player.this.finished = true;
     }
 
@@ -226,6 +237,71 @@ public class Player extends Entity {
     @Override
     protected synchronized void rotateAntiClockwise() {
         super.rotateAntiClockwise();
+    }
+
+    public void applyDamage(int damage) {
+        int newHealth = health - damage;
+        health = Math.max(0, Math.min(MAX_HEALTH, newHealth));
+    }
+    
+    public void applyHeal(int heal) {
+        applyDamage(-heal);
+    }
+    
+    public void addBuff(Buff buff) {
+        buffList.add(buff);
+        buff.onApply(this);
+    }
+    
+    public boolean hasBuff(BuffType bt) {
+        for(Buff buff : buffList) {
+            if(buff.getType() == bt) {
+                return true;
+            }
+        }
+        return false;
+    }
+    
+    public void setMoveSpeed(double speed) {
+        moveSpeed = speed;
+    }
+    
+    public double getMoveSpeed() {
+        return moveSpeed;
+    }
+    
+    public void setRotateSpeed(double speed) {
+        rotationSpeed = speed;
+    }
+    
+    public double getRotateSpeed() {
+        return rotationSpeed;
+    }
+    
+    public void removeBuff(Buff buff) {
+        buffList.remove(buff);
+        buff.onRemove(this);
+    }
+    
+    public void removeBuff(BuffType bt) {
+        for(Buff buff: buffList) {
+            if(buff.getType() == bt) {
+                removeBuff(buff);
+            }
+        }
+    }
+    
+    @Override
+    public void onTick() {
+        for(Buff buff : buffList) {
+            buff.periodicEffect(this);
+        }
+    }
+
+    @Override
+    public long interval() {
+        // possibly vary this
+        return (long) GameEngine.UPDATES_PER_SECOND;
     }
 
 }

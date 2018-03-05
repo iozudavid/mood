@@ -180,6 +180,19 @@ public abstract class Entity extends NetworkObject implements IMinimapObject, Pr
     }
 
     /**
+    * Move the player irrespective of the direction they're facing 
+    */
+    public synchronized void absoluteMove(Vector2D absDir, double distance) {
+        double xPos = position.getX(), yPos = position.getY();
+        double xDir = absDir.getX() , yDir = absDir.getY();
+        Tile xTile = map.getTile((int) (xPos + xDir * distance), (int) (yPos));
+        Tile yTile = map.getTile((int) (xPos), (int) (yPos + yDir *distance));
+        xPos += xDir * distance * (1 - xTile.getSolidity());
+        yPos += yDir * distance * (1 - yTile.getSolidity());
+        position = new Vector2D(xPos, yPos);
+    }
+    
+    /**
      * Rotation is simply multiplication by the rotation matrix. We take the
      * position and plane vectors, then multiply them by the rotation matrix
      * (whose parameter is ROTATION_SPEED). This lets us rotate.

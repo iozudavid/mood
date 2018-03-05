@@ -1,6 +1,9 @@
 package com.knightlore.game.tile;
 
 import com.knightlore.game.Player;
+import com.knightlore.game.buff.BuffType;
+import com.knightlore.game.buff.Fire;
+import com.knightlore.game.buff.Slow;
 import com.knightlore.render.graphic.Graphic;
 
 public class LavaTile extends Tile {
@@ -17,8 +20,16 @@ public class LavaTile extends Tile {
 
     @Override
     public void onEntered(Player player) {
-        // TODO: Damage player
-
+        // only apply a buff to player if it
+        // doesn't have it
+        if(!player.hasBuff(BuffType.fire)) {
+            player.addBuff(new Fire());
+        }
+        
+        if(!player.hasBuff(BuffType.slow)) {
+            player.addBuff(new Slow());
+        }
+        
     }
 
     @Override
