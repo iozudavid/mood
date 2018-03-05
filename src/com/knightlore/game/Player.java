@@ -250,4 +250,11 @@ public class Player extends Entity {
         this.currentWeapon = currentWeapon;
     }
 
+    public int getCurrentHealth() {
+        return currentHealth;
+    }
+
+    public int getMaxHealth() {
+        return MAX_HEALTH;
+    }
 }

@@ -45,6 +45,7 @@ public class GameEngine implements Runnable {
     private GameWorld world;
     private GameObjectManager gameObjectManager;
     private NetworkObjectManager networkObjectManager;
+
     private Camera camera;
 
     private GameEngine() {
@@ -109,12 +110,16 @@ public class GameEngine implements Runnable {
         System.out.println("World Initialised Successfully.");
 
         if (GameSettings.isClient()) {
+            ClientNetworkObjectManager cn = (ClientNetworkObjectManager) networkObjectManager;
+            while (!cn.hasFinishedSetup()) {
+                // wait...
+            }
             ClientWorld cworld = (ClientWorld) world;
-            
+
             final int w = screen.getWidth(), h = screen.getHeight();
             Renderer renderer = new Renderer(w, 8 * h / 9, camera, cworld);
             Minimap minimap = new Minimap(camera, cworld, 128);
-            HUD hud = new HUD(w, h / 9);
+            HUD hud = new HUD(cn.getMyPlayer(), w, h / 9);
             this.display = new Display(renderer, minimap, hud);
         }
     }
@@ -179,7 +184,7 @@ public class GameEngine implements Runnable {
         }
         System.err.println("GameEngine finished running.");
     }
-    
+
     /**
      * Add the singleton keyboard instance to the canvas and request focus.
      */

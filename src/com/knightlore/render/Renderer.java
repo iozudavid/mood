@@ -19,7 +19,7 @@ import com.knightlore.utils.Vector2D;
  *
  */
 public class Renderer {
-    
+
     private PixelBuffer pix;
 
     /**
@@ -365,7 +365,7 @@ public class Renderer {
         pix.fillRect(CROSSHAIR_COLOR, w - CROSSHAIR_SIZE, h - CROSSHAIR_WIDTH / 2, CROSSHAIR_SIZE * 2, CROSSHAIR_WIDTH);
         pix.fillRect(CROSSHAIR_COLOR, w - CROSSHAIR_WIDTH / 2, h - CROSSHAIR_SIZE, CROSSHAIR_WIDTH, CROSSHAIR_SIZE * 2);
     }
-    
+
     public PixelBuffer getPixelBuffer() {
         return pix;
     }
