@@ -86,5 +86,4 @@ public class Room extends Area {
         Room r = (Room) o;
         return position.equals(r.position);
     }
-
 }

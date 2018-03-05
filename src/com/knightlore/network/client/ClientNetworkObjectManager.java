@@ -155,5 +155,9 @@ public class ClientNetworkObjectManager extends NetworkObjectManager {
             }
         }
     }
+    
+    public boolean hasFinishedSetup() {
+        return finishedSetUp;
+    }
 
 }

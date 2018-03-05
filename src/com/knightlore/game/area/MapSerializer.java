@@ -37,5 +37,4 @@ public class MapSerializer {
 
         return new Map(grid, 0L);
     }
-
 }

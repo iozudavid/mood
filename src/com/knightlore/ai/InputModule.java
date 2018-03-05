@@ -1,5 +1,9 @@
 package com.knightlore.ai;
 
+import java.util.Map;
+
+import com.knightlore.network.protocol.ClientController;
+
 public abstract class InputModule {
     /*
      * FORWARD, LEFT, BACKWARD, RIGHT, ROTATE_CLOCKWISE, ROTATE_ANTI_CLOCKWISE,
@@ -10,7 +14,7 @@ public abstract class InputModule {
 	public float walkInput;
 	public boolean shoot;
 	
-	public abstract void updateInput();
+	public abstract Map<ClientController, Byte> updateInput(Map<ClientController, Byte> inputState);
 	
 	
 }

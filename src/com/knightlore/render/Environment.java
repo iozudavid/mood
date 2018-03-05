@@ -4,24 +4,8 @@ import com.knightlore.render.graphic.Graphic;
 import com.knightlore.render.graphic.texture.Texture;
 
 public enum Environment {
-    DARK_OUTDOORS(15, Texture.SLAB, Texture.WOOD) {
-        @Override
-        public int getMinimapBaseColor() {
-            return 0x33333;
-        }
-    },
-    LIGHT_OUTDOORS(3, Texture.BRICK, Texture.BRICK) {
-        @Override
-        public int getMinimapBaseColor() {
-            return 0x074A00;
-        }
-    },
-    DUNGEON(20, Texture.WOOD, Texture.MUD) {
-        @Override
-        public int getMinimapBaseColor() {
-            return 0x000000;
-        }
-    };
+    DARK_OUTDOORS(15, Texture.SLAB, Texture.MUD), LIGHT_OUTDOORS(3, Texture.BRICK, Texture.BRICK), DUNGEON(20,
+            Texture.WOOD, Texture.MUD);
 
     private final int darkness;
     private final Graphic floorTexture;
@@ -33,7 +17,10 @@ public enum Environment {
         this.ceilingTexture = ceilingTexture;
     }
 
-    public abstract int getMinimapBaseColor();
+    public int getMinimapBaseColor() {
+        int avg = ColorUtils.averageColor(getFloorTexture().getPixels());
+        return ColorUtils.quickDarken(avg);
+    }
 
     public int getDarkness() {
         return darkness;

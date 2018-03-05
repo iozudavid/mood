@@ -11,6 +11,9 @@ import com.knightlore.engine.GameEngine;
 import com.knightlore.engine.TickListener;
 import com.knightlore.game.buff.Buff;
 import com.knightlore.game.buff.BuffType;
+import com.knightlore.ai.InputModule;
+import com.knightlore.ai.RemoteInput;
+import com.knightlore.engine.GameEngine;
 import com.knightlore.game.entity.Entity;
 import com.knightlore.game.entity.weapon.Shotgun;
 import com.knightlore.game.entity.weapon.Weapon;
@@ -20,12 +23,13 @@ import com.knightlore.network.protocol.ClientProtocol;
 import com.knightlore.render.PixelBuffer;
 import com.knightlore.render.graphic.Graphic;
 import com.knightlore.render.graphic.sprite.DirectionalSprite;
+import com.knightlore.render.graphic.sprite.WeaponSprite;
 import com.knightlore.utils.Vector2D;
 
 public class Player extends Entity implements TickListener{
 
     private final int MAX_HEALTH = 100;
-    private int health = MAX_HEALTH;
+    private int currentHealth = MAX_HEALTH;
     private Weapon currentWeapon;
 
     private ArrayList<Buff> buffList = new ArrayList<Buff>();
@@ -33,6 +37,7 @@ public class Player extends Entity implements TickListener{
     // Maps all inputs that the player could be making to their values.
     private java.util.Map<ClientController, Runnable> ACTION_MAPPINGS = new HashMap<>();
     private java.util.Map<ClientController, Byte> inputState = new HashMap<>();
+    private InputModule inputModule = null;
     // private volatile boolean finished = false;
 
     // Returns a new instance. See NetworkObject for details.
@@ -47,6 +52,7 @@ public class Player extends Entity implements TickListener{
     public Player(UUID uuid, Vector2D pos, Vector2D dir) {
         super(uuid, 0.25D, pos, dir);
         this.currentWeapon = new Shotgun();
+        this.inputModule = new RemoteInput();
 
         // Map possible inputs to the methods that handle them. Avoids long
         // if-statement chain.
@@ -87,6 +93,10 @@ public class Player extends Entity implements TickListener{
         // hence below
         final int SCALE = (int) (5 + 1 / 242D * (pix.getHeight() - 558));
 
+        if (currentWeapon == null) {
+            System.out.println(currentWeapon + " is null...");
+            return;
+        }
         Graphic g = currentWeapon.getGraphic();
         final int width = g.getWidth() * SCALE, height = g.getHeight() * SCALE;
 
@@ -102,7 +112,14 @@ public class Player extends Entity implements TickListener{
         inertiaOffsetX += (int) (p * -inertiaOffsetX);
         inertiaOffsetY += (int) (p * -inertiaOffsetY);
 
-        pix.drawGraphic(g, xx + xOffset + inertiaOffsetX, yy + yOffset + inertiaOffsetY, SCALE, SCALE);
+        if (inertiaOffsetX < -120) {
+            g = WeaponSprite.SHOTGUN_LEFT;
+        } else if (inertiaOffsetX > 120) {
+            g = WeaponSprite.SHOTGUN_RIGHT;
+        }
+
+        pix.drawGraphic(g, xx + xOffset + inertiaOffsetX, yy + yOffset + inertiaOffsetY, SCALE * g.getWidth(),
+                SCALE * g.getHeight());
     }
 
     private void setNetworkConsumers() {
@@ -130,27 +147,26 @@ public class Player extends Entity implements TickListener{
 
     @Override
     public void onUpdate() {
+
         synchronized (inputState) {
+            inputState = inputModule.updateInput(inputState);
             // Check whether each input is triggered - if it is, execute the
             // respective method.
             // DEBUG
-            boolean updated = false;
-            for (Entry<ClientController, Byte> entry : inputState.entrySet())
+            for (Entry<ClientController, Byte> entry : inputState.entrySet()) {
                 // For boolean inputs (i.e. all current inputs), 0 represents
                 // false.
                 if (entry.getValue() != 0) {
                     ACTION_MAPPINGS.get(entry.getKey()).run();
-                    updated = true;
                 }
-
-            if (updated) {
-                // updateMotionOffset();
             }
         }
     }
 
     private void shoot() {
-        System.out.println("SHOOT");
+        if (currentWeapon != null) {
+            currentWeapon.fire(this);
+        }
     }
 
     @Override
@@ -165,7 +181,7 @@ public class Player extends Entity implements TickListener{
     }
 
     private Vector2D prevPos, prevDir;
-    private int inertiaOffsetX = 0, inertiaOffsetY = 0;;
+    private int inertiaOffsetX = 0, inertiaOffsetY = 500;
 
     @Override
     public void deserialize(ByteBuffer buffer) {
@@ -229,23 +245,27 @@ public class Player extends Entity implements TickListener{
         return this.getClass().getName();
     }
 
-    @Override
-    protected synchronized void rotateClockwise() {
-        super.rotateClockwise();
+    public void setInputModule(InputModule inp) {
+        this.inputModule = inp;
+    }
+
+    public void setCurrentWeapon(Weapon currentWeapon) {
+        this.currentWeapon = currentWeapon;
     }
 
     @Override
-    protected synchronized void rotateAntiClockwise() {
-        super.rotateAntiClockwise();
-    }
-
-    public void applyDamage(int damage) {
-        int newHealth = health - damage;
-        health = Math.max(0, Math.min(MAX_HEALTH, newHealth));
+    public void takeDamage(int damage) {
+        int newHealth = currentHealth - damage;
+        currentHealth = Math.max(0, Math.min(MAX_HEALTH, newHealth));
+        //respawn
+        if (currentHealth == 0) {
+            this.position = GameEngine.getSingleton().getWorld().getMap().getRandomSpawnPoint();
+            currentHealth = MAX_HEALTH;
+        }
     }
     
     public void applyHeal(int heal) {
-        applyDamage(-heal);
+        takeDamage(-heal);
     }
     
     public void addBuff(Buff buff) {
@@ -304,4 +324,12 @@ public class Player extends Entity implements TickListener{
         return (long) GameEngine.UPDATES_PER_SECOND;
     }
 
+    public int getCurrentHealth() {
+        return currentHealth;
+    }
+
+    public int getMaxHealth() {
+        return MAX_HEALTH;
+    }
 }
+

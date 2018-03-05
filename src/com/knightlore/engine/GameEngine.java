@@ -13,8 +13,11 @@ import com.knightlore.network.client.ClientNetworkObjectManager;
 import com.knightlore.network.server.ServerManager;
 import com.knightlore.network.server.ServerNetworkObjectManager;
 import com.knightlore.render.Camera;
+import com.knightlore.render.Display;
 import com.knightlore.render.Renderer;
 import com.knightlore.render.Screen;
+import com.knightlore.render.hud.HUD;
+import com.knightlore.render.minimap.Minimap;
 
 /**
  * Game engine acting as sort of a 'hub' for each of the individual game
@@ -37,12 +40,13 @@ public class GameEngine implements Runnable {
 
     private MainWindow window;
     private Screen screen;
+    private Display display;
 
     private GameWorld world;
     private GameObjectManager gameObjectManager;
     private NetworkObjectManager networkObjectManager;
+
     private Camera camera;
-    private Renderer renderer;
 
     private GameEngine() {
         if (HEADLESS) {
@@ -63,11 +67,6 @@ public class GameEngine implements Runnable {
 
     public GameObjectManager getGameObjectManager() {
         return gameObjectManager;
-    }
-
-    // FIXME: remove this
-    public Renderer getRenderer() {
-        return this.renderer;
     }
 
     public NetworkObjectManager getNetworkObjectManager() {
@@ -111,7 +110,17 @@ public class GameEngine implements Runnable {
         System.out.println("World Initialised Successfully.");
 
         if (GameSettings.isClient()) {
-            this.renderer = new Renderer(camera, (ClientWorld) world);
+            ClientNetworkObjectManager cn = (ClientNetworkObjectManager) networkObjectManager;
+            while (!cn.hasFinishedSetup()) {
+                // wait...
+            }
+            ClientWorld cworld = (ClientWorld) world;
+
+            final int w = screen.getWidth(), h = screen.getHeight();
+            Renderer renderer = new Renderer(w, 8 * h / 9, camera, cworld);
+            Minimap minimap = new Minimap(camera, cworld, 128);
+            HUD hud = new HUD(cn.getMyPlayer(), w, h / 9);
+            this.display = new Display(renderer, minimap, hud);
         }
     }
 
@@ -169,7 +178,7 @@ public class GameEngine implements Runnable {
             }
 
             if (!HEADLESS) {
-                screen.render(0, 0, renderer);
+                screen.render(0, 0, display);
                 InputManager.clearMouse();
             }
         }

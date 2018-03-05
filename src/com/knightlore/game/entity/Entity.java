@@ -252,4 +252,8 @@ public abstract class Entity extends NetworkObject implements IMinimapObject, Pr
     public double getDrawSize() {
         return 2 * size;
     }
+    
+    public void takeDamage(int damage) {
+        // DO NOTHING
+    }
 }

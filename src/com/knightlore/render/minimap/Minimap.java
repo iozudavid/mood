@@ -43,7 +43,7 @@ public class Minimap implements TickListener {
      * The resolution of the minimap. This is the size to draw a single pixel. A
      * larger number will give you better performance, but 'poorer quality'.
      */
-    public static final int RESOLUTION = 3;
+    public static final int RESOLUTION = 5;
 
     /**
      * The scope of the minimap. This range forms a box around the player.
@@ -128,7 +128,7 @@ public class Minimap implements TickListener {
                  * rectangle of size 2 as a really basic form of interpolation
                  * (so we don't get 'holes' in the minimap).
                  */
-                final int INTERPOLATION_CONSTANT = 4;
+                final int INTERPOLATION_CONSTANT = 7;
                 display.fillSquare(color, (int) drawPos.getX(), (int) drawPos.getY(), INTERPOLATION_CONSTANT);
             }
         }

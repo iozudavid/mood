@@ -11,7 +11,7 @@ public class Fire extends Buff{
     @Override
     public void onApply(Player p) {
         // TODO: Apply some fiery effect on the player's display
-        p.applyDamage(FIRE_DAMAGE);
+        p.takeDamage(FIRE_DAMAGE);
         counter++;
     }
 
@@ -24,7 +24,7 @@ public class Fire extends Buff{
             p.removeBuff(this);
             return;
         }
-        p.applyDamage(FIRE_DAMAGE);
+        p.takeDamage(FIRE_DAMAGE);
         counter++;
         
     }
