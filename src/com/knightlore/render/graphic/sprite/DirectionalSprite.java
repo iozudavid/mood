@@ -49,7 +49,9 @@ public class DirectionalSprite {
 //        // must be REMOVED
 //        if (i >= angles.size())
 //            return angles.get(angles.size() - 1);
-
+        // for some reason, without this line turrets try to access sprite 32
+        i = i%angles.size();
+        
         return angles.get(i);
     }
 

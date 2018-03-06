@@ -23,12 +23,17 @@ public class Map extends Area {
         return seed;
     }
 
+    /**
+     * Finds a random air tile that exists
+     * 
+     * @returns the coordinate in the center of a tile
+     */
     public Vector2D getRandomSpawnPoint() {
         List<Vector2D> candidates = new ArrayList<>();
         for (int i = 0; i < getWidth(); i++) {
             for (int j = 0; j < getHeight(); j++) {
                 if (getTile(i, j) == AirTile.getInstance()) {
-                    candidates.add(new Vector2D(i, j));
+                    candidates.add(new Vector2D(i+0.5, j+0.5));
                 }
             }
         }
@@ -52,7 +57,7 @@ public class Map extends Area {
                     continue;
                 }
 
-                positions.add(new Vector2D(i, j));
+                positions.add(new Vector2D(i+0.5, j+0.5));
 
             }
         }
