@@ -12,27 +12,23 @@ public class Shotgun extends Weapon {
     private static final long FIRE_DELAY = 10;
     private final float sqrRange = 10;
     private long nextFireTime;
-    
+
+
     public Shotgun() {
-        super(WeaponSprite.SHOTGUN, false, (int) (0.75 * GameEngine.UPDATES_PER_SECOND));
+        super(WeaponSprite.SHOTGUN, false, (int) (GameEngine.UPDATES_PER_SECOND * 0.25D));
     }
-    
+
     @Override
     public void fire(Player shooter) {
         if (nextFireTime > GameEngine.ticker.getTime()) {
             // can't shoot
             return;
         }
-        
         nextFireTime = GameEngine.ticker.getTime() + FIRE_DELAY;
         
-        // System.out.println("fired shotgun");
         RaycastHit hit = GameEngine.getSingleton().getWorld().raycast(shooter.getPosition(), shooter.getDirection(),
                 100, sqrRange, shooter);
-        // System.out.println(hit.getHitType());
-        // System.out.println(hit.getEntity());
         if (hit.didHitEntity()) {
-            // System.out.println("hit entity");
             // take damage!
             hit.getEntity().takeDamage(damageInflicted(shooter, hit.getEntity()));
         }
@@ -47,7 +43,7 @@ public class Shotgun extends Weapon {
             dmg = 0;
         }
         return dmg;
-        
+
     }
     
 }

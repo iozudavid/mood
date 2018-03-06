@@ -1,5 +1,6 @@
 package com.knightlore.game.entity.weapon;
 
+import com.knightlore.engine.GameEngine;
 import com.knightlore.engine.TickListener;
 import com.knightlore.game.Player;
 import com.knightlore.game.entity.Entity;
@@ -17,23 +18,27 @@ public abstract class Weapon implements TickListener {
         this.graphic = graphic;
         this.automatic = automatic;
         this.fireRate = fireRate;
+        GameEngine.ticker.addTickListener(this);
     }
 
     public abstract int damageInflicted(Player shooter, Entity target);
 
-    public abstract void fire(Player shooter);
+    public void fire(Player shooter) {
+        this.timer = 0;
+    }
 
     private int weaponBobX = 20, weaponBobY = 30;
     private int inertiaCoeffX = 125, inertiaCoeffY = 35;
-    
-    public void render(PixelBuffer pix, int x, int y, int inertiaX, int inertiaY, double distanceTraveled) {
+
+    public void render(PixelBuffer pix, int x, int y, int inertiaX, int inertiaY, double distanceTraveled,
+            boolean muzzleFlash) {
         // Used a linear equation to get the expression below.
         // With a screen height of 558, we want a scale of 5.
         // With a screen height of 800, we want a scale of 6.
         // The linear equation relating is therefore y = 1/242 * (h - 558),
         // hence below
-        final int SCALE = (int) (5 + 1 / 242D * (pix.getHeight() - 558));
-        
+        int SCALE = (int) (5 + 1 / 242D * (pix.getHeight() - 558));
+
         Graphic g = getGraphic();
         final int width = g.getWidth() * SCALE, height = g.getHeight() * SCALE;
 
@@ -49,22 +54,25 @@ public abstract class Weapon implements TickListener {
             g = WeaponSprite.SHOTGUN_RIGHT;
         }
 
-        pix.drawGraphic(g, xx + xOffset + inertiaX, yy + yOffset + inertiaY, SCALE * g.getWidth(),
-                SCALE * g.getHeight());
+        if (muzzleFlash) {
+            pix.fillOval(0xFCC07F, xx + xOffset + inertiaX + width / 4, yy + yOffset + inertiaY + height / 4, width / 2,
+                    height / 2, 500);
+        }
+        pix.drawGraphic(g, xx + xOffset + inertiaX, yy + yOffset + inertiaY, width, height);
     }
 
     public boolean canFire() {
-        return timer >= fireRate;
+        return timer > fireRate;
     }
 
     public Graphic getGraphic() {
         return graphic;
     }
-    
+
     public int getInertiaCoeffX() {
         return inertiaCoeffX;
     }
-    
+
     public int getInertiaCoeffY() {
         return inertiaCoeffY;
     }
