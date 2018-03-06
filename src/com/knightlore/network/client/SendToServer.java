@@ -31,8 +31,6 @@ public class SendToServer implements Runnable {
     // private byte[] currentState;
     // private Object lock;
     private int updateCounter = 1;
-    // debug
-    private int l = 0;
 
     private ByteBuffer currentState;
     private ClientNetworkObjectManager manager;
@@ -93,7 +91,6 @@ public class SendToServer implements Runnable {
         // a regular update is due.
         synchronized (this.currentState) {
             if (updateCounter++ >= REGULAR_UPDATE_FREQ || !Arrays.equals(currentState.array(), lastState.array())) {
-                System.out.println("Packet " + l++);
                 updateCounter = 1;
                 conn.send(currentState);
                 this.lastState = currentState;
