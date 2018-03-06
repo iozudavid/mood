@@ -1,14 +1,13 @@
 package com.knightlore.game.entity.weapon;
 
 import com.knightlore.engine.GameEngine;
-import com.knightlore.engine.TickListener;
 import com.knightlore.game.Player;
 import com.knightlore.game.entity.Entity;
 import com.knightlore.render.PixelBuffer;
 import com.knightlore.render.graphic.Graphic;
 import com.knightlore.render.graphic.sprite.WeaponSprite;
 
-public abstract class Weapon implements TickListener {
+public abstract class Weapon {
 
     protected Graphic graphic;
     protected boolean automatic;
@@ -18,7 +17,6 @@ public abstract class Weapon implements TickListener {
         this.graphic = graphic;
         this.automatic = automatic;
         this.fireRate = fireRate;
-        GameEngine.ticker.addTickListener(this);
     }
 
     public abstract int damageInflicted(Player shooter, Entity target);
@@ -60,6 +58,10 @@ public abstract class Weapon implements TickListener {
         }
         pix.drawGraphic(g, xx + xOffset + inertiaX, yy + yOffset + inertiaY, width, height);
     }
+    
+    public void update() {
+        timer++;
+    }
 
     public boolean canFire() {
         return timer > fireRate;
@@ -77,13 +79,4 @@ public abstract class Weapon implements TickListener {
         return inertiaCoeffY;
     }
 
-    @Override
-    public void onTick() {
-        timer++;
-    }
-
-    @Override
-    public long interval() {
-        return 1L;
-    }
 }

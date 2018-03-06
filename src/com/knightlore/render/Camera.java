@@ -17,7 +17,7 @@ public class Camera implements IRenderable {
     public static final double FIELD_OF_VIEW = .66;
 
     /* Variables concerning motion bob. */
-    private static final double MOTION_BOB_AMOUNT = 10.0;
+    private static final double MOTION_BOB_AMOUNT = 15.0;
     private static final double MOTION_BOB_SPEED = 0.15 * 10;
 
     private Entity subject;

@@ -158,6 +158,7 @@ public class Player extends Entity {
 
         prevPos = position;
         prevDir = direction;
+        currentWeapon.update();
     }
 
     private boolean shootOnNextUpdate;
