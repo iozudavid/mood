@@ -35,6 +35,8 @@ public class Player extends Entity {
     private InputModule inputModule = null;
     // private volatile boolean finished = false;
 
+    private String name = "noname";
+    
     // Returns a new instance. See NetworkObject for details.
     public static NetworkObject build(UUID uuid, ByteBuffer state) {
         System.out.println("Player build, state size: " + state.remaining());
@@ -116,7 +118,7 @@ public class Player extends Entity {
         }
 
         synchronized (inputState) {
-            inputState = inputModule.updateInput(inputState);
+            inputState = inputModule.updateInput(inputState, this);
             // Check whether each input is triggered - if it is, execute the
             // respective method.
             // DEBUG
@@ -224,14 +226,29 @@ public class Player extends Entity {
     @Override
     public void takeDamage(int damage) {
         currentHealth -= damage;
-        if (currentHealth <= 0) {
-            this.position = GameEngine.getSingleton().getWorld().getMap().getRandomSpawnPoint();
-            currentHealth = MAX_HEALTH;
+        if(currentHealth <=0) {
+            System.out.println("Player "+getName()+ " died.");
+            Respawn();
         }
+    }
+    
+    private void Respawn() {
+        this.position = GameEngine.getSingleton().getWorld().getMap().getRandomSpawnPoint();
+        currentHealth = MAX_HEALTH;
+        inputModule.onRespawn(this);
+        System.out.println("Player "+getName()+ " respawned.");
     }
 
     public void setInputModule(InputModule inp) {
         this.inputModule = inp;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     public void setCurrentWeapon(Weapon currentWeapon) {
@@ -246,3 +263,4 @@ public class Player extends Entity {
         return MAX_HEALTH;
     }
 }
+

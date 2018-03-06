@@ -2,6 +2,7 @@ package com.knightlore.ai;
 
 import java.util.Map;
 
+import com.knightlore.game.Player;
 import com.knightlore.network.protocol.ClientController;
 
 public abstract class InputModule {
@@ -9,12 +10,12 @@ public abstract class InputModule {
      * FORWARD, LEFT, BACKWARD, RIGHT, ROTATE_CLOCKWISE, ROTATE_ANTI_CLOCKWISE,
      * SHOOT
      */
-	public float turnInput;
-	public float strafeInput;
-	public float walkInput;
+	public double turnInput;
+	public double strafeInput;
+	public double walkInput;
 	public boolean shoot;
 	
-	public abstract Map<ClientController, Byte> updateInput(Map<ClientController, Byte> inputState);
-	
-	
+	public abstract Map<ClientController, Byte> updateInput(Map<ClientController, Byte> inputState, Player myPlayer);
+
+    public abstract void onRespawn(Player myPlayer);
 }
