@@ -5,7 +5,7 @@ import com.knightlore.render.graphic.Graphic;
 import com.knightlore.render.graphic.texture.Texture;
 
 public class UndecidedTile extends Tile {
-    private static UndecidedTile instance = new UndecidedTile();
+    private static final UndecidedTile instance = new UndecidedTile();
 
     private UndecidedTile() {
     }
@@ -33,8 +33,7 @@ public class UndecidedTile extends Tile {
     }
 
     @Override
-    public TileType getTileType() {
-        return TileType.undecided;
+    public Tile copy() {
+        return instance;
     }
-
 }

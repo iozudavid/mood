@@ -25,8 +25,7 @@ public class BushTile extends Tile {
     }
 
     @Override
-    public TileType getTileType() {
-        return TileType.bush;
+    public Tile copy() {
+        return new BushTile();
     }
-
 }

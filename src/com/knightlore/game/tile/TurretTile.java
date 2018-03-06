@@ -5,11 +5,10 @@ import com.knightlore.game.Team;
 import com.knightlore.render.graphic.Graphic;
 
 public class TurretTile extends Tile {
-
-    Team team = Team.none;
+    private final Team team;
     
-    public TurretTile(Team t) {
-        team = t;
+    public TurretTile(Team team) {
+        this.team = team;
     }
     
     @Override
@@ -33,13 +32,12 @@ public class TurretTile extends Tile {
     }
 
     @Override
-    public TileType getTileType() {
-        return TileType.turret;
-    }
-
-    @Override
     public Team getTeam() {
         return team;
     }
-    
+
+    @Override
+    public Tile copy() {
+        return new TurretTile(team);
+    }
 }
