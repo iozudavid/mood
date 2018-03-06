@@ -48,7 +48,7 @@ public class Renderer {
             @Override
             public double getMix(double distance) {
                 int denom = (int) (550000 + 100000 * Math.sin(GameEngine.ticker.getTime() / 10D));
-                return distance / denom;
+                return 0;
             }
         };
     }
