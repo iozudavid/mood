@@ -25,6 +25,10 @@ public class Player extends Entity {
     private int currentHealth = MAX_HEALTH;
     private Weapon currentWeapon;
 
+    private boolean hasShot;
+    private Vector2D prevPos, prevDir;
+    private int inertiaX = 0, inertiaY = 0;
+
     // Maps all inputs that the player could be making to their values.
     private java.util.Map<ClientController, Runnable> ACTION_MAPPINGS = new HashMap<>();
     private java.util.Map<ClientController, Byte> inputState = new HashMap<>();
@@ -72,8 +76,9 @@ public class Player extends Entity {
     public void render(PixelBuffer pix, int x, int y, double distanceTraveled) {
         super.render(pix, x, y, distanceTraveled);
 
-        if (currentWeapon != null)
-            currentWeapon.render(pix, x, y, inertiaX, inertiaY, distanceTraveled);
+        if (currentWeapon != null) {
+            currentWeapon.render(pix, x, y, inertiaX, inertiaY, distanceTraveled, hasShot);
+        }
     }
 
     private void setNetworkConsumers() {
@@ -102,6 +107,14 @@ public class Player extends Entity {
     @Override
     public void onUpdate() {
 
+        hasShot = false;
+        if (shootOnNextUpdate) {
+            currentWeapon.fire(this);
+            inertiaY += 60;
+            hasShot = true;
+            shootOnNextUpdate = false;
+        }
+
         synchronized (inputState) {
             inputState = inputModule.updateInput(inputState);
             // Check whether each input is triggered - if it is, execute the
@@ -119,31 +132,7 @@ public class Player extends Entity {
         final double p = 0.1D;
         inertiaX += (int) (p * -inertiaX);
         inertiaY += (int) (p * -inertiaY);
-    }
 
-    private void shoot() {
-        if (currentWeapon != null) {
-            currentWeapon.fire(this);
-        }
-    }
-
-    @Override
-    public void onCollide(Player player) {
-    }
-
-    // TODO: serialize weapon etc.
-    @Override
-    public ByteBuffer serialize() {
-        ByteBuffer bb = super.serialize();
-        return bb;
-    }
-
-    private Vector2D prevPos, prevDir;
-    private int inertiaX = 0, inertiaY = 500;
-
-    @Override
-    public void deserialize(ByteBuffer buffer) {
-        super.deserialize(buffer);
         if (prevPos != null && prevDir != null) {
 
             Vector2D displacement = position.subtract(prevPos);
@@ -164,11 +153,40 @@ public class Player extends Entity {
                 diff += 2 * Math.PI;
             }
 
-            inertiaX += 150 * diff;
+            inertiaX += currentWeapon.getInertiaCoeffX() * diff;
         }
 
         prevPos = position;
         prevDir = direction;
+    }
+
+    private boolean shootOnNextUpdate;
+
+    private void shoot() {
+        if (currentWeapon == null)
+            return;
+
+        if (currentWeapon.canFire()) {
+            shootOnNextUpdate = true;
+        }
+    }
+
+    @Override
+    public void onCollide(Player player) {
+    }
+
+    // TODO: serialize weapon etc.
+    @Override
+    public ByteBuffer serialize() {
+        ByteBuffer bb = super.serialize();
+        bb.putInt(shootOnNextUpdate ? 1 : 0);
+        return bb;
+    }
+
+    @Override
+    public synchronized void deserialize(ByteBuffer buf) {
+        super.deserialize(buf);
+        shootOnNextUpdate = buf.getInt() == 1;
     }
 
     public Weapon getCurrentWeapon() {
