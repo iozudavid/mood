@@ -8,7 +8,6 @@ import java.util.PriorityQueue;
 import java.util.Queue;
 import java.util.Random;
 
-import com.knightlore.game.Team;
 import com.knightlore.game.area.Map;
 import com.knightlore.game.area.Room;
 import com.knightlore.game.area.RoomType;
@@ -26,6 +25,7 @@ public class MapGenerator extends ProceduralAreaGenerator {
     private static final int ROOM_RANGE_MAX = 8;
     private int maxRooms;
     
+    private List<RoomType> roomsToBuild = new LinkedList<>();
     private final List<Room> rooms = new LinkedList<>();
     private double[][] costGrid;
 
@@ -41,7 +41,7 @@ public class MapGenerator extends ProceduralAreaGenerator {
         System.out.println("Creating map with seed: " + seed);
         rand = new Random(seed);
         grid = new Tile[width][height];
-        // maybe make this correspond to map size
+        // TODO: maybe make this correspond to map size
         maxRooms = ROOM_RANGE_MIN + rand.nextInt(ROOM_RANGE_MAX - ROOM_RANGE_MIN);
         PerlinNoiseGenerator perlinGenerator = new PerlinNoiseGenerator(width, height, seed);
         // Initialize costGrid with perlin noise to make generated paths less optimal
@@ -53,25 +53,37 @@ public class MapGenerator extends ProceduralAreaGenerator {
     @Override
     protected void fillGrid() {
         resetGrid();
+        determineRoomsToBuild();
         generateRooms();
         generatePaths();
         makeSymY();
         fillUndecidedTiles();
     }
 
+    private void determineRoomsToBuild() {
+        // TODO: Expand this if we need other types of
+        // of room
+        roomsToBuild.add(RoomType.spawn);   
+        for(int i=1; i < maxRooms; i++) {
+            double randInt = rand.nextDouble();
+            if(randInt >= 0.66) {
+                roomsToBuild.add(RoomType.weapon);
+            }else {
+                roomsToBuild.add(RoomType.normal);
+            }
+        }
+    }
+    
     private void generateRooms() {
         RoomGenerator roomGenerator = new RoomGenerator();
-        // place spawn room first
-        Room room = roomGenerator.createRoom(rand.nextLong(), RoomType.spawn);
-        setRoomPosition(room , grid.length/8, grid[0].length/8);
-        rooms.add(room);
-        
-        // TODO: Produce a list of room types to have!
-        room = roomGenerator.createRoom(rand.nextLong(), RoomType.weapon);
-        
-        while (rooms.size() < maxRooms && setRoomPosition(room)) {
-            rooms.add(room);
-            room = roomGenerator.createRoom(rand.nextLong(), RoomType.normal);
+
+        for(RoomType rt : roomsToBuild) {
+            Room room = roomGenerator.createRoom(rand.nextLong(), rt);
+            // TODO: potentially have different setRoomPositions
+            // implementations dependent on room type
+            if(setRoomPosition(room)) {
+                rooms.add(room);
+            }
         }
     }
     
@@ -79,27 +91,6 @@ public class MapGenerator extends ProceduralAreaGenerator {
         List<Point> candidates = new ArrayList<Point>();
         for (int x = 0; x < grid.length - room.getWidth(); x++) {
             for (int y = 0; y < grid[0].length - room.getHeight(); y++) {
-                room.setRoomPosition(new Point(x, y));
-                if (canBePlaced(room)) {
-                    candidates.add(new Point(x, y));
-                }
-            }
-        }
-
-        if (candidates.isEmpty()) {
-            return false;
-        } else {
-            int index = rand.nextInt(candidates.size());
-            room.setRoomPosition(candidates.get(index));
-            placeRoom(room);
-            return true;
-        }
-    }
-    
-    private boolean setRoomPosition(Room room, int maxX, int maxY) {
-        List<Point> candidates = new ArrayList<Point>();
-        for (int x = 0; x < maxX; x++) {
-            for (int y = 0; y < maxY; y++) {
                 room.setRoomPosition(new Point(x, y));
                 if (canBePlaced(room)) {
                     candidates.add(new Point(x, y));
@@ -124,7 +115,6 @@ public class MapGenerator extends ProceduralAreaGenerator {
         int bottomWallY = topWallY + room.getHeight();
         for(int i=leftWallX; i < rightWallX; i++) {
             for(int j=topWallY; j < bottomWallY; j++) {
-                //if(grid[i][j] != UndecidedTile.getInstance()) {
                 if (grid[i][j].getTileType() != TileType.undecided) {
                     return false;
                 }
@@ -142,7 +132,6 @@ public class MapGenerator extends ProceduralAreaGenerator {
                 // place appropriate room tile
                 grid[x][y] = r.getTile(x - xPos, y - yPos);
                 // modify cost grid
-                //costGrid[x][y] = Double.MAX_VALUE;
                 costGrid[x][y] = costGrid[x][y] * 5; // arbitrary value of 5
             }
         }

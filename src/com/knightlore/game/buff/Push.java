@@ -8,6 +8,7 @@ public class Push extends Buff {
     private static double MOVE_DISTANCE = .040;
     private Vector2D direction;
     
+    @SuppressWarnings("unused")
     private Push() {}
     
     public Push(Vector2D d) {
