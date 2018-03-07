@@ -8,15 +8,20 @@ import java.util.PriorityQueue;
 import java.util.Queue;
 import java.util.Random;
 
+import com.knightlore.game.Team;
 import com.knightlore.game.area.Map;
 import com.knightlore.game.area.Room;
 import com.knightlore.game.area.RoomType;
 import com.knightlore.game.tile.AirTile;
+import com.knightlore.game.tile.BreakibleTile;
 import com.knightlore.game.tile.BrickTile;
 import com.knightlore.game.tile.MossBrickTile;
 import com.knightlore.game.tile.PathTile;
+import com.knightlore.game.tile.PlayerSpawnTile;
 import com.knightlore.game.tile.Tile;
+import com.knightlore.game.tile.TurretTile;
 import com.knightlore.game.tile.UndecidedTile;
+import com.knightlore.game.tile.WeaponTile;
 import com.knightlore.utils.pathfinding.PathFinder;
 
 public class MapGenerator extends ProceduralAreaGenerator {
@@ -226,6 +231,29 @@ public class MapGenerator extends ProceduralAreaGenerator {
             // using arbitrary number 3
             costGrid[p.x][p.y] = costGrid[p.x][p.y] * 3;
             */
+            
+            Tile currentTile = grid[p.x][p.y];
+            if(currentTile == AirTile.getInstance()) {
+                continue;
+            }
+            
+            if(currentTile == PlayerSpawnTile.getInstance(Team.blue)) {
+                continue;
+            }
+            
+            if(currentTile.toChar() == 'W') {
+                continue;
+            }
+            
+            if(currentTile == BreakibleTile.getInstance()) {
+                continue;
+            }
+            
+            //if(currentTile == TurretTile.getInstance()) {
+            if(currentTile.toChar() == 'T') {
+                continue;
+            }
+            
             grid[p.x][p.y] = AirTile.getInstance();
         }
     }

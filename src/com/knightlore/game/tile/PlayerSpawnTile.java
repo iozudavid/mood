@@ -8,11 +8,22 @@ import com.knightlore.render.graphic.texture.Texture;
 
 public class PlayerSpawnTile extends Tile {
     private final Team team;
-
-    public PlayerSpawnTile(Team team) {
+    private static PlayerSpawnTile instanceBlue = new PlayerSpawnTile(Team.blue);
+    private static PlayerSpawnTile instanceRed = new PlayerSpawnTile(Team.red);
+    private static PlayerSpawnTile instanceNone = new PlayerSpawnTile(Team.none);
+    
+    private PlayerSpawnTile(Team team) {
         this.team = team;
     }
 
+    public static PlayerSpawnTile getInstance(Team t) {
+        switch(t){
+            case blue : return instanceBlue;
+            case red  : return instanceRed;
+            default   : return instanceNone;
+        }
+    }
+    
     @Override
     public Graphic getTexture() {
         return Texture.BUSH;

@@ -6,6 +6,14 @@ import com.knightlore.render.graphic.Graphic;
 public class BreakibleTile extends Tile {
 
     private int health = 100;
+    private static BreakibleTile instance = new BreakibleTile();
+    
+    private BreakibleTile() {    
+    }
+    
+    public static BreakibleTile getInstance() {
+        return instance;
+    }
     
     @Override
     public Graphic getTexture() {

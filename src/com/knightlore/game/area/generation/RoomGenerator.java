@@ -50,7 +50,7 @@ public class RoomGenerator extends ProceduralAreaGenerator {
         int width = grid.length;
         int height = grid[0].length;
         switch(rt) {
-            case spawn : grid[width/2][height/2] = new PlayerSpawnTile(Team.blue);
+            case spawn : grid[width/2][height/2] = PlayerSpawnTile.getInstance(Team.blue);
                          grid[2][2] = new TurretTile(Team.blue);
                          grid[2][height-3] = new TurretTile(Team.blue);
                          grid[width-3][2] = new TurretTile(Team.blue);
@@ -69,7 +69,7 @@ public class RoomGenerator extends ProceduralAreaGenerator {
                           // surround weapon with breakible tiles
                           for(int x = width/2 -1; x<width/2 + 2; x++) {
                               for(int y = height/2 -1; y<height/2 + 2; y++) {
-                                  grid[x][y] = new BreakibleTile();
+                                  grid[x][y] = BreakibleTile.getInstance();
                               }
                           }
 
