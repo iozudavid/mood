@@ -37,7 +37,7 @@ public class SendToServer implements Runnable {
     private ClientNetworkObjectManager manager;
     private UUID myUUID;
     private Prediction prediction;
-    private int i = 0;
+    private int lastPosition = 0;
 
     public SendToServer(Connection conn) {
         this.conn = conn;
@@ -73,6 +73,7 @@ public class SendToServer implements Runnable {
                 buf.put((byte) 0);
             }
         }
+        this.lastPosition = buf.position();
         return buf;
     }
 
@@ -94,7 +95,6 @@ public class SendToServer implements Runnable {
         // Send a controls update if either the controls have changed or
         // a regular update is due.
     	
-    	System.out.println(this.manager.getMyPlayer().getDirection());
         synchronized (this.currentState) {
         	ArrayList<ByteBuffer> lastStates = this.manager.getPlayerStateOnServer();
         	if(!lastStates.isEmpty()){
@@ -109,7 +109,6 @@ public class SendToServer implements Runnable {
             }
             if(!Arrays.equals(currentState.array(), lastState.array())){
             	updateCounter = 1;
-            	conn.send(currentState);
             	this.currentState.position(0);
             	NetworkUtils.getStringFromBuf(this.currentState);
             	NetworkUtils.getStringFromBuf(this.currentState);
@@ -120,7 +119,8 @@ public class SendToServer implements Runnable {
             		inputsAsArray[count++] = this.currentState.get();
             	}
             	this.prediction.update(this.manager.getMyPlayer(),inputsAsArray);
-            	this.currentState.position(0);
+            	this.currentState.position(this.lastPosition);
+            	conn.send(currentState);
                 this.lastState = currentState;
             }
         }

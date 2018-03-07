@@ -179,10 +179,4 @@ public class ClientNetworkObjectManager extends NetworkObjectManager {
 		}
     }
 
-	@Override
-	public void deserialize2(ByteBuffer buffer) {
-		// TODO Auto-generated method stub
-		
-	}
-
 }

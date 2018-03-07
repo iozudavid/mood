@@ -1,13 +1,10 @@
 package com.knightlore.network.client;
 
 import java.nio.ByteBuffer;
-import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import com.knightlore.game.Player;
-import com.knightlore.network.NetworkObject;
-import com.knightlore.network.protocol.ClientProtocol;
 import com.knightlore.network.protocol.NetworkUtils;
 
 public class Prediction {
@@ -49,27 +46,14 @@ public class Prediction {
 		double yPos = received.getDouble();
 		double xDir = received.getDouble();
 		double yDir = received.getDouble();
-		double xPlane = received.getDouble();
-		double yPlane = received.getDouble();
 		int shootOnNext = received.getInt();
 		player.setSize(size);
 		player.setxPos(xPos);
 		player.setyPos(yPos);
 		player.setxDir(xDir);
 		player.setyDir(yDir);
-		player.setxPlane(xPlane);
-		player.setyPlane(yPlane);
 		player.setOnNextShot(shootOnNext==1 ? true : false);
 		
-		
-		System.out.println("===========");
-		System.out.println(xPos);
-		System.out.println(yPos);
-		System.out.println(xDir);
-		System.out.println(yDir);
-		System.out.println(xPlane);
-		System.out.println(yPlane);
-		System.out.println("=============SERVER");
 		//predict again the player state
 		//based on server packets
 		synchronized (this.clientInputHistory) {
@@ -88,14 +72,6 @@ public class Prediction {
 	// called every client frame
 	public Player update(Player player, byte[] input) {
 		player.setInputState(input);
-		System.out.println("===========");
-		System.out.println(player.getxPos());
-		System.out.println(player.getyPos());
-		System.out.println(player.getxDir());
-		System.out.println(player.getyDir());
-		System.out.println(player.getxPlane());
-		System.out.println(player.getyPlane());
-		System.out.println("=============CLIENT");
 		synchronized(this.clientInputHistory){
 			this.clientInputHistory.add(input);
 		}

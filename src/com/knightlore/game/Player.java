@@ -42,7 +42,6 @@ public class Player extends Entity {
         System.out.println("Player build, state size: " + state.remaining());
         NetworkObject obj = new Player(uuid, Vector2D.ONE, Vector2D.ONE);
         obj.init();
-        obj.deserialize2(state);
         
         return obj;
     }

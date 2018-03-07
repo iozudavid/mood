@@ -80,9 +80,9 @@ public abstract class NetworkObjectManager implements INetworkable, Runnable {
                 			((ClientNetworkObjectManager)this).getMyPlayer().getObjectId().equals(objID) &&
                 				methodName.equals("deserialize")){
                 		if(((ClientNetworkObjectManager)this).hasFinishedSetup()){
-                		buf.rewind();
-                		((ClientNetworkObjectManager)this).addToPlayerStateOnServer(buf);
-                		continue;
+                			buf.rewind();
+                			((ClientNetworkObjectManager)this).addToPlayerStateOnServer(buf);
+                			continue;
                 		}
                 	}
                 }
