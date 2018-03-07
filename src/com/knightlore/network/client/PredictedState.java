@@ -10,13 +10,17 @@ public class PredictedState {
 	private ByteBuffer currentState;
 	private String uuid;
 	private Vector2D position;
+	private Vector2D deltaPosition;
 	private Vector2D direction;
+	private Vector2D deltaDirection;
 	private Vector2D plane;
+	private Vector2D deltaPlane;
 	private boolean shootOnNext;
 	private double time;
 	
 	public PredictedState(ByteBuffer b){
 		this.currentState = b;
+		this.currentState.rewind();
 		depack();
 	}
 	
@@ -37,6 +41,9 @@ public class PredictedState {
 		double yPlane = currentState.getDouble();
 		this.plane = new Vector2D(xPlane, yPlane);
 		this.shootOnNext = currentState.getInt()==1 ? true : false;
+		this.deltaPosition = new Vector2D(0,0);
+		this.deltaDirection = new Vector2D(0,0);
+		this.deltaDirection = new Vector2D(0,0);
 	}
 
 	public String getUuid() {
@@ -53,6 +60,18 @@ public class PredictedState {
 	
 	public Vector2D getPlane(){
 		return this.plane;
+	}
+	
+	public Vector2D getDeltaPosition(){
+		return this.deltaPosition;
+	}
+	
+	public Vector2D getDeltaDirection(){
+		return this.deltaDirection;
+	}
+	
+	public Vector2D getDeltaPlane(){
+		return this.deltaPlane;
 	}
 	
 	public boolean getShootAbility(){
@@ -77,6 +96,18 @@ public class PredictedState {
 	
 	public void setPlane(double x, double y){
 		this.plane = new Vector2D(x, y);
+	}
+	
+	public void setDeltaPosition(double x, double y){
+		this.deltaPosition = new Vector2D(x, y);
+	}
+	
+	public void setDeltaDirection(double x, double y){
+		this.deltaDirection = new Vector2D(x, y);
+	}
+	
+	public void setDeltaPlane(double x, double y){
+		this.deltaPlane = new Vector2D(x, y);
 	}
 	
 }

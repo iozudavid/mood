@@ -8,6 +8,7 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.function.Consumer;
 
+import com.knightlore.network.client.ClientNetworkObjectManager;
 import com.knightlore.network.protocol.NetworkUtils;
 
 public abstract class NetworkObjectManager implements INetworkable, Runnable {
@@ -77,7 +78,12 @@ public abstract class NetworkObjectManager implements INetworkable, Runnable {
             }
             // Execute the specified method on the specified object, with the
             // rest of the ByteBuffer as input.
-            cons.accept(buf);
+            if(this instanceof ClientNetworkObjectManager){
+            	if(((ClientNetworkObjectManager)this).getMyPlayer().getObjectId() == objID){
+            		
+            	}
+            }else
+            	cons.accept(buf);
         }
     }
 

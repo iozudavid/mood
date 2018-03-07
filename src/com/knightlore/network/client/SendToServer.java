@@ -35,12 +35,14 @@ public class SendToServer implements Runnable {
     private ByteBuffer currentState;
     private ClientNetworkObjectManager manager;
     private UUID myUUID;
+    private Prediction prediction;
 
     public SendToServer(Connection conn) {
         this.conn = conn;
         // this.lock = new Object();
         this.manager = (ClientNetworkObjectManager) GameEngine.getSingleton().getNetworkObjectManager();
-
+        this.prediction = new Prediction();
+        
     }
 
     private synchronized ByteBuffer getCurrentControlState() {
@@ -90,8 +92,15 @@ public class SendToServer implements Runnable {
         // Send a controls update if either the controls have changed or
         // a regular update is due.
         synchronized (this.currentState) {
-            if (updateCounter++ >= REGULAR_UPDATE_FREQ || !Arrays.equals(currentState.array(), lastState.array())) {
+            if (updateCounter++ >= REGULAR_UPDATE_FREQ) {
                 updateCounter = 1;
+                prediction.update(manager.getMyPlayer(), manager.getMyPlayer().serialize());
+                conn.send(currentState);
+                this.lastState = currentState;
+            }
+            if (!Arrays.equals(currentState.array(), lastState.array())) {
+                updateCounter = 1;
+                prediction.update(manager.getMyPlayer(), manager.getMyPlayer().serialize());
                 conn.send(currentState);
                 this.lastState = currentState;
             }
