@@ -1,6 +1,5 @@
 package com.knightlore.render;
 
-import java.awt.Color;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Stack;
@@ -9,6 +8,7 @@ import com.knightlore.engine.GameEngine;
 import com.knightlore.game.Player;
 import com.knightlore.game.area.Map;
 import com.knightlore.game.entity.Entity;
+import com.knightlore.game.entity.SpectatorCamera;
 import com.knightlore.game.tile.AirTile;
 import com.knightlore.game.tile.Tile;
 import com.knightlore.game.world.ClientWorld;
@@ -49,12 +49,24 @@ public class Renderer {
 
             @Override
             public double getMix(double distance) {
-                Player p = ((Player) (camera.getSubject()));
-                double r = p.getCurrentHealth() / (double) p.getMaxHealth();
-                double denom = 4*550000 + 100000 * Math.sin(GameEngine.ticker.getTime() / 20D);
-                return distance / (denom * r);
+                Entity subject = camera.getSubject();
+                if (false &&  subject instanceof Player) {
+                    Player p = ((Player) (camera.getSubject()));
+                    double r = p.getCurrentHealth() / (double) p.getMaxHealth();
+                    double denom = 4 * 550000 + 100000 * Math.sin(GameEngine.ticker.getTime() / 20D);
+                    return distance / (denom * r);
+                } else {
+                    return 0;
+                }
             }
         };
+//        
+//        for(Entity e : world.getEntities()) {
+//            if(e instanceof SpectatorCamera) {
+//                camera.setSubject(e);
+//                System.out.println("foudn camera");
+//            }
+//        }
     }
 
     private final int BLOCKINESS = 10; // how 'old school' you want to look.
