@@ -41,7 +41,9 @@ public class ServerWorld extends GameWorld {
             Player botPlayer = new Player(map.getRandomSpawnPoint(), Vector2D.UP);
             botPlayer.setInputModule(new BotInput());
             botPlayer.init();
+            botPlayer.setName("bot"+i);
             playerManager.addPlayer(botPlayer);
+            
         }
     }
     

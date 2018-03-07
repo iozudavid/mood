@@ -21,9 +21,7 @@ import com.knightlore.network.NetworkObject;
 import com.knightlore.network.protocol.ClientController;
 import com.knightlore.network.protocol.ClientProtocol;
 import com.knightlore.render.PixelBuffer;
-import com.knightlore.render.graphic.Graphic;
 import com.knightlore.render.graphic.sprite.DirectionalSprite;
-import com.knightlore.render.graphic.sprite.WeaponSprite;
 import com.knightlore.utils.Vector2D;
 
 public class Player extends Entity implements TickListener{
@@ -33,13 +31,18 @@ public class Player extends Entity implements TickListener{
     private Weapon currentWeapon;
 
     private ArrayList<Buff> buffList = new ArrayList<Buff>();
-    
+    private boolean hasShot;
+    private Vector2D prevPos, prevDir;
+    private int inertiaX = 0, inertiaY = 0;
+
     // Maps all inputs that the player could be making to their values.
     private java.util.Map<ClientController, Runnable> ACTION_MAPPINGS = new HashMap<>();
     private java.util.Map<ClientController, Byte> inputState = new HashMap<>();
     private InputModule inputModule = null;
     // private volatile boolean finished = false;
 
+    private String name = "noname";
+    
     // Returns a new instance. See NetworkObject for details.
     public static NetworkObject build(UUID uuid, ByteBuffer state) {
         System.out.println("Player build, state size: " + state.remaining());
@@ -86,40 +89,9 @@ public class Player extends Entity implements TickListener{
     public void render(PixelBuffer pix, int x, int y, double distanceTraveled) {
         super.render(pix, x, y, distanceTraveled);
 
-        // Used a linear equation to get the expression below.
-        // With a screen height of 558, we want a scale of 5.
-        // With a screen height of 800, we want a scale of 6.
-        // The linear equation relating is therefore y = 1/242 * (h - 558),
-        // hence below
-        final int SCALE = (int) (5 + 1 / 242D * (pix.getHeight() - 558));
-
-        if (currentWeapon == null) {
-            System.out.println(currentWeapon + " is null...");
-            return;
+        if (currentWeapon != null) {
+            currentWeapon.render(pix, x, y, inertiaX, inertiaY, distanceTraveled, hasShot);
         }
-        Graphic g = currentWeapon.getGraphic();
-        final int width = g.getWidth() * SCALE, height = g.getHeight() * SCALE;
-
-        final int weaponBobX = 20, weaponBobY = 30;
-
-        int xx = x + (pix.getWidth() - width) / 2;
-        int yy = pix.getHeight() - height + 28 * SCALE;
-
-        int xOffset = (int) (Math.cos(distanceTraveled) * weaponBobX);
-        int yOffset = (int) (Math.abs(Math.sin(distanceTraveled) * weaponBobY));
-
-        final double p = 0.1;
-        inertiaOffsetX += (int) (p * -inertiaOffsetX);
-        inertiaOffsetY += (int) (p * -inertiaOffsetY);
-
-        if (inertiaOffsetX < -120) {
-            g = WeaponSprite.SHOTGUN_LEFT;
-        } else if (inertiaOffsetX > 120) {
-            g = WeaponSprite.SHOTGUN_RIGHT;
-        }
-
-        pix.drawGraphic(g, xx + xOffset + inertiaOffsetX, yy + yOffset + inertiaOffsetY, SCALE * g.getWidth(),
-                SCALE * g.getHeight());
     }
 
     private void setNetworkConsumers() {
@@ -148,8 +120,16 @@ public class Player extends Entity implements TickListener{
     @Override
     public void onUpdate() {
 
+        hasShot = false;
+        if (shootOnNextUpdate) {
+            currentWeapon.fire(this);
+            inertiaY += 60;
+            hasShot = true;
+            shootOnNextUpdate = false;
+        }
+
         synchronized (inputState) {
-            inputState = inputModule.updateInput(inputState);
+            inputState = inputModule.updateInput(inputState, this);
             // Check whether each input is triggered - if it is, execute the
             // respective method.
             // DEBUG
@@ -161,11 +141,47 @@ public class Player extends Entity implements TickListener{
                 }
             }
         }
+
+        final double p = 0.1D;
+        inertiaX += (int) (p * -inertiaX);
+        inertiaY += (int) (p * -inertiaY);
+
+        if (prevPos != null && prevDir != null) {
+
+            Vector2D displacement = position.subtract(prevPos);
+            Vector2D temp = new Vector2D(plane.getX() / plane.magnitude(), plane.getY() / plane.magnitude());
+            double orthProjection = displacement.dot(temp);
+            inertiaX -= orthProjection * currentWeapon.getInertiaCoeffX();
+
+            temp = new Vector2D(direction.getX() / direction.magnitude(), direction.getY() / direction.magnitude());
+            orthProjection = displacement.dot(temp);
+            inertiaY += orthProjection * currentWeapon.getInertiaCoeffY();
+
+            double prevDirTheta = Math.atan2(prevDir.getY(), prevDir.getX());
+            double directionTheta = Math.atan2(direction.getY(), direction.getX());
+            double diff = directionTheta - prevDirTheta;
+            if (diff > Math.PI) {
+                diff -= 2 * Math.PI;
+            } else if (diff < -Math.PI) {
+                diff += 2 * Math.PI;
+            }
+
+            inertiaX += currentWeapon.getInertiaCoeffX() * diff;
+        }
+
+        prevPos = position;
+        prevDir = direction;
+        currentWeapon.update();
     }
 
+    private boolean shootOnNextUpdate;
+
     private void shoot() {
-        if (currentWeapon != null) {
-            currentWeapon.fire(this);
+        if (currentWeapon == null)
+            return;
+
+        if (currentWeapon.canFire()) {
+            shootOnNextUpdate = true;
         }
     }
 
@@ -177,40 +193,14 @@ public class Player extends Entity implements TickListener{
     @Override
     public ByteBuffer serialize() {
         ByteBuffer bb = super.serialize();
+        bb.putInt(shootOnNextUpdate ? 1 : 0);
         return bb;
     }
 
-    private Vector2D prevPos, prevDir;
-    private int inertiaOffsetX = 0, inertiaOffsetY = 500;
-
     @Override
-    public void deserialize(ByteBuffer buffer) {
-        super.deserialize(buffer);
-        if (prevPos != null && prevDir != null) {
-
-            Vector2D displacement = position.subtract(prevPos);
-            Vector2D temp = new Vector2D(plane.getX() / plane.magnitude(), plane.getY() / plane.magnitude());
-            double orthProjection = displacement.dot(temp);
-            inertiaOffsetX -= orthProjection * 125;
-
-            temp = new Vector2D(direction.getX() / direction.magnitude(), direction.getY() / direction.magnitude());
-            orthProjection = displacement.dot(temp);
-            inertiaOffsetY += orthProjection * 35;
-
-            double prevDirTheta = Math.atan2(prevDir.getY(), prevDir.getX());
-            double directionTheta = Math.atan2(direction.getY(), direction.getX());
-            double diff = directionTheta - prevDirTheta;
-            if (diff > Math.PI) {
-                diff -= 2 * Math.PI;
-            } else if (diff < -Math.PI) {
-                diff += 2 * Math.PI;
-            }
-
-            inertiaOffsetX += 150 * diff;
-        }
-
-        prevPos = position;
-        prevDir = direction;
+    public synchronized void deserialize(ByteBuffer buf) {
+        super.deserialize(buf);
+        shootOnNextUpdate = buf.getInt() == 1;
     }
 
     public Weapon getCurrentWeapon() {
@@ -245,22 +235,14 @@ public class Player extends Entity implements TickListener{
         return this.getClass().getName();
     }
 
-    public void setInputModule(InputModule inp) {
-        this.inputModule = inp;
-    }
-
-    public void setCurrentWeapon(Weapon currentWeapon) {
-        this.currentWeapon = currentWeapon;
-    }
-
     @Override
     public void takeDamage(int damage) {
         int newHealth = currentHealth - damage;
         currentHealth = Math.max(0, Math.min(MAX_HEALTH, newHealth));
         //respawn
         if (currentHealth == 0) {
-            this.position = GameEngine.getSingleton().getWorld().getMap().getRandomSpawnPoint();
-            currentHealth = MAX_HEALTH;
+            System.out.println("Player "+getName()+ " died.");
+            respawn();
         }
     }
     
@@ -322,6 +304,29 @@ public class Player extends Entity implements TickListener{
     public long interval() {
         // possibly vary this
         return (long) GameEngine.UPDATES_PER_SECOND;
+    }
+    
+    private void respawn() {
+        this.position = GameEngine.getSingleton().getWorld().getMap().getRandomSpawnPoint();
+        currentHealth = MAX_HEALTH;
+        inputModule.onRespawn(this);
+        System.out.println("Player "+getName()+ " respawned.");
+    }
+
+    public void setInputModule(InputModule inp) {
+        this.inputModule = inp;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setCurrentWeapon(Weapon currentWeapon) {
+        this.currentWeapon = currentWeapon;
     }
 
     public int getCurrentHealth() {

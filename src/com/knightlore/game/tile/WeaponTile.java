@@ -26,10 +26,12 @@ public class WeaponTile extends Tile {
     public void onEntered(Player player) {
     }
 
+    /*
     @Override
     public TileType getTileType() {
         return TileType.weapon;
     }
+    */
     
     public Weapon getWeapon() {
         return weapon;
@@ -38,6 +40,12 @@ public class WeaponTile extends Tile {
     @Override
     public char toChar() {
         return 'W';
+    }
+
+    @Override
+    public Tile copy() {
+        // TODO Auto-generated method stub
+        return new WeaponTile(weapon);
     }
     
 }

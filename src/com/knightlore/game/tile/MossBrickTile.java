@@ -4,7 +4,6 @@ import com.knightlore.render.graphic.Graphic;
 import com.knightlore.render.graphic.texture.Texture;
 
 public class MossBrickTile extends BrickTile {
-
     @Override
     public Graphic getTexture() {
         return Texture.MOSSY_BRICK;
@@ -17,6 +16,10 @@ public class MossBrickTile extends BrickTile {
     
     public char toChar() {
         return 'M';
+    }
+    
+    public Tile copy() {
+        return new MossBrickTile();
     }
 
 }

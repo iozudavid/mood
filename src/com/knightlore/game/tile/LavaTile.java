@@ -32,14 +32,22 @@ public class LavaTile extends Tile {
         
     }
 
+    /*
     @Override
     public TileType getTileType() {
         return TileType.lava;
     }
+    */
 
     @Override
     public char toChar() {
         return 'L';
+    }
+
+    @Override
+    public Tile copy() {
+        // TODO Auto-generated method stub
+        return new LavaTile();
     }
     
 }

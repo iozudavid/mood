@@ -1,34 +1,28 @@
 package com.knightlore.leveleditor;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import com.google.common.collect.ImmutableList;
+import com.knightlore.game.tile.*;
 
 import javax.swing.Box;
 import javax.swing.JButton;
 import javax.swing.JPanel;
 
-import com.knightlore.game.tile.TileType;
-
 public class TileChooserPanel extends JPanel {
+    private static final ImmutableList<Tile> options = ImmutableList.of(
+            AirTile.getInstance(),
+            new BrickTile(),
+            new BushTile()
+    );
 
     public TileChooserPanel() {
         super();
         Box box = Box.createVerticalBox();
-
-        TileType[] options = TileType.values();
-        for (TileType o : options) {
-            JButton button = new JButton(o.name());
-            button.addActionListener(new ActionListener() {
-
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    LevelEditorWindow.pen.stroke = o;
-                }
-            });
+        for (Tile o : options) {
+            JButton button = new JButton(o.toString());
+            button.addActionListener(e -> LevelEditorWindow.pen.stroke = o);
             box.add(button);
         }
 
         add(box);
     }
-
 }

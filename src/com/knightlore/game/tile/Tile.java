@@ -5,7 +5,9 @@ import com.knightlore.game.Team;
 import com.knightlore.render.ColorUtils;
 import com.knightlore.render.graphic.Graphic;
 
-public abstract class Tile {
+import java.io.Serializable;
+
+public abstract class Tile implements Serializable {
 
     private int minimapColor = ColorUtils.averageColor(getTexture().getPixels());
 
@@ -47,6 +49,5 @@ public abstract class Tile {
         return Team.none;
     }
 
-    public abstract TileType getTileType();
-
+    public abstract Tile copy();
 }

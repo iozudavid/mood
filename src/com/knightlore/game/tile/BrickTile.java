@@ -25,11 +25,6 @@ public class BrickTile extends Tile {
         return 1D;
     }
 
-//    @Override
-//    public int getMinimapColor() {
-//        return 0x8C4100;
-//    }
-
     @Override
     public void onShot() {
         System.out.println("shot brick");
@@ -51,8 +46,7 @@ public class BrickTile extends Tile {
     }
 
     @Override
-    public TileType getTileType() {
-        return TileType.brick;
+    public Tile copy() {
+        return new BrickTile();
     }
-
 }

@@ -16,7 +16,6 @@ import com.knightlore.game.tile.BrickTile;
 import com.knightlore.game.tile.MossBrickTile;
 import com.knightlore.game.tile.PathTile;
 import com.knightlore.game.tile.Tile;
-import com.knightlore.game.tile.TileType;
 import com.knightlore.game.tile.UndecidedTile;
 import com.knightlore.utils.pathfinding.PathFinder;
 
@@ -115,7 +114,7 @@ public class MapGenerator extends ProceduralAreaGenerator {
         int bottomWallY = topWallY + room.getHeight();
         for(int i=leftWallX; i < rightWallX; i++) {
             for(int j=topWallY; j < bottomWallY; j++) {
-                if (grid[i][j].getTileType() != TileType.undecided) {
+                if (grid[i][j] != UndecidedTile.getInstance()) {
                     return false;
                 }
             }
@@ -200,6 +199,9 @@ public class MapGenerator extends ProceduralAreaGenerator {
 
     private void placePath(List<Point> path) {
         for (Point p : path) {
+            //TODO: This but without enums
+            // OR GET ENUMS BACK
+            /*
             TileType currentType = grid[p.x][p.y].getTileType();
             if(currentType == TileType.air) {
                 continue;
@@ -223,6 +225,8 @@ public class MapGenerator extends ProceduralAreaGenerator {
             // changing cost grid, also...
             // using arbitrary number 3
             costGrid[p.x][p.y] = costGrid[p.x][p.y] * 3;
+            */
+            grid[p.x][p.y] = AirTile.getInstance();
         }
     }
 

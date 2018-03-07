@@ -23,14 +23,22 @@ public class BreakibleTile extends Tile {
     public void onEntered(Player player) {
     }
 
+    /*
     @Override
     public TileType getTileType() {
         return TileType.breakible;
     }
+    */
     
     @Override
     public char toChar() {
         return 'b';
+    }
+
+    @Override
+    public Tile copy() {
+        // TODO Auto-generated method stub
+        return new BreakibleTile();
     }
 
 }

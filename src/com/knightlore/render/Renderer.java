@@ -4,12 +4,15 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Stack;
 
+import com.knightlore.engine.GameEngine;
 import com.knightlore.game.area.Map;
 import com.knightlore.game.entity.Entity;
 import com.knightlore.game.tile.AirTile;
 import com.knightlore.game.tile.Tile;
 import com.knightlore.game.world.ClientWorld;
 import com.knightlore.render.graphic.Graphic;
+import com.knightlore.render.graphic.filter.LightingMask;
+import com.knightlore.render.graphic.filter.LightingMask.LightingMaskEquation;
 import com.knightlore.utils.Vector2D;
 
 /**
@@ -32,13 +35,25 @@ public class Renderer {
      */
     private ClientWorld world;
 
+    private LightingMask mask;
+    private LightingMaskEquation eq;
+
     public Renderer(int width, int height, Camera camera, ClientWorld world) {
         this.pix = new PixelBuffer(width, height);
         this.camera = camera;
         this.world = world;
+        this.mask = new LightingMask(0xFF0000);
+        this.eq = new LightingMaskEquation() {
+
+            @Override
+            public double getMix(double distance) {
+                int denom = (int) (550000 + 100000 * Math.sin(GameEngine.ticker.getTime() / 10D));
+                return 0;
+            }
+        };
     }
 
-    private final int BLOCKINESS = 20; // how 'old school' you want to look.
+    private final int BLOCKINESS = 10; // how 'old school' you want to look.
 
     public void render() {
         if (camera == null || !camera.isSubjectSet()) {
@@ -55,14 +70,6 @@ public class Renderer {
         camera.render(pix, 0, 0);
         drawCrosshair(pix);
     }
-
-    /*
-     * NOTE: THIS ONLY AFFECTS THE RENDERING SIZE OF A TILE. If you change this
-     * variable, tiles will be drawn differently but the player will still move
-     * at their usual speed over a single tile. You might want to compensate a
-     * change here with a change in player move speed.
-     */
-    private final float TILE_SIZE = 1F;
 
     private void drawPerspective(PixelBuffer pix, int offset) {
 
@@ -146,7 +153,7 @@ public class Renderer {
                         hit = true;
 
                     distanceToWall = RaycasterUtils.getImpactDistance(camera, rayX, rayY, mapX, mapY, side, stepX,
-                            stepY, TILE_SIZE);
+                            stepY);
                     int lineHeight = RaycasterUtils.getDrawHeight(height, distanceToWall);
 
                     // calculate lowest and highest pixel to fill in current
@@ -187,7 +194,6 @@ public class Renderer {
             // We know that we've hit the final tile (and opaque one). So now,
             // we can do the floorcast.
             floorCast(pix, offset, xx, rayX, rayY, mapX, mapY, wallX, distanceToWall, drawEnd, side);
-
         }
 
         while (!renderStack.isEmpty()) {
@@ -247,12 +253,15 @@ public class Renderer {
 
             // floor
             int floorColor = floor.getPixels()[floor.getWidth() * floorTexY + floorTexX];
+            floorColor = mask.augmentColor(eq, floorColor, xx, y, pix.getWidth(), pix.getHeight());
             floorColor = ColorUtils.darken(floorColor, world.getEnvironment().getDarkness(), currentDist);
+
             pix.fillRect(floorColor, xx, y + offset, BLOCKINESS, 1);
 
             // ceiling
             int ceilColor = ceil.getPixels()[ceil.getWidth() * floorTexY + floorTexX];
             ceilColor = ColorUtils.darken(ceilColor, world.getEnvironment().getDarkness(), currentDist);
+            ceilColor = mask.augmentColor(eq, ceilColor, xx, y, pix.getWidth(), pix.getHeight());
             pix.fillRect(ceilColor, xx, h - y + offset, BLOCKINESS, 1);
         }
     }
@@ -271,6 +280,7 @@ public class Renderer {
             color = ColorUtils.darken(color, world.getEnvironment().getDarkness(), p.distanceToWall);
             if (p.side)
                 color = ColorUtils.quickDarken(color);
+            color = mask.augmentColor(eq, color, p.xx, yy, pix.getWidth(), pix.getHeight());
             pix.fillRect(color, p.xx, drawY, BLOCKINESS, 1);
         }
     }
@@ -347,8 +357,10 @@ public class Renderer {
 
                             color = ColorUtils.darken(color, world.getEnvironment().getDarkness(),
                                     camera.getPosition().distance(m.getPosition()));
+                            color = mask.augmentColor(eq, color, stripe, y, pix.getWidth(), pix.getHeight());
 
                             int drawY = y + offset;
+
                             pix.fillRect(color, stripe, drawY, BLOCKINESS, 1);
                         }
                 }

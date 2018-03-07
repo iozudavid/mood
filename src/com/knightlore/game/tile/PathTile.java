@@ -24,14 +24,22 @@ public class PathTile extends Tile {
     public void onEntered(Player player) {
     }
 
+    /*
     @Override
     public TileType getTileType() {
         return TileType.path;
     }
+    */
 
     @Override
     public char toChar() {
         return '-';
+    }
+
+    @Override
+    public Tile copy() {
+        // TODO Auto-generated method stub
+        return new PathTile();
     }
     
 }

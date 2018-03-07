@@ -85,7 +85,7 @@ public class PathFinder {
     }
 
     private boolean isInBounds(Point p, double[][] grid) {
-        // modifying this because we don't want our path to 
+        // modifying this because we don't want our path to
         // be on the very edge of the map
         //return p.x >= 0 && p.x < grid.length && p.y >= 0 && p.y < grid[0].length;
         if(!isForMap) {
@@ -93,6 +93,7 @@ public class PathFinder {
         }else {
             return p.x >= 1 && p.x < grid.length-1 && p.y >= 1 && p.y <grid[0].length -1;
         }
+
     }
 
     public void setCostGrid(double[][] costGrid) {
