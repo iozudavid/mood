@@ -54,7 +54,7 @@ public class ZombieServer extends ZombieShared {
             return;
         }
 
-        Player closestPlayer = players.get(0);
+        Entity closestPlayer = players.get(0);
         List<Point> shortestPath = pathsToPlayers.get(0);
         for (int i = 0; i < players.size(); i++) {
             List<Point> path = pathsToPlayers.get(i);
@@ -67,7 +67,7 @@ public class ZombieServer extends ZombieShared {
         currentPath = shortestPath;
         System.out.println("current path size" + currentPath.size());
         if (currentPath.size() <= ATTACK_RANGE) {
-            closestPlayer.takeDamage(DAMAGE);
+            closestPlayer.takeDamage(DAMAGE, this);
             System.out.println("Zombie attacked");
         }
 
@@ -101,11 +101,11 @@ public class ZombieServer extends ZombieShared {
     }
 
     @Override
-    public void onCollide(Player player) {
+    public void onCollide(Entity player) {
     }
     
     @Override
-    public void takeDamage(int damage) {
+    public void takeDamage(int damage, Entity inflictor) {
         currentHealth -= damage;
         if(currentHealth <=0) {
             this.position = GameEngine.getSingleton().getWorld().getMap().getRandomSpawnPoint();

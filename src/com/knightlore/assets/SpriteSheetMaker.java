@@ -42,7 +42,7 @@ public class SpriteSheetMaker {
                 System.err.println("Unknown mode " + mode);
             }
         } else {
-            System.out.println("expected 3 arguments, got " + args.length);
+            System.out.println("expected 4 arguments, got " + args.length);
             System.out.println("<mode> <dimensions> <directions> <name>");
         }
 

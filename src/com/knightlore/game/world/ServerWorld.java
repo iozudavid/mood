@@ -37,7 +37,7 @@ public class ServerWorld extends GameWorld {
         }
         TurretShared tboi = new TurretServer(3, map.getRandomSpawnPoint(), Vector2D.UP);
         tboi.init();
-        for (int i = 0; i < 5; i++) {
+        for (int i = 0; i < 15; i++) {
             Player botPlayer = new Player(map.getRandomSpawnPoint(), Vector2D.UP);
             botPlayer.setInputModule(new BotInput());
             botPlayer.init();
@@ -50,7 +50,7 @@ public class ServerWorld extends GameWorld {
     @Override
     public void update() {
         super.update();
-        for (Player player : playerManager.getPlayers()) {
+        for (Entity player : playerManager.getPlayers()) {
             for (Entity ent : ents) {
                 if (player.getBoundingRectangle().intersects(ent.getBoundingRectangle())) {
                     ent.onCollide(player);

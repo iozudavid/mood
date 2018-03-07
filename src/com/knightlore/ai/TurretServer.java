@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.knightlore.engine.GameEngine;
 import com.knightlore.game.Player;
+import com.knightlore.game.entity.Entity;
 import com.knightlore.utils.Physics;
 import com.knightlore.utils.RaycastHit;
 import com.knightlore.utils.Vector2D;
@@ -30,12 +31,12 @@ public final class TurretServer extends TurretShared {
     }
     
     @Override
-    public void onCollide(Player ent) {
+    public void onCollide(Entity ent) {
     }
     
     private void think() {
         List<Player> players = GameEngine.getSingleton().getGameObjectManager().findObjectsOfType(Player.class);
-        for (Player player : players) {
+        for (Entity player : players) {
             double sqrDist = player.getPosition().sqrDistTo(this.position);
             if (sqrDist < sqrRange) {
                 // compute dir to check
@@ -74,7 +75,7 @@ public final class TurretServer extends TurretShared {
             return;
         }
         // just deal 15 damage
-        target.takeDamage(DAMAGE);
+        target.takeDamage(DAMAGE, this);
     }
     
     @Override
