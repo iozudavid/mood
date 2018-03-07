@@ -36,7 +36,7 @@ public class Player extends Entity {
     // private volatile boolean finished = false;
 
     private String name = "noname";
-    
+
     // Returns a new instance. See NetworkObject for details.
     public static NetworkObject build(UUID uuid, ByteBuffer state) {
         System.out.println("Player build, state size: " + state.remaining());
@@ -130,7 +130,14 @@ public class Player extends Entity {
                 }
             }
         }
+        
+        updateInertia();
+        prevPos = position;
+        prevDir = direction;
+        currentWeapon.update();
+    }
 
+    private void updateInertia() {
         final double p = 0.1D;
         inertiaX += (int) (p * -inertiaX);
         inertiaY += (int) (p * -inertiaY);
@@ -157,10 +164,6 @@ public class Player extends Entity {
 
             inertiaX += currentWeapon.getInertiaCoeffX() * diff;
         }
-
-        prevPos = position;
-        prevDir = direction;
-        currentWeapon.update();
     }
 
     private boolean shootOnNextUpdate;
@@ -227,17 +230,17 @@ public class Player extends Entity {
     @Override
     public void takeDamage(int damage) {
         currentHealth -= damage;
-        if(currentHealth <=0) {
-            System.out.println("Player "+getName()+ " died.");
+        if (currentHealth <= 0) {
+            System.out.println("Player " + getName() + " died.");
             Respawn();
         }
     }
-    
+
     private void Respawn() {
         this.position = GameEngine.getSingleton().getWorld().getMap().getRandomSpawnPoint();
         currentHealth = MAX_HEALTH;
         inputModule.onRespawn(this);
-        System.out.println("Player "+getName()+ " respawned.");
+        System.out.println("Player " + getName() + " respawned.");
     }
 
     public void setInputModule(InputModule inp) {
@@ -264,4 +267,3 @@ public class Player extends Entity {
         return MAX_HEALTH;
     }
 }
-

@@ -8,11 +8,8 @@ import javax.swing.JButton;
 import javax.swing.JPanel;
 
 public class TileChooserPanel extends JPanel {
-    private static final ImmutableList<Tile> options = ImmutableList.of(
-            AirTile.getInstance(),
-            new BrickTile(),
-            new BushTile()
-    );
+    private static final ImmutableList<Tile> options = ImmutableList.of(AirTile.getInstance(), new BrickTile(),
+            new BushTile());
 
     public TileChooserPanel() {
         super();
