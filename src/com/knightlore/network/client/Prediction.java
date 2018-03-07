@@ -3,6 +3,7 @@ package com.knightlore.network.client;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import com.knightlore.game.Player;
 import com.knightlore.network.NetworkObject;
@@ -12,12 +13,14 @@ import com.knightlore.network.protocol.NetworkUtils;
 public class Prediction {
 
 	// first double is the input timestemp
-	private ArrayList<ByteBuffer> clientInputHistory;
-	private double nextPacketNoToSend;
+	private CopyOnWriteArrayList<byte[]> clientInputHistory;
+	private double sentToServer;
+	private double receiveFromServer;
 	
 	public Prediction(){
-		this.clientInputHistory = new ArrayList<>();
-		this.nextPacketNoToSend++;
+		this.clientInputHistory = new CopyOnWriteArrayList<>();
+		this.sentToServer=0;
+		this.receiveFromServer=0;
 	}
 
 	// this will be called when a packet
@@ -25,17 +28,22 @@ public class Prediction {
 	public Player onServerFrame(Player player, ByteBuffer received) {
 		// remove the old history
 		// inputs before this packet was sent
-		double timeStemp = received.getDouble();
-		Iterator<ByteBuffer> bufferIterator = this.clientInputHistory.iterator();
-		while(bufferIterator.hasNext()){
-			ByteBuffer b = bufferIterator.next();
-			double time = b.getDouble();
-			b.rewind();
-			if(time<=timeStemp)
-				bufferIterator.remove();
+		this.receiveFromServer++;
+		NetworkUtils.getStringFromBuf(received);
+		NetworkUtils.getStringFromBuf(received);
+		double delta = Math.max(0, this.sentToServer - this.receiveFromServer);
+		synchronized (this.clientInputHistory) {
+			Iterator<byte[]> bufferIterator = this.clientInputHistory.iterator();
+			if (this.clientInputHistory.size() > 0 && delta == 0)
+				this.clientInputHistory.remove(0);
+			while (delta >= 0 && bufferIterator.hasNext()) {
+				@SuppressWarnings("unused")
+				byte[] b = bufferIterator.next();
+				if (delta > 0)
+					bufferIterator.remove();
+				delta--;
+			}
 		}
-		NetworkUtils.getStringFromBuf(received);
-		NetworkUtils.getStringFromBuf(received);
 		double size = received.getDouble();
 		double xPos = received.getDouble();
 		double yPos = received.getDouble();
@@ -53,10 +61,22 @@ public class Prediction {
 		player.setyPlane(yPlane);
 		player.setOnNextShot(shootOnNext==1 ? true : false);
 		
+		
+		System.out.println("===========");
+		System.out.println(xPos);
+		System.out.println(yPos);
+		System.out.println(xDir);
+		System.out.println(yDir);
+		System.out.println(xPlane);
+		System.out.println(yPlane);
+		System.out.println("=============SERVER");
 		//predict again the player state
 		//based on server packets
-		for(ByteBuffer nextInput : this.clientInputHistory)
-			player.setInputState(nextInput);
+		synchronized (this.clientInputHistory) {
+			for (byte[] nextInput : this.clientInputHistory) {
+				player.setInputState(nextInput);
+			}
+		}
 		
 		// return new player state
 		// predicted using last packet received from server
@@ -66,17 +86,20 @@ public class Prediction {
 	}
 	
 	// called every client frame
-	public Player update(Player player, ByteBuffer input) {
+	public Player update(Player player, byte[] input) {
 		player.setInputState(input);
-		ByteBuffer inputWithNo = ByteBuffer.allocate(NetworkObject.BYTE_BUFFER_DEFAULT_SIZE);
-		inputWithNo.putDouble(this.nextPacketNoToSend);
-		this.nextPacketNoToSend++;
-		for(int i=0; i<ClientProtocol.getIndexActionMap().size();i++){
-			inputWithNo.putInt(input.getInt());
-			inputWithNo.put(input.get());
+		System.out.println("===========");
+		System.out.println(player.getxPos());
+		System.out.println(player.getyPos());
+		System.out.println(player.getxDir());
+		System.out.println(player.getyDir());
+		System.out.println(player.getxPlane());
+		System.out.println(player.getyPlane());
+		System.out.println("=============CLIENT");
+		synchronized(this.clientInputHistory){
+			this.clientInputHistory.add(input);
 		}
-		inputWithNo.rewind();
-		this.clientInputHistory.add(inputWithNo);
+		this.sentToServer++;
 		return player;
 	}
 

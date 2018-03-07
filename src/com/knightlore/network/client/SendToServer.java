@@ -16,8 +16,6 @@ import com.knightlore.network.NetworkObject;
 import com.knightlore.network.protocol.ClientController;
 import com.knightlore.network.protocol.ClientProtocol;
 import com.knightlore.network.protocol.NetworkUtils;
-import com.knightlore.utils.Tuple;
-import com.knightlore.utils.Vector2D;
 
 public class SendToServer implements Runnable {
     // How many times PER SECOND to check for new state, and send it if
@@ -39,6 +37,7 @@ public class SendToServer implements Runnable {
     private ClientNetworkObjectManager manager;
     private UUID myUUID;
     private Prediction prediction;
+    private int i = 0;
 
     public SendToServer(Connection conn) {
         this.conn = conn;
@@ -95,6 +94,7 @@ public class SendToServer implements Runnable {
         // Send a controls update if either the controls have changed or
         // a regular update is due.
     	
+    	System.out.println(this.manager.getMyPlayer().getDirection());
         synchronized (this.currentState) {
         	ArrayList<ByteBuffer> lastStates = this.manager.getPlayerStateOnServer();
         	if(!lastStates.isEmpty()){
@@ -113,7 +113,13 @@ public class SendToServer implements Runnable {
             	this.currentState.position(0);
             	NetworkUtils.getStringFromBuf(this.currentState);
             	NetworkUtils.getStringFromBuf(this.currentState);
-            	this.prediction.update(this.manager.getMyPlayer(),this.currentState);
+            	byte[] inputsAsArray = new byte[ClientProtocol.getIndexActionMap().size()*2];
+            	int count=0;
+            	for(int i=0;i<ClientProtocol.getIndexActionMap().size(); i++){
+            		inputsAsArray[count++] = (byte)this.currentState.getInt();
+            		inputsAsArray[count++] = this.currentState.get();
+            	}
+            	this.prediction.update(this.manager.getMyPlayer(),inputsAsArray);
             	this.currentState.position(0);
                 this.lastState = currentState;
             }

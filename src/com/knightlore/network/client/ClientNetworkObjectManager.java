@@ -171,10 +171,18 @@ public class ClientNetworkObjectManager extends NetworkObjectManager {
     
     public ArrayList<ByteBuffer> getPlayerStateOnServer(){
 		synchronized (this.myPlayerStateOnServer) {
-			ArrayList<ByteBuffer> copyStates = this.myPlayerStateOnServer;
+			ArrayList<ByteBuffer> copyStates = new ArrayList<>();
+			for(ByteBuffer b : this.myPlayerStateOnServer)
+				copyStates.add(b);
 			this.myPlayerStateOnServer.clear();
 			return copyStates;
 		}
     }
+
+	@Override
+	public void deserialize2(ByteBuffer buffer) {
+		// TODO Auto-generated method stub
+		
+	}
 
 }

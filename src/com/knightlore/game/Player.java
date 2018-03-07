@@ -42,7 +42,8 @@ public class Player extends Entity {
         System.out.println("Player build, state size: " + state.remaining());
         NetworkObject obj = new Player(uuid, Vector2D.ONE, Vector2D.ONE);
         obj.init();
-        obj.deserialize(state);
+        obj.deserialize2(state);
+        
         return obj;
     }
 
@@ -101,8 +102,25 @@ public class Player extends Entity {
                 }
                 Byte value = buf.get();
                 inputState.put(control, value);
-                if(control==ClientController.SHOOT)
-                	break;
+            }
+        }
+
+    }
+    
+    public void setInputState(byte[] inputs) {
+        synchronized (inputState) {
+            for(int i=0;i<inputs.length;i=i+2) {
+                // take the control
+                // using client protocol
+                // to fetch the order
+                ClientController control = null;
+                try {
+                    control = ClientProtocol.getByIndex(inputs[i]);
+                } catch (IOException e) {
+                    System.err.println("Index not good... " + e.getMessage());
+                }
+                Byte value = inputs[i+1];
+                inputState.put(control, value);
             }
         }
 
@@ -125,7 +143,7 @@ public class Player extends Entity {
             // respective method.
             // DEBUG
             for (Entry<ClientController, Byte> entry : inputState.entrySet()) {
-                // For boolean inputs (i.e. all current inputs), 0 represents
+            	// For boolean inputs (i.e. all current inputs), 0 represents
                 // false.
                 if (entry.getValue() != 0) {
                     ACTION_MAPPINGS.get(entry.getKey()).run();

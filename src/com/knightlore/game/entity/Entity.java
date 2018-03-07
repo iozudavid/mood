@@ -222,9 +222,6 @@ public abstract class Entity extends NetworkObject implements IMinimapObject, Pr
 
     @Override
     public synchronized void deserialize(ByteBuffer buf) {
-    	// timestemp not interesting here
-    	// no point to store it
-    	buf.getDouble();
         size = buf.getDouble();
         double posX = buf.getDouble();
         double posY = buf.getDouble();
@@ -232,6 +229,22 @@ public abstract class Entity extends NetworkObject implements IMinimapObject, Pr
         double dirX = buf.getDouble();
         double dirY = buf.getDouble();
         direction = new Vector2D(dirX, dirY);
+        double planeX = buf.getDouble();
+        double planeY = buf.getDouble();
+        plane = new Vector2D(planeX, planeY);
+        // zOffset = buf.getInt();
+    }
+    
+    public synchronized void deserialize2(ByteBuffer buf) {
+        size = buf.getDouble();
+        double posX = buf.getDouble();
+        double posY = buf.getDouble();
+        position = new Vector2D(posX, posY);
+        double dirX = buf.getDouble();
+        double dirY = buf.getDouble();
+        direction = new Vector2D(dirX, dirY);
+        System.out.println("=============222222222222222");
+        System.out.println(direction);
         double planeX = buf.getDouble();
         double planeY = buf.getDouble();
         plane = new Vector2D(planeX, planeY);

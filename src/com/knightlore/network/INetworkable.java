@@ -18,6 +18,8 @@ public interface INetworkable {
 
     // This should be the inverse function of serialize.
     public void deserialize(ByteBuffer buffer);
+    
+    public void deserialize2(ByteBuffer buffer);
 
     // Networked objects must have a unique UUID.
     public UUID getObjectId();
