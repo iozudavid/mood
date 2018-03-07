@@ -2,26 +2,37 @@ package com.knightlore.network.client;
 
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
+import java.util.Iterator;
 
 import com.knightlore.game.Player;
+import com.knightlore.network.NetworkObject;
+import com.knightlore.network.protocol.ClientProtocol;
 import com.knightlore.network.protocol.NetworkUtils;
-import com.knightlore.utils.Vector2D;
 
 public class Prediction {
 
-	private ArrayList<PredictedState> history;
-	private Player player;
+	// first double is the input timestemp
+	private ArrayList<ByteBuffer> clientInputHistory;
+	private double nextPacketNoToSend;
 	
 	public Prediction(){
-		this.history = new ArrayList<>();
+		this.clientInputHistory = new ArrayList<>();
+		this.nextPacketNoToSend++;
 	}
 
 	// this will be called when a packet
 	// is received from the server
-	public void onServerFrame(Player player, ByteBuffer received) {
-
-		if(this.history.size()>30){
-			this.history.remove(0);
+	public Player onServerFrame(Player player, ByteBuffer received) {
+		// remove the old history
+		// inputs before this packet was sent
+		double timeStemp = received.getDouble();
+		Iterator<ByteBuffer> bufferIterator = this.clientInputHistory.iterator();
+		while(bufferIterator.hasNext()){
+			ByteBuffer b = bufferIterator.next();
+			double time = b.getDouble();
+			b.rewind();
+			if(time<=timeStemp)
+				bufferIterator.remove();
 		}
 		NetworkUtils.getStringFromBuf(received);
 		NetworkUtils.getStringFromBuf(received);
@@ -33,37 +44,40 @@ public class Prediction {
 		double xPlane = received.getDouble();
 		double yPlane = received.getDouble();
 		int shootOnNext = received.getInt();
-	//	if(player.getxPos()
+		player.setSize(size);
+		player.setxPos(xPos);
+		player.setyPos(yPos);
+		player.setxDir(xDir);
+		player.setyDir(yDir);
+		player.setxPlane(xPlane);
+		player.setyPlane(yPlane);
+		player.setOnNextShot(shootOnNext==1 ? true : false);
+		
+		//predict again the player state
+		//based on server packets
+		for(ByteBuffer nextInput : this.clientInputHistory)
+			player.setInputState(nextInput);
+		
+		// return new player state
+		// predicted using last packet received from server
+		// in order to keep server reconciliation
+		return player;
 		
 	}
 	
 	// called every client frame
-	public void update(Player player) {
-		if(this.history.size()>30){
-			this.history.remove(0);
+	public Player update(Player player, ByteBuffer input) {
+		player.setInputState(input);
+		ByteBuffer inputWithNo = ByteBuffer.allocate(NetworkObject.BYTE_BUFFER_DEFAULT_SIZE);
+		inputWithNo.putDouble(this.nextPacketNoToSend);
+		this.nextPacketNoToSend++;
+		for(int i=0; i<ClientProtocol.getIndexActionMap().size();i++){
+			inputWithNo.putInt(input.getInt());
+			inputWithNo.put(input.get());
 		}
-		PredictedState ps = new PredictedState(player.serialize());
-		this.history.add(ps);
-	}
-	
-	public double getTimeFormat(){
-		double time = System.currentTimeMillis();
-		while(time>=100){
-			time *= 0.1;
-		}
-		return time;
-	}
-	
-	public Vector2D getPosition(){
-		return this.player.getPosition();
-	}
-	
-	public Vector2D getDirection(){
-		return this.player.getDirection();
-	}
-	
-	public Vector2D getPlane(){
-		return this.player.getPlane();
+		inputWithNo.rewind();
+		this.clientInputHistory.add(inputWithNo);
+		return player;
 	}
 
 }

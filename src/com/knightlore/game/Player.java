@@ -101,6 +101,8 @@ public class Player extends Entity {
                 }
                 Byte value = buf.get();
                 inputState.put(control, value);
+                if(control==ClientController.SHOOT)
+                	break;
             }
         }
 
@@ -252,6 +254,10 @@ public class Player extends Entity {
         this.name = name;
     }
 
+    public void setOnNextShot(boolean b){
+    	this.shootOnNextUpdate = b;
+    }
+    
     public void setCurrentWeapon(Weapon currentWeapon) {
         this.currentWeapon = currentWeapon;
     }

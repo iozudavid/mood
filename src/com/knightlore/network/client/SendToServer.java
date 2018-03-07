@@ -76,31 +76,6 @@ public class SendToServer implements Runnable {
         }
         return buf;
     }
-    
-    private synchronized ByteBuffer getLocalCurrentControlState() {
-        // ByteBuffer to store current input state.
-        ByteBuffer buf = ByteBuffer.allocate(NetworkObject.BYTE_BUFFER_DEFAULT_SIZE);
-        for (int i = 0; i < ClientProtocol.getIndexActionMap().size(); i++) {
-            // Encode the current control as an integer.
-            buf.putInt(i);
-            // taking the current control
-            ClientController currentControl = null;
-            int keyCode;
-            try {
-                currentControl = ClientProtocol.getByIndex(i);
-                keyCode = ClientController.getKeyCode(currentControl);
-            } catch (IOException e) {
-                System.err.println("ClientControl index out of range");
-                return null;
-            }
-            if (InputManager.isKeyDown(keyCode)) {
-                buf.put((byte) 1);
-            } else {
-                buf.put((byte) 0);
-            }
-        }
-        return buf;
-    }
 
     // this should be use to close this thread
     // best way to do this as the thread will be blocked listening for the next
@@ -134,12 +109,14 @@ public class SendToServer implements Runnable {
             }
             if(!Arrays.equals(currentState.array(), lastState.array())){
             	updateCounter = 1;
-            	ByteBuffer copy = currentState;
-            	NetworkUtils.getStringFromBuf(copy);
-            	NetworkUtils.getStringFromBuf(copy);
-            	this.manager.getMyPlayer().setInputState(copy);
-            	this.prediction.update(this.manager.getMyPlayer());
+            	this.currentState.position(0);
+            	NetworkUtils.getStringFromBuf(this.currentState);
+            	NetworkUtils.getStringFromBuf(this.currentState);
+            	this.prediction.update(this.manager.getMyPlayer(),this.currentState);
+            	this.currentState.position(0);
+            	System.out.println("====Try");
             	conn.send(currentState);
+            	System.out.println("SENT");
                 this.lastState = currentState;
             }
         }

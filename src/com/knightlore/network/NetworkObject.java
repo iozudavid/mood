@@ -26,6 +26,7 @@ import com.knightlore.utils.Vector2D;
 public abstract class NetworkObject extends GameObject implements INetworkable {
     private UUID objectUniqueID;
     private NetworkObjectManager networkObjectManager = GameEngine.getSingleton().getNetworkObjectManager();
+    private double nextPacketNumberToSend;
 
     protected Map<String, Consumer<ByteBuffer>> networkConsumers = new HashMap<>();
 
@@ -36,6 +37,7 @@ public abstract class NetworkObject extends GameObject implements INetworkable {
 
     public NetworkObject(UUID uuid, Vector2D position) {
         super(position);
+        this.nextPacketNumberToSend = 0;
         this.objectUniqueID = uuid;
         setNetworkConsumers();
     }
@@ -75,6 +77,8 @@ public abstract class NetworkObject extends GameObject implements INetworkable {
         ByteBuffer buf = ByteBuffer.allocate(BYTE_BUFFER_DEFAULT_SIZE);
         NetworkUtils.putStringIntoBuf(buf, objectUniqueID.toString());
         NetworkUtils.putStringIntoBuf(buf, remoteMethod);
+        buf.putDouble(this.nextPacketNumberToSend);
+        this.nextPacketNumberToSend++;
         return buf;
     }
     

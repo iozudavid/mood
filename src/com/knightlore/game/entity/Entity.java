@@ -222,6 +222,9 @@ public abstract class Entity extends NetworkObject implements IMinimapObject, Pr
 
     @Override
     public synchronized void deserialize(ByteBuffer buf) {
+    	// timestemp not interesting here
+    	// no point to store it
+    	buf.getDouble();
         size = buf.getDouble();
         double posX = buf.getDouble();
         double posY = buf.getDouble();
@@ -238,6 +241,10 @@ public abstract class Entity extends NetworkObject implements IMinimapObject, Pr
     @Override
     public double getDrawSize() {
         return 2 * size;
+    }
+    
+    public void setSize(double s){
+    	this.size = s;
     }
     
     public void takeDamage(int damage) {

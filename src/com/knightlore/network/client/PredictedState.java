@@ -25,7 +25,7 @@ public class PredictedState {
 	}
 	
 	private void depack(){
-		this.time = System.currentTimeMillis();
+		this.time = this.currentState.getDouble();
 		this.uuid=(NetworkUtils.getStringFromBuf(currentState));
 		//method remote
 		NetworkUtils.getStringFromBuf(currentState);
