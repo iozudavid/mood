@@ -175,7 +175,7 @@ public class Player extends Entity {
     }
 
     @Override
-    public void onCollide(Entity player) {
+    public void onCollide(Player player) {
     }
 
     // TODO: serialize weapon etc.

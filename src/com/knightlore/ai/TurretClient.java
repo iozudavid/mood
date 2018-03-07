@@ -3,7 +3,7 @@ package com.knightlore.ai;
 import java.nio.ByteBuffer;
 import java.util.UUID;
 
-import com.knightlore.game.entity.Entity;
+import com.knightlore.game.Player;
 import com.knightlore.network.NetworkObject;
 import com.knightlore.utils.Vector2D;
 
@@ -27,7 +27,7 @@ public final class TurretClient extends TurretShared {
     }
     
     @Override
-    public void onCollide(Entity player) {
+    public void onCollide(Player player) {
     }
     
     @Override

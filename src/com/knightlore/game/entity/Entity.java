@@ -5,6 +5,7 @@ import java.nio.ByteBuffer;
 import java.util.UUID;
 
 import com.knightlore.engine.GameEngine;
+import com.knightlore.game.Player;
 import com.knightlore.game.Team;
 import com.knightlore.game.area.Map;
 import com.knightlore.game.tile.Tile;
@@ -75,7 +76,7 @@ public abstract class Entity extends NetworkObject implements IMinimapObject, Pr
         /* ONLY CALLED IF THIS ENTITY IS THE CAMERA SUBJECT */
     }
     
-    public abstract void onCollide(Entity player);
+    public abstract void onCollide(Player player);
     
     public Graphic getGraphic(Vector2D playerPos) {
         return getDirectionalSprite().getCurrentGraphic(position, direction, playerPos);

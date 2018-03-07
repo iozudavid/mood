@@ -50,7 +50,7 @@ public class ServerWorld extends GameWorld {
     @Override
     public void update() {
         super.update();
-        for (Entity player : playerManager.getPlayers()) {
+        for (Player player : playerManager.getPlayers()) {
             for (Entity ent : ents) {
                 if (player.getBoundingRectangle().intersects(ent.getBoundingRectangle())) {
                     ent.onCollide(player);

@@ -1,5 +1,6 @@
 package com.knightlore.game.entity;
 
+import com.knightlore.game.Player;
 import com.knightlore.network.NetworkObject;
 import com.knightlore.utils.Vector2D;
 
@@ -29,6 +30,6 @@ public class ZombieClient extends ZombieShared {
     }
 
     @Override
-    public void onCollide(Entity player) {
+    public void onCollide(Player player) {
     }
 }

@@ -31,7 +31,7 @@ public final class TurretServer extends TurretShared {
     }
     
     @Override
-    public void onCollide(Entity ent) {
+    public void onCollide(Player player) {
     }
     
     private void think() {
