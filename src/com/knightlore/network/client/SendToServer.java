@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.ByteBuffer;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.UUID;
 
@@ -15,6 +16,8 @@ import com.knightlore.network.NetworkObject;
 import com.knightlore.network.protocol.ClientController;
 import com.knightlore.network.protocol.ClientProtocol;
 import com.knightlore.network.protocol.NetworkUtils;
+import com.knightlore.utils.Tuple;
+import com.knightlore.utils.Vector2D;
 
 public class SendToServer implements Runnable {
     // How many times PER SECOND to check for new state, and send it if
@@ -73,6 +76,31 @@ public class SendToServer implements Runnable {
         }
         return buf;
     }
+    
+    private synchronized ByteBuffer getLocalCurrentControlState() {
+        // ByteBuffer to store current input state.
+        ByteBuffer buf = ByteBuffer.allocate(NetworkObject.BYTE_BUFFER_DEFAULT_SIZE);
+        for (int i = 0; i < ClientProtocol.getIndexActionMap().size(); i++) {
+            // Encode the current control as an integer.
+            buf.putInt(i);
+            // taking the current control
+            ClientController currentControl = null;
+            int keyCode;
+            try {
+                currentControl = ClientProtocol.getByIndex(i);
+                keyCode = ClientController.getKeyCode(currentControl);
+            } catch (IOException e) {
+                System.err.println("ClientControl index out of range");
+                return null;
+            }
+            if (InputManager.isKeyDown(keyCode)) {
+                buf.put((byte) 1);
+            } else {
+                buf.put((byte) 0);
+            }
+        }
+        return buf;
+    }
 
     // this should be use to close this thread
     // best way to do this as the thread will be blocked listening for the next
@@ -91,17 +119,27 @@ public class SendToServer implements Runnable {
     public void tick() {
         // Send a controls update if either the controls have changed or
         // a regular update is due.
+    	
         synchronized (this.currentState) {
+        	ArrayList<ByteBuffer> lastStates = this.manager.getPlayerStateOnServer();
+        	if(!lastStates.isEmpty()){
+        		for(ByteBuffer b : lastStates){
+        			this.prediction.onServerFrame(this.manager.getMyPlayer(), b);
+        		}
+        	}
             if (updateCounter++ >= REGULAR_UPDATE_FREQ) {
                 updateCounter = 1;
-                prediction.update(manager.getMyPlayer(), manager.getMyPlayer().serialize());
                 conn.send(currentState);
                 this.lastState = currentState;
             }
-            if (!Arrays.equals(currentState.array(), lastState.array())) {
-                updateCounter = 1;
-                prediction.update(manager.getMyPlayer(), manager.getMyPlayer().serialize());
-                conn.send(currentState);
+            if(!Arrays.equals(currentState.array(), lastState.array())){
+            	updateCounter = 1;
+            	ByteBuffer copy = currentState;
+            	NetworkUtils.getStringFromBuf(copy);
+            	NetworkUtils.getStringFromBuf(copy);
+            	this.manager.getMyPlayer().setInputState(copy);
+            	this.prediction.update(this.manager.getMyPlayer());
+            	conn.send(currentState);
                 this.lastState = currentState;
             }
         }

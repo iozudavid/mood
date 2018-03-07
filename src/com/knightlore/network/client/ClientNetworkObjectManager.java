@@ -3,6 +3,7 @@ package com.knightlore.network.client;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.nio.ByteBuffer;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -21,12 +22,14 @@ public class ClientNetworkObjectManager extends NetworkObjectManager {
     private Player myPlayer = null;
     // Whether we've received enough information to start the game.
     private boolean finishedSetUp = false;
+    private ArrayList<ByteBuffer> myPlayerStateOnServer;
 
     private ClientWorld clientWorld;
 
     public ClientNetworkObjectManager(ClientWorld world) {
         super();
         this.clientWorld = world;
+        this.myPlayerStateOnServer = new ArrayList<>();
         setNetworkConsumers();
     }
 
@@ -158,6 +161,20 @@ public class ClientNetworkObjectManager extends NetworkObjectManager {
     
     public boolean hasFinishedSetup() {
         return finishedSetUp;
+    }
+    
+    public void addToPlayerStateOnServer(ByteBuffer b){
+    	synchronized(this.myPlayerStateOnServer){
+    		this.myPlayerStateOnServer.add(b);
+    	}
+    }
+    
+    public ArrayList<ByteBuffer> getPlayerStateOnServer(){
+		synchronized (this.myPlayerStateOnServer) {
+			ArrayList<ByteBuffer> copyStates = this.myPlayerStateOnServer;
+			this.myPlayerStateOnServer.clear();
+			return copyStates;
+		}
     }
 
 }
