@@ -109,14 +109,12 @@ public class SendToServer implements Runnable {
             }
             if(!Arrays.equals(currentState.array(), lastState.array())){
             	updateCounter = 1;
+            	conn.send(currentState);
             	this.currentState.position(0);
             	NetworkUtils.getStringFromBuf(this.currentState);
             	NetworkUtils.getStringFromBuf(this.currentState);
             	this.prediction.update(this.manager.getMyPlayer(),this.currentState);
             	this.currentState.position(0);
-            	System.out.println("====Try");
-            	conn.send(currentState);
-            	System.out.println("SENT");
                 this.lastState = currentState;
             }
         }
