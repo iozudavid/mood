@@ -3,28 +3,30 @@ package com.knightlore.game.entity.pickup;
 import java.nio.ByteBuffer;
 import java.util.UUID;
 
+import com.knightlore.engine.GameEngine;
 import com.knightlore.game.Player;
 import com.knightlore.network.NetworkObject;
 import com.knightlore.render.graphic.sprite.DirectionalSprite;
 import com.knightlore.utils.Vector2D;
 
 public class ShotgunPickup extends PickupItem {
-
+    
     // Returns a new instance. See NetworkObject for details.
     public static NetworkObject build(UUID uuid, ByteBuffer state) {
-        NetworkObject obj = new ShotgunPickup(uuid, Vector2D.ONE);
+        NetworkObject obj = new ShotgunPickup(uuid, Vector2D.ONE, null);
         obj.init();
         obj.deserialize(state);
         return obj;
     }
 
-    public ShotgunPickup(Vector2D position) {
-        this(UUID.randomUUID(), position);
+    public ShotgunPickup(Vector2D position, PickupManager pickupManager) {
+        this(UUID.randomUUID(), position, pickupManager);
     }
 
-    public ShotgunPickup(UUID uuid, Vector2D position) {
-        super(uuid, position);
+    public ShotgunPickup(UUID uuid, Vector2D position, PickupManager pickupManager) {
+        super(uuid, position, pickupManager);
         sprite = DirectionalSprite.SHOTGUN_DIRECTIONAL_SPRITE;
+        spawnDelay = GameEngine.UPDATES_PER_SECOND * 10;
     }
 
     @Override
@@ -40,6 +42,12 @@ public class ShotgunPickup extends PickupItem {
 
     @Override
     public void onCollide(Player player) {
+        System.out.println("Collided with shotgun pickup!");
+        // update pickup manager
+        addToPickupManager();
+        // give player shotgun
+        // ...
+        // existence of object set to false
         setExists(false);
     }
 

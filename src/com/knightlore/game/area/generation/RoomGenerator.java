@@ -3,6 +3,8 @@ package com.knightlore.game.area.generation;
 import com.knightlore.game.Team;
 import com.knightlore.game.area.Room;
 import com.knightlore.game.area.RoomType;
+import com.knightlore.game.entity.pickup.PickupType;
+import com.knightlore.game.entity.pickup.ShotgunPickup;
 import com.knightlore.game.entity.weapon.Shotgun;
 import com.knightlore.game.tile.AirTile;
 import com.knightlore.game.tile.BreakibleTile;
@@ -12,7 +14,8 @@ import com.knightlore.game.tile.PlayerSpawnTile;
 import com.knightlore.game.tile.Tile;
 import com.knightlore.game.tile.TurretTile;
 import com.knightlore.game.tile.UndecidedTile;
-import com.knightlore.game.tile.WeaponTile;
+import com.knightlore.utils.Vector2D;
+import com.knightlore.game.tile.PickupTile;
 
 import java.util.Random;
 
@@ -55,26 +58,13 @@ public class RoomGenerator extends ProceduralAreaGenerator {
                          grid[2][height-3] = new TurretTile(Team.blue);
                          grid[width-3][2] = new TurretTile(Team.blue);
                          grid[width-3][height-3] = new TurretTile(Team.blue);
-                         break;
-            case weapon : 
-                          for(int x=0; x < grid.length; x++) {
-                              for(int y=0; y<grid[0].length; y++) {
-                                  grid[x][y] = new LavaTile();
-                              }
-                          }
-                          grid[2][2] = new TurretTile(Team.none);
-                          grid[2][height-3] = new TurretTile(Team.none);
-                          grid[width-3][2] = new TurretTile(Team.none);
-                          grid[width-3][height-3] = new TurretTile(Team.none);
-                          // surround weapon with breakible tiles
-                          for(int x = width/2 -1; x<width/2 + 2; x++) {
-                              for(int y = height/2 -1; y<height/2 + 2; y++) {
-                                  grid[x][y] = BreakibleTile.getInstance();
-                              }
-                          }
-
-                          // TODO: Pick a weapon in the weapon tile class
-                          grid[width/2][height/2] = new WeaponTile(new Shotgun());                         
+                         break; 
+            case pickup :
+                        if(rand.nextDouble() < 0.5) {
+                        grid[width/2][height/2] = new PickupTile(PickupType.shotgun);
+                        }else {
+                        grid[width/2][height/2] = new PickupTile(PickupType.health);
+                        }
         }
         fillUndecidedTiles();
         addWalls();

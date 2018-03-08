@@ -56,11 +56,13 @@ public abstract class Area implements Serializable {
     }
 
     public int getWidth() {
-        return width;
+        return grid.length;
+        //return width;
     }
 
     public int getHeight() {
-        return height;
+        return grid[0].length;
+        //return height;
     }
 
     public String toDebugString() {

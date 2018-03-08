@@ -22,8 +22,10 @@ public class ServerWorld extends GameWorld {
     }
     
     public void buildEntities() {
+        /*
         // add the mobs
-        ShotgunPickup shot = new ShotgunPickup(new Vector2D(8, 8));
+        // null field means no pickup manager
+        ShotgunPickup shot = new ShotgunPickup(new Vector2D(8, 8), null);
         shot.init();
         ents.add(shot);
         ZombieServer zom = new ZombieServer(map.getRandomSpawnPoint());
@@ -31,7 +33,7 @@ public class ServerWorld extends GameWorld {
         ents.add(zom);
         // add pickups
         for (int i = 5; i < 9; i += 2) {
-            ShotgunPickup shotI = new ShotgunPickup(new Vector2D(i, 3));
+            ShotgunPickup shotI = new ShotgunPickup(new Vector2D(i, 3), null);
             shotI.init();
             ents.add(shotI);
         }
@@ -45,6 +47,7 @@ public class ServerWorld extends GameWorld {
             playerManager.addPlayer(botPlayer);
             
         }
+        */
     }
     
     @Override

@@ -2,14 +2,16 @@ package com.knightlore.game.tile;
 
 import com.knightlore.game.Player;
 import com.knightlore.render.graphic.Graphic;
+import com.knightlore.game.entity.pickup.PickupItem;
+import com.knightlore.game.entity.pickup.PickupType;
 import com.knightlore.game.entity.weapon.*;
 
-public class WeaponTile extends Tile {
+public class PickupTile extends Tile {
 
-    Weapon weapon;
+    private PickupType pickupType;
     
-    public WeaponTile(Weapon weapon) {
-        this.weapon = weapon;
+    public PickupTile(PickupType pickupType) {
+        this.pickupType = pickupType;
     }
     
     @Override
@@ -25,27 +27,19 @@ public class WeaponTile extends Tile {
     @Override
     public void onEntered(Player player) {
     }
-
-    /*
-    @Override
-    public TileType getTileType() {
-        return TileType.weapon;
-    }
-    */
     
-    public Weapon getWeapon() {
-        return weapon;
+    public PickupType getPickupType() {
+        return pickupType;
     }
 
     @Override
     public char toChar() {
-        return 'W';
+        return 'p';
     }
 
     @Override
     public Tile copy() {
-        // TODO Auto-generated method stub
-        return new WeaponTile(weapon);
+        return new PickupTile(pickupType);
     }
     
 }

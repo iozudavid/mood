@@ -131,6 +131,10 @@ public final class Vector2D {
         return new Vector2D(point.x+0.5,point.y+0.5);
     }
     
+    public static Vector2D fromGridRef(int x, int y) {
+        return new Vector2D(x + 0.5 , y + 0.5);
+    }
+    
     public static Vector2D fromPoint(Point point) {
         return new Vector2D(point.x,point.y);
     }

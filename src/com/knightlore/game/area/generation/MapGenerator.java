@@ -21,7 +21,7 @@ import com.knightlore.game.tile.PlayerSpawnTile;
 import com.knightlore.game.tile.Tile;
 import com.knightlore.game.tile.TurretTile;
 import com.knightlore.game.tile.UndecidedTile;
-import com.knightlore.game.tile.WeaponTile;
+import com.knightlore.game.tile.PickupTile;
 import com.knightlore.utils.pathfinding.PathFinder;
 
 public class MapGenerator extends ProceduralAreaGenerator {
@@ -71,7 +71,7 @@ public class MapGenerator extends ProceduralAreaGenerator {
         for(int i=1; i < maxRooms; i++) {
             double randInt = rand.nextDouble();
             if(randInt >= 0.66) {
-                roomsToBuild.add(RoomType.weapon);
+                roomsToBuild.add(RoomType.pickup);
             }else {
                 roomsToBuild.add(RoomType.normal);
             }
@@ -241,7 +241,8 @@ public class MapGenerator extends ProceduralAreaGenerator {
                 continue;
             }
             
-            if(currentTile.toChar() == 'W') {
+            // Change this later
+            if(currentTile instanceof PickupTile) {
                 continue;
             }
             
@@ -249,8 +250,8 @@ public class MapGenerator extends ProceduralAreaGenerator {
                 continue;
             }
             
-            //if(currentTile == TurretTile.getInstance()) {
-            if(currentTile.toChar() == 'T') {
+            // Change this later
+            if(currentTile instanceof TurretTile) {
                 continue;
             }
             
