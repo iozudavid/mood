@@ -3,7 +3,7 @@ package com.knightlore.game.entity.weapon;
 import com.knightlore.engine.GameEngine;
 import com.knightlore.game.entity.Entity;
 import com.knightlore.render.graphic.sprite.WeaponSprite;
-import com.knightlore.utils.RaycastHit;
+import com.knightlore.utils.physics.RaycastHit;
 import com.knightlore.utils.Vector2D;
 
 public class Shotgun extends Weapon {

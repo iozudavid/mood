@@ -10,7 +10,7 @@ import com.knightlore.game.Player;
 import com.knightlore.game.PlayerManager;
 import com.knightlore.game.entity.Entity;
 import com.knightlore.network.protocol.ClientController;
-import com.knightlore.utils.RaycastHit;
+import com.knightlore.utils.physics.RaycastHit;
 import com.knightlore.utils.Vector2D;
 
 /**
@@ -135,7 +135,7 @@ public final class BotInput extends InputModule {
             // check actual Line of sight
             RaycastHit hit = GameEngine.getSingleton().getWorld().raycast(myPlayer.getPosition(), dir, 100, SIGHT_DIST,
                     myPlayer);
-            // did we not hit an entity?
+            // did we not hit an ENTITY?
             if (!hit.didHitEntity()) {
                 continue;
             }

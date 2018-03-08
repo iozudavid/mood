@@ -13,7 +13,7 @@ import com.knightlore.engine.input.InputManager;
 import com.knightlore.render.IRenderable;
 import com.knightlore.render.PixelBuffer;
 import com.knightlore.render.graphic.Graphic;
-import com.knightlore.utils.Physics;
+import com.knightlore.utils.physics.Physics;
 import com.knightlore.utils.Vector2D;
 
 public class GUICanvas extends GameObject implements IRenderable {
@@ -145,7 +145,7 @@ public class GUICanvas extends GameObject implements IRenderable {
             }
         } else {
             if (!InputManager.getMouse().isLeftHeld() && lastHeld) {
-                // we have nothing selected... did we click?
+                // we have NOTHING selected... did we click?
                 if (focussed != null) {
                     focussed.onLostFocus();
                     focussed = null;

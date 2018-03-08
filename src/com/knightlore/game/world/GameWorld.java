@@ -11,9 +11,9 @@ import com.knightlore.game.PlayerManager;
 import com.knightlore.game.area.Map;
 import com.knightlore.game.area.generation.MapGenerator;
 import com.knightlore.game.entity.Entity;
-import com.knightlore.utils.Physics;
-import com.knightlore.utils.RaycastHit;
-import com.knightlore.utils.RaycastHitType;
+import com.knightlore.utils.physics.Physics;
+import com.knightlore.utils.physics.RaycastHit;
+import com.knightlore.utils.physics.RaycastHitType;
 import com.knightlore.utils.Vector2D;
 import com.knightlore.utils.pruner.Pruner;
 
@@ -86,21 +86,21 @@ public abstract class GameWorld {
             x = (int) p.getX();
             y = (int) p.getY();
             if (map.getTile(x, y).blockLOS()) {
-                return new RaycastHit(RaycastHitType.wall, p, null);
+                return new RaycastHit(RaycastHitType.WALL, p, null);
             } else {
                 for (int n = 0; n < ents.size(); n++) {
                     if(ents.get(n) == ignore) {
                         continue;
                     }
                     if (Physics.pointInRectangleDoubleTest(p, ents.get(n).getBoundingRectangle())) {
-                        return new RaycastHit(RaycastHitType.entity, p, ents.get(n));
+                        return new RaycastHit(RaycastHitType.ENTITY, p, ents.get(n));
                     }
                 }
             }
             p = p.add(step);
         }
         
-        return new RaycastHit(RaycastHitType.nothing, Vector2D.ZERO, null);
+        return new RaycastHit(RaycastHitType.NOTHING, Vector2D.ZERO, null);
     }
 
     public GameManager getGameManager() {
