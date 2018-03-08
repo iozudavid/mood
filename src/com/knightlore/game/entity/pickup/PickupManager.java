@@ -14,6 +14,7 @@ public class PickupManager implements TickListener{
 
     private double currentTime = 0.0;
     private GameEngine engine;
+    private boolean debug = true;
     
     // keep track of the pickup object and when to place
     private PriorityQueue<PickupPlacement> pickupQueue 
@@ -21,13 +22,8 @@ public class PickupManager implements TickListener{
     
     public PickupManager(Map map) {
         
-        // can probably change this because engine is singleton...
         this.engine = GameEngine.getSingleton();
-        
-        if(map == null) {
-            System.out.println("Map is null! Porque?");
-        }
-        
+
         for(int x=0; x< map.getWidth(); x++) {
             for(int y=0; y< map.getHeight(); y++) {
                 if(!(map.getTile(x, y) instanceof PickupTile)) {
@@ -39,7 +35,10 @@ public class PickupManager implements TickListener{
                 PickupItem item;
                 switch(type){
                     case shotgun : item = new ShotgunPickup(vector, this);
-                    default : item = new ShotgunPickup(vector , this);  
+                                   break;
+                    case health  : item = new HealthPickup(vector , this);
+                                   break;
+                    default      : item = new HealthPickup(vector, this);
                 }
                 pickupQueue.add(new PickupPlacement(0 , item));                
             }
@@ -58,7 +57,7 @@ public class PickupManager implements TickListener{
     public void onTick() {
         
         // something wrong with my logic here...
-        if(pickupQueue.peek() != null) {
+        if(debug == true && pickupQueue.peek() != null) {
             System.out.println("CURRENT TIME: " + currentTime);
             System.out.println("NEXT ITEM TIME: " + pickupQueue.peek().getPlacementTime());
         }
@@ -80,6 +79,7 @@ public class PickupManager implements TickListener{
 
     @Override
     public long interval() {
+        // once per second
         return (long) GameEngine.UPDATES_PER_SECOND;
     }
     

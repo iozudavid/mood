@@ -47,7 +47,7 @@ public class GameEngine implements Runnable {
     private GameObjectManager gameObjectManager;
     private NetworkObjectManager networkObjectManager;
     
-    private PickupManager pickupManager; // ------- ME
+    private PickupManager pickupManager;
 
     private Camera camera;
 
@@ -114,7 +114,8 @@ public class GameEngine implements Runnable {
         System.out.println("World Initialised Successfully.");
 
         if (GameSettings.isServer()) {
-            pickupManager = new PickupManager(world.getMap()); // ------- ME
+            // map must be initialised before handing it the pickup manager
+            pickupManager = new PickupManager(world.getMap());
         }
         
         if (GameSettings.isClient()) {

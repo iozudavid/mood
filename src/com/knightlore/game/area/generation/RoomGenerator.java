@@ -61,10 +61,12 @@ public class RoomGenerator extends ProceduralAreaGenerator {
                          break; 
             case pickup :
                         if(rand.nextDouble() < 0.5) {
-                        grid[width/2][height/2] = new PickupTile(PickupType.shotgun);
+                            grid[width/2][height/2] = new PickupTile(PickupType.health);
                         }else {
-                        grid[width/2][height/2] = new PickupTile(PickupType.health);
+                            grid[width/2][height/2] = new PickupTile(PickupType.shotgun);
                         }
+                        break;
+            default: break;
         }
         fillUndecidedTiles();
         addWalls();
