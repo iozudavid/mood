@@ -29,6 +29,8 @@ public class GraphicSheet {
             ColorFilter.BLUE);
 
     public final static GraphicSheet TURRET_SPRITES = new GraphicSheet("res/models/turret_sprites.png", 128);
+    
+    public final static GraphicSheet CAMERA_SPRITES = new GraphicSheet("res/models/camera_sprites.png", 128);
 
     private final int cellSize;
     private BufferedImage sheet;

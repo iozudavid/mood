@@ -1,6 +1,7 @@
 package com.knightlore.game.tile;
 
 import com.knightlore.game.Player;
+import com.knightlore.game.entity.Entity;
 import com.knightlore.render.graphic.Graphic;
 
 public class PathTile extends Tile {
@@ -21,17 +22,6 @@ public class PathTile extends Tile {
     }
 
     @Override
-    public void onEntered(Player player) {
-    }
-
-    /*
-    @Override
-    public TileType getTileType() {
-        return TileType.path;
-    }
-    */
-
-    @Override
     public char toChar() {
         return '-';
     }
@@ -40,6 +30,12 @@ public class PathTile extends Tile {
     public Tile copy() {
         // TODO Auto-generated method stub
         return new PathTile();
+    }
+
+    @Override
+    public void onEntered(Entity entity) {
+        // TODO Auto-generated method stub
+        
     }
     
 }

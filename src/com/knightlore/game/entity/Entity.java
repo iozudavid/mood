@@ -76,6 +76,13 @@ public abstract class Entity extends NetworkObject implements IMinimapObject, Pr
     }
 
     public abstract void onCollide(Player player);
+    
+    @Override
+    public void onUpdate() {
+        Map map = GameEngine.getSingleton().getWorld().getMap();
+        Tile t = map.getTile((int) position.getX(), (int) position.getY());
+        t.onEntered(this);
+    }
 
     public Graphic getGraphic(Vector2D playerPos) {
         return getDirectionalSprite().getCurrentGraphic(position, direction, playerPos);

@@ -4,6 +4,7 @@ import com.knightlore.game.Player;
 import com.knightlore.game.buff.BuffType;
 import com.knightlore.game.buff.Fire;
 import com.knightlore.game.buff.Slow;
+import com.knightlore.game.entity.Entity;
 import com.knightlore.render.graphic.Graphic;
 
 public class LavaTile extends Tile {
@@ -16,20 +17,6 @@ public class LavaTile extends Tile {
 
     @Override
     public void onShot() {
-    }
-
-    @Override
-    public void onEntered(Player player) {
-        // only apply a buff to player if it
-        // doesn't have it
-        if(!player.hasBuff(BuffType.fire)) {
-            player.addBuff(new Fire());
-        }
-        
-        if(!player.hasBuff(BuffType.slow)) {
-            player.addBuff(new Slow());
-        }
-        
     }
 
     /*
@@ -48,6 +35,21 @@ public class LavaTile extends Tile {
     public Tile copy() {
         // TODO Auto-generated method stub
         return new LavaTile();
+    }
+
+    @Override
+    public void onEntered(Entity entity) {
+        // only apply a buff to player if it
+        // doesn't have it
+        /*
+        if(!entity.hasBuff(BuffType.fire)) {
+            entity.addBuff(new Fire());
+        }
+        
+        if(!entity.hasBuff(BuffType.slow)) {
+            entity.addBuff(new Slow());
+        }
+        */
     }
     
 }

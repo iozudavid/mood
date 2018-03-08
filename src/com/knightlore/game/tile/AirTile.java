@@ -1,6 +1,7 @@
 package com.knightlore.game.tile;
 
 import com.knightlore.game.Player;
+import com.knightlore.game.entity.Entity;
 import com.knightlore.render.graphic.Graphic;
 import com.knightlore.render.graphic.texture.Texture;
 
@@ -30,12 +31,14 @@ public class AirTile extends Tile {
     }
 
     @Override
-    public void onEntered(Player p) {
+    public Tile copy() {
+        return instance;
     }
 
     @Override
-    public Tile copy() {
-        return instance;
+    public void onEntered(Entity entity) {
+        // TODO Auto-generated method stub
+        
     }
 
     public char toChar() {

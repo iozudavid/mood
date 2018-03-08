@@ -7,6 +7,7 @@ import com.knightlore.ai.TurretServer;
 import com.knightlore.ai.TurretShared;
 import com.knightlore.game.Player;
 import com.knightlore.game.entity.Entity;
+import com.knightlore.game.entity.SpectatorCamera;
 import com.knightlore.game.entity.ZombieServer;
 import com.knightlore.game.entity.pickup.ShotgunPickup;
 import com.knightlore.utils.RaycastHit;
@@ -14,42 +15,50 @@ import com.knightlore.utils.RaycastHitType;
 import com.knightlore.utils.Vector2D;
 
 public class ServerWorld extends GameWorld {
-    
+
     @Override
     public void setUpWorld(Long mapSeed) {
         super.setUpWorld(mapSeed);
         buildEntities();
     }
-    
+
     public void buildEntities() {
-        /*
+        
         // add the mobs
         // null field means no pickup manager
+        /*
         ShotgunPickup shot = new ShotgunPickup(new Vector2D(8, 8), null);
         shot.init();
         ents.add(shot);
+        */
         ZombieServer zom = new ZombieServer(map.getRandomSpawnPoint());
         zom.init();
         ents.add(zom);
         // add pickups
+        /*
         for (int i = 5; i < 9; i += 2) {
             ShotgunPickup shotI = new ShotgunPickup(new Vector2D(i, 3), null);
             shotI.init();
             ents.add(shotI);
         }
+        */
         TurretShared tboi = new TurretServer(3, map.getRandomSpawnPoint(), Vector2D.UP);
         tboi.init();
         for (int i = 0; i < 5; i++) {
             Player botPlayer = new Player(map.getRandomSpawnPoint(), Vector2D.UP);
             botPlayer.setInputModule(new BotInput());
             botPlayer.init();
-            botPlayer.setName("bot"+i);
+            botPlayer.setName("bot" + i);
             playerManager.addPlayer(botPlayer);
-            
+
         }
-        */
+        
+
+        SpectatorCamera cam = new SpectatorCamera(new Vector2D(10, 20), Vector2D.UP);
+        cam.init();
+        ents.add(cam);
     }
-    
+
     @Override
     public void update() {
         super.update();
@@ -61,7 +70,7 @@ public class ServerWorld extends GameWorld {
             }
         }
     }
-    
+
     @Override
     /**
      * Casts a ray against all world, entities and players. returns a structure
@@ -72,26 +81,26 @@ public class ServerWorld extends GameWorld {
             System.err.println("can't raycast with <= 0 segments");
             return null;
         }
-        
+
         Vector2D step = Vector2D.mul(direction.normalised(), maxDist / segments);
-        
+
         Vector2D p = pos;
         int x, y;
-        
+
         for (int i = 0; i < segments; i++) {
             x = (int) p.getX();
             y = (int) p.getY();
             if (map.getTile(x, y).blockLOS()) {
                 return new RaycastHit(RaycastHitType.wall, p, null);
             }
-            
+
             double sqrDist;
             double sqrSize;
-            
+
             // cast against players
             List<Player> playerList = playerManager.getPlayers();
             for (int n = 0; n < playerList.size(); n++) {
-                if(playerList.get(n) == ignore) {
+                if (playerList.get(n) == ignore) {
                     continue;
                 }
                 sqrSize = playerList.get(n).getSize() * playerList.get(n).getSize();
@@ -100,10 +109,10 @@ public class ServerWorld extends GameWorld {
                     return new RaycastHit(RaycastHitType.player, p, playerList.get(n));
                 }
             }
-            
+
             // now against entities
             for (int n = 0; n < ents.size(); n++) {
-                if(ents.get(n) == ignore) {
+                if (ents.get(n) == ignore) {
                     continue;
                 }
                 sqrSize = ents.get(n).getSize() * ents.get(n).getSize();
@@ -135,10 +144,10 @@ public class ServerWorld extends GameWorld {
              */
             p = p.add(step);
         }
-        
+
         return new RaycastHit(RaycastHitType.nothing, Vector2D.ZERO, null);
     }
-    
+
     public Player createPlayer() {
         Vector2D pos = map.getRandomSpawnPoint();
         Player player = new Player(pos, Vector2D.UP);

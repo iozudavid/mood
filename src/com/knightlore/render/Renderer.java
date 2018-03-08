@@ -5,11 +5,13 @@ import java.util.List;
 import java.util.Stack;
 
 import com.knightlore.engine.GameEngine;
+import com.knightlore.game.Player;
 import com.knightlore.game.area.Map;
 import com.knightlore.game.entity.Entity;
 import com.knightlore.game.tile.AirTile;
 import com.knightlore.game.tile.Tile;
 import com.knightlore.game.world.ClientWorld;
+import com.knightlore.render.font.Font;
 import com.knightlore.render.graphic.Graphic;
 import com.knightlore.render.graphic.filter.LightingMask;
 import com.knightlore.render.graphic.filter.LightingMask.LightingMaskEquation;
@@ -42,15 +44,29 @@ public class Renderer {
         this.pix = new PixelBuffer(width, height);
         this.camera = camera;
         this.world = world;
-        this.mask = new LightingMask(0xFF0000);
+        this.mask = new LightingMask(0x800c17);
         this.eq = new LightingMaskEquation() {
 
             @Override
             public double getMix(double distance) {
-                int denom = (int) (550000 + 100000 * Math.sin(GameEngine.ticker.getTime() / 10D));
-                return 0;
+                Entity subject = camera.getSubject();
+                if (false && subject instanceof Player) {
+                    Player p = ((Player) (camera.getSubject()));
+                    double r = p.getCurrentHealth() / (double) p.getMaxHealth();
+                    double denom = 4 * 550000 + 100000 * Math.sin(GameEngine.ticker.getTime() / 20D);
+                    return distance / (denom * r);
+                } else {
+                    return 0;
+                }
             }
         };
+        //
+        // for(Entity e : world.getEntities()) {
+        // if(e instanceof SpectatorCamera) {
+        // camera.setSubject(e);
+        // System.out.println("foudn camera");
+        // }
+        // }
     }
 
     private final int BLOCKINESS = 10; // how 'old school' you want to look.
@@ -341,7 +357,7 @@ public class Renderer {
                     // 2) it's on the screen (left)
                     // 3) it's on the screen (right)
                     // 4) ZBuffer, with perpendicular distance
-                    if (transformY > 0 && stripe > 0 && stripe < pix.getWidth() && transformY < zbuffer[stripe])
+                    if (transformY > 0 && stripe > 0 && stripe < pix.getWidth() && transformY < zbuffer[stripe]) {
                         for (int y = drawStartY; y < drawEndY; y++) {
                             // 16 and 8 are factors to avoid division and
                             // floats.
@@ -363,6 +379,14 @@ public class Renderer {
 
                             pix.fillRect(color, stripe, drawY, BLOCKINESS, 1);
                         }
+
+                        if (m instanceof Player) {
+                            final double sc = (drawEndY - drawStartY) / 90D;
+                            final double sp = (drawEndY - drawStartY) / 50D;
+                            pix.drawString(Font.DEFAULT_WHITE, ((Player) m).getName(), spriteScreenX,
+                                    drawStartY + offset, sc, sp);
+                        }
+                    }
                 }
 
             }
@@ -370,7 +394,7 @@ public class Renderer {
     }
 
     private void drawCrosshair(PixelBuffer pix) {
-        final int CROSSHAIR_SIZE = 10;
+        final int CROSSHAIR_SIZE = 6;
         final int CROSSHAIR_WIDTH = 2;
         final int CROSSHAIR_COLOR = 0xFFFFFF;
         final int w = pix.getWidth() / 2, h = pix.getHeight() / 2;

@@ -14,6 +14,7 @@ import com.knightlore.game.buff.BuffType;
 import com.knightlore.ai.InputModule;
 import com.knightlore.ai.RemoteInput;
 import com.knightlore.engine.GameEngine;
+import com.knightlore.game.area.Map;
 import com.knightlore.game.entity.Entity;
 import com.knightlore.game.entity.weapon.Shotgun;
 import com.knightlore.game.entity.weapon.Weapon;
@@ -42,7 +43,7 @@ public class Player extends Entity implements TickListener{
     // private volatile boolean finished = false;
 
     private String name = "noname";
-    
+
     // Returns a new instance. See NetworkObject for details.
     public static NetworkObject build(UUID uuid, ByteBuffer state) {
         System.out.println("Player build, state size: " + state.remaining());
@@ -114,12 +115,13 @@ public class Player extends Entity implements TickListener{
                 inputState.put(control, value);
             }
         }
-
+        
     }
 
     @Override
     public void onUpdate() {
-
+        super.onUpdate();
+        
         hasShot = false;
         if (shootOnNextUpdate) {
             currentWeapon.fire(this);
@@ -141,7 +143,14 @@ public class Player extends Entity implements TickListener{
                 }
             }
         }
+        
+        updateInertia();
+        prevPos = position;
+        prevDir = direction;
+        currentWeapon.update();
+    }
 
+    private void updateInertia() {
         final double p = 0.1D;
         inertiaX += (int) (p * -inertiaX);
         inertiaY += (int) (p * -inertiaY);
@@ -168,10 +177,6 @@ public class Player extends Entity implements TickListener{
 
             inertiaX += currentWeapon.getInertiaCoeffX() * diff;
         }
-
-        prevPos = position;
-        prevDir = direction;
-        currentWeapon.update();
     }
 
     private boolean shootOnNextUpdate;
@@ -310,7 +315,7 @@ public class Player extends Entity implements TickListener{
         this.position = GameEngine.getSingleton().getWorld().getMap().getRandomSpawnPoint();
         currentHealth = MAX_HEALTH;
         inputModule.onRespawn(this);
-        System.out.println("Player "+getName()+ " respawned.");
+        System.out.println("Player " + getName() + " respawned.");
     }
 
     public void setInputModule(InputModule inp) {
@@ -337,4 +342,3 @@ public class Player extends Entity implements TickListener{
         return MAX_HEALTH;
     }
 }
-

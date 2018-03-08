@@ -1,6 +1,7 @@
 package com.knightlore.game.tile;
 
 import com.knightlore.game.Player;
+import com.knightlore.game.entity.Entity;
 import com.knightlore.render.graphic.Graphic;
 
 public class BreakibleTile extends Tile {
@@ -26,17 +27,6 @@ public class BreakibleTile extends Tile {
         // TODO: Deal damage to tile
 
     }
-
-    @Override
-    public void onEntered(Player player) {
-    }
-
-    /*
-    @Override
-    public TileType getTileType() {
-        return TileType.breakible;
-    }
-    */
     
     @Override
     public char toChar() {
@@ -47,6 +37,10 @@ public class BreakibleTile extends Tile {
     public Tile copy() {
         // TODO Auto-generated method stub
         return new BreakibleTile();
+    }
+
+    @Override
+    public void onEntered(Entity entity) {
     }
 
 }
