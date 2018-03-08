@@ -2,12 +2,17 @@ package com.knightlore.game.entity;
 
 import java.awt.geom.Rectangle2D;
 import java.nio.ByteBuffer;
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.UUID;
 
 import com.knightlore.engine.GameEngine;
+import com.knightlore.engine.TickListener;
 import com.knightlore.game.Player;
 import com.knightlore.game.Team;
 import com.knightlore.game.area.Map;
+import com.knightlore.game.buff.Buff;
+import com.knightlore.game.buff.BuffType;
 import com.knightlore.game.tile.Tile;
 import com.knightlore.network.NetworkObject;
 import com.knightlore.render.PixelBuffer;
@@ -17,12 +22,14 @@ import com.knightlore.render.minimap.IMinimapObject;
 import com.knightlore.utils.Vector2D;
 import com.knightlore.utils.pruner.Prunable;
 
-public abstract class Entity extends NetworkObject implements IMinimapObject, Prunable {
+public abstract class Entity extends NetworkObject implements TickListener, IMinimapObject, Prunable {
 
     protected double moveSpeed = .040;
     protected double strafeSpeed = .01;
     protected double rotationSpeed = .025;
 
+    private ArrayList<Buff> buffList = new ArrayList<Buff>();
+    
     private Map map;
 
     protected double size;
@@ -46,6 +53,8 @@ public abstract class Entity extends NetworkObject implements IMinimapObject, Pr
         this.plane = direction.perpendicular();
         this.zOffset = 0;
         map = GameEngine.getSingleton().getWorld().getMap();
+        // tick listener for buffs
+        GameEngine.getSingleton().ticker.addTickListener(this);
     }
 
     /**
@@ -262,5 +271,69 @@ public abstract class Entity extends NetworkObject implements IMinimapObject, Pr
     
     public void takeDamage(int damage) {
         // DO NOTHING
+    }
+    
+    public synchronized void addBuff(Buff buff) {
+        buffList.add(buff);
+        buff.onApply(this);
+    }
+    
+    public synchronized boolean hasBuff(BuffType bt) {
+        for(Buff buff : buffList) {
+            if(buff.getType() == bt) {
+                return true;
+            }
+        }
+        return false;
+    }
+    
+    public void setMoveSpeed(double speed) {
+        moveSpeed = speed;
+    }
+    
+    public double getMoveSpeed() {
+        return moveSpeed;
+    }
+    
+    public void setRotateSpeed(double speed) {
+        rotationSpeed = speed;
+    }
+    
+    public double getRotateSpeed() {
+        return rotationSpeed;
+    }
+    
+    public synchronized void removeBuff(Buff buff) {
+        buffList.remove(buff);
+        buff.onRemove(this);
+    }
+    
+    public synchronized void removeBuff(BuffType bt) {
+        for(Buff buff: buffList) {
+            if(buff.getType() == bt) {
+                removeBuff(buff);
+            }
+        }
+    }
+    
+    @Override
+    public synchronized void onTick() {
+        // cannot remove a buff while iterating
+        // through all the buffs!
+        //for(Buff buff : buffList) {
+        //    buff.periodicEffect(this);
+        //}
+        for(Iterator<Buff> iter = buffList.iterator() ; iter.hasNext(); ) {
+            Buff buff = iter.next();
+            if(!buff.periodicEffect(this)) {
+                iter.remove();
+            }
+        }
+    }
+
+    @Override
+    public long interval() {
+        // possibly vary this
+        return (long) GameEngine.UPDATES_PER_SECOND;
     }
 }

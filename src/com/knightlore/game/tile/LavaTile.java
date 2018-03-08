@@ -5,6 +5,7 @@ import com.knightlore.game.buff.BuffType;
 import com.knightlore.game.buff.Fire;
 import com.knightlore.game.buff.Slow;
 import com.knightlore.game.entity.Entity;
+import com.knightlore.game.entity.ZombieServer;
 import com.knightlore.render.graphic.Graphic;
 
 public class LavaTile extends Tile {
@@ -19,13 +20,6 @@ public class LavaTile extends Tile {
     public void onShot() {
     }
 
-    /*
-    @Override
-    public TileType getTileType() {
-        return TileType.lava;
-    }
-    */
-
     @Override
     public char toChar() {
         return 'L';
@@ -39,6 +33,12 @@ public class LavaTile extends Tile {
 
     @Override
     public void onEntered(Entity entity) {
+        
+        // not quite sure which zombie class to use...
+        if(entity instanceof Player || entity instanceof ZombieServer) {
+            // implement buffs in entity
+        }
+        
         // only apply a buff to player if it
         // doesn't have it
         /*

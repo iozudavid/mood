@@ -1,6 +1,7 @@
 package com.knightlore.game.buff;
 
 import com.knightlore.game.Player;
+import com.knightlore.game.entity.Entity;
 
 public class Fire extends Buff{
 
@@ -9,28 +10,28 @@ public class Fire extends Buff{
     private int counter = 0;
     
     @Override
-    public void onApply(Player p) {
+    public void onApply(Entity ent) {
         // TODO: Apply some fiery effect on the player's display
-        p.takeDamage(FIRE_DAMAGE);
+        ent.takeDamage(FIRE_DAMAGE);
         counter++;
     }
 
     @Override
-    public void periodicEffect(Player p) {
+    public boolean periodicEffect(Entity ent) {
         // TODO: Potentially muck about with the ticker
         // and maybe only apply damage on certain ticks
         if(counter >= MAX_ITERATIONS) {
             // tell the player to remove this buff
-            p.removeBuff(this);
-            return;
+            return false;
         }
-        p.takeDamage(FIRE_DAMAGE);
+        ent.takeDamage(FIRE_DAMAGE);
         counter++;
+        return true;
         
     }
 
     @Override
-    public void onRemove(Player p) {
+    public void onRemove(Entity ent) {
         // TODO: Remove fiery effect on the player's display
         
     }

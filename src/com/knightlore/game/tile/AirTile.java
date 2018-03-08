@@ -1,6 +1,8 @@
 package com.knightlore.game.tile;
 
 import com.knightlore.game.Player;
+import com.knightlore.game.buff.BuffType;
+import com.knightlore.game.buff.Fire;
 import com.knightlore.game.entity.Entity;
 import com.knightlore.render.graphic.Graphic;
 import com.knightlore.render.graphic.texture.Texture;
@@ -37,8 +39,11 @@ public class AirTile extends Tile {
 
     @Override
     public void onEntered(Entity entity) {
-        // TODO Auto-generated method stub
-        
+        // just for testing the fire debuff
+        if(entity.hasBuff(BuffType.fire)) {
+            return;
+        }
+        entity.addBuff(new Fire());
     }
 
     public char toChar() {

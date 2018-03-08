@@ -1,6 +1,7 @@
 package com.knightlore.game.buff;
 
 import com.knightlore.game.Player;
+import com.knightlore.game.entity.Entity;
 import com.knightlore.utils.Vector2D;
 
 public class Push extends Buff {
@@ -16,21 +17,21 @@ public class Push extends Buff {
     }
     
     @Override
-    public void onApply(Player p) {
+    public void onApply(Entity ent) {
         // TODO: PUSH PLAYER IN DIRECTION
-        p.addBuff(this);
-        p.absoluteMove(direction, MOVE_DISTANCE);
+        ent.addBuff(this);
+        ent.absoluteMove(direction, MOVE_DISTANCE);
     }
 
     @Override
-    public void periodicEffect(Player p) {
+    public boolean periodicEffect(Entity ent) {
         // TODO: PUSH PLAYER IN DIRECTION
-
+        return false;
     }
 
     @Override
-    public void onRemove(Player p) {
-        p.removeBuff(this);
+    public void onRemove(Entity ent) {
+        ent.removeBuff(this);
     }
 
     @Override

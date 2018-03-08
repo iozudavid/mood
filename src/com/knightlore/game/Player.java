@@ -31,7 +31,6 @@ public class Player extends Entity implements TickListener{
     private int currentHealth = MAX_HEALTH;
     private Weapon currentWeapon;
 
-    private ArrayList<Buff> buffList = new ArrayList<Buff>();
     private boolean hasShot;
     private Vector2D prevPos, prevDir;
     private int inertiaX = 0, inertiaY = 0;
@@ -253,62 +252,6 @@ public class Player extends Entity implements TickListener{
     
     public void applyHeal(int heal) {
         takeDamage(-heal);
-    }
-    
-    public void addBuff(Buff buff) {
-        buffList.add(buff);
-        buff.onApply(this);
-    }
-    
-    public boolean hasBuff(BuffType bt) {
-        for(Buff buff : buffList) {
-            if(buff.getType() == bt) {
-                return true;
-            }
-        }
-        return false;
-    }
-    
-    public void setMoveSpeed(double speed) {
-        moveSpeed = speed;
-    }
-    
-    public double getMoveSpeed() {
-        return moveSpeed;
-    }
-    
-    public void setRotateSpeed(double speed) {
-        rotationSpeed = speed;
-    }
-    
-    public double getRotateSpeed() {
-        return rotationSpeed;
-    }
-    
-    public void removeBuff(Buff buff) {
-        buffList.remove(buff);
-        buff.onRemove(this);
-    }
-    
-    public void removeBuff(BuffType bt) {
-        for(Buff buff: buffList) {
-            if(buff.getType() == bt) {
-                removeBuff(buff);
-            }
-        }
-    }
-    
-    @Override
-    public void onTick() {
-        for(Buff buff : buffList) {
-            buff.periodicEffect(this);
-        }
-    }
-
-    @Override
-    public long interval() {
-        // possibly vary this
-        return (long) GameEngine.UPDATES_PER_SECOND;
     }
     
     private void respawn() {
