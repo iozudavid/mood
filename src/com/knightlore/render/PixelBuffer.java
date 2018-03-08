@@ -1,5 +1,6 @@
 package com.knightlore.render;
 
+import com.knightlore.render.font.Font;
 import com.knightlore.render.graphic.Graphic;
 
 /**
@@ -93,10 +94,10 @@ public class PixelBuffer {
             for (int xx = 0; xx < width; xx++) {
                 int drawX = x + xx;
                 int drawY = y + yy;
-                
+
                 int texX = (int) ((xx / (double) width) * graphic.getWidth());
                 int texY = (int) ((yy / (double) height) * graphic.getHeight());
-                int color = graphic.getPixels()[texY * graphic.getHeight() + texX];
+                int color = graphic.getPixels()[texY * graphic.getWidth() + texX];
                 fillPixel(color, drawX, drawY);
             }
         }
@@ -234,6 +235,14 @@ public class PixelBuffer {
                 e -= 1.0;
                 fillPixel(color, x, y);
             }
+        }
+    }
+
+    public void drawString(Font font, String str, int x, int y, double scaling, double spacing) {
+        for (char c : str.toCharArray()) {
+            Graphic g = font.getGraphic(c);
+            this.drawGraphic(g, x, y, (int) (g.getWidth() * scaling), (int) (g.getHeight() * scaling));
+            x += g.getWidth() * scaling + spacing;
         }
     }
 

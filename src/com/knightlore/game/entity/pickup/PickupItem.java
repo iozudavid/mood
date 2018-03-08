@@ -27,6 +27,7 @@ public abstract class PickupItem extends Entity {
 
     @Override
     public void onUpdate() {
+        super.onUpdate();
         // FIXME: avoid null pointer for direction when this is called and the
         // constructor hasn't yet finished.
         if (direction == null)
@@ -39,6 +40,7 @@ public abstract class PickupItem extends Entity {
         double xprime = direction.getX() * Math.cos(ROTATION_SPEED) - direction.getY() * Math.sin(ROTATION_SPEED);
         double yprime = direction.getX() * Math.sin(ROTATION_SPEED) + direction.getY() * Math.cos(ROTATION_SPEED);
         direction = new Vector2D(xprime, yprime);
+        plane = direction.perpendicular();
     }
     
     @Override

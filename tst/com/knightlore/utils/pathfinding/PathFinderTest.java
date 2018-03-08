@@ -45,8 +45,8 @@ public class PathFinderTest {
             }
         }
 
-        Vector2D start = new Vector2D(13.24, 1.69);
-        Vector2D end  = new Vector2D(12.96123123, 5.501129);
+        Vector2D start = new Vector2D(13.24, 2.999);
+        Vector2D end  = new Vector2D(13.001233123, 6.88);
 
         // When
         PathFinder finder = new PathFinder(costGrid);
@@ -71,8 +71,8 @@ public class PathFinderTest {
         costGrid[13][4] = 10;
         costGrid[12][3] = 2;
         costGrid[14][6] = 2;
-        Vector2D start = new Vector2D(13.24, 1.69);
-        Vector2D end  = new Vector2D(12.96123123, 5.501129);
+        Vector2D start = new Vector2D(13.24, 2.79);
+        Vector2D end  = new Vector2D(13.01952, 6.991);
 
         // When
         PathFinder finder = new PathFinder(costGrid);
