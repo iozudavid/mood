@@ -16,8 +16,10 @@ public class Prediction {
 
 	// first double is the input timestemp
 	private LinkedHashMap<Double, byte[]> clientInputHistory;
-	private Player nextPrediction;
+	private PredictedState nextPrediction;
 	private ByteBuffer lastReceivedFromServer;
+	private final double maxTolerance = 0.5D;
+	private final double converge = 0.05D;
 	
 	public Prediction(){
 		this.clientInputHistory = new LinkedHashMap<>();
@@ -31,6 +33,8 @@ public class Prediction {
 		// remove the old history
 		// inputs before this packet was sent
 		if (!Arrays.equals(this.lastReceivedFromServer.array(), received.array())) {
+			this.nextPrediction = new PredictedState(player, received);
+			received.position(0);
 			NetworkUtils.getStringFromBuf(received);
 			NetworkUtils.getStringFromBuf(received);
 
@@ -53,15 +57,10 @@ public class Prediction {
 			}
 			//create a new player
 			//which will predict the next steps
-			if(this.nextPrediction==null){
-				this.nextPrediction=new Player(Vector2D.ONE, Vector2D.ONE);
-			}
-			this.nextPrediction.setSize(size);
-			this.nextPrediction.setxPos(xPos);
-			this.nextPrediction.setyPos(yPos);
-			this.nextPrediction.setxDir(xDir);
-			this.nextPrediction.setyDir(yDir);
-			this.nextPrediction.setOnNextShot(shootOnNext == 1 ? true : false);
+
+			this.nextPrediction.setPosition(xPos, yPos);
+			this.nextPrediction.setDirection(xDir,yDir);
+			this.nextPrediction.setOnShootNext(shootOnNext == 1 ? true : false);
 
 			// predict again the player state
 			// based on server packets
@@ -84,13 +83,34 @@ public class Prediction {
 	public Player update(Player player, byte[] input, double time) {
 		//use last prediction based on server stats
 		//to construct the new position
-		if (this.nextPrediction!=null) {
-			player.setxPos(this.nextPrediction.getxPos());
-			player.setyPos(this.nextPrediction.getyPos());
-			player.setxDir(this.nextPrediction.getxDir());
-			player.setyDir(this.nextPrediction.getyDir());
-		}
 		player.setInputState(input);
+		if (this.nextPrediction!=null){ 
+				if(Math.abs(player.getxPos()-nextPrediction.getPosition().getX())>this.maxTolerance){
+					if(player.getxPos()>nextPrediction.getPosition().getX())
+						player.setxPos(player.getxPos()-this.converge);
+					else
+						player.setxPos(player.getxPos()+this.converge);
+				}
+				if(Math.abs(player.getyPos()-nextPrediction.getPosition().getY())>this.maxTolerance){
+					if(player.getyPos()>nextPrediction.getPosition().getY())
+						player.setyPos(player.getyPos()-this.converge);
+					else
+						player.setyPos(player.getyPos()+this.converge);
+				}
+				if(Math.abs(player.getxDir()-nextPrediction.getDirection().getX())>this.maxTolerance){
+					if(player.getxDir()>nextPrediction.getDirection().getX())
+						player.setxDir(player.getxDir()-this.converge);
+					else
+						player.setxDir(player.getxDir()+this.converge);
+				}
+				if(Math.abs(player.getyDir()-nextPrediction.getDirection().getY())>this.maxTolerance){
+					if(player.getyDir()>nextPrediction.getDirection().getY())
+						player.setyDir(player.getyDir()-this.converge);
+					else
+						player.setyDir(player.getyDir()+this.converge);
+				}
+		}
+		
 		synchronized(this.clientInputHistory){
 			this.clientInputHistory.put(time,input);
 		}

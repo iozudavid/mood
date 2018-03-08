@@ -213,7 +213,8 @@ public class Player extends Entity {
     public synchronized void deserialize(ByteBuffer buf) {
         super.deserialize(buf);
         shootOnNextUpdate = buf.getInt() == 1;
-        this.timeToSend = buf.getDouble();
+      //  if(buf.hasRemaining())
+        	this.timeToSend = buf.getDouble();
         System.out.println("GET"+this.timeToSend);
     }
 

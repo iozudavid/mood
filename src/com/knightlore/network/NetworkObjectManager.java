@@ -66,6 +66,7 @@ public abstract class NetworkObjectManager implements INetworkable, Runnable {
                 e.printStackTrace();
                 return;
             }
+            buf.position(0);
             UUID objID = UUID.fromString(NetworkUtils.getStringFromBuf(buf));
             String methodName = NetworkUtils.getStringFromBuf(buf);
             Consumer<ByteBuffer> cons;

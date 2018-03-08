@@ -222,9 +222,6 @@ public abstract class Entity extends NetworkObject implements IMinimapObject, Pr
 
     @Override
     public synchronized void deserialize(ByteBuffer buf) {
-    	//time stemp
-    	//no point in stoing it
-    	buf.getDouble();
         size = buf.getDouble();
         double posX = buf.getDouble();
         double posY = buf.getDouble();
