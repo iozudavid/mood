@@ -38,15 +38,13 @@ public class SendToServer implements Runnable {
     private UUID myUUID;
     private Prediction prediction;
     private int lastPosition = 0;
-    private boolean isMoving;
-	private long time;
+	private long packetNumber = 0;
 
     public SendToServer(Connection conn) {
         this.conn = conn;
         // this.lock = new Object();
         this.manager = (ClientNetworkObjectManager) GameEngine.getSingleton().getNetworkObjectManager();
         this.prediction = new Prediction();
-        isMoving = false;
     }
 
     private synchronized ByteBuffer getCurrentControlState(double time) {
@@ -57,7 +55,6 @@ public class SendToServer implements Runnable {
         // Call the setInputState method on our player.
         NetworkUtils.putStringIntoBuf(buf, "setInputState");
         buf.putDouble(time);
-        this.isMoving = false;
         for (int i = 0; i < ClientProtocol.getIndexActionMap().size(); i++) {
             // Encode the current control as an integer.
             buf.putInt(i);
@@ -73,7 +70,6 @@ public class SendToServer implements Runnable {
             }
             if (InputManager.isKeyDown(keyCode)) {
 					buf.put((byte) 1);
-					this.isMoving=true;
 				} else {
 					buf.put((byte) 0);
 				}
@@ -156,14 +152,14 @@ public class SendToServer implements Runnable {
                 e1.printStackTrace();
             }
         this.myUUID = player.getObjectId();
-        this.time = System.currentTimeMillis();
-        this.currentState = getCurrentControlState(this.time);
+        this.currentState = getCurrentControlState(this.packetNumber);
+        this.packetNumber++;
         this.lastState = this.currentState;
 
         while (!conn.terminated) {
-        	this.time = System.currentTimeMillis();
             synchronized (this.currentState) {
-                this.currentState = getCurrentControlState(this.time);
+                this.currentState = getCurrentControlState(this.packetNumber);
+                this.packetNumber++;
             }
             this.tick();
             try {
