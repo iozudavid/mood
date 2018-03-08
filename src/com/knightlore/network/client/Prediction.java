@@ -6,6 +6,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 import com.knightlore.game.Player;
 import com.knightlore.network.protocol.NetworkUtils;
+import com.knightlore.utils.Vector2D;
 
 public class Prediction {
 
@@ -13,11 +14,16 @@ public class Prediction {
 	private CopyOnWriteArrayList<byte[]> clientInputHistory;
 	private double sentToServer;
 	private double receiveFromServer;
+	private Vector2D actualClientPos;
+	private Vector2D actualClientDir;
+	private final double maxTolerance = 0.2;
+	private Player auxPlayer;
 	
 	public Prediction(){
 		this.clientInputHistory = new CopyOnWriteArrayList<>();
 		this.sentToServer=0;
 		this.receiveFromServer=0;
+		this.auxPlayer = new Player(Vector2D.ONE, Vector2D.ONE);
 	}
 
 	// this will be called when a packet
@@ -47,24 +53,34 @@ public class Prediction {
 		double xDir = received.getDouble();
 		double yDir = received.getDouble();
 		int shootOnNext = received.getInt();
-		player.setSize(size);
-		player.setxPos(xPos);
-		player.setyPos(yPos);
-		player.setxDir(xDir);
-		player.setyDir(yDir);
-		player.setOnNextShot(shootOnNext==1 ? true : false);
+		this.auxPlayer.setSize(size);
+		this.auxPlayer.setxPos(xPos);
+		this.auxPlayer.setyPos(yPos);
+		this.auxPlayer.setxDir(xDir);
+		this.auxPlayer.setyDir(yDir);
+		this.auxPlayer.setOnNextShot(shootOnNext==1 ? true : false);
 		
 		//predict again the player state
 		//based on server packets
 		synchronized (this.clientInputHistory) {
 			for (byte[] nextInput : this.clientInputHistory) {
-				player.setInputState(nextInput);
+				this.auxPlayer.setInputState(nextInput);
 			}
 		}
 		
 		// return new player state
 		// predicted using last packet received from server
 		// in order to keep server reconciliation
+		if(this.actualClientPos!= null && this.actualClientDir!=null &&
+				(Math.abs(this.auxPlayer.getxPos()-this.actualClientPos.getX())>this.maxTolerance ||
+					Math.abs(this.auxPlayer.getyPos()-this.actualClientPos.getY())>this.maxTolerance ||
+						Math.abs(this.auxPlayer.getxDir()-this.actualClientDir.getX())>this.maxTolerance ||
+							Math.abs(this.auxPlayer.getyDir()-this.actualClientDir.getY())>this.maxTolerance)){
+			player.setxPos(this.auxPlayer.getxPos());
+			player.setyPos(this.auxPlayer.getyPos());
+			player.setxDir(this.auxPlayer.getxDir());
+			player.setyDir(this.auxPlayer.getyDir());
+		}
 		return player;
 		
 	}
@@ -76,7 +92,9 @@ public class Prediction {
 			this.clientInputHistory.add(input);
 		}
 		this.sentToServer++;
+		this.actualClientPos = player.getPosition();
+		this.actualClientDir = player.getDirection();
 		return player;
 	}
-
+	
 }
