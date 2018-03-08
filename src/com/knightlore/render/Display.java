@@ -30,15 +30,15 @@ public class Display implements IRenderable {
         PixelBuffer hudBuffer = hud.getPixelBuffer();
         pix.composite(hudBuffer, x, y + renderer.getPixelBuffer().getHeight());
     }
-    
+
     public Renderer getRenderer() {
         return renderer;
     }
-    
+
     public Minimap getMinimap() {
         return minimap;
     }
-    
+
     public HUD getHud() {
         return hud;
     }

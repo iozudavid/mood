@@ -16,8 +16,10 @@ import com.knightlore.render.graphic.filter.ColorFilter;
 
 public class Font {
 
-    public static final Font DEFAULT_BLACK = new Font("res/font/font.png", "ABCDEFGHIJKLMNOPQRSTUVWXYZ", 0x000000);
-    public static final Font DEFAULT_WHITE = new Font("res/font/font.png", "ABCDEFGHIJKLMNOPQRSTUVWXYZ", 0xFFFFFF);
+    public static final Font DEFAULT_BLACK = new Font("res/font/font.png", "ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890 ",
+            0x000000);
+    public static final Font DEFAULT_WHITE = new Font("res/font/font.png", "ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890 ",
+            0xFFFFFF);
 
     private static final int BOUNDS_COLOR = -65536; // pure red.
 
@@ -44,7 +46,7 @@ public class Font {
             if (sheet.getRGB(x, 0) == BOUNDS_COLOR)
                 bounds.add(x);
         }
-        
+
         ColorFilter filter = new ColorFilter(color, 1D);
 
         for (int i = 0; i < bounds.size() - 1; i += 2) {

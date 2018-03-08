@@ -8,10 +8,13 @@ public class HUD {
 
     private PixelBuffer display;
 
+    private Player myPlayer;
+
     private HealthCounter healthCounter;
     private Compass currentWeapon;
 
     public HUD(Player myPlayer, int width, int height) {
+        this.myPlayer = myPlayer;
         display = new PixelBuffer(width, height);
         healthCounter = new HealthCounter();
         currentWeapon = new Compass();
@@ -23,7 +26,8 @@ public class HUD {
         display.flood(0x1F1F1F);
         currentWeapon.render(display, 10, -20);
         healthCounter.render(display, 0, 0);
-        display.drawString(Font.DEFAULT_WHITE, "SCORE", display.getWidth() - 100, 25, 2, 2);
+        display.drawString(Font.DEFAULT_WHITE, String.format("SCORE %d", 100 + myPlayer.score),
+                display.getWidth() - 150, 25, 2, 2);
     }
 
     public PixelBuffer getPixelBuffer() {

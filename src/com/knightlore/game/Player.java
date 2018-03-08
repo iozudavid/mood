@@ -23,7 +23,7 @@ import com.knightlore.utils.Vector2D;
 public class Player extends Entity {
 
     public int score = 0;
-    
+
     private final int MAX_HEALTH = 100;
     private int currentHealth = MAX_HEALTH;
     private Weapon currentWeapon;
@@ -104,13 +104,13 @@ public class Player extends Entity {
                 inputState.put(control, value);
             }
         }
-        
+
     }
 
     @Override
     public void onUpdate() {
         super.onUpdate();
-        
+
         hasShot = false;
         if (shootOnNextUpdate) {
             currentWeapon.fire(this);
@@ -132,7 +132,7 @@ public class Player extends Entity {
                 }
             }
         }
-        
+
         updateInertia();
         prevPos = position;
         prevDir = direction;
@@ -232,17 +232,17 @@ public class Player extends Entity {
     @Override
     public void takeDamage(int damage, Entity inflictor) {
         currentHealth -= damage;
-        if(currentHealth <=0) {
-            System.out.println(name + " was killed by "+inflictor.getName());
+        if (currentHealth <= 0) {
+            System.out.println(name + " was killed by " + inflictor.getName());
             GameEngine.getSingleton().getWorld().getGameManager().onPlayerDeath(this);
         }
     }
-    
+
     void respawn(Vector2D spawnPos) {
         this.position = spawnPos;
         currentHealth = MAX_HEALTH;
         inputModule.onRespawn(this);
-        System.out.println(name+ " respawned.");
+        System.out.println(name + " respawned.");
     }
 
     public void setInputModule(InputModule inp) {
