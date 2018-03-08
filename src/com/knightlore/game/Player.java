@@ -36,6 +36,7 @@ public class Player extends Entity {
     // private volatile boolean finished = false;
 
     private String name = "noname";
+	private double timeToSend = 0;
     
     // Returns a new instance. See NetworkObject for details.
     public static NetworkObject build(UUID uuid, ByteBuffer state) {
@@ -88,6 +89,7 @@ public class Player extends Entity {
     }
 
     public void setInputState(ByteBuffer buf) {
+    	this.timeToSend  = buf.getDouble();
         synchronized (inputState) {
             while (buf.hasRemaining()) {
                 // take the control
@@ -202,6 +204,8 @@ public class Player extends Entity {
     public ByteBuffer serialize() {
         ByteBuffer bb = super.serialize();
         bb.putInt(shootOnNextUpdate ? 1 : 0);
+        System.out.println("PUT:"+this.timeToSend);
+        bb.putDouble(this.timeToSend);
         return bb;
     }
 
@@ -209,6 +213,8 @@ public class Player extends Entity {
     public synchronized void deserialize(ByteBuffer buf) {
         super.deserialize(buf);
         shootOnNextUpdate = buf.getInt() == 1;
+        this.timeToSend = buf.getDouble();
+        System.out.println("GET"+this.timeToSend);
     }
 
     public Weapon getCurrentWeapon() {

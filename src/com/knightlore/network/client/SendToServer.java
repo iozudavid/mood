@@ -38,22 +38,26 @@ public class SendToServer implements Runnable {
     private UUID myUUID;
     private Prediction prediction;
     private int lastPosition = 0;
+    private boolean isMoving;
+	private long time;
 
     public SendToServer(Connection conn) {
         this.conn = conn;
         // this.lock = new Object();
         this.manager = (ClientNetworkObjectManager) GameEngine.getSingleton().getNetworkObjectManager();
         this.prediction = new Prediction();
-        
+        isMoving = false;
     }
 
-    private synchronized ByteBuffer getCurrentControlState() {
+    private synchronized ByteBuffer getCurrentControlState(double time) {
         // ByteBuffer to store current input state.
         ByteBuffer buf = ByteBuffer.allocate(NetworkObject.BYTE_BUFFER_DEFAULT_SIZE);
         // Let the server know which UUID this relates to.
         NetworkUtils.putStringIntoBuf(buf, myUUID.toString());
         // Call the setInputState method on our player.
         NetworkUtils.putStringIntoBuf(buf, "setInputState");
+        buf.putDouble(time);
+        this.isMoving = false;
         for (int i = 0; i < ClientProtocol.getIndexActionMap().size(); i++) {
             // Encode the current control as an integer.
             buf.putInt(i);
@@ -68,10 +72,11 @@ public class SendToServer implements Runnable {
                 return null;
             }
             if (InputManager.isKeyDown(keyCode)) {
-                buf.put((byte) 1);
-            } else {
-                buf.put((byte) 0);
-            }
+					buf.put((byte) 1);
+					this.isMoving=true;
+				} else {
+					buf.put((byte) 0);
+				}
         }
         this.lastPosition = buf.position();
         return buf;
@@ -107,18 +112,28 @@ public class SendToServer implements Runnable {
                 conn.send(currentState);
                 this.lastState = currentState;
             }
-            if(!Arrays.equals(currentState.array(), lastState.array())){
+            boolean check = true;
+            byte[] current = currentState.array();
+            byte[] last = lastState.array();
+            for(int i=this.lastPosition;i>this.lastPosition-ClientProtocol.getIndexActionMap().size()*5;i--){
+            	if(current[i]!=last[i]){
+            		check=false;
+            		break;
+            	}
+            }
+            if(!check){
             	updateCounter = 1;
             	this.currentState.position(0);
             	NetworkUtils.getStringFromBuf(this.currentState);
             	NetworkUtils.getStringFromBuf(this.currentState);
+            	double sendTime = this.currentState.getDouble();
             	byte[] inputsAsArray = new byte[ClientProtocol.getIndexActionMap().size()*2];
             	int count=0;
             	for(int i=0;i<ClientProtocol.getIndexActionMap().size(); i++){
             		inputsAsArray[count++] = (byte)this.currentState.getInt();
             		inputsAsArray[count++] = this.currentState.get();
             	}
-            	this.prediction.update(this.manager.getMyPlayer(),inputsAsArray);
+            	this.prediction.update(this.manager.getMyPlayer(),inputsAsArray,sendTime);
             	this.currentState.position(this.lastPosition);
             	conn.send(currentState);
                 this.lastState = currentState;
@@ -141,13 +156,14 @@ public class SendToServer implements Runnable {
                 e1.printStackTrace();
             }
         this.myUUID = player.getObjectId();
-        
-        this.currentState = getCurrentControlState();
+        this.time = System.currentTimeMillis();
+        this.currentState = getCurrentControlState(this.time);
         this.lastState = this.currentState;
 
         while (!conn.terminated) {
+        	this.time = System.currentTimeMillis();
             synchronized (this.currentState) {
-                this.currentState = getCurrentControlState();
+                this.currentState = getCurrentControlState(this.time);
             }
             this.tick();
             try {
