@@ -36,6 +36,7 @@ public abstract class Entity extends NetworkObject implements IMinimapObject, Pr
     public Team team;
 
     protected int zOffset;
+    protected String name = "entity";
 
     // Allow you to create an entity with a specified UUID. Useful for creating
     // "synchronised" objects on the client-side.
@@ -247,7 +248,15 @@ public abstract class Entity extends NetworkObject implements IMinimapObject, Pr
         return 2 * size;
     }
 
-    public void takeDamage(int damage) {
+    public void takeDamage(int damage, Entity inflictor) {
         // DO NOTHING
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 }

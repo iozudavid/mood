@@ -95,4 +95,9 @@ public abstract class TurretShared extends Entity {
         // turret client please :)
         return TurretClient.class.getName();
     }
+    
+    @Override
+    public String getName() {
+        return "Turret";
+    }
 }
