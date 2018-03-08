@@ -379,7 +379,13 @@ public class Renderer {
 
                             pix.fillRect(color, stripe, drawY, BLOCKINESS, 1);
                         }
-                        pix.drawString(Font.DEFAULT_WHITE, "helloworld", spriteScreenX, drawStartY, 3, 7);
+
+                        if (m instanceof Player) {
+                            final double sc = (drawEndY - drawStartY) / 50D;
+                            final double sp = (drawEndY - drawStartY) / 50D;
+                            pix.drawString(Font.DEFAULT_WHITE, ((Player) m).getName(), spriteScreenX, drawStartY, sc,
+                                    sp);
+                        }
                     }
                 }
 

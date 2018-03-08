@@ -238,7 +238,7 @@ public class PixelBuffer {
         }
     }
 
-    public void drawString(Font font, String str, int x, int y, double scaling, int spacing) {
+    public void drawString(Font font, String str, int x, int y, double scaling, double spacing) {
         for (char c : str.toCharArray()) {
             Graphic g = font.getGraphic(c);
             this.drawGraphic(g, x, y, (int) (g.getWidth() * scaling), (int) (g.getHeight() * scaling));
