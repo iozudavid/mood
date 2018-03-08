@@ -43,7 +43,7 @@ public class Player extends Entity {
         System.out.println("Player build, state size: " + state.remaining());
         NetworkObject obj = new Player(uuid, Vector2D.ONE, Vector2D.ONE);
         obj.init();
-        
+        obj.deserialize(state);
         return obj;
     }
 
@@ -105,6 +105,7 @@ public class Player extends Entity {
                 inputState.put(control, value);
             }
         }
+
 
     }
     
@@ -204,7 +205,6 @@ public class Player extends Entity {
     public ByteBuffer serialize() {
         ByteBuffer bb = super.serialize();
         bb.putInt(shootOnNextUpdate ? 1 : 0);
-        System.out.println("PUT:"+this.timeToSend);
         bb.putDouble(this.timeToSend);
         return bb;
     }
@@ -213,9 +213,7 @@ public class Player extends Entity {
     public synchronized void deserialize(ByteBuffer buf) {
         super.deserialize(buf);
         shootOnNextUpdate = buf.getInt() == 1;
-      //  if(buf.hasRemaining())
-        	this.timeToSend = buf.getDouble();
-        System.out.println("GET"+this.timeToSend);
+        this.timeToSend = buf.getDouble();
     }
 
     public Weapon getCurrentWeapon() {

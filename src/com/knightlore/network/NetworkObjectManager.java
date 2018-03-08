@@ -57,6 +57,7 @@ public abstract class NetworkObjectManager implements INetworkable, Runnable {
 
     @Override
     public void run() {
+    	int i=0;
         while (true) {
             ByteBuffer buf = null;
             try {
@@ -81,9 +82,12 @@ public abstract class NetworkObjectManager implements INetworkable, Runnable {
                 			((ClientNetworkObjectManager)this).getMyPlayer().getObjectId().equals(objID) &&
                 				methodName.equals("deserialize")){
                 		if(((ClientNetworkObjectManager)this).hasFinishedSetup()){
+                			if(i==1){
                 			buf.rewind();
                 			((ClientNetworkObjectManager)this).addToPlayerStateOnServer(buf);
                 			continue;
+                			}else
+                				i++;
                 		}
                 	}
                 }

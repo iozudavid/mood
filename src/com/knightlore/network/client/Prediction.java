@@ -44,9 +44,11 @@ public class Prediction {
 			double yPos = received.getDouble();
 			double xDir = received.getDouble();
 			double yDir = received.getDouble();
+			//plane...
+			received.getDouble();
+			received.getDouble();
 			int shootOnNext = received.getInt();
 			double timeSent = received.getDouble();
-
 			//remove data inserted before this packet was sent
 			Iterator<Map.Entry<Double, byte[]>> it = this.clientInputHistory.entrySet().iterator();
 			while(it.hasNext()){
@@ -65,6 +67,7 @@ public class Prediction {
 			// predict again the player state
 			// based on server packets
 			// and all the inputs inserted after this packet was sent
+			System.out.println("SIZE: " + this.clientInputHistory.size());
 			synchronized (this.clientInputHistory) {
 				for (byte[] nextInput : this.clientInputHistory.values()) {
 					this.nextPrediction.setInputState(nextInput);
@@ -83,6 +86,7 @@ public class Prediction {
 	public Player update(Player player, byte[] input, double time) {
 		//use last prediction based on server stats
 		//to construct the new position
+		System.out.println("========DA");
 		player.setInputState(input);
 		if (this.nextPrediction!=null){ 
 				if(Math.abs(player.getxPos()-nextPrediction.getPosition().getX())>this.maxTolerance){
