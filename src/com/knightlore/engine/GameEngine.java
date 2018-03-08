@@ -159,6 +159,8 @@ public class GameEngine implements Runnable {
 
     @Override
     public void run() {
+        // start the lobby
+        world.getGameManager().startLobby();
         /*
          * This piece of code limits the number of game updates per second to
          * whatever it is set to in the variable updatesPerSecond.

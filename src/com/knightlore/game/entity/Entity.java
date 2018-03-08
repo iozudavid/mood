@@ -18,25 +18,26 @@ import com.knightlore.utils.Vector2D;
 import com.knightlore.utils.pruner.Prunable;
 
 public abstract class Entity extends NetworkObject implements IMinimapObject, Prunable {
-
+    
     protected double moveSpeed = .040;
     protected double strafeSpeed = .01;
     protected double rotationSpeed = .025;
-
+    
     private Map map;
-
+    
     protected double size;
     // Initialise these with vectors to avoid null pointers before
     // deserialisation occurs.
     protected Vector2D direction = Vector2D.ONE;
     protected Vector2D plane = Vector2D.ONE;
-
+    
     // cannot have invalid values
     // anyone can set a team and get a team
     public Team team;
-
+    
     protected int zOffset;
-
+    protected String name = "entity";
+    
     // Allow you to create an entity with a specified UUID. Useful for creating
     // "synchronised" objects on the client-side.
     protected Entity(UUID uuid, double size, Vector2D position, Vector2D direction) {
@@ -47,7 +48,7 @@ public abstract class Entity extends NetworkObject implements IMinimapObject, Pr
         this.zOffset = 0;
         map = GameEngine.getSingleton().getWorld().getMap();
     }
-
+    
     /**
      * Creates an Entity with random UUID
      * 
@@ -59,7 +60,7 @@ public abstract class Entity extends NetworkObject implements IMinimapObject, Pr
     protected Entity(double size, Vector2D position, Vector2D direction) {
         this(UUID.randomUUID(), size, position, direction);
     }
-
+    
     /**
      * Entity collision size defaults to 1
      * 
@@ -74,7 +75,7 @@ public abstract class Entity extends NetworkObject implements IMinimapObject, Pr
     public void render(PixelBuffer pix, int x, int y, double distanceTraveled) {
         /* ONLY CALLED IF THIS ENTITY IS THE CAMERA SUBJECT */
     }
-
+    
     public abstract void onCollide(Player player);
     
     @Override
@@ -87,65 +88,65 @@ public abstract class Entity extends NetworkObject implements IMinimapObject, Pr
     public Graphic getGraphic(Vector2D playerPos) {
         return getDirectionalSprite().getCurrentGraphic(position, direction, playerPos);
     }
-
+    
     public abstract DirectionalSprite getDirectionalSprite();
     
     public double getSize() {
         return size;
     }
-
+    
     public Vector2D getDirection() {
         return direction;
     }
-
+    
     public Rectangle2D.Double getBoundingRectangle() {
         return new Rectangle2D.Double(getxPos(), getyPos(), size, size);
     }
-
+    
     public double getxDir() {
         return getDirection().getX();
     }
-
+    
     public double getyDir() {
         return getDirection().getY();
     }
-
+    
     public void setxDir(double xDir) {
         direction = new Vector2D(xDir, direction.getY());
         plane = direction.perpendicular();
     }
-
+    
     public void setyDir(double yDir) {
         direction = new Vector2D(direction.getX(), yDir);
         plane = direction.perpendicular();
     }
-
+    
     public Vector2D getPlane() {
         return plane;
     }
-
+    
     public double getxPlane() {
         return getPlane().getX();
     }
-
+    
     public double getyPlane() {
         return getPlane().getY();
     }
-
+    
     public void setxPlane(double xPlane) {
         plane = new Vector2D(xPlane, plane.getY());
         direction = plane.perpendicular();
     }
-
+    
     public void setyPlane(double yPlane) {
         plane = new Vector2D(plane.getX(), yPlane);
         direction = plane.perpendicular();
     }
-
+    
     public int getzOffset() {
         return zOffset;
     }
-
+    
     protected synchronized void moveForward() {
         double xPos = position.getX(), yPos = position.getY();
         double xDir = direction.getX(), yDir = direction.getY();
@@ -155,7 +156,7 @@ public abstract class Entity extends NetworkObject implements IMinimapObject, Pr
         yPos += yDir * moveSpeed * (1 - yTile.getSolidity());
         position = new Vector2D(xPos, yPos);
     }
-
+    
     protected synchronized void moveBackward() {
         double xPos = position.getX(), yPos = position.getY();
         double xDir = direction.getX(), yDir = direction.getY();
@@ -165,7 +166,7 @@ public abstract class Entity extends NetworkObject implements IMinimapObject, Pr
         yPos -= yDir * moveSpeed * (1 - yTile.getSolidity());
         position = new Vector2D(xPos, yPos);
     }
-
+    
     protected synchronized void strafeLeft() {
         double xPos = position.getX(), yPos = position.getY();
         double xDir = direction.getX(), yDir = direction.getY();
@@ -175,7 +176,7 @@ public abstract class Entity extends NetworkObject implements IMinimapObject, Pr
         yPos -= -xDir * strafeSpeed * (1 - yTile.getSolidity());
         position = new Vector2D(xPos, yPos);
     }
-
+    
     protected synchronized void strafeRight() {
         double xPos = position.getX(), yPos = position.getY();
         double xDir = direction.getX(), yDir = direction.getY();
@@ -185,7 +186,7 @@ public abstract class Entity extends NetworkObject implements IMinimapObject, Pr
         yPos += -xDir * strafeSpeed * (1 - yTile.getSolidity());
         position = new Vector2D(xPos, yPos);
     }
-
+    
     /**
      * Rotation is simply multiplication by the rotation matrix. We take the
      * position and plane vectors, then multiply them by the rotation matrix
@@ -199,7 +200,7 @@ public abstract class Entity extends NetworkObject implements IMinimapObject, Pr
         direction = new Vector2D(xDir, yDir);
         plane = direction.perpendicular();
     }
-
+    
     /**
      * Same as rotating left but clockwise this time.
      */
@@ -211,7 +212,7 @@ public abstract class Entity extends NetworkObject implements IMinimapObject, Pr
         direction = new Vector2D(xDir, yDir);
         plane = direction.perpendicular();
     }
-
+    
     @Override
     public synchronized ByteBuffer serialize() {
         // TODO: serialise objects as well as primitives
@@ -226,7 +227,7 @@ public abstract class Entity extends NetworkObject implements IMinimapObject, Pr
         // buf.putInt(zOffset);
         return buf;
     }
-
+    
     @Override
     public synchronized void deserialize(ByteBuffer buf) {
         size = buf.getDouble();
@@ -241,13 +242,21 @@ public abstract class Entity extends NetworkObject implements IMinimapObject, Pr
         plane = new Vector2D(planeX, planeY);
         // zOffset = buf.getInt();
     }
-
+    
     @Override
     public double getDrawSize() {
         return 2 * size;
     }
     
-    public void takeDamage(int damage) {
+    public void takeDamage(int damage, Entity inflictor) {
         // DO NOTHING
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 }

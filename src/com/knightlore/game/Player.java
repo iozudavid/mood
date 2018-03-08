@@ -22,6 +22,8 @@ import com.knightlore.utils.Vector2D;
 
 public class Player extends Entity {
 
+    public int score = 0;
+    
     private final int MAX_HEALTH = 100;
     private int currentHealth = MAX_HEALTH;
     private Weapon currentWeapon;
@@ -35,8 +37,6 @@ public class Player extends Entity {
     private java.util.Map<ClientController, Byte> inputState = new HashMap<>();
     private InputModule inputModule = null;
     // private volatile boolean finished = false;
-
-    private String name = "noname";
 
     // Returns a new instance. See NetworkObject for details.
     public static NetworkObject build(UUID uuid, ByteBuffer state) {
@@ -230,31 +230,23 @@ public class Player extends Entity {
     }
 
     @Override
-    public void takeDamage(int damage) {
+    public void takeDamage(int damage, Entity inflictor) {
         currentHealth -= damage;
-        if (currentHealth <= 0) {
-            System.out.println("Player " + getName() + " died.");
-            Respawn();
+        if(currentHealth <=0) {
+            System.out.println(name + " was killed by "+inflictor.getName());
+            GameEngine.getSingleton().getWorld().getGameManager().onPlayerDeath(this);
         }
     }
-
-    private void Respawn() {
-        this.position = GameEngine.getSingleton().getWorld().getMap().getRandomSpawnPoint();
+    
+    void respawn(Vector2D spawnPos) {
+        this.position = spawnPos;
         currentHealth = MAX_HEALTH;
         inputModule.onRespawn(this);
-        System.out.println("Player " + getName() + " respawned.");
+        System.out.println(name+ " respawned.");
     }
 
     public void setInputModule(InputModule inp) {
         this.inputModule = inp;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
     }
 
     public void setCurrentWeapon(Weapon currentWeapon) {
