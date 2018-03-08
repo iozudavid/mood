@@ -21,10 +21,8 @@ public class Prediction {
 	private LinkedHashMap<Double, byte[]> clientInputHistory;
 	private PredictedState nextPrediction;
 	private ByteBuffer lastReceivedFromServer;
-	private final double maxTolerance = 0.5D;
-	private final double converge = 0.05D;
-	private double packetsSent = 0;
-	private double packetsReceived = 0;
+	private final double maxTolerance = 0.2D;
+	private final double converge = 0.45D;
 	
 	public Prediction(){
 		this.clientInputHistory = new LinkedHashMap<>();
@@ -99,47 +97,13 @@ public class Prediction {
 	public Player update(Player player, byte[] input, double packetNumber) {
 		//use last prediction based on server stats
 		//to construct the new position
-		System.out.println("========DA");
-		player.setInputState(input);
-		if (this.nextPrediction!=null){ 
-			if (Math.abs(player.getxPos() - nextPrediction.getPosition().getX()) > this.maxTolerance) {
-				if ((isMoveActivated(ClientController.FORWARD, input)
-						|| isMoveActivated(ClientController.BACKWARD, input))) {
-					if (player.getxPos() > nextPrediction.getPosition().getX())
-						player.setxPos(player.getxPos() - this.converge);
-					else
-						player.setxPos(player.getxPos() + this.converge);
-				}
-			}
-			if (Math.abs(player.getyPos() - nextPrediction.getPosition().getY()) > this.maxTolerance) {
-				if (isMoveActivated(ClientController.FORWARD, input)
-						|| isMoveActivated(ClientController.BACKWARD, input)) {
-					if (player.getyPos() > nextPrediction.getPosition().getY())
-						player.setyPos(player.getyPos() - this.converge);
-					else
-						player.setyPos(player.getyPos() + this.converge);
-				}
-			}
-			if (Math.abs(player.getxDir() - nextPrediction.getDirection().getX()) > this.maxTolerance) {
-				if ((isMoveActivated(ClientController.ROTATE_ANTI_CLOCKWISE, input)
-						|| isMoveActivated(ClientController.ROTATE_CLOCKWISE, input))) {
-					if (player.getxDir() > nextPrediction.getDirection().getX())
-						player.setxDir(player.getxDir() - this.converge);
-					else
-						player.setxDir(player.getxDir() + this.converge);
-				}
-			}
-			if (Math.abs(player.getyDir() - nextPrediction.getDirection().getY()) > this.maxTolerance) {
-				if (isMoveActivated(ClientController.ROTATE_ANTI_CLOCKWISE, input)
-						|| isMoveActivated(ClientController.ROTATE_CLOCKWISE, input)) {
-					if (player.getyDir() > nextPrediction.getDirection().getY())
-						player.setyDir(player.getyDir() - this.converge);
-					else
-						player.setyDir(player.getyDir() + this.converge);
-				}
-			}
-		}
 		
+		player.setxPos(nextPrediction.getPosition().getX());
+		player.setyPos(nextPrediction.getPosition().getY());
+		player.setxDir(nextPrediction.getDirection().getX());
+		player.setyDir(nextPrediction.getDirection().getY());
+		
+		player.setInputState(input);
 		synchronized(this.clientInputHistory){
 			this.clientInputHistory.put(packetNumber,input);
 		}
