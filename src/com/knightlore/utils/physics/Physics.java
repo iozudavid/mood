@@ -1,4 +1,4 @@
-package com.knightlore.utils;
+package com.knightlore.utils.physics;
 
 import java.awt.Rectangle;
 import java.awt.geom.Rectangle2D;
@@ -7,6 +7,8 @@ import java.awt.geom.Rectangle2D.Double;
 import com.knightlore.engine.GameEngine;
 import com.knightlore.game.area.Map;
 import com.knightlore.game.tile.Tile;
+import com.knightlore.utils.Rect;
+import com.knightlore.utils.Vector2D;
 
 public class Physics {
     
