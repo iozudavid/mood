@@ -19,8 +19,10 @@ public class Push extends Buff {
     @Override
     public void onApply(Entity ent) {
         // TODO: PUSH PLAYER IN DIRECTION
-        ent.addBuff(this);
-        ent.absoluteMove(direction, MOVE_DISTANCE);
+        if(ent.hasBuff(BuffType.push)) {
+            ent.addBuff(this);
+            ent.absoluteMove(direction, MOVE_DISTANCE);
+        }
     }
 
     @Override
@@ -37,7 +39,7 @@ public class Push extends Buff {
     @Override
     public BuffType getType() {
         // TODO Auto-generated method stub
-        return null;
+        return BuffType.push;
     }
 
 }
