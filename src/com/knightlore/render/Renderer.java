@@ -8,10 +8,10 @@ import com.knightlore.engine.GameEngine;
 import com.knightlore.game.Player;
 import com.knightlore.game.area.Map;
 import com.knightlore.game.entity.Entity;
-import com.knightlore.game.entity.SpectatorCamera;
 import com.knightlore.game.tile.AirTile;
 import com.knightlore.game.tile.Tile;
 import com.knightlore.game.world.ClientWorld;
+import com.knightlore.render.font.Font;
 import com.knightlore.render.graphic.Graphic;
 import com.knightlore.render.graphic.filter.LightingMask;
 import com.knightlore.render.graphic.filter.LightingMask.LightingMaskEquation;
@@ -50,7 +50,7 @@ public class Renderer {
             @Override
             public double getMix(double distance) {
                 Entity subject = camera.getSubject();
-                if (false &&  subject instanceof Player) {
+                if (false && subject instanceof Player) {
                     Player p = ((Player) (camera.getSubject()));
                     double r = p.getCurrentHealth() / (double) p.getMaxHealth();
                     double denom = 4 * 550000 + 100000 * Math.sin(GameEngine.ticker.getTime() / 20D);
@@ -60,13 +60,13 @@ public class Renderer {
                 }
             }
         };
-//        
-//        for(Entity e : world.getEntities()) {
-//            if(e instanceof SpectatorCamera) {
-//                camera.setSubject(e);
-//                System.out.println("foudn camera");
-//            }
-//        }
+        //
+        // for(Entity e : world.getEntities()) {
+        // if(e instanceof SpectatorCamera) {
+        // camera.setSubject(e);
+        // System.out.println("foudn camera");
+        // }
+        // }
     }
 
     private final int BLOCKINESS = 10; // how 'old school' you want to look.
@@ -357,7 +357,7 @@ public class Renderer {
                     // 2) it's on the screen (left)
                     // 3) it's on the screen (right)
                     // 4) ZBuffer, with perpendicular distance
-                    if (transformY > 0 && stripe > 0 && stripe < pix.getWidth() && transformY < zbuffer[stripe])
+                    if (transformY > 0 && stripe > 0 && stripe < pix.getWidth() && transformY < zbuffer[stripe]) {
                         for (int y = drawStartY; y < drawEndY; y++) {
                             // 16 and 8 are factors to avoid division and
                             // floats.
@@ -379,6 +379,8 @@ public class Renderer {
 
                             pix.fillRect(color, stripe, drawY, BLOCKINESS, 1);
                         }
+                        pix.drawString(Font.DEFAULT_WHITE, "helloworld", spriteScreenX, drawStartY, 3, 7);
+                    }
                 }
 
             }
