@@ -394,7 +394,7 @@ public class Renderer {
     }
 
     private void drawCrosshair(PixelBuffer pix) {
-        final int CROSSHAIR_SIZE = 10;
+        final int CROSSHAIR_SIZE = 6;
         final int CROSSHAIR_WIDTH = 2;
         final int CROSSHAIR_COLOR = 0xFFFFFF;
         final int w = pix.getWidth() / 2, h = pix.getHeight() / 2;
