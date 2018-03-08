@@ -44,4 +44,10 @@ public class TurretTile extends Tile {
     public Tile copy() {
         return new TurretTile(team);
     }
+    
+    @Override
+    public double getOpacity() {
+        return 1D;
+    }
+    
 }

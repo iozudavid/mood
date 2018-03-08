@@ -60,9 +60,9 @@ public class Renderer {
                 }
             }
         };
-        //
-        // for(Entity e : world.getEntities()) {
-        // if(e instanceof SpectatorCamera) {
+
+        // for (Entity e : world.getEntities()) {
+        // if (e instanceof SpectatorCamera) {
         // camera.setSubject(e);
         // System.out.println("foudn camera");
         // }
@@ -88,7 +88,6 @@ public class Renderer {
     }
 
     private void drawPerspective(PixelBuffer pix, int offset) {
-
         Map map = world.getMap();
 
         final int width = pix.getWidth(), height = pix.getHeight();
@@ -222,6 +221,7 @@ public class Renderer {
 
     private void floorCast(PixelBuffer pix, int offset, int xx, double rayX, double rayY, int mapX, int mapY,
             double wallX, double distanceToWall, int drawEnd, boolean side) {
+        Map map = world.getMap();
         double floorXWall, floorYWall;
 
         if (!side && rayX > 0) {
@@ -262,6 +262,12 @@ public class Renderer {
 
             double currentFloorX = weight * floorXWall + (1 - weight) * camera.getxPos();
             double currentFloorY = weight * floorYWall + (1 - weight) * camera.getyPos();
+            Tile tile = map.getTile((int) currentFloorX, (int) currentFloorY);
+            if (tile == AirTile.getInstance()) {
+                floor = world.getEnvironment().getFloorTexture();
+            } else {
+                floor = tile.getTexture();
+            }
 
             int floorTexX, floorTexY;
             floorTexX = (int) ((currentFloorX * floor.getWidth()) % floor.getWidth());
@@ -283,6 +289,9 @@ public class Renderer {
     }
 
     private void draw(PixelBuffer pix, PerspectiveRenderItem p, int offset) {
+        if (p.opacity == 0)
+            return;
+        
         // calculate y coordinate on texture
         for (int yy = p.drawStart; yy < p.drawEnd; yy++) {
 

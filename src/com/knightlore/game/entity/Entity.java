@@ -70,13 +70,13 @@ public abstract class Entity extends NetworkObject implements IMinimapObject, Pr
     protected Entity(UUID uuid, Vector2D position, Vector2D direction) {
         this(uuid, 1, position, direction);
     }
-    
+
     public void render(PixelBuffer pix, int x, int y, double distanceTraveled) {
         /* ONLY CALLED IF THIS ENTITY IS THE CAMERA SUBJECT */
     }
 
     public abstract void onCollide(Player player);
-    
+
     @Override
     public void onUpdate() {
         Map map = GameEngine.getSingleton().getWorld().getMap();
@@ -89,7 +89,7 @@ public abstract class Entity extends NetworkObject implements IMinimapObject, Pr
     }
 
     public abstract DirectionalSprite getDirectionalSprite();
-    
+
     public double getSize() {
         return size;
     }
@@ -246,7 +246,7 @@ public abstract class Entity extends NetworkObject implements IMinimapObject, Pr
     public double getDrawSize() {
         return 2 * size;
     }
-    
+
     public void takeDamage(int damage) {
         // DO NOTHING
     }

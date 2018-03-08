@@ -21,9 +21,6 @@ public class SpectatorCamera extends Entity {
 
     public static final double CAMERA_SIZE = 0.25D;
 
-    private double theta = 0;
-    private double sweep = 10;
-
     public SpectatorCamera(Vector2D position, Vector2D direction) {
         this(UUID.randomUUID(), position, direction);
     }
@@ -35,10 +32,12 @@ public class SpectatorCamera extends Entity {
     @Override
     public void onUpdate() {
         super.onUpdate();
-        theta = Math.sin(GameEngine.ticker.getTime()) * sweep;
+        double angle = Math.sin(GameEngine.ticker.getTime() / 240D) / 150D;
+        double xprime = direction.getX() * Math.cos(angle) - direction.getY() * Math.sin(angle);
+        double yprime = direction.getX() * Math.sin(angle) + direction.getY() * Math.cos(angle);
+        direction = new Vector2D(xprime, yprime);
 
-        double xDir = Math.cos(theta), yDir = Math.sin(theta);
-        direction = new Vector2D(xDir, yDir);
+        plane = direction.perpendicular();
     }
 
     @Override
