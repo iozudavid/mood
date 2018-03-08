@@ -52,6 +52,7 @@ public class Prediction {
 		int shootOnNext = received.getInt();
 		player.setOnNextShot(shootOnNext == 1 ? true : false);
 		double timeSent = received.getDouble();
+		boolean respawn = (received.getInt()==1 ? true:false);
 		// remove data inserted before this packet was sent
 		if (!Arrays.equals(this.lastReceivedFromServer.array(), received.array())) {
 			this.nextPrediction = new PredictedState(player, received);
@@ -87,8 +88,16 @@ public class Prediction {
 			// use it as a start point
 			// for the next prediction
 			this.lastReceivedFromServer = received;
+			if (respawn) {
+				player.setxPos(nextPrediction.getPosition().getX());
+				player.setyPos(nextPrediction.getPosition().getY());
+				player.setxDir(nextPrediction.getDirection().getX());
+				player.setyDir(nextPrediction.getDirection().getY());
+			}
 		}
 
+		
+		
 		return player;
 
 	}
@@ -102,6 +111,7 @@ public class Prediction {
 		player.setyPos(nextPrediction.getPosition().getY());
 		player.setxDir(nextPrediction.getDirection().getX());
 		player.setyDir(nextPrediction.getDirection().getY());
+	
 		
 		player.setInputState(input);
 		synchronized(this.clientInputHistory){

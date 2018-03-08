@@ -37,6 +37,7 @@ public class Player extends Entity {
 
     private String name = "noname";
 	private double timeToSend = 0;
+	private boolean respawn = false;
     
     // Returns a new instance. See NetworkObject for details.
     public static NetworkObject build(UUID uuid, ByteBuffer state) {
@@ -206,6 +207,8 @@ public class Player extends Entity {
         ByteBuffer bb = super.serialize();
         bb.putInt(shootOnNextUpdate ? 1 : 0);
         bb.putDouble(this.timeToSend);
+        bb.putInt(this.respawn ? 1:0);
+        this.respawn = false;
         return bb;
     }
 
@@ -261,6 +264,7 @@ public class Player extends Entity {
         this.position = GameEngine.getSingleton().getWorld().getMap().getRandomSpawnPoint();
         currentHealth = MAX_HEALTH;
         inputModule.onRespawn(this);
+        this.respawn = true;
         System.out.println("Player "+getName()+ " respawned.");
     }
 
