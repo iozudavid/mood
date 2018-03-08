@@ -2,6 +2,7 @@ package com.knightlore.render.hud;
 
 import com.knightlore.game.Player;
 import com.knightlore.render.PixelBuffer;
+import com.knightlore.render.font.Font;
 
 public class HUD {
 
@@ -22,6 +23,7 @@ public class HUD {
         display.flood(0x1F1F1F);
         currentWeapon.render(display, 10, -20);
         healthCounter.render(display, 0, 0);
+        display.drawString(Font.DEFAULT_WHITE, "SCORE", display.getWidth() - 100, 25, 2, 2);
     }
 
     public PixelBuffer getPixelBuffer() {
