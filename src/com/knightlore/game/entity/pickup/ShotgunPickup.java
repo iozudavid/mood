@@ -26,7 +26,7 @@ public class ShotgunPickup extends PickupItem {
     public ShotgunPickup(UUID uuid, Vector2D position, PickupManager pickupManager) {
         super(uuid, position, pickupManager);
         sprite = DirectionalSprite.SHOTGUN_DIRECTIONAL_SPRITE;
-        spawnDelay = GameEngine.UPDATES_PER_SECOND * 10;
+        spawnDelay = 10;
     }
 
     @Override

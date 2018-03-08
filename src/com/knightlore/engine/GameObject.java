@@ -70,7 +70,7 @@ public abstract class GameObject implements Prunable {
      * @param b
      *            true if the game object exists, false otherwise.
      */
-    protected void setExists(boolean b) {
+    public void setExists(boolean b) {
         exists = b;
     }
 

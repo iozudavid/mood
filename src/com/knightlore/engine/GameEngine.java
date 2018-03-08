@@ -114,7 +114,7 @@ public class GameEngine implements Runnable {
         System.out.println("World Initialised Successfully.");
 
         if (GameSettings.isServer()) {
-            pickupManager = new PickupManager(this , world.getMap()); // ------- ME
+            pickupManager = new PickupManager(world.getMap()); // ------- ME
         }
         
         if (GameSettings.isClient()) {

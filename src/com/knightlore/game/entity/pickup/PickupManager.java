@@ -1,10 +1,12 @@
 package com.knightlore.game.entity.pickup;
 
+import java.util.List;
 import java.util.PriorityQueue;
 
 import com.knightlore.engine.GameEngine;
 import com.knightlore.engine.TickListener;
 import com.knightlore.game.area.Map;
+import com.knightlore.game.entity.Entity;
 import com.knightlore.game.tile.PickupTile;
 import com.knightlore.utils.Vector2D;
 
@@ -17,10 +19,10 @@ public class PickupManager implements TickListener{
     private PriorityQueue<PickupPlacement> pickupQueue 
       = new PriorityQueue<PickupPlacement>();
     
-    public PickupManager(GameEngine engine , Map map) {
+    public PickupManager(Map map) {
         
         // can probably change this because engine is singleton...
-        this.engine = engine;
+        this.engine = GameEngine.getSingleton();
         
         if(map == null) {
             System.out.println("Map is null! Porque?");
@@ -43,25 +45,36 @@ public class PickupManager implements TickListener{
             }
         }
         
-        engine.ticker.addTickListener(this);
+        GameEngine.ticker.addTickListener(this);
     }
 
     public void addToQueue(PickupItem item) {
+        System.out.println("Adding to queue item!");
         double nextTime = currentTime + item.getSpawnDelay();
         pickupQueue.add(new PickupPlacement(nextTime, item));
     }
     
     @Override
     public void onTick() {
+        
+        // something wrong with my logic here...
+        if(pickupQueue.peek() != null) {
+            System.out.println("CURRENT TIME: " + currentTime);
+            System.out.println("NEXT ITEM TIME: " + pickupQueue.peek().getPlacementTime());
+        }
         // place pickups if appropriate
         while(pickupQueue.peek() != null && pickupQueue.peek().getPlacementTime() <= currentTime) {
             // get and remove from queue
             PickupPlacement pp = pickupQueue.poll();
             // add pickup to the engine
             System.out.println("Adding to engine a pickup!");
-            pp.getItem().init();
+            PickupItem item = pp.getItem();
+            item.setExists(true);
+            item.init();
+            List<Entity> ents = engine.getWorld().getEntities();
+            ents.add(item);
         }
-        // increment time (maybe make interval shorter)
+        // increment time (maybe try shorter intervals)
         currentTime += 1;
     }
 

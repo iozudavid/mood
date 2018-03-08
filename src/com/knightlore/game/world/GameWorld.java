@@ -63,11 +63,6 @@ public abstract class GameWorld {
         if (mapSeed == null)
             mapSeed = TEST_SEED;
         map = new MapGenerator().createMap(TEST_XSIZE, TEST_YSIZE, mapSeed);
-        // DEBUG FROM TOM
-        if(map != null) {
-            System.out.println("We created the map!");
-            System.out.println(map.toDebugString());
-        }
         ents = new LinkedList<>();
         aiManager = new AIManager(map);
         playerManager = new PlayerManager();
