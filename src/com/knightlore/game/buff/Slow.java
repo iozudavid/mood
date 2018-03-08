@@ -16,14 +16,13 @@ public class Slow extends Buff {
     }
 
     @Override
-    public boolean periodicEffect(Entity p) {
+    public void periodicEffect(Entity p) {
         if(counter >= MAX_ITERATIONS) {
             p.removeBuff(this);
-            return false;
-        }else {
-            counter++;
-            return true;
+            done = true;
+            return;
         }
+        counter++;
     }
 
     @Override

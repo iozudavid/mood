@@ -39,11 +39,7 @@ public class AirTile extends Tile {
 
     @Override
     public void onEntered(Entity entity) {
-        // just for testing the fire debuff
-        if(entity.hasBuff(BuffType.fire)) {
-            return;
-        }
-        entity.addBuff(new Fire());
+        
     }
 
     public char toChar() {

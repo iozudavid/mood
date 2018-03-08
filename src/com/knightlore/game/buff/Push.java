@@ -24,9 +24,9 @@ public class Push extends Buff {
     }
 
     @Override
-    public boolean periodicEffect(Entity ent) {
+    public void periodicEffect(Entity ent) {
         // TODO: PUSH PLAYER IN DIRECTION
-        return false;
+        done = true;
     }
 
     @Override

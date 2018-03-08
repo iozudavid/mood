@@ -258,6 +258,9 @@ public class Player extends Entity implements TickListener{
         this.position = GameEngine.getSingleton().getWorld().getMap().getRandomSpawnPoint();
         currentHealth = MAX_HEALTH;
         inputModule.onRespawn(this);
+        for(Buff b : buffList) {
+            b.setDone(true);
+        }
         System.out.println("Player " + getName() + " respawned.");
     }
 

@@ -17,16 +17,17 @@ public class Fire extends Buff{
     }
 
     @Override
-    public boolean periodicEffect(Entity ent) {
+    public void periodicEffect(Entity ent) {
         // TODO: Potentially muck about with the ticker
         // and maybe only apply damage on certain ticks
         if(counter >= MAX_ITERATIONS) {
             // tell the player to remove this buff
-            return false;
+            done =  true;
+            return;
         }
         ent.takeDamage(FIRE_DAMAGE);
         counter++;
-        return true;
+        return;
         
     }
 

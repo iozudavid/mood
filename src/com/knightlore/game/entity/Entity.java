@@ -28,7 +28,7 @@ public abstract class Entity extends NetworkObject implements TickListener, IMin
     protected double strafeSpeed = .01;
     protected double rotationSpeed = .025;
 
-    private ArrayList<Buff> buffList = new ArrayList<Buff>();
+    protected ArrayList<Buff> buffList = new ArrayList<Buff>();
     
     private Map map;
 
@@ -318,14 +318,12 @@ public abstract class Entity extends NetworkObject implements TickListener, IMin
     
     @Override
     public synchronized void onTick() {
-        // cannot remove a buff while iterating
-        // through all the buffs!
-        //for(Buff buff : buffList) {
-        //    buff.periodicEffect(this);
-        //}
+        
         for(Iterator<Buff> iter = buffList.iterator() ; iter.hasNext(); ) {
             Buff buff = iter.next();
-            if(!buff.periodicEffect(this)) {
+            buff.periodicEffect(this);
+            if(buff.getDone()) {
+                System.out.println("BUFF DONE");
                 iter.remove();
             }
         }
