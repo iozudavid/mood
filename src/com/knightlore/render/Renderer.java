@@ -381,10 +381,10 @@ public class Renderer {
                         }
 
                         if (m instanceof Player) {
-                            final double sc = (drawEndY - drawStartY) / 50D;
+                            final double sc = (drawEndY - drawStartY) / 90D;
                             final double sp = (drawEndY - drawStartY) / 50D;
-                            pix.drawString(Font.DEFAULT_WHITE, ((Player) m).getName(), spriteScreenX, drawStartY, sc,
-                                    sp);
+                            pix.drawString(Font.DEFAULT_WHITE, ((Player) m).getName(), spriteScreenX,
+                                    drawStartY + offset, sc, sp);
                         }
                     }
                 }
