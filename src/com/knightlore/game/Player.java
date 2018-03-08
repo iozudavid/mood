@@ -9,6 +9,7 @@ import java.util.UUID;
 import com.knightlore.ai.InputModule;
 import com.knightlore.ai.RemoteInput;
 import com.knightlore.engine.GameEngine;
+import com.knightlore.game.area.Map;
 import com.knightlore.game.entity.Entity;
 import com.knightlore.game.entity.weapon.Shotgun;
 import com.knightlore.game.entity.weapon.Weapon;
@@ -103,12 +104,13 @@ public class Player extends Entity {
                 inputState.put(control, value);
             }
         }
-
+        
     }
 
     @Override
     public void onUpdate() {
-
+        super.onUpdate();
+        
         hasShot = false;
         if (shootOnNextUpdate) {
             currentWeapon.fire(this);
@@ -130,7 +132,14 @@ public class Player extends Entity {
                 }
             }
         }
+        
+        updateInertia();
+        prevPos = position;
+        prevDir = direction;
+        currentWeapon.update();
+    }
 
+    private void updateInertia() {
         final double p = 0.1D;
         inertiaX += (int) (p * -inertiaX);
         inertiaY += (int) (p * -inertiaY);
@@ -157,10 +166,6 @@ public class Player extends Entity {
 
             inertiaX += currentWeapon.getInertiaCoeffX() * diff;
         }
-
-        prevPos = position;
-        prevDir = direction;
-        currentWeapon.update();
     }
 
     private boolean shootOnNextUpdate;
@@ -256,4 +261,3 @@ public class Player extends Entity {
         return MAX_HEALTH;
     }
 }
-

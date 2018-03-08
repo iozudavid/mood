@@ -1,8 +1,8 @@
 package com.knightlore.game.tile;
 
 import com.knightlore.engine.GameEngine;
-import com.knightlore.game.Player;
 import com.knightlore.game.Team;
+import com.knightlore.game.entity.Entity;
 import com.knightlore.render.graphic.Graphic;
 import com.knightlore.render.graphic.texture.Texture;
 
@@ -35,10 +35,6 @@ public class PlayerSpawnTile extends Tile {
 
     @Override
     public void onShot() {
-    }
-
-    @Override
-    public void onEntered(Player p) {
     }
 
     public char toChar() {
@@ -84,5 +80,9 @@ public class PlayerSpawnTile extends Tile {
     @Override
     public Tile copy() {
         return new PlayerSpawnTile(team);
+    }
+
+    @Override
+    public void onEntered(Entity entity) {
     }
 }

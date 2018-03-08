@@ -1,10 +1,12 @@
 package com.knightlore.render;
 
+import java.awt.Color;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Stack;
 
 import com.knightlore.engine.GameEngine;
+import com.knightlore.game.Player;
 import com.knightlore.game.area.Map;
 import com.knightlore.game.entity.Entity;
 import com.knightlore.game.tile.AirTile;
@@ -42,13 +44,15 @@ public class Renderer {
         this.pix = new PixelBuffer(width, height);
         this.camera = camera;
         this.world = world;
-        this.mask = new LightingMask(0xFF0000);
+        this.mask = new LightingMask(0x800c17);
         this.eq = new LightingMaskEquation() {
 
             @Override
             public double getMix(double distance) {
-                int denom = (int) (550000 + 100000 * Math.sin(GameEngine.ticker.getTime() / 10D));
-                return 0;
+                Player p = ((Player) (camera.getSubject()));
+                double r = p.getCurrentHealth() / (double) p.getMaxHealth();
+                double denom = 4*550000 + 100000 * Math.sin(GameEngine.ticker.getTime() / 20D);
+                return distance / (denom * r);
             }
         };
     }
