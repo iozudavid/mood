@@ -32,17 +32,10 @@ public class ServerNetworkObjectManager extends NetworkObjectManager {
     private int updateCount = 1;
 
     private ServerWorld serverWorld;
-    
-    //in order to implement interpolation
-    //we need to send player's state to other players
-    //a tick later
-    //to make game playable
-    private Map<UUID, ByteBuffer> statesToBeSent;
 
     public ServerNetworkObjectManager(ServerWorld world) {
         super();
         this.serverWorld = world;
-        this.statesToBeSent = new LinkedHashMap<>();
     }
 
     @Override
@@ -50,7 +43,7 @@ public class ServerNetworkObjectManager extends NetworkObjectManager {
         UUID uuid = obj.getObjectId();
         this.networkObjects.put(uuid, new Tuple<>(obj, obj.serialize()));
         // Notify all clients of the newly-created object.
-        this.sendToAllClients(getObjectCreationMessage(obj));
+        this.sendToClients(getObjectCreationMessage(obj));
     }
 
     private ByteBuffer getObjectCreationMessage(NetworkObject obj) {
@@ -104,7 +97,7 @@ public class ServerNetworkObjectManager extends NetworkObjectManager {
     public synchronized void removeNetworkObject(NetworkObject obj) {
         UUID uuid = obj.getObjectId();
         // Notify all clients of the destroyed object.
-        this.sendToAllClients(getObjectDestroyMessage(obj));
+        this.sendToClients(getObjectDestroyMessage(obj));
         this.networkObjects.remove(uuid);
     }
 
@@ -183,10 +176,6 @@ public class ServerNetworkObjectManager extends NetworkObjectManager {
         // has changed, send the new state to each client.
         for (Entry<UUID, Tuple<NetworkObject, ByteBuffer>> t : networkObjects
                 .entrySet()) {
-        	for(Entry<UUID,ByteBuffer> b : this.statesToBeSent.entrySet()){
-        		this.sendToClients(b.getKey(),b.getValue());
-        	}
-        	this.statesToBeSent.clear();
             ByteBuffer newState = t.getValue().x.serialize();
             // Send state either if we're due a regular update, or if the
             // state has changed.
@@ -196,8 +185,7 @@ public class ServerNetworkObjectManager extends NetworkObjectManager {
                 // and use the standard library
                 if (updateCount >= REGULAR_UPDATE_FREQ || !Arrays
                         .equals(newState.array(), t.getValue().y.array())) {
-                    this.sendToOneClient(t.getKey(),newState);
-                    this.statesToBeSent.put(t.getKey(), newState);
+                    this.sendToClients(newState);
                     // networkObjects.put(t.getKey(), new
                     // Tuple<>(t.getValue().x, newState));
                     t.getValue().y = newState;
@@ -221,17 +209,7 @@ public class ServerNetworkObjectManager extends NetworkObjectManager {
     }
 
     // Send a message to all connected clients.
-    private void sendToClients(UUID uuid, ByteBuffer buf) {
-        synchronized (clientSenders) {
-            for (SendToClient s : clientSenders) {
-                if(s.getUUID().equals(uuid))
-                	continue;
-            	s.send(buf);
-            }
-        }
-    }
-    
-    private void sendToAllClients(ByteBuffer buf) {
+    private void sendToClients(ByteBuffer buf) {
         synchronized (clientSenders) {
             for (SendToClient s : clientSenders) {
             	s.send(buf);
@@ -239,15 +217,5 @@ public class ServerNetworkObjectManager extends NetworkObjectManager {
         }
     }
     
-    private void sendToOneClient(UUID uuid, ByteBuffer buf) {
-        synchronized (clientSenders) {
-            for (SendToClient s : clientSenders) {
-            	if(s.getUUID().equals(uuid)){
-            		s.send(buf);
-            		return;
-            	}
-            }
-        }
-    }
 
 }

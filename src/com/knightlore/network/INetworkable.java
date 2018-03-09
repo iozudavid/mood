@@ -25,4 +25,5 @@ public interface INetworkable {
     // Must return a map of all consumer methods you want to be callable over
     // the network, keyed by the methods' names.
     Map<String, Consumer<ByteBuffer>> getNetworkConsumers();
+
 }

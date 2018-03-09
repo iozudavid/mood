@@ -4,6 +4,7 @@ import java.awt.geom.Rectangle2D;
 import java.nio.ByteBuffer;
 import java.util.UUID;
 
+import com.knightlore.GameSettings;
 import com.knightlore.engine.GameEngine;
 import com.knightlore.game.Player;
 import com.knightlore.game.Team;
@@ -36,7 +37,8 @@ public abstract class Entity extends NetworkObject implements IMinimapObject, Pr
     public Team team;
 
     protected int zOffset;
-
+    private boolean creationCall;
+    
     // Allow you to create an entity with a specified UUID. Useful for creating
     // "synchronised" objects on the client-side.
     protected Entity(UUID uuid, double size, Vector2D position, Vector2D direction) {
@@ -46,6 +48,7 @@ public abstract class Entity extends NetworkObject implements IMinimapObject, Pr
         this.plane = direction.perpendicular();
         this.zOffset = 0;
         map = GameEngine.getSingleton().getWorld().getMap();
+        this.creationCall = false;
     }
 
     /**
@@ -222,17 +225,72 @@ public abstract class Entity extends NetworkObject implements IMinimapObject, Pr
 
     @Override
     public synchronized void deserialize(ByteBuffer buf) {
-        size = buf.getDouble();
-        double posX = buf.getDouble();
-        double posY = buf.getDouble();
-        position = new Vector2D(posX, posY);
-        double dirX = buf.getDouble();
-        double dirY = buf.getDouble();
-        direction = new Vector2D(dirX, dirY);
-        double planeX = buf.getDouble();
-        double planeY = buf.getDouble();
-        plane = new Vector2D(planeX, planeY);
-        // zOffset = buf.getInt();
+    	//interpolation only on client side
+		if (this.creationCall == false || GameSettings.isServer()) {
+			size = buf.getDouble();
+			double posX = buf.getDouble();
+			double posY = buf.getDouble();
+			position = new Vector2D(posX, posY);
+			double dirX = buf.getDouble();
+			double dirY = buf.getDouble();
+			direction = new Vector2D(dirX, dirY);
+			double planeX = buf.getDouble();
+			double planeY = buf.getDouble();
+			plane = new Vector2D(planeX, planeY);
+			// zOffset = buf.getInt();
+			this.creationCall = true;
+		}else{
+			size = buf.getDouble();
+			double posX = buf.getDouble();
+			double posY = buf.getDouble();
+			if(this.posT1==null){
+				this.posT1 = new Vector2D(posX, posY);
+			}else if(this.posT2==null){
+				this.posT2 = new Vector2D(posX, posY);
+				this.position = interpolate(this.posT1, this.posT2);
+			}else{
+				this.posT1 = this.posT2;
+				this.posT2 = new Vector2D(posX, posY);
+				this.position = interpolate(this.posT1, this.posT2);
+			}
+			double dirX = buf.getDouble();
+			double dirY = buf.getDouble();
+			if(this.dirT1==null){
+				this.dirT1 = new Vector2D(dirX, dirY);
+			}else if(this.dirT2==null){
+				this.dirT2 = new Vector2D(dirX, dirY);
+				this.direction = interpolate(this.dirT1, this.dirT2);
+			}else{
+				this.dirT1 = this.dirT2;
+				this.dirT2 = new Vector2D(dirX, dirY);
+				this.direction = interpolate(this.dirT1, this.dirT2);
+			}
+			double planeX = buf.getDouble();
+			double planeY = buf.getDouble();
+			plane = new Vector2D(planeX, planeY);
+			// zOffset = buf.getInt();
+			this.creationCall = true;
+		}
+    }
+    
+    private Vector2D interpolate(Vector2D local, Vector2D remote){
+    	double finalX = 0D;
+    	double finalY = 0D;
+    	final double constant = 0.15D;
+    //	final double delta = 0.1;
+    	double difX = Math.abs(local.getX()-remote.getX());
+    	if(difX<this.treshold){
+    		finalX = remote.getX();
+    	}else{
+    		finalX = local.getX() + difX * constant; 
+    	}
+    	double difY = Math.abs(local.getY()-remote.getY());
+    	if(difY<this.treshold){
+    		finalY = remote.getY();
+    	}else{
+    		finalY = local.getY() + difY * constant; 
+    	}
+    	return new Vector2D(finalX, finalY);
     }
 
     @Override

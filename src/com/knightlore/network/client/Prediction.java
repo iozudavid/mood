@@ -74,12 +74,12 @@ public class Prediction {
 			// based on server packets
 			// and all the inputs inserted after this packet was sent
 	//		System.out.println("SIZE: " + this.clientInputHistory.size());
-			System.out.println("========DIFFERENCE========");
-			System.out.println(player.getxPos() + " -> " + this.nextPrediction.getPosition().getX());
-			System.out.println(player.getyPos() + " -> " + this.nextPrediction.getPosition().getY());
-			System.out.println(player.getxDir() + " -> " + this.nextPrediction.getDirection().getX());
-			System.out.println(player.getyDir() + " -> " + this.nextPrediction.getDirection().getY());
-			System.out.println("=========DIFFERENCE ENDED============");
+//			System.out.println("========DIFFERENCE========");
+//			System.out.println(player.getxPos() + " -> " + this.nextPrediction.getPosition().getX());
+//			System.out.println(player.getyPos() + " -> " + this.nextPrediction.getPosition().getY());
+//			System.out.println(player.getxDir() + " -> " + this.nextPrediction.getDirection().getX());
+//			System.out.println(player.getyDir() + " -> " + this.nextPrediction.getDirection().getY());
+//			System.out.println("=========DIFFERENCE ENDED============");
 			synchronized (this.clientInputHistory) {
 				for (byte[] nextInput : this.clientInputHistory.values()) {
 					this.nextPrediction.setInputState(nextInput);

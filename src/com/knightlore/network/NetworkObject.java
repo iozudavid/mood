@@ -6,7 +6,6 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.function.Consumer;
 
-import com.knightlore.GameSettings;
 import com.knightlore.engine.GameEngine;
 import com.knightlore.engine.GameObject;
 import com.knightlore.network.protocol.NetworkUtils;
@@ -27,6 +26,8 @@ import com.knightlore.utils.Vector2D;
 public abstract class NetworkObject extends GameObject implements INetworkable {
     private UUID objectUniqueID;
     private NetworkObjectManager networkObjectManager = GameEngine.getSingleton().getNetworkObjectManager();
+    protected Vector2D posT1, dirT1, posT2, dirT2;
+    protected final double treshold = 0.05D; 
 
     protected Map<String, Consumer<ByteBuffer>> networkConsumers = new HashMap<>();
 

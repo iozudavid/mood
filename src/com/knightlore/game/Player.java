@@ -295,6 +295,7 @@ public class Player extends Entity {
     public int getMaxHealth() {
         return MAX_HEALTH;
     }
+
     
 }
 

@@ -1,5 +1,6 @@
 package com.knightlore.ai;
 
+import java.nio.ByteBuffer;
 import java.util.List;
 
 import com.knightlore.engine.GameEngine;
@@ -81,4 +82,5 @@ public final class TurretServer extends TurretShared {
     protected boolean hasTarget() {
         return target != null;
     }
+
 }
