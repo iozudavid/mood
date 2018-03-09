@@ -107,11 +107,12 @@ public class Prediction {
 		//use last prediction based on server stats
 		//to construct the new position
 		
-		player.setxPos(nextPrediction.getPosition().getX());
-		player.setyPos(nextPrediction.getPosition().getY());
-		player.setxDir(nextPrediction.getDirection().getX());
-		player.setyDir(nextPrediction.getDirection().getY());
-	
+		if (this.nextPrediction != null) {
+			player.setxPos(nextPrediction.getPosition().getX());
+			player.setyPos(nextPrediction.getPosition().getY());
+			player.setxDir(nextPrediction.getDirection().getX());
+			player.setyDir(nextPrediction.getDirection().getY());
+		}
 		
 		player.setInputState(input);
 		synchronized(this.clientInputHistory){
