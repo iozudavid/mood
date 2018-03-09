@@ -162,13 +162,7 @@ public class SendToServer implements Runnable {
                 this.packetNumber++;
             }
             this.tick();
-            try {
-                // To milliseconds
-                Thread.sleep(delay);
-            } catch (InterruptedException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            }
+
         }
 
     }
