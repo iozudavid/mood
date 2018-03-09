@@ -1,34 +1,44 @@
 package com.knightlore.engine.audio;
 
-import java.applet.Applet;
-import java.applet.AudioClip;
+import java.io.ByteArrayInputStream;
+import java.io.File;
 import java.io.IOException;
-import java.net.URL;
 
-public enum SoundEffect {
+import javax.sound.sampled.AudioFormat;
+import javax.sound.sampled.AudioInputStream;
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.Clip;
+import javax.sound.sampled.LineUnavailableException;
+import javax.sound.sampled.UnsupportedAudioFileException;
 
-    SHOOT("res/sound/shoot.wav");
+public class SoundEffect {
+    byte[] data;
+    AudioFormat encoding;
 
-    public static enum Volume {
-        MUTE, LOW, MEDIUM, HIGH
-    }
-
-    private Volume volume = Volume.MEDIUM;
-    private AudioClip clip;
-
-    private SoundEffect(String filename) {
-        try {
-            URL url = new URL(filename);
-            clip = Applet.newAudioClip(url);
-        } catch (IOException e) {
+    public SoundEffect(String path) {
+        File f = new File(path);
+        try (AudioInputStream stream = AudioSystem.getAudioInputStream(f)) {
+            this.encoding = stream.getFormat();
+            data = new byte[(int) (stream.getFrameLength()
+                    * stream.getFormat().getFrameSize())];
+            stream.read(data, 0, data.length);
+        } catch (IOException | UnsupportedAudioFileException e) {
+            System.err.println("Error while reading sound file: ");
             e.printStackTrace();
         }
     }
 
-    public void play() {
-        if (volume == Volume.MUTE)
-            return;
-        new Thread(() -> clip.play()).start();
+    public Clip getNewClip() {
+        Clip clip = null;
+        try {
+            clip = AudioSystem.getClip();
+            clip.open(new AudioInputStream(new ByteArrayInputStream(data),
+                    encoding, data.length));
+        } catch (LineUnavailableException | IOException e) {
+            System.err.println(
+                    "Error while reconstituting wave file from bytes: ");
+            e.printStackTrace();
+        }
+        return clip;
     }
-
 }

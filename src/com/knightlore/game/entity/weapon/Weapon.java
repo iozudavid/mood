@@ -1,34 +1,59 @@
 package com.knightlore.game.entity.weapon;
 
+import com.knightlore.GameSettings;
 import com.knightlore.engine.GameEngine;
+import com.knightlore.engine.audio.SoundEffect;
 import com.knightlore.game.entity.Entity;
 import com.knightlore.render.PixelBuffer;
 import com.knightlore.render.graphic.Graphic;
 import com.knightlore.render.graphic.sprite.WeaponSprite;
+import com.knightlore.utils.Vector2D;
 
 public abstract class Weapon {
+    // How far away an entity should be from us before we don't play the shoot
+    // sound. Sound effects for shots fired closer than this will have their
+    // volume scaled linearly.
+    private float SHOOT_SFX_CUTOFF_DISTANCE = 10;
 
     protected Graphic graphic;
     protected boolean automatic;
     protected int fireRate, timer;
 
-    public Weapon(Graphic graphic, boolean automatic, int fireRate) {
+    private SoundEffect shootSFX;
+
+    public Weapon(Graphic graphic, boolean automatic, int fireRate,
+            SoundEffect shootSFX) {
         this.graphic = graphic;
         this.automatic = automatic;
         this.fireRate = fireRate;
+        this.shootSFX = shootSFX;
     }
 
     public abstract int damageInflicted(Entity shooter, Entity target);
 
     public void fire(Entity shooter) {
         this.timer = 0;
+
+        if (GameSettings.isClient())
+            playShotSFX(shooter);
+    }
+
+    private void playShotSFX(Entity shooter) {
+        // Determine volume to play sound effect based on distance from us.
+        Vector2D ourPos = GameEngine.getSingleton().getCamera().getPosition();
+        Vector2D theirPos = shooter.getPosition();
+        float distance = (float) ourPos.distance(theirPos);
+        // This must be a decimal from 0 to 1.
+        float volume = 1 - (distance / SHOOT_SFX_CUTOFF_DISTANCE);
+        if (volume > 0)
+            GameEngine.getSingleton().getSoundManager().play(shootSFX, volume);
     }
 
     private int weaponBobX = 20, weaponBobY = 30;
     private int inertiaCoeffX = 125, inertiaCoeffY = 35;
 
-    public void render(PixelBuffer pix, int x, int y, int inertiaX, int inertiaY, double distanceTraveled,
-            boolean muzzleFlash) {
+    public void render(PixelBuffer pix, int x, int y, int inertiaX,
+            int inertiaY, double distanceTraveled, boolean muzzleFlash) {
         // Used a linear equation to get the expression below.
         // With a screen height of 558, we want a scale of 5.
         // With a screen height of 800, we want a scale of 6.
@@ -52,12 +77,14 @@ public abstract class Weapon {
         }
 
         if (muzzleFlash) {
-            pix.fillOval(0xFCC07F, xx + xOffset + inertiaX + width / 4, yy + yOffset + inertiaY + height / 4, width / 2,
-                    height / 2, 500);
+            pix.fillOval(0xFCC07F, xx + xOffset + inertiaX + width / 4,
+                    yy + yOffset + inertiaY + height / 4, width / 2, height / 2,
+                    500);
         }
-        pix.drawGraphic(g, xx + xOffset + inertiaX, yy + yOffset + inertiaY, width, height);
+        pix.drawGraphic(g, xx + xOffset + inertiaX, yy + yOffset + inertiaY,
+                width, height);
     }
-    
+
     public void update() {
         timer++;
     }

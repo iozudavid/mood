@@ -2,6 +2,7 @@ package com.knightlore.engine;
 
 import com.knightlore.GameSettings;
 import com.knightlore.MainWindow;
+import com.knightlore.engine.audio.SoundManager;
 import com.knightlore.engine.input.InputManager;
 import com.knightlore.engine.input.Mouse;
 import com.knightlore.game.world.ClientWorld;
@@ -48,6 +49,8 @@ public class GameEngine implements Runnable {
 
     private Camera camera;
 
+    private SoundManager soundManager;
+
     private GameEngine() {
         if (HEADLESS) {
             window = null;
@@ -56,6 +59,11 @@ public class GameEngine implements Runnable {
         }
 
         this.gameObjectManager = new GameObjectManager();
+        this.soundManager = new SoundManager();
+    }
+
+    public SoundManager getSoundManager() {
+        return soundManager;
     }
 
     public static GameEngine getSingleton() {
