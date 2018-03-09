@@ -4,9 +4,12 @@ import com.knightlore.engine.GameEngine;
 import com.knightlore.game.Team;
 import com.knightlore.game.buff.BuffType;
 import com.knightlore.game.buff.Fire;
+import com.knightlore.game.buff.Push;
+import com.knightlore.game.buff.Slow;
 import com.knightlore.game.entity.Entity;
 import com.knightlore.render.graphic.Graphic;
 import com.knightlore.render.graphic.texture.Texture;
+import com.knightlore.utils.Vector2D;
 
 public class PlayerSpawnTile extends Tile {
     private final Team team;
@@ -97,10 +100,6 @@ public class PlayerSpawnTile extends Tile {
 
     @Override
     public void onEntered(Entity entity) {
-     // just for testing the fire debuff
-        if(entity.hasBuff(BuffType.fire)) {
-            return;
-        }
-        entity.addBuff(new Fire());
+
     }
 }

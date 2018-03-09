@@ -1,14 +1,20 @@
 package com.knightlore.game.buff;
 
+import com.knightlore.engine.GameEngine;
 import com.knightlore.game.Player;
 import com.knightlore.game.entity.Entity;
 
 public abstract class Buff {
     
-    // TODO: Collaborate with Will to make Buffs
-    // work on entities
-    
     protected boolean done = false;
+    protected int applyGap;
+    protected int maxSteps;
+    protected int counter;
+    
+    protected Buff(double frequency, double length) {
+        applyGap = calculateGap(frequency);
+        maxSteps = calculateMaxSteps(length);
+    }
     
     /** The affect the buff has on application
      * 
@@ -25,6 +31,8 @@ public abstract class Buff {
      */
     public abstract void periodicEffect(Entity ent);
     
+    public abstract void reset(Entity ent);
+    
     public void setDone(boolean b) {
         done = b;
     }
@@ -39,6 +47,18 @@ public abstract class Buff {
      */
     public abstract void onRemove(Entity ent);
     
+    public int calculateGap(double frequency) {
+        double ticksPerSecond = Entity.getBuffTickRate() / GameEngine.UPDATES_PER_SECOND;
+        return (int) (frequency / ticksPerSecond);
+    }
+    
+    public int calculateMaxSteps(double length) {
+        double ticksPerSecond = Entity.getBuffTickRate() / GameEngine.UPDATES_PER_SECOND;
+        return (int) (length / ticksPerSecond);
+    }
+    
     public abstract BuffType getType();
+    
+    public abstract String toString();
     
 }

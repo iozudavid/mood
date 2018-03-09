@@ -29,6 +29,7 @@ public abstract class Entity extends NetworkObject implements TickListener, IMin
     protected double rotationSpeed = .025;
 
     protected ArrayList<Buff> buffList = new ArrayList<Buff>();
+    private static final double BUFF_TICK_RATE = GameEngine.UPDATES_PER_SECOND / 16;
     
     private Map map;
 
@@ -273,20 +274,6 @@ public abstract class Entity extends NetworkObject implements TickListener, IMin
         // DO NOTHING
     }
     
-    public synchronized void addBuff(Buff buff) {
-        buffList.add(buff);
-        buff.onApply(this);
-    }
-    
-    public synchronized boolean hasBuff(BuffType bt) {
-        for(Buff buff : buffList) {
-            if(buff.getType() == bt) {
-                return true;
-            }
-        }
-        return false;
-    }
-    
     public void setMoveSpeed(double speed) {
         moveSpeed = speed;
     }
@@ -303,17 +290,38 @@ public abstract class Entity extends NetworkObject implements TickListener, IMin
         return rotationSpeed;
     }
     
-    public synchronized void removeBuff(Buff buff) {
-        buffList.remove(buff);
-        buff.onRemove(this);
+    public void setStrafeSpeed(double speed) {
+        strafeSpeed = speed;
     }
     
-    public synchronized void removeBuff(BuffType bt) {
-        for(Buff buff: buffList) {
+    public double getStrafeSpeed() {
+        return strafeSpeed;
+    }
+    
+    public synchronized void addBuff(Buff buff) {
+        buffList.add(buff);
+        buff.onApply(this);
+    }
+    
+    public synchronized boolean hasBuff(BuffType bt) {
+        for(Buff buff : buffList) {
             if(buff.getType() == bt) {
-                removeBuff(buff);
+                return true;
             }
         }
+        return false;
+    }
+    
+    public synchronized void resetBuff(Buff rbuff) {
+        BuffType bt = rbuff.getType();
+        for(Buff buff : buffList) {
+            if(buff.getType() == bt) {
+                buff.reset(this);
+                return; //IMPORTANT WE RETURN
+            }
+        }
+        System.out.println("Adding buff : " + rbuff.toString());
+        addBuff(rbuff);
     }
     
     @Override
@@ -323,15 +331,22 @@ public abstract class Entity extends NetworkObject implements TickListener, IMin
             Buff buff = iter.next();
             buff.periodicEffect(this);
             if(buff.getDone()) {
-                System.out.println("BUFF DONE");
+                System.out.println("Removing buff : " + buff.toString());
+                buff.onRemove(this);
                 iter.remove();
             }
         }
     }
 
+    public static double getBuffTickRate() {
+        return BUFF_TICK_RATE;
+    }
+    
     @Override
     public long interval() {
-        // possibly vary this
-        return (long) GameEngine.UPDATES_PER_SECOND;
+        // every half second...
+        //return (long) GameEngine.UPDATES_PER_SECOND / 2;
+        // every sixteenth second
+        return (long) GameEngine.UPDATES_PER_SECOND / 16;
     }
 }

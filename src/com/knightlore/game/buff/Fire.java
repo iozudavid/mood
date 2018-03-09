@@ -7,7 +7,12 @@ public class Fire extends Buff{
 
     private static int FIRE_DAMAGE = 5;
     private static int MAX_ITERATIONS = 7;
-    private int counter = 0;
+    private static final double FIRE_FREQUENCY = 0.5;
+    private static final double FIRE_LENGTH = 3.0;
+    
+    public Fire() {
+        super(FIRE_FREQUENCY, FIRE_LENGTH);
+    }
     
     @Override
     public void onApply(Entity ent) {
@@ -18,19 +23,25 @@ public class Fire extends Buff{
 
     @Override
     public void periodicEffect(Entity ent) {
-        // TODO: Potentially muck about with the ticker
-        // and maybe only apply damage on certain ticks
         if(counter >= MAX_ITERATIONS) {
             // tell the player to remove this buff
             done =  true;
             return;
         }
-        ent.takeDamage(FIRE_DAMAGE);
+        if(counter % applyGap == 0) {
+            ent.takeDamage(FIRE_DAMAGE);
+        }
         counter++;
         return;
-        
     }
 
+    @Override
+    public void reset(Entity ent) {
+        if(counter >= 2) {
+            counter = 1;
+        }
+    }
+    
     @Override
     public void onRemove(Entity ent) {
         // TODO: Remove fiery effect on the player's display
@@ -40,6 +51,11 @@ public class Fire extends Buff{
     @Override
     public BuffType getType() {
         return BuffType.fire;
+    }
+    
+    @Override
+    public String toString() {
+        return "Fire";
     }
     
 }
