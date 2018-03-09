@@ -22,7 +22,7 @@ public class Prediction {
 	private PredictedState nextPrediction;
 	private ByteBuffer lastReceivedFromServer;
 	private final double maxTolerance = 0.2D;
-	private final double converge = 0.45D;
+	private final double converge = 0.35D;
 	
 	public Prediction(){
 		this.clientInputHistory = new LinkedHashMap<>();
@@ -108,10 +108,20 @@ public class Prediction {
 		//to construct the new position
 		
 		if (this.nextPrediction != null) {
-			player.setxPos(nextPrediction.getPosition().getX());
-			player.setyPos(nextPrediction.getPosition().getY());
-			player.setxDir(nextPrediction.getDirection().getX());
-			player.setyDir(nextPrediction.getDirection().getY());
+			if ((Math.abs(player.getxPos() - this.nextPrediction.getPosition().getX()) > this.maxTolerance
+					|| Math.abs(player.getyPos() - this.nextPrediction.getPosition().getY()) > this.maxTolerance
+					|| Math.abs(player.getxDir() - this.nextPrediction.getDirection().getX()) > this.maxTolerance
+					|| Math.abs(player.getyDir() - this.nextPrediction.getDirection().getY()) > this.maxTolerance)) {
+				player.setxPos(nextPrediction.getPosition().getX());
+				player.setyPos(nextPrediction.getPosition().getY());
+				player.setxDir(nextPrediction.getDirection().getX());
+				player.setyDir(nextPrediction.getDirection().getY());
+			} else {
+				player.setxPos(smooth(player.getxPos(),this.nextPrediction.getPosition().getX()));
+				player.setyPos(smooth(player.getyPos(),this.nextPrediction.getPosition().getY()));
+				player.setxDir(smooth(player.getxDir(),this.nextPrediction.getDirection().getX()));
+				player.setyDir(smooth(player.getyDir(),this.nextPrediction.getDirection().getY()));
+			}
 		}
 		
 		player.setInputState(input);
@@ -119,6 +129,11 @@ public class Prediction {
 			this.clientInputHistory.put(packetNumber,input);
 		}
 		return player;
+	}
+	
+	public double smooth(double playerState, double predictedState){
+		double delta = playerState-predictedState;
+		return playerState-delta*this.converge;
 	}
 	
 	public boolean isMoveActivated(ClientController c, byte[] input){
