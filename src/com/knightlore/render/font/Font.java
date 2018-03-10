@@ -16,9 +16,9 @@ import com.knightlore.render.graphic.filter.ColorFilter;
 
 public class Font {
 
-    public static final Font DEFAULT_BLACK = new Font("res/font/font.png", "ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890 ",
+    public static final Font DEFAULT_BLACK = new Font("res/font/font.png", "ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890 ?!-+",
             0x000000);
-    public static final Font DEFAULT_WHITE = new Font("res/font/font.png", "ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890 ",
+    public static final Font DEFAULT_WHITE = new Font("res/font/font.png", "ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890 ?!-+",
             0xFFFFFF);
 
     private static final int BOUNDS_COLOR = -65536; // pure red.
@@ -53,14 +53,31 @@ public class Font {
             int b1 = bounds.get(i), b2 = bounds.get(i + 1);
             BufferedImage character = sheet.getSubimage(b1, 1, b2 - b1 + 1, getHeight());
             Graphic g = new Graphic(character);
+
             filter.apply(g.getPixels(), PixelBuffer.CHROMA_KEY);
             symbols.put(order.charAt(i / 2), g);
+
+            System.out.println(order.charAt(i / 2));
         }
 
     }
 
     public Graphic getGraphic(char c) {
-        return symbols.containsKey(c) ? symbols.get(c) : symbols.get(Character.toUpperCase(c));
+        if (symbols.containsKey(c))
+            return symbols.get(c);
+
+        c = Character.toUpperCase(c);
+        if (symbols.containsKey(c))
+            return symbols.get(c);
+
+        if (symbols.containsKey('?')) {
+            return symbols.get('?');
+        }
+
+        if (symbols.containsKey(' '))
+            return symbols.get(' ');
+
+        return Graphic.EMPTY;
     }
 
     public int getHeight() {
