@@ -86,6 +86,7 @@ public class GameEngine implements Runnable {
 
         System.out.println("Engine Initialised Successfully.");
         // ALSO TODO, UNHOOK HARD CODED WORLDS
+
         System.out.println("Initialising World...");
 
         if (GameSettings.isServer()) {
@@ -108,10 +109,10 @@ public class GameEngine implements Runnable {
         networkObjectManager.init();
 
         System.out.println("World Initialised Successfully.");
-
+        
         this.gameState = GameState.StartMenu;
     }
-
+    
     /**
      * Creates the window for the game.
      */

@@ -12,6 +12,7 @@ import com.knightlore.game.tile.AirTile;
 import com.knightlore.game.tile.Tile;
 import com.knightlore.game.world.ClientWorld;
 import com.knightlore.gui.GUICanvas;
+import com.knightlore.gui.MultiplayerMenu;
 import com.knightlore.gui.StartMenu;
 import com.knightlore.render.graphic.Graphic;
 import com.knightlore.render.minimap.Minimap;
@@ -33,12 +34,14 @@ public class Renderer implements IRenderable {
 
     private GUICanvas gui;
     private StartMenu startMenu;
+    private MultiplayerMenu mp;
+    private Screen screen;
 
     public Renderer(Camera camera, ClientWorld world, Screen screen) {
         this.camera = camera;
         this.world = world;
+        this.screen = screen;
         this.minimap = new Minimap(camera, world, 128);
-        this.startMenu = new StartMenu(screen.getHeight(), screen.getWidth());
     }
     
     private final int BLOCKINESS = 3; // how 'old school' you want to look.
@@ -58,7 +61,13 @@ public class Renderer implements IRenderable {
             return;
 
         if(GameEngine.getSingleton().gameState==GameState.StartMenu){
+        	if(startMenu==null)
+        		 this.startMenu = new StartMenu(screen.getHeight(), screen.getWidth());
         	this.startMenu.render(pix,x,y);
+        }else if(GameEngine.getSingleton().gameState==GameState.MultiplayerMenu){
+        	if(mp==null)
+                this.mp = new MultiplayerMenu(screen.getHeight(), screen.getWidth());
+        	this.mp.render(pix,x,y);
         }
     	else{
         

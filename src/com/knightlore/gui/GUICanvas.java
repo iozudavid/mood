@@ -72,6 +72,12 @@ public class GUICanvas extends GameObject implements IRenderable {
 		}
 	}
 	
+	public static void deleteChar() {
+		if (activeTextField != null) {
+			activeTextField.onDeleteChar();
+		}
+	}
+	
 	public static boolean isTyping() {
 		return activeTextField != null;
 	}
@@ -122,6 +128,7 @@ public class GUICanvas extends GameObject implements IRenderable {
 		
 		// notify new gui of mouse enter
 		if (selected != null) {
+			System.out.println(selected);
 			// send mouse entered event
 			if (selected != lastSelected) {
 				selected.onMouseEnter();
@@ -163,6 +170,7 @@ public class GUICanvas extends GameObject implements IRenderable {
 
 	@Override
 	public void onDestroy() {
+		guis.clear();
 		canvasG2D.dispose();
 	}
 	
@@ -190,4 +198,5 @@ public class GUICanvas extends GameObject implements IRenderable {
 	public static void setActiveTextField(TextField activeTextField) {
 		GUICanvas.activeTextField = activeTextField;
 	}
+	
 }
