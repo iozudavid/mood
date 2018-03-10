@@ -39,7 +39,12 @@ public class Keyboard extends KeyAdapter {
 
     @Override
     public void keyTyped(KeyEvent e) {
-        GUICanvas.inputChar(e.getKeyChar());
+    	char eChar = e.getKeyChar();
+    	//vk_back_space not working here
+    	if(eChar=='\b')
+    		GUICanvas.deleteChar();
+    	else
+    		GUICanvas.inputChar(e.getKeyChar());
     }
 
     /**

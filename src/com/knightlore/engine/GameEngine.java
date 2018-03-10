@@ -48,6 +48,7 @@ public class GameEngine implements Runnable {
     private NetworkObjectManager networkObjectManager;
 
     private Camera camera;
+    public GameState gameState;
 
     private GameEngine() {
         if (HEADLESS) {
