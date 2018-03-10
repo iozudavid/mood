@@ -48,7 +48,7 @@ public class ClientWorld extends GameWorld {
         tf.rect.height = 30;
         gui.addGUIObject(tf);
         gui.addGUIObject(b);
-        GameEngine.getSingleton().getRenderer().setGUI(gui);
+  //      GameEngine.getSingleton().getRenderer().setGUI(gui);
     }
 
 }

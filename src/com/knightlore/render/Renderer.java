@@ -61,15 +61,23 @@ public class Renderer implements IRenderable {
             return;
 
         if(GameEngine.getSingleton().gameState==GameState.StartMenu){
+        	if(this.mp != null)
+        		this.mp = null;
         	if(startMenu==null)
         		 this.startMenu = new StartMenu(screen.getHeight(), screen.getWidth());
         	this.startMenu.render(pix,x,y);
         }else if(GameEngine.getSingleton().gameState==GameState.MultiplayerMenu){
+        	if(startMenu!=null)
+        		this.startMenu = null;
         	if(mp==null)
                 this.mp = new MultiplayerMenu(screen.getHeight(), screen.getWidth());
         	this.mp.render(pix,x,y);
         }
     	else{
+    		if(this.mp!=null)
+    			this.mp = null;
+    		if(this.startMenu!=null)
+    			this.startMenu = null;
         
         // Draw the environment, as specified by the world.
         world.getEnvironment().renderEnvironment(pix);
