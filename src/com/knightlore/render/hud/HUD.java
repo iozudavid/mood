@@ -11,23 +11,29 @@ public class HUD {
     private Player myPlayer;
 
     private HealthCounter healthCounter;
-    private Compass currentWeapon;
+    private Compass compass;
 
     public HUD(Player myPlayer, int width, int height) {
         this.myPlayer = myPlayer;
         display = new PixelBuffer(width, height);
         healthCounter = new HealthCounter();
-        currentWeapon = new Compass();
+        compass = new Compass();
         healthCounter.setPlayer(myPlayer);
-        currentWeapon.setPlayer(myPlayer);
+        compass.setPlayer(myPlayer);
     }
 
     public void render() {
         display.flood(0x1F1F1F);
-        currentWeapon.render(display, 10, -20);
+
+        final int compassX = 10;
+        final int compassY = (int) (display.getHeight() / 2 - compass.compassSprite.getHeight() / 2.5D);
+        compass.render(display, compassX, compassY);
+
         healthCounter.render(display, 0, 0);
-        display.drawString(Font.DEFAULT_WHITE, String.format("SCORE %d", 100 + myPlayer.score),
-                display.getWidth() - 150, 25, 2, 2);
+
+        final int scoreX = display.getWidth() - 150;
+        final int scoreY = display.getHeight() / 2 - 7;
+        display.drawString(Font.DEFAULT_WHITE, String.format("SCORE %d", 100 + myPlayer.score), scoreX, scoreY, 2, 2);
     }
 
     public PixelBuffer getPixelBuffer() {
