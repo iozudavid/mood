@@ -180,7 +180,7 @@ public class TextField extends GUIObject {
 			deltaPos -= width;
 			if(deltaPos<0){
 				if(oldDelta<Math.abs(deltaPos))
-					this.insertPosition = chooseLocation--;
+					this.insertPosition = --chooseLocation;
 				else
 					this.insertPosition = chooseLocation;
 				break;
