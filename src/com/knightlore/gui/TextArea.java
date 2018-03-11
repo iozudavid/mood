@@ -27,6 +27,7 @@ public class TextArea extends GUIObject{
 
 	@Override
 	void Draw(Graphics g, Rectangle parentRect) {
+		g.drawRect(this.getRectangle().x, this.getRectangle().y, this.getRectangle().width, this.getRectangle().height);
 		this.positionXToRender = 0;
 		this.positionYToRender = 0;
 		char[] space = new char[1];

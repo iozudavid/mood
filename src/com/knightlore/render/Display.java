@@ -1,5 +1,6 @@
 package com.knightlore.render;
 
+import com.knightlore.gui.GameChat;
 import com.knightlore.render.hud.HUD;
 import com.knightlore.render.minimap.Minimap;
 
@@ -8,11 +9,13 @@ public class Display implements IRenderable {
     private Renderer renderer;
     private Minimap minimap;
     private HUD hud;
+    private GameChat chat;
 
-    public Display(Renderer renderer, Minimap minimap, HUD hud) {
+    public Display(Renderer renderer, Minimap minimap, HUD hud, GameChat chat) {
         this.renderer = renderer;
         this.minimap = minimap;
         this.hud = hud;
+        this.chat = chat;
     }
 
     @Override
@@ -29,8 +32,10 @@ public class Display implements IRenderable {
 
         PixelBuffer hudBuffer = hud.getPixelBuffer();
         pix.composite(hudBuffer, x, y + renderer.getPixelBuffer().getHeight());
+        
 
         GameFeed.getInstance().render(pix, x, y);
+        chat.render(pix,x,y);
     }
 
     public Renderer getRenderer() {

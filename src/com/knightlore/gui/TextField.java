@@ -78,7 +78,9 @@ public class TextField extends GUIObject {
 		g.fillRect(rect.x, rect.y, rect.width, rect.height);
 		// draw the characters of the string
 		g.setColor(Color.BLACK);
-		g.drawChars(rawChars, 0, rawChars.length, rect.x, rect.y+hOffset);
+		
+		if(text!=null)
+			g.drawChars(rawChars, 0, rawChars.length, rect.x, rect.y+hOffset);
 		this.g=g;
 	}
 	
@@ -173,6 +175,11 @@ public class TextField extends GUIObject {
 		Vector2D mousePos = InputManager.getMousePos();
 		double deltaPos = mousePos.getX()-this.rect.x;
 		int chooseLocation = 0;
+		if(this.text==null){
+			this.text = "";
+			this.insertPosition = 0;
+			
+		}else{
 		for(char c : this.text.toCharArray()){
 			chooseLocation++;
 			int width = this.g.getFontMetrics().charWidth(c);
@@ -188,7 +195,7 @@ public class TextField extends GUIObject {
 		}
 		if(deltaPos>0)
 			this.insertPosition = text.length();
-		
+		}
 		insertString = text.substring(0, chooseLocation) + "|" + text.substring(chooseLocation);
 		displayText(insertString);
 		state = SelectState.DOWN;

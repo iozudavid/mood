@@ -84,7 +84,7 @@ public class GUICanvas extends GameObject implements IRenderable {
 	
 	@Override
 	public void render(PixelBuffer pix, int x, int y) {
-		canvasG2D.setColor(BACKGROUND_COLOR);		
+		canvasG2D.setColor(BACKGROUND_COLOR);
 		for(int i=0;i<guis.size();i++){
 			guis.get(i).Draw(canvasG2D,rect);
 

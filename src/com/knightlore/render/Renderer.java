@@ -10,6 +10,7 @@ import com.knightlore.game.entity.Entity;
 import com.knightlore.game.tile.AirTile;
 import com.knightlore.game.tile.Tile;
 import com.knightlore.game.world.ClientWorld;
+import com.knightlore.gui.GameChat;
 import com.knightlore.render.font.Font;
 import com.knightlore.render.graphic.Graphic;
 import com.knightlore.utils.Vector2D;
@@ -56,6 +57,7 @@ public class Renderer {
 
         camera.render(pix, 0, 0);
         drawCrosshair(pix);
+        
     }
 
     private void drawPerspective(PixelBuffer pix, int offset) {

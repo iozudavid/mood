@@ -7,6 +7,7 @@ import com.knightlore.engine.input.Mouse;
 import com.knightlore.game.world.ClientWorld;
 import com.knightlore.game.world.GameWorld;
 import com.knightlore.game.world.ServerWorld;
+import com.knightlore.gui.GameChat;
 import com.knightlore.network.NetworkObjectManager;
 import com.knightlore.network.client.ClientManager;
 import com.knightlore.network.client.ClientNetworkObjectManager;
@@ -122,7 +123,8 @@ public class GameEngine implements Runnable {
             Renderer renderer = new Renderer(w, 8 * h / 9, camera, cworld);
             Minimap minimap = new Minimap(camera, cworld, 128);
             HUD hud = new HUD(cn.getMyPlayer(), w, h / 9);
-            this.display = new Display(renderer, minimap, hud);
+            GameChat chat = new GameChat(w,h/9);
+            this.display = new Display(renderer, minimap, hud, chat);
         }
     }
 
