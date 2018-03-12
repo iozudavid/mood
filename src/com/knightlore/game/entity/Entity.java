@@ -28,6 +28,8 @@ public abstract class Entity extends NetworkObject implements TickListener, IMin
     protected double strafeSpeed = .01;
     protected double rotationSpeed = .025;
 
+    protected boolean isImmune = false;
+    
     protected ArrayList<Buff> buffList = new ArrayList<Buff>();
     private static final double BUFF_TICK_RATE = GameEngine.UPDATES_PER_SECOND / 16;
     
@@ -299,18 +301,13 @@ public abstract class Entity extends NetworkObject implements TickListener, IMin
         return strafeSpeed;
     }
     
-    public synchronized void addBuff(Buff buff) {
-        buffList.add(buff);
-        buff.onApply(this);
+    public void setImmune(boolean b) {
+        isImmune = b;
     }
     
-    public synchronized boolean hasBuff(BuffType bt) {
-        for(Buff buff : buffList) {
-            if(buff.getType() == bt) {
-                return true;
-            }
-        }
-        return false;
+    private synchronized void addBuff(Buff buff) {
+        buffList.add(buff);
+        buff.onApply(this);
     }
     
     public synchronized void resetBuff(Buff rbuff) {
@@ -321,7 +318,6 @@ public abstract class Entity extends NetworkObject implements TickListener, IMin
                 return; //IMPORTANT WE RETURN
             }
         }
-        //System.out.println("Adding buff : " + rbuff.toString());
         addBuff(rbuff);
     }
     
@@ -332,7 +328,6 @@ public abstract class Entity extends NetworkObject implements TickListener, IMin
             Buff buff = iter.next();
             buff.periodicEffect(this);
             if(buff.getDone()) {
-                //System.out.println("Removing buff : " + buff.toString());
                 buff.onRemove(this);
                 iter.remove();
             }

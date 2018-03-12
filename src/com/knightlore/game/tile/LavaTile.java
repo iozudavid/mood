@@ -16,6 +16,14 @@ public class LavaTile extends Tile {
         return AirTile.getInstance().getTexture();
     }
 
+    public double getOpacity() {
+        return 0D;
+    }
+
+    public double getSolidity() {
+        return 0D;
+    }
+    
     @Override
     public void onShot() {
     }
@@ -36,20 +44,9 @@ public class LavaTile extends Tile {
         
         // not quite sure which zombie class to use...
         if(entity instanceof Player || entity instanceof ZombieServer) {
-            // implement buffs in entity
+            entity.resetBuff(new Fire());
         }
-        
-        // only apply a buff to player if it
-        // doesn't have it
-        /*
-        if(!entity.hasBuff(BuffType.fire)) {
-            entity.addBuff(new Fire());
-        }
-        
-        if(!entity.hasBuff(BuffType.slow)) {
-            entity.addBuff(new Slow());
-        }
-        */
+
     }
     
 }

@@ -11,6 +11,7 @@ import com.knightlore.engine.GameEngine;
 import com.knightlore.engine.TickListener;
 import com.knightlore.game.buff.Buff;
 import com.knightlore.game.buff.BuffType;
+import com.knightlore.game.buff.Immune;
 import com.knightlore.ai.InputModule;
 import com.knightlore.ai.RemoteInput;
 import com.knightlore.engine.GameEngine;
@@ -31,6 +32,7 @@ public class Player extends Entity implements TickListener{
 
     private final int MAX_HEALTH = 100;
     private int currentHealth = MAX_HEALTH;
+    
     private Weapon currentWeapon;
 
     private boolean hasShot;
@@ -255,6 +257,9 @@ public class Player extends Entity implements TickListener{
     */
 
     public void takeDamage(int damage, Entity inflictor) {
+        if(isImmune) {
+            return;
+        }
         int newHealth = currentHealth - damage;
         currentHealth = Math.max(0, Math.min(MAX_HEALTH, newHealth));
         if (currentHealth <= 0) {
@@ -268,7 +273,7 @@ public class Player extends Entity implements TickListener{
             for(Buff b : buffList) {
                 b.setDone(true);
             }
-            
+            resetBuff(new Immune());
             GameEngine.getSingleton().getWorld().getGameManager().onPlayerDeath(this);
         }
     }
