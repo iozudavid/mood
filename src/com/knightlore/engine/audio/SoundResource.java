@@ -11,14 +11,17 @@ import javax.sound.sampled.Clip;
 import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.UnsupportedAudioFileException;
 
-public class SoundEffect {
+public class SoundResource {
+    // The cached data of the audio file.
     byte[] data;
     AudioFormat encoding;
 
-    public SoundEffect(String path) {
+    // Path to a WAV file to read.
+    public SoundResource(String path) {
         File f = new File(path);
         try (AudioInputStream stream = AudioSystem.getAudioInputStream(f)) {
             this.encoding = stream.getFormat();
+            // Store the audio data in the byte array.
             data = new byte[(int) (stream.getFrameLength()
                     * stream.getFormat().getFrameSize())];
             stream.read(data, 0, data.length);
@@ -28,6 +31,11 @@ public class SoundEffect {
         }
     }
 
+    /**
+     * Generates a new audio Clip from the stored audio data on each call. This
+     * allows the same audio file to be played multiple times concurrently, if
+     * necessary.
+     */
     public Clip getNewClip() {
         Clip clip = null;
         try {
