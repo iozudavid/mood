@@ -2,7 +2,7 @@ package com.knightlore.game.entity.weapon;
 
 import com.knightlore.GameSettings;
 import com.knightlore.engine.GameEngine;
-import com.knightlore.engine.audio.SoundEffect;
+import com.knightlore.engine.audio.SoundResource;
 import com.knightlore.game.entity.Entity;
 import com.knightlore.render.PixelBuffer;
 import com.knightlore.render.graphic.Graphic;
@@ -19,10 +19,10 @@ public abstract class Weapon {
     protected boolean automatic;
     protected int fireRate, timer;
 
-    private SoundEffect shootSFX;
+    private SoundResource shootSFX;
 
     public Weapon(Graphic graphic, boolean automatic, int fireRate,
-            SoundEffect shootSFX) {
+            SoundResource shootSFX) {
         this.graphic = graphic;
         this.automatic = automatic;
         this.fireRate = fireRate;

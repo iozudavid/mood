@@ -25,7 +25,7 @@ public class SoundManager {
      * @param volume:
      *            The volume level to play at, as a float from 0 to 1.
      */
-    public void play(SoundEffect e, float volume) {
+    public void play(SoundResource e, float volume) {
         Clip clip = e.getNewClip();
         final FloatControl control = (FloatControl) clip
                 .getControl(FloatControl.Type.MASTER_GAIN);
@@ -41,7 +41,7 @@ public class SoundManager {
      * @param e:
      *            The sound effect to play.
      */
-    public void play(SoundEffect e) {
+    public void play(SoundResource e) {
         this.play(e, this.DEFAULT_VOLUME);
     }
 }

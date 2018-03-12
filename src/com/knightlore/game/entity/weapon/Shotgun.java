@@ -1,7 +1,7 @@
 package com.knightlore.game.entity.weapon;
 
 import com.knightlore.engine.GameEngine;
-import com.knightlore.engine.audio.SoundEffect;
+import com.knightlore.engine.audio.SoundResource;
 import com.knightlore.game.entity.Entity;
 import com.knightlore.render.graphic.sprite.WeaponSprite;
 import com.knightlore.utils.Vector2D;
@@ -9,7 +9,7 @@ import com.knightlore.utils.physics.RaycastHit;
 
 public class Shotgun extends Weapon {
 
-    private static final SoundEffect SHOOT_SFX = new SoundEffect(
+    private static final SoundResource SHOOT_SFX = new SoundResource(
             "res/sfx/shotgun.wav");
     private static final long FIRE_DELAY = 10;
     private final float sqrRange = 10;
