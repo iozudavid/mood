@@ -28,7 +28,7 @@ public abstract class Entity extends NetworkObject implements TickListener, IMin
     protected double strafeSpeed = .01;
     protected double rotationSpeed = .025;
 
-    protected boolean isImmune = false;
+    protected double damageTakenModifier = 1;
     
     protected ArrayList<Buff> buffList = new ArrayList<Buff>();
     private static final double BUFF_TICK_RATE = GameEngine.UPDATES_PER_SECOND / 16;
@@ -301,8 +301,8 @@ public abstract class Entity extends NetworkObject implements TickListener, IMin
         return strafeSpeed;
     }
     
-    public void setImmune(boolean b) {
-        isImmune = b;
+    public void setDamageTakenModifier(double d) {
+        damageTakenModifier = d;
     }
     
     private synchronized void addBuff(Buff buff) {

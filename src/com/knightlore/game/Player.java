@@ -257,9 +257,7 @@ public class Player extends Entity implements TickListener{
     */
 
     public void takeDamage(int damage, Entity inflictor) {
-        if(isImmune) {
-            return;
-        }
+        damage = (int) (damage * damageTakenModifier);
         int newHealth = currentHealth - damage;
         currentHealth = Math.max(0, Math.min(MAX_HEALTH, newHealth));
         if (currentHealth <= 0) {

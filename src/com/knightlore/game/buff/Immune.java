@@ -14,7 +14,7 @@ public class Immune extends Buff {
     @Override
     public void onApply(Entity ent) {
         // TODO: Show visual affect
-        ent.setImmune(true);
+        ent.setDamageTakenModifier(0);
     }
 
     @Override
@@ -26,7 +26,7 @@ public class Immune extends Buff {
     @Override
     public void onRemove(Entity ent) {
         // TODO: Remove visual affect
-        ent.setImmune(false);
+        ent.setDamageTakenModifier(1);
     }
 
     @Override
