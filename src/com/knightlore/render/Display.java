@@ -29,6 +29,8 @@ public class Display implements IRenderable {
 
         PixelBuffer hudBuffer = hud.getPixelBuffer();
         pix.composite(hudBuffer, x, y + renderer.getPixelBuffer().getHeight());
+
+        GameFeed.getInstance().render(pix, x, y);
     }
 
     public Renderer getRenderer() {
