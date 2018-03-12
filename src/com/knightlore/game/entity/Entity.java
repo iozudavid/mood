@@ -320,7 +320,7 @@ public abstract class Entity extends NetworkObject implements TickListener, IMin
                 return; //IMPORTANT WE RETURN
             }
         }
-        System.out.println("Adding buff : " + rbuff.toString());
+        //System.out.println("Adding buff : " + rbuff.toString());
         addBuff(rbuff);
     }
     
@@ -331,7 +331,7 @@ public abstract class Entity extends NetworkObject implements TickListener, IMin
             Buff buff = iter.next();
             buff.periodicEffect(this);
             if(buff.getDone()) {
-                System.out.println("Removing buff : " + buff.toString());
+                //System.out.println("Removing buff : " + buff.toString());
                 buff.onRemove(this);
                 iter.remove();
             }

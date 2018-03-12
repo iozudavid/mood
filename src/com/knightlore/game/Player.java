@@ -241,13 +241,14 @@ public class Player extends Entity implements TickListener{
 
     @Override
     public void takeDamage(int damage) {
+        if (currentHealth == 0) {
+            System.out.println("Player" + getName() + " died");
+            respawn();
+            return;
+        }
         int newHealth = currentHealth - damage;
         currentHealth = Math.max(0, Math.min(MAX_HEALTH, newHealth));
-        //respawn
-        if (currentHealth == 0) {
-            System.out.println("Player "+getName()+ " died.");
-            respawn();
-        }
+        System.out.println("HP: " + currentHealth);
     }
     
     public void applyHeal(int heal) {
@@ -255,12 +256,12 @@ public class Player extends Entity implements TickListener{
     }
     
     private void respawn() {
-        this.position = GameEngine.getSingleton().getWorld().getMap().getRandomSpawnPoint();
-        currentHealth = MAX_HEALTH;
-        inputModule.onRespawn(this);
         for(Buff b : buffList) {
             b.setDone(true);
         }
+        this.position = GameEngine.getSingleton().getWorld().getMap().getRandomSpawnPoint();
+        currentHealth = MAX_HEALTH;
+        inputModule.onRespawn(this);
         System.out.println("Player " + getName() + " respawned.");
     }
 

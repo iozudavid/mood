@@ -5,10 +5,9 @@ import com.knightlore.game.entity.Entity;
 
 public class Fire extends Buff{
 
-    private static int FIRE_DAMAGE = 5;
-    private static int MAX_ITERATIONS = 7;
+    private static int FIRE_DAMAGE = 2;
     private static final double FIRE_FREQUENCY = 0.5;
-    private static final double FIRE_LENGTH = 3.0;
+    private static final double FIRE_LENGTH = 8;
     
     public Fire() {
         super(FIRE_FREQUENCY, FIRE_LENGTH);
@@ -23,7 +22,7 @@ public class Fire extends Buff{
 
     @Override
     public void periodicEffect(Entity ent) {
-        if(counter >= MAX_ITERATIONS) {
+        if(counter >= maxSteps) {
             // tell the player to remove this buff
             done =  true;
             return;
@@ -35,12 +34,14 @@ public class Fire extends Buff{
         return;
     }
 
+    /*
     @Override
     public void reset(Entity ent) {
         if(counter >= 2) {
             counter = 1;
         }
     }
+    */
     
     @Override
     public void onRemove(Entity ent) {

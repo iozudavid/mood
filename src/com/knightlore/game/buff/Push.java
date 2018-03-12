@@ -8,7 +8,6 @@ public class Push extends Buff {
     private static double MOVE_DISTANCE = .15;
     private Vector2D direction;
     
-    private static final int MAX_ITERATIONS = 3;
     private static final double PUSH_FREQUENCY = 1 / 16;
     private static final double PUSH_LENGTH = 0.5;
     private int counter = 0;
@@ -26,18 +25,13 @@ public class Push extends Buff {
     @Override
     public void periodicEffect(Entity ent) {
         // TODO: PUSH PLAYER IN DIRECTION
-        if(counter >= MAX_ITERATIONS) {
+        if(counter >= maxSteps) {
             done = true;
         }
         if(counter % 2 == 0) {
             ent.absoluteMove(direction, MOVE_DISTANCE);
         }
         counter++;
-    }
-
-    @Override
-    public void reset(Entity ent) {
-        counter = 1;        
     }
     
     @Override

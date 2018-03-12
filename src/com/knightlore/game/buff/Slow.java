@@ -3,8 +3,6 @@ package com.knightlore.game.buff;
 import com.knightlore.game.entity.Entity;
 
 public class Slow extends Buff {
-
-    private static int MAX_ITERATIONS  = 2;
     
     private double originalMoveSpeed;
     private double originalRotateSpeed;
@@ -37,7 +35,7 @@ public class Slow extends Buff {
 
     @Override
     public void periodicEffect(Entity p) {
-        if(counter >= MAX_ITERATIONS) {
+        if(counter >= maxSteps) {
             done = true;
             return;
         }

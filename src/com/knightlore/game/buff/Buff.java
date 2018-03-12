@@ -31,7 +31,11 @@ public abstract class Buff {
      */
     public abstract void periodicEffect(Entity ent);
     
-    public abstract void reset(Entity ent);
+    public void reset(Entity ent) {
+        if(counter >= applyGap) {
+            counter = 1;
+        }
+    }
     
     public void setDone(boolean b) {
         done = b;

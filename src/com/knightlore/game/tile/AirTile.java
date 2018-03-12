@@ -41,9 +41,7 @@ public class AirTile extends Tile {
 
     @Override
     public void onEntered(Entity entity) {
-        // just for testing the fire debuff
-        //entity.resetBuff(new Push(Vector2D.UP));
-        entity.resetBuff(new Fire());
+
     }
 
     public char toChar() {
