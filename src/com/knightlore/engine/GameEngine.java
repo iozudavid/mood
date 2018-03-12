@@ -15,6 +15,7 @@ import com.knightlore.network.server.ServerManager;
 import com.knightlore.network.server.ServerNetworkObjectManager;
 import com.knightlore.render.Camera;
 import com.knightlore.render.Display;
+import com.knightlore.render.GameFeed;
 import com.knightlore.render.Renderer;
 import com.knightlore.render.Screen;
 import com.knightlore.render.hud.HUD;
@@ -95,17 +96,18 @@ public class GameEngine implements Runnable {
         // The NetworkObjectManager will call setUpWorld() on the world when
         // it's ready to do so.
         if (GameSettings.isServer()) {
-            ServerManager networkManager = new ServerManager();
-            new Thread(networkManager).start();
             world = new ServerWorld();
             networkObjectManager = new ServerNetworkObjectManager((ServerWorld) world);
             
+            ServerManager networkManager = new ServerManager();
+            new Thread(networkManager).start();
+
         }
         if (GameSettings.isClient()) {
-            ClientManager networkManager = new ClientManager();
-            new Thread(networkManager).start();
             world = new ClientWorld();
             networkObjectManager = new ClientNetworkObjectManager((ClientWorld) world);
+            ClientManager networkManager = new ClientManager();
+            new Thread(networkManager).start();
         }
 
         System.out.println("Initialising NetworkObjectManager...");
@@ -168,6 +170,8 @@ public class GameEngine implements Runnable {
 
     @Override
     public void run() {
+        // start the lobby
+        world.getGameManager().startLobby();
         /*
          * This piece of code limits the number of game updates per second to
          * whatever it is set to in the variable updatesPerSecond.
@@ -182,8 +186,13 @@ public class GameEngine implements Runnable {
             while (delta >= 1) {
                 gameObjectManager.updateObjects();
                 world.update();
+                GameFeed.getInstance().update();
                 delta -= 1;
                 ticker.tick();
+                
+                if(GameEngine.ticker.getTime() % 60 == 0) {
+                    GameFeed.getInstance().println("tick");
+                }
             }
 
             if (!HEADLESS) {

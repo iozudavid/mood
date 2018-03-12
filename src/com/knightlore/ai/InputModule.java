@@ -2,7 +2,7 @@ package com.knightlore.ai;
 
 import java.util.Map;
 
-import com.knightlore.game.Player;
+import com.knightlore.game.entity.Entity;
 import com.knightlore.network.protocol.ClientController;
 
 public abstract class InputModule {
@@ -15,7 +15,7 @@ public abstract class InputModule {
 	public double walkInput;
 	public boolean shoot;
 	
-	public abstract Map<ClientController, Byte> updateInput(Map<ClientController, Byte> inputState, Player myPlayer);
+	public abstract Map<ClientController, Byte> updateInput(Map<ClientController, Byte> inputState, Entity myPlayer);
 
-    public abstract void onRespawn(Player myPlayer);
+    public abstract void onRespawn(Entity myPlayer);
 }

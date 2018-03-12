@@ -44,6 +44,7 @@ public abstract class Entity extends NetworkObject implements TickListener, IMin
     public Team team;
 
     protected int zOffset;
+    protected String name = "entity";
 
     // Allow you to create an entity with a specified UUID. Useful for creating
     // "synchronised" objects on the client-side.
@@ -80,13 +81,13 @@ public abstract class Entity extends NetworkObject implements TickListener, IMin
     protected Entity(UUID uuid, Vector2D position, Vector2D direction) {
         this(uuid, 1, position, direction);
     }
-    
+
     public void render(PixelBuffer pix, int x, int y, double distanceTraveled) {
         /* ONLY CALLED IF THIS ENTITY IS THE CAMERA SUBJECT */
     }
 
     public abstract void onCollide(Player player);
-    
+
     @Override
     public void onUpdate() {
         Map map = GameEngine.getSingleton().getWorld().getMap();
@@ -99,7 +100,7 @@ public abstract class Entity extends NetworkObject implements TickListener, IMin
     }
 
     public abstract DirectionalSprite getDirectionalSprite();
-    
+
     public double getSize() {
         return size;
     }
@@ -269,8 +270,8 @@ public abstract class Entity extends NetworkObject implements TickListener, IMin
     public double getDrawSize() {
         return 2 * size;
     }
-    
-    public void takeDamage(int damage) {
+
+    public void takeDamage(int damage, Entity inflictor) {
         // DO NOTHING
     }
     
@@ -348,5 +349,13 @@ public abstract class Entity extends NetworkObject implements TickListener, IMin
         //return (long) GameEngine.UPDATES_PER_SECOND / 2;
         // every sixteenth second
         return (long) GameEngine.UPDATES_PER_SECOND / 16;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 }

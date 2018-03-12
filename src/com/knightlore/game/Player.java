@@ -14,18 +14,20 @@ import com.knightlore.game.buff.BuffType;
 import com.knightlore.ai.InputModule;
 import com.knightlore.ai.RemoteInput;
 import com.knightlore.engine.GameEngine;
-import com.knightlore.game.area.Map;
 import com.knightlore.game.entity.Entity;
 import com.knightlore.game.entity.weapon.Shotgun;
 import com.knightlore.game.entity.weapon.Weapon;
 import com.knightlore.network.NetworkObject;
 import com.knightlore.network.protocol.ClientController;
 import com.knightlore.network.protocol.ClientProtocol;
+import com.knightlore.render.GameFeed;
 import com.knightlore.render.PixelBuffer;
 import com.knightlore.render.graphic.sprite.DirectionalSprite;
 import com.knightlore.utils.Vector2D;
 
 public class Player extends Entity implements TickListener{
+
+    public int score = 0;
 
     private final int MAX_HEALTH = 100;
     private int currentHealth = MAX_HEALTH;
@@ -40,8 +42,6 @@ public class Player extends Entity implements TickListener{
     private java.util.Map<ClientController, Byte> inputState = new HashMap<>();
     private InputModule inputModule = null;
     // private volatile boolean finished = false;
-
-    private String name = "noname";
 
     // Returns a new instance. See NetworkObject for details.
     public static NetworkObject build(UUID uuid, ByteBuffer state) {
@@ -114,13 +114,13 @@ public class Player extends Entity implements TickListener{
                 inputState.put(control, value);
             }
         }
-        
+
     }
 
     @Override
     public void onUpdate() {
         super.onUpdate();
-        
+
         hasShot = false;
         if (shootOnNextUpdate) {
             currentWeapon.fire(this);
@@ -142,7 +142,7 @@ public class Player extends Entity implements TickListener{
                 }
             }
         }
-        
+
         updateInertia();
         prevPos = position;
         prevDir = direction;
@@ -240,41 +240,52 @@ public class Player extends Entity implements TickListener{
     }
 
     @Override
+
+    /*
     public void takeDamage(int damage) {
         if (currentHealth == 0) {
             System.out.println("Player" + getName() + " died");
             respawn();
             return;
         }
+            int newHealth = currentHealth - damage;
+            currentHealth = Math.max(0, Math.min(MAX_HEALTH, newHealth));
+            System.out.println("HP: " + currentHealth);
+    }
+    */
+
+    public void takeDamage(int damage, Entity inflictor) {
         int newHealth = currentHealth - damage;
         currentHealth = Math.max(0, Math.min(MAX_HEALTH, newHealth));
-        System.out.println("HP: " + currentHealth);
+        if (currentHealth <= 0) {
+            if(inflictor == null) {
+                System.out.println(name + " was killed by natural causes");
+            }else {
+                System.out.println(name + " was killed by " + inflictor.getName());
+            }
+            
+            // remove buffs
+            for(Buff b : buffList) {
+                b.setDone(true);
+            }
+            
+            GameEngine.getSingleton().getWorld().getGameManager().onPlayerDeath(this);
+        }
     }
     
     public void applyHeal(int heal) {
-        takeDamage(-heal);
+        takeDamage(-heal,null);
     }
-    
-    private void respawn() {
-        for(Buff b : buffList) {
-            b.setDone(true);
-        }
-        this.position = GameEngine.getSingleton().getWorld().getMap().getRandomSpawnPoint();
+
+    void respawn(Vector2D spawnPos) {
+        this.position = spawnPos;
         currentHealth = MAX_HEALTH;
         inputModule.onRespawn(this);
-        System.out.println("Player " + getName() + " respawned.");
+        System.out.println(name + " respawned.");
     }
 
     public void setInputModule(InputModule inp) {
         this.inputModule = inp;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
     }
 
     public void setCurrentWeapon(Weapon currentWeapon) {

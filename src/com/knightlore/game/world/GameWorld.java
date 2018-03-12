@@ -3,18 +3,19 @@ package com.knightlore.game.world;
 import java.util.LinkedList;
 import java.util.List;
 
-import com.knightlore.engine.GameEngine;
-
 import com.knightlore.ai.AIManager;
+import com.knightlore.game.FFAGame;
+import com.knightlore.game.GameManager;
 import com.knightlore.game.PlayerManager;
 
 import com.knightlore.game.area.Map;
 import com.knightlore.game.area.generation.MapGenerator;
 import com.knightlore.game.entity.Entity;
+
 import com.knightlore.game.entity.pickup.PickupManager;
-import com.knightlore.utils.Physics;
-import com.knightlore.utils.RaycastHit;
-import com.knightlore.utils.RaycastHitType;
+import com.knightlore.utils.physics.Physics;
+import com.knightlore.utils.physics.RaycastHit;
+import com.knightlore.utils.physics.RaycastHitType;
 import com.knightlore.utils.Vector2D;
 import com.knightlore.utils.pruner.Pruner;
 
@@ -26,6 +27,7 @@ public abstract class GameWorld {
     
     protected Map map;
     protected PlayerManager playerManager;
+    protected GameManager gameManager;
     protected AIManager aiManager;
     protected List<Entity> ents;
     
@@ -66,6 +68,8 @@ public abstract class GameWorld {
         ents = new LinkedList<>();
         aiManager = new AIManager(map);
         playerManager = new PlayerManager();
+        gameManager = new FFAGame();
+        gameManager.init();
     }
     
     public RaycastHit raycast(Vector2D pos, Vector2D direction, int segments, double maxDist, Entity ignore) {
@@ -84,21 +88,25 @@ public abstract class GameWorld {
             x = (int) p.getX();
             y = (int) p.getY();
             if (map.getTile(x, y).blockLOS()) {
-                return new RaycastHit(RaycastHitType.wall, p, null);
+                return new RaycastHit(RaycastHitType.WALL, p, null);
             } else {
                 for (int n = 0; n < ents.size(); n++) {
                     if(ents.get(n) == ignore) {
                         continue;
                     }
                     if (Physics.pointInRectangleDoubleTest(p, ents.get(n).getBoundingRectangle())) {
-                        return new RaycastHit(RaycastHitType.entity, p, ents.get(n));
+                        return new RaycastHit(RaycastHitType.ENTITY, p, ents.get(n));
                     }
                 }
             }
             p = p.add(step);
         }
         
-        return new RaycastHit(RaycastHitType.nothing, Vector2D.ZERO, null);
+        return new RaycastHit(RaycastHitType.NOTHING, Vector2D.ZERO, null);
+    }
+
+    public GameManager getGameManager() {
+        return gameManager;
     }
     
 }
