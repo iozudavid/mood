@@ -93,16 +93,16 @@ public class GameEngine implements Runnable {
         // The NetworkObjectManager will call setUpWorld() on the world when
         // it's ready to do so.
         if (GameSettings.isServer()) {
-            ServerManager networkManager = new ServerManager();
-            new Thread(networkManager).start();
             world = new ServerWorld();
             networkObjectManager = new ServerNetworkObjectManager((ServerWorld) world);
+            ServerManager networkManager = new ServerManager();
+            new Thread(networkManager).start();
         }
         if (GameSettings.isClient()) {
-            ClientManager networkManager = new ClientManager();
-            new Thread(networkManager).start();
             world = new ClientWorld();
             networkObjectManager = new ClientNetworkObjectManager((ClientWorld) world);
+            ClientManager networkManager = new ClientManager();
+            new Thread(networkManager).start();
         }
 
         System.out.println("Initialising NetworkObjectManager...");
