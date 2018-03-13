@@ -11,18 +11,25 @@ public class MossBrickTile extends BrickTile {
     }
 
     @Override
-    public int getMinimapColor() {
-        return super.getMinimapColor();
-    }
-
-    @Override
     public double getOpacity() {
-        return 0;
+        return 0D;
     }
 
     @Override
     public double getSolidity() {
-        return 1D;
+        return 0D;
+    }
+
+    @Override
+    public Tile copy() {
+        // TODO Auto-generated method stub
+        return new MossBrickTile();
+    }
+
+    @Override
+    public char toChar() {
+        // TODO Auto-generated method stub
+        return super.toChar();
     }
 
 }

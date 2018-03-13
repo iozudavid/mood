@@ -209,7 +209,7 @@ public class MapGenerator extends ProceduralAreaGenerator {
         for (int x = 0; x < grid.length; x++) {
             for (int y = 0; y < grid[0].length; y++) {
                 if (grid[x][y] == UndecidedTile.getInstance()) {
-                    grid[x][y] = Math.random() < 0.66 ? new BrickTile() : new MossBrickTile();
+                    grid[x][y] = rand.nextDouble() < 0.66D ? new BrickTile() : new MossBrickTile();
                 }
             }
         }
