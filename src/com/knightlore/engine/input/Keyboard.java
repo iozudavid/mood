@@ -3,6 +3,8 @@ package com.knightlore.engine.input;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 
+import com.knightlore.engine.GameEngine;
+import com.knightlore.engine.GameState;
 import com.knightlore.gui.GUICanvas;
 
 public class Keyboard extends KeyAdapter {
@@ -43,6 +45,10 @@ public class Keyboard extends KeyAdapter {
     	//vk_back_space not working here
     	if(eChar=='\b')
     		GUICanvas.deleteChar();
+    	else if(GameEngine.getSingleton().gameState==GameState.InGame && e.getKeyCode()==KeyEvent.VK_U)
+    		GUICanvas.startMessageTeam(e.getKeyChar());
+    	else if(GameEngine.getSingleton().gameState==GameState.InGame && e.getKeyCode()==KeyEvent.VK_ENTER)
+    		GUICanvas.sendMessage(e.getKeyChar());
     	else
     		GUICanvas.inputChar(e.getKeyChar());
     }

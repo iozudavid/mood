@@ -3,8 +3,14 @@ package com.knightlore.gui;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Rectangle;
+import java.nio.ByteBuffer;
+import java.util.UUID;
 
+import com.knightlore.engine.GameEngine;
 import com.knightlore.engine.input.InputManager;
+import com.knightlore.network.NetworkObject;
+import com.knightlore.network.client.ClientNetworkObjectManager;
+import com.knightlore.network.protocol.NetworkUtils;
 import com.knightlore.utils.Vector2D;
 
 public class TextField extends GUIObject {
@@ -18,6 +24,7 @@ public class TextField extends GUIObject {
 	private char[] rawChars;
 	private int insertPosition = 0;
 	private Graphics g;
+	private char sendTo;
 		
 	public TextField(int x, int y, int width, int height) {
         super(x, y, width, height);
@@ -111,6 +118,38 @@ public class TextField extends GUIObject {
 		text = insertString.replace("|", "");
 		insertPosition++;
 		displayText(insertString);
+	}
+	
+	void onMessageTeam(char c) {
+		this.sendTo = c;
+		if(text.length()==0)
+			insertString = c + "|";
+		else
+			insertString = text.substring(0, insertPosition)+c+'|'+text.substring(insertPosition);
+		text = insertString.replace("|", "");
+		insertPosition++;
+		displayText(insertString);
+	}
+	
+	void onSendMessage(char c) {
+		ClientNetworkObjectManager manager = (ClientNetworkObjectManager) GameEngine.getSingleton().getNetworkObjectManager();
+		ByteBuffer nextMessage = constructMessage(manager.getMyPlayer().getObjectId());
+		manager.addToChat(nextMessage);
+		this.insertPosition=0;
+		this.insertString="|";
+		this.text=this.insertString.replaceAll("|", "");
+		displayText(insertString);
+	}
+	
+	public ByteBuffer constructMessage(UUID uuid){
+		ByteBuffer bf = ByteBuffer.allocate(NetworkObject.BYTE_BUFFER_DEFAULT_SIZE);
+		NetworkUtils.putStringIntoBuf(bf, uuid.toString());
+		if(this.sendTo=='u')
+			NetworkUtils.putStringIntoBuf(bf, "messageToTeam");
+		else
+			NetworkUtils.putStringIntoBuf(bf, "messageToAll");
+		NetworkUtils.putStringIntoBuf(bf, this.text);
+		return bf;
 	}
 	
 	void onLeftArrow() {

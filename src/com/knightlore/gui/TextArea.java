@@ -32,7 +32,7 @@ public class TextArea extends GUIObject{
 	
 	@Override
 	void Draw(Graphics g, Rectangle parentRect) {
-		g.setColor(GuiUtils.makeTransparent(Color.DARK_GRAY, 255));
+		g.setColor(GuiUtils.makeTransparent(new Color(0x1F1F1F),255));
 		g.fillRect(this.getRectangle().x, this.getRectangle().y, this.getRectangle().width, this.getRectangle().height);
 		this.positionXToRender = (int)this.getRectangle().getX() + 1;
 		this.positionYToRender = (int)this.getRectangle().getY()+g.getFontMetrics().getHeight();

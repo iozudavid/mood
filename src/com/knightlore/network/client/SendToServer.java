@@ -90,6 +90,10 @@ public class SendToServer implements Runnable {
         // Send a controls update if either the controls have changed or
         // a regular update is due.
         synchronized (this.currentState) {
+        	ByteBuffer message = this.manager.takeNextMessageToSend();
+        	if(message!=null){
+        		conn.send(message);
+        	}
             if (updateCounter++ >= REGULAR_UPDATE_FREQ || !Arrays.equals(currentState.array(), lastState.array())) {
                 updateCounter = 1;
                 conn.send(currentState);

@@ -8,12 +8,12 @@ public class GameChat {
 	private TextArea textArea;
 	private TextField textField;
 	private PixelBuffer pix;
-	private Button button;
 	
 	public GameChat(int screenWidth, int screenHeight){
 		this.gui = new GUICanvas((int)(screenWidth*0.3),(int)(screenHeight*0.35));
 		this.gui.init();
 		this.pix = new PixelBuffer((int)(screenWidth*0.3),(int)(screenHeight*0.35));
+		this.pix.flood(-16711936);
 		this.textArea = new TextArea(0,0,(int)(screenWidth*0.3),(int)(screenHeight*0.3));
 		this.textField = new TextField(0, (int)(this.textArea.getRectangle().getY()+this.textArea.getRectangle().getHeight()), (int)(screenWidth*0.3), (int)(screenHeight*0.05));
 		this.textArea.addText("dsasad");
@@ -31,5 +31,6 @@ public class GameChat {
 	public PixelBuffer getPixelBuffer(){
 		return this.pix;
 	}
+	
 	
 }

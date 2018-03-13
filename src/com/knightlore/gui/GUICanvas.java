@@ -22,7 +22,7 @@ public class GUICanvas extends GameObject implements IRenderable {
 
 	private static int WIDTH;
 	private static int HEIGHT;
-	private static final Color BACKGROUND_COLOR = new Color(0xFF0000FF,true);
+	private static final Color BACKGROUND_COLOR = new Color(0xFF00FF00,true);
 
 	static TextField activeTextField;
 
@@ -62,6 +62,18 @@ public class GUICanvas extends GameObject implements IRenderable {
 		}
 	}
 	
+	public static void startMessageTeam(char c) {
+		if (activeTextField != null) {
+			activeTextField.onMessageTeam(c);
+		}
+	}
+	
+	public static void sendMessage(char c) {
+		if (activeTextField != null) {
+			activeTextField.onSendMessage(c);
+		}
+	}
+	
 	public static void inputLeftArrow(){
 		if (activeTextField != null) {
 			activeTextField.onLeftArrow();
@@ -86,15 +98,9 @@ public class GUICanvas extends GameObject implements IRenderable {
 	
 	@Override
 	public void render(PixelBuffer pix, int x, int y) {
-		canvasG2D.setColor(GuiUtils.makeTransparent(BACKGROUND_COLOR,255));
-		int maxWidth = 0;
-		int maxHeight = 0;
+		canvasG2D.setColor(BACKGROUND_COLOR);
 		for(int i=0;i<guis.size();i++){
 			guis.get(i).Draw(canvasG2D,rect);
-			if(guis.get(i).getRectangle().getWidth()+guis.get(i).getRectangle().getX()>maxWidth)
-				maxWidth = (int)(guis.get(i).getRectangle().getWidth()+guis.get(i).getRectangle().getX());
-			if(guis.get(i).getRectangle().getHeight()+guis.get(i).getRectangle().getY()>maxHeight)
-				maxHeight = (int)(guis.get(i).getRectangle().getHeight()+guis.get(i).getRectangle().getY());
 		}
 		canvasImage.getRGB(0, 0, WIDTH, HEIGHT, drawPixels, 0, WIDTH);
 		pix.drawGraphic(canvasGraphic, x, y, WIDTH, HEIGHT);

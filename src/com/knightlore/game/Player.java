@@ -5,6 +5,8 @@ import java.nio.ByteBuffer;
 import java.util.HashMap;
 import java.util.Map.Entry;
 import java.util.UUID;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
 
 import com.knightlore.ai.InputModule;
 import com.knightlore.ai.RemoteInput;
@@ -13,9 +15,10 @@ import com.knightlore.game.entity.Entity;
 import com.knightlore.game.entity.weapon.Shotgun;
 import com.knightlore.game.entity.weapon.Weapon;
 import com.knightlore.network.NetworkObject;
+import com.knightlore.network.NetworkObjectManager;
 import com.knightlore.network.protocol.ClientController;
 import com.knightlore.network.protocol.ClientProtocol;
-import com.knightlore.render.GameFeed;
+import com.knightlore.network.protocol.NetworkUtils;
 import com.knightlore.render.PixelBuffer;
 import com.knightlore.render.graphic.sprite.DirectionalSprite;
 import com.knightlore.utils.Vector2D;
@@ -37,6 +40,9 @@ public class Player extends Entity {
     private java.util.Map<ClientController, Byte> inputState = new HashMap<>();
     private InputModule inputModule = null;
     // private volatile boolean finished = false;
+    private BlockingQueue<ByteBuffer> teamMessagesToSend;
+    private BlockingQueue<ByteBuffer> allMessagesToSend;
+
 
     // Returns a new instance. See NetworkObject for details.
     public static NetworkObject build(UUID uuid, ByteBuffer state) {
@@ -51,7 +57,9 @@ public class Player extends Entity {
         super(uuid, 0.25D, pos, dir);
         this.currentWeapon = new Shotgun();
         this.inputModule = new RemoteInput();
-
+        this.teamMessagesToSend = new LinkedBlockingQueue<ByteBuffer>();
+        this.allMessagesToSend = new LinkedBlockingQueue<>();
+        
         // Map possible inputs to the methods that handle them. Avoids long
         // if-statement chain.
         ACTION_MAPPINGS.put(ClientController.FORWARD, this::moveForward);
@@ -86,6 +94,8 @@ public class Player extends Entity {
 
     private void setNetworkConsumers() {
         networkConsumers.put("setInputState", this::setInputState);
+        networkConsumers.put("messageToTeam", this::messageToTeam);
+        networkConsumers.put("messageToAll", this::messageToAll);
     }
 
     public void setInputState(ByteBuffer buf) {
@@ -105,6 +115,50 @@ public class Player extends Entity {
             }
         }
 
+    }
+    
+    public void messageToTeam(ByteBuffer buf){
+    	String message = NetworkUtils.getStringFromBuf(buf);
+    	message = "[" + this.team + "] " + this.name + ": " + message;
+    	ByteBuffer bf = ByteBuffer.allocate(NetworkObject.BYTE_BUFFER_DEFAULT_SIZE);
+    	NetworkUtils.putStringIntoBuf(buf, NetworkObjectManager.MANAGER_UUID.toString());
+    	NetworkUtils.putStringIntoBuf(buf, "displayMessage");
+    	NetworkUtils.putStringIntoBuf(buf, message);
+    	this.teamMessagesToSend.offer(bf);
+    }
+    
+    public ByteBuffer getTeamMessages(){
+    	if(this.teamMessagesToSend.size()==0)
+    		return null;
+    	try {
+			return this.teamMessagesToSend.take();
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+    	return null;
+    }
+    
+    public void messageToAll(ByteBuffer buf){
+    	String message = NetworkUtils.getStringFromBuf(buf);
+    	message = "[all] " + this.name + ": " + message;
+    	ByteBuffer bf = ByteBuffer.allocate(NetworkObject.BYTE_BUFFER_DEFAULT_SIZE);
+    	NetworkUtils.putStringIntoBuf(buf, NetworkObjectManager.MANAGER_UUID.toString());
+    	NetworkUtils.putStringIntoBuf(buf, "displayMessage");
+    	NetworkUtils.putStringIntoBuf(buf, message);
+    	this.allMessagesToSend.offer(bf);
+    }
+    
+    public ByteBuffer getAllMessages(){
+    	if(this.allMessagesToSend.size()==0)
+    		return null;
+    	try {
+			return this.allMessagesToSend.take();
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+    	return null;
     }
 
     @Override

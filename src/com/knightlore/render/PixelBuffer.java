@@ -102,6 +102,20 @@ public class PixelBuffer {
             }
         }
     }
+    
+    public void drawGraphicWithTransparency(Graphic graphic, int x, int y, int width, int height) {
+        for (int yy = 0; yy < height; yy++) {
+            for (int xx = 0; xx < width; xx++) {
+                int drawX = x + xx;
+                int drawY = y + yy;
+
+                int texX = (int) ((xx / (double) width) * graphic.getWidth());
+                int texY = (int) ((yy / (double) height) * graphic.getHeight());
+                int color = graphic.getPixels()[texY * graphic.getWidth() + texX];
+                fillPixel(color, drawX, drawY);
+            }
+        }
+    }
 
     /**
      * Fills a single pixel to a given colour.
