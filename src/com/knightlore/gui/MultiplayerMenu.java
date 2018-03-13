@@ -24,7 +24,7 @@ public class MultiplayerMenu {
 	private Button cancelButton;
 
 	public MultiplayerMenu(int screenHeight, int screenWidth){
-		this.gui = new GUICanvas();	
+		this.gui = new GUICanvas(screenWidth, screenHeight);	
 		this.gui.init();
 		this.screenHeight = screenHeight;
 		this.screenWidth = screenWidth;

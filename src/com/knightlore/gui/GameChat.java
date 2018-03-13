@@ -8,19 +8,24 @@ public class GameChat {
 	private TextArea textArea;
 	private TextField textField;
 	private PixelBuffer pix;
+	private Button button;
 	
 	public GameChat(int screenWidth, int screenHeight){
-		this.gui = new GUICanvas();
+		this.gui = new GUICanvas((int)(screenWidth*0.3),(int)(screenHeight*0.35));
 		this.gui.init();
-		this.pix = new PixelBuffer(screenWidth, screenHeight);
-		this.textField = new TextField(0, 0, (int)(screenWidth*0.3), 100);
-		this.textArea = new TextArea(0,this.textField.getRectangle().height,(int)(screenWidth*0.3),(int)(screenHeight*0.3));
-		this.gui.addGUIObject(this.textField);
+		this.pix = new PixelBuffer((int)(screenWidth*0.3),(int)(screenHeight*0.35));
+		this.textArea = new TextArea(0,0,(int)(screenWidth*0.3),(int)(screenHeight*0.3));
+		this.textField = new TextField(0, (int)(this.textArea.getRectangle().getY()+this.textArea.getRectangle().getHeight()), (int)(screenWidth*0.3), (int)(screenHeight*0.05));
+		this.textArea.addText("dsasad");
+		this.textArea.addText("dsasadadsadsasdas");
+		this.textArea.addText("dsasadadsadsasdasasdddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd");
 		this.gui.addGUIObject(this.textArea);
+		this.gui.addGUIObject(this.textField);
+		
 	}
 	
-	public void render(PixelBuffer pix, int x, int y){
-		this.gui.render(pix,x,y);
+	public void render(){
+		this.gui.render(pix,0,0);
 	}
 	
 	public PixelBuffer getPixelBuffer(){

@@ -1,8 +1,10 @@
 package com.knightlore.gui;
 
+import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Rectangle;
 import java.util.ArrayList;
+import java.util.Iterator;
 
 public class TextArea extends GUIObject{
 
@@ -25,24 +27,35 @@ public class TextArea extends GUIObject{
 		this.positionYToRender = 0;
 	}
 
+	private Iterator<String> it = null;
+	private Iterator<String> it2 = null;
+	
 	@Override
 	void Draw(Graphics g, Rectangle parentRect) {
-		g.drawRect(this.getRectangle().x, this.getRectangle().y, this.getRectangle().width, this.getRectangle().height);
-		this.positionXToRender = 0;
-		this.positionYToRender = 0;
+		g.setColor(GuiUtils.makeTransparent(Color.DARK_GRAY, 255));
+		g.fillRect(this.getRectangle().x, this.getRectangle().y, this.getRectangle().width, this.getRectangle().height);
+		this.positionXToRender = (int)this.getRectangle().getX() + 1;
+		this.positionYToRender = (int)this.getRectangle().getY()+g.getFontMetrics().getHeight();
 		char[] space = new char[1];
 		space[0] = ' ';
-		for(String currentText : this.text){			
+		g.setColor(Color.white);
+		it = this.text.iterator();
+		it2 = null;
+		while(it.hasNext()){
+			if(it2==null){
+				it2 = this.text.iterator();
+				it2.next();
+			}
+			String currentText = it.next();
 			for(String word : currentText.split(" ")){
 				//draw words
 				this.fitText(word, g, parentRect);
 				//draw space
 				g.drawChars(space, 0, 1, positionXToRender, positionYToRender);
 				positionXToRender += g.getFontMetrics().charWidth(' ');
-				positionYToRender += g.getFontMetrics().getHeight();
 			}
 			//new line
-			this.positionXToRender = 0;
+			this.positionXToRender = (int)this.getRectangle().getX();
 			this.positionYToRender += g.getFontMetrics().getHeight();
 		}
 	}
@@ -56,11 +69,10 @@ public class TextArea extends GUIObject{
 			// so just draw it
 			g.drawChars(wordAsArray, 0, wordAsArray.length, this.positionXToRender, this.positionYToRender);
 			this.positionXToRender += wOffset;
-			this.positionYToRender += hOffset;
 		} else if(hOffset + this.positionYToRender < this.getRectangle().getHeight()){
 			// width will exceed
 			// so newline
-			this.positionXToRender = 0;
+			this.positionXToRender = (int)this.getRectangle().getX();
 			this.positionYToRender += hOffset;
 			//still bigger
 			if(wOffset + this.positionXToRender > this.getRectangle().getWidth()){
@@ -72,7 +84,6 @@ public class TextArea extends GUIObject{
 				//draw it on the next line
 				g.drawChars(wordAsArray, 0, wordAsArray.length, this.positionXToRender, this.positionYToRender);
 				this.positionXToRender += wOffset;
-				this.positionYToRender += hOffset;
 		} else{
 			//textarea full
 			//need to rerender everything without first message
@@ -98,20 +109,18 @@ public class TextArea extends GUIObject{
 				// so just draw it
 				g.drawChars(charAsArray, 0, 1, this.positionXToRender, this.positionYToRender);
 				this.positionXToRender += wOffset;
-				this.positionYToRender += hOffset;
 			} else if(hOffset + this.positionYToRender < this.getRectangle().getHeight()){
 				// width will exceed
 				// so newline
-				this.positionXToRender = 0;
+				this.positionXToRender = (int)this.getRectangle().getX();
 				this.positionYToRender += hOffset;
 				g.drawChars(wordAsArray, 0, wordAsArray.length, this.positionXToRender, this.positionYToRender);
 				this.positionXToRender += wOffset;
-				this.positionYToRender += hOffset;
 			} else{
 				//textarea full
 				//need to rerender everything without first message
 				//in order to free some space
-				this.text.remove(0);
+				it2.remove();
 				this.Draw(g, parentRect);
 				return;
 			}

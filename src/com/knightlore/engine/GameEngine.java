@@ -123,7 +123,7 @@ public class GameEngine implements Runnable {
             Renderer renderer = new Renderer(w, 8 * h / 9, camera, cworld);
             Minimap minimap = new Minimap(camera, cworld, 128);
             HUD hud = new HUD(cn.getMyPlayer(), w, h / 9);
-            GameChat chat = new GameChat(w,h/9);
+            GameChat chat = new GameChat(w,h);
             this.display = new Display(renderer, minimap, hud, chat);
         }
     }
