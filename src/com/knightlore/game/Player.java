@@ -121,9 +121,9 @@ public class Player extends Entity {
     	String message = NetworkUtils.getStringFromBuf(buf);
     	message = "[" + this.team + "] " + this.name + ": " + message;
     	ByteBuffer bf = ByteBuffer.allocate(NetworkObject.BYTE_BUFFER_DEFAULT_SIZE);
-    	NetworkUtils.putStringIntoBuf(buf, NetworkObjectManager.MANAGER_UUID.toString());
-    	NetworkUtils.putStringIntoBuf(buf, "displayMessage");
-    	NetworkUtils.putStringIntoBuf(buf, message);
+    	NetworkUtils.putStringIntoBuf(bf, NetworkObjectManager.MANAGER_UUID.toString());
+    	NetworkUtils.putStringIntoBuf(bf, "displayMessage");
+    	NetworkUtils.putStringIntoBuf(bf, message);
     	this.teamMessagesToSend.offer(bf);
     }
     
@@ -143,9 +143,9 @@ public class Player extends Entity {
     	String message = NetworkUtils.getStringFromBuf(buf);
     	message = "[all] " + this.name + ": " + message;
     	ByteBuffer bf = ByteBuffer.allocate(NetworkObject.BYTE_BUFFER_DEFAULT_SIZE);
-    	NetworkUtils.putStringIntoBuf(buf, NetworkObjectManager.MANAGER_UUID.toString());
-    	NetworkUtils.putStringIntoBuf(buf, "displayMessage");
-    	NetworkUtils.putStringIntoBuf(buf, message);
+    	NetworkUtils.putStringIntoBuf(bf, NetworkObjectManager.MANAGER_UUID.toString());
+    	NetworkUtils.putStringIntoBuf(bf, "displayMessage");
+    	NetworkUtils.putStringIntoBuf(bf, message);
     	this.allMessagesToSend.offer(bf);
     }
     

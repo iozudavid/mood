@@ -5,23 +5,25 @@ import java.awt.Graphics;
 import java.awt.Rectangle;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
 
 public class TextArea extends GUIObject{
 
-	private ArrayList<String> text;
+	private BlockingQueue<String> text;
 	private int positionXToRender;
 	private int positionYToRender;
 
 	public TextArea(int x, int y, int width, int height) {
 		super(x, y, width, height);
-		this.text = new ArrayList<>();
+		this.text = new LinkedBlockingQueue<>();
 		this.positionXToRender = 0;
 		this.positionYToRender = 0;
 	}
 	
 	public TextArea(int x, int y, int width, int height, String text) {
 		super(x, y, width, height);
-		this.text = new ArrayList<>();
+		this.text = new LinkedBlockingQueue<>();
 		this.text.add(text);
 		this.positionXToRender = 0;
 		this.positionYToRender = 0;
@@ -85,10 +87,11 @@ public class TextArea extends GUIObject{
 				g.drawChars(wordAsArray, 0, wordAsArray.length, this.positionXToRender, this.positionYToRender);
 				this.positionXToRender += wOffset;
 		} else{
+			System.out.println("FULLLLLLLLLLLLLLLLLLLLLLL");
 			//textarea full
 			//need to rerender everything without first message
 			//in order to free some space
-			this.text.remove(0);
+			it2.remove();
 			this.Draw(g, parentRect);
 			return;
 		}

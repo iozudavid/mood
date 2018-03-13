@@ -120,14 +120,13 @@ public class TextField extends GUIObject {
 		displayText(insertString);
 	}
 	
-	void onMessageTeam(char c) {
+	void onMessage(char c) {
 		this.sendTo = c;
-		if(text.length()==0)
-			insertString = c + "|";
+		if(text==null || text.length()==0)
+			insertString = "|";
 		else
-			insertString = text.substring(0, insertPosition)+c+'|'+text.substring(insertPosition);
+			insertString = text.substring(0, insertPosition)+'|'+text.substring(insertPosition);
 		text = insertString.replace("|", "");
-		insertPosition++;
 		displayText(insertString);
 	}
 	
@@ -141,10 +140,17 @@ public class TextField extends GUIObject {
 		displayText(insertString);
 	}
 	
+	void escape() {
+		this.insertPosition=0;
+		this.insertString="";
+		this.text=this.insertString.replaceAll("|", "");
+		displayText(insertString);
+	}
+	
 	public ByteBuffer constructMessage(UUID uuid){
 		ByteBuffer bf = ByteBuffer.allocate(NetworkObject.BYTE_BUFFER_DEFAULT_SIZE);
 		NetworkUtils.putStringIntoBuf(bf, uuid.toString());
-		if(this.sendTo=='u')
+		if(this.sendTo=='t')
 			NetworkUtils.putStringIntoBuf(bf, "messageToTeam");
 		else
 			NetworkUtils.putStringIntoBuf(bf, "messageToAll");

@@ -25,6 +25,7 @@ public class GUICanvas extends GameObject implements IRenderable {
 	private static final Color BACKGROUND_COLOR = new Color(0xFF00FF00,true);
 
 	static TextField activeTextField;
+	static TextField gameTextField;
 
 	private final List<GUIObject> guis;
 	private final Graphic canvasGraphic;
@@ -63,15 +64,37 @@ public class GUICanvas extends GameObject implements IRenderable {
 	}
 	
 	public static void startMessageTeam(char c) {
-		if (activeTextField != null) {
-			activeTextField.onMessageTeam(c);
-		}
+		if (activeTextField == null) {
+			if (gameTextField != null) {
+				activeTextField = gameTextField;
+				gameTextField.onMessage(c);
+			}
+		}else
+			inputChar(c);
+		
+	}
+	
+	public static void startMessageAll(char c) {
+		if (activeTextField == null) {
+			if (gameTextField != null) {
+				activeTextField = gameTextField;
+				gameTextField.onMessage(c);
+			}
+		}else
+			inputChar(c);
+		
 	}
 	
 	public static void sendMessage(char c) {
-		if (activeTextField != null) {
-			activeTextField.onSendMessage(c);
+		if (gameTextField != null) {
+			activeTextField=gameTextField;
+			gameTextField.onSendMessage(c);
 		}
+	}
+	
+	public static void escape(){
+		activeTextField = null;
+		gameTextField.escape();
 	}
 	
 	public static void inputLeftArrow(){
@@ -199,6 +222,8 @@ public class GUICanvas extends GameObject implements IRenderable {
 	}
 
 	public void addGUIObject(GUIObject gui) {
+		if(gui instanceof TextField)
+			gameTextField = (TextField) gui;
 		guis.add(gui);
 		sort();
 	}

@@ -63,7 +63,7 @@ public class SendToServer implements Runnable {
                 System.err.println("ClientControl index out of range");
                 return null;
             }
-            if (InputManager.isKeyDown(keyCode)) {
+            if (InputManager.isKeyDown(keyCode) && !InputManager.getKeyboard().isTyping()) {
                 buf.put((byte) 1);
             } else {
                 buf.put((byte) 0);

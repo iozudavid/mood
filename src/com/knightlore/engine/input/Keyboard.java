@@ -38,18 +38,27 @@ public class Keyboard extends KeyAdapter {
             GUICanvas.inputRightArrow();
         }
     }
+    
+    public boolean isTyping(){
+    	return GUICanvas.isTyping();
+    }
 
     @Override
     public void keyTyped(KeyEvent e) {
     	char eChar = e.getKeyChar();
     	//vk_back_space not working here
+    	System.out.println(e.getKeyCode());
     	if(eChar=='\b')
     		GUICanvas.deleteChar();
-    	else if(GameEngine.getSingleton().gameState==GameState.InGame && e.getKeyCode()==KeyEvent.VK_U)
+    	else if(GameEngine.getSingleton().gameState==GameState.InGame && eChar=='t'){
     		GUICanvas.startMessageTeam(e.getKeyChar());
-    	else if(GameEngine.getSingleton().gameState==GameState.InGame && e.getKeyCode()==KeyEvent.VK_ENTER)
+    	} else if(GameEngine.getSingleton().gameState==GameState.InGame && eChar=='y'){
+    		GUICanvas.startMessageAll(e.getKeyChar());
+    	} else if(GameEngine.getSingleton().gameState==GameState.InGame && eChar=='\n'){
     		GUICanvas.sendMessage(e.getKeyChar());
-    	else
+    	} else if(GameEngine.getSingleton().gameState==GameState.InGame && e.getKeyChar()==KeyEvent.VK_ESCAPE){
+    		GUICanvas.escape();
+    	} else
     		GUICanvas.inputChar(e.getKeyChar());
     }
 

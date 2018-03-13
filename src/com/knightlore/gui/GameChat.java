@@ -32,5 +32,8 @@ public class GameChat {
 		return this.pix;
 	}
 	
+	public TextArea getTextArea(){
+		return this.textArea;
+	}
 	
 }

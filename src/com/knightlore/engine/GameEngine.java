@@ -49,7 +49,7 @@ public class GameEngine implements Runnable {
     private NetworkObjectManager networkObjectManager;
 
     private Camera camera;
-    public GameState gameState;
+    public GameState gameState = GameState.InGame;
 
     private GameEngine() {
         if (HEADLESS) {
@@ -225,6 +225,10 @@ public class GameEngine implements Runnable {
 
     public GameWorld getWorld() {
         return world;
+    }
+    
+    public Display getDisplay(){
+    	return this.display;
     }
 
 }

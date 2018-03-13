@@ -42,6 +42,7 @@ public class ClientNetworkObjectManager extends NetworkObjectManager {
         networkConsumers.put("objDestroyed", this::objDestroyed);
         networkConsumers.put("receiveMapSeed", this::receiveMapSeed);
         networkConsumers.put("receiveReadySignal", this::receiveReadySignal);
+        networkConsumers.put("displayMessage", this::displayMessage);
     }
 
     @Override
@@ -57,6 +58,11 @@ public class ClientNetworkObjectManager extends NetworkObjectManager {
 
     public Player getMyPlayer() {
         return myPlayer;
+    }
+    
+    public synchronized void displayMessage(ByteBuffer b){
+    	String message = NetworkUtils.getStringFromBuf(b);
+    	GameEngine.getSingleton().getDisplay().getChat().getTextArea().addText(message);
     }
 
     // Called remotely when a new network object is created on the server.

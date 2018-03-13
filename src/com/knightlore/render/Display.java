@@ -1,8 +1,6 @@
 package com.knightlore.render;
 
-import com.knightlore.MainWindow;
 import com.knightlore.gui.GameChat;
-import com.knightlore.gui.MultiplayerMenu;
 import com.knightlore.render.hud.HUD;
 import com.knightlore.render.minimap.Minimap;
 
@@ -57,6 +55,10 @@ public class Display implements IRenderable {
 
     public HUD getHud() {
         return hud;
+    }
+    
+    public GameChat getChat(){
+    	return this.chat;
     }
 
 }
