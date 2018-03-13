@@ -93,6 +93,8 @@ public class GameEngine implements Runnable {
             setupMouse();
         }
 
+        this.soundManager.init();
+
         System.out.println("Engine Initialised Successfully.");
         // TODO maybe refactor this into a make world method
         // ALSO TODO, UNHOOK TEST WORLD
