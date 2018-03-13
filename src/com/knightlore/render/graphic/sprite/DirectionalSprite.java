@@ -64,5 +64,13 @@ public class DirectionalSprite {
     public List<Graphic> getAngles() {
         return angles;
     }
+    
+    public int getWidth() {
+        return angles.get(0).getWidth();
+    }
+    
+    public int getHeight() {
+        return angles.get(0).getHeight();
+    }
 
 }
