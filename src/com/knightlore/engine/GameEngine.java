@@ -179,10 +179,6 @@ public class GameEngine implements Runnable {
                 GameFeed.getInstance().update();
                 delta -= 1;
                 ticker.tick();
-                
-                if(GameEngine.ticker.getTime() % 60 == 0) {
-                    GameFeed.getInstance().println("tick");
-                }
             }
 
             if (!HEADLESS) {
