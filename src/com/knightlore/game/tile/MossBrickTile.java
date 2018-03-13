@@ -12,12 +12,12 @@ public class MossBrickTile extends BrickTile {
 
     @Override
     public double getOpacity() {
-        return 0D;
+        return 1D;
     }
 
     @Override
     public double getSolidity() {
-        return 0D;
+        return 1D;
     }
 
     @Override
