@@ -83,7 +83,7 @@ public class Room extends Area {
         }
 
         Room r = (Room) o;
-        if (!position.equals(r.position) || getHeight() != r.getHeight() || getWidth() != r.getWidth()) {
+        if (getHeight() != r.getHeight() || getWidth() != r.getWidth()) {
             return false;
         }
 
