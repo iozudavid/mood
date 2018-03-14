@@ -16,9 +16,9 @@ public class GameChat {
 		this.pix.flood(-16711936);
 		this.textArea = new TextArea(0,0,(int)(screenWidth*0.3),(int)(screenHeight*0.3));
 		this.textField = new TextField(0, (int)(this.textArea.getRectangle().getY()+this.textArea.getRectangle().getHeight()), (int)(screenWidth*0.3), (int)(screenHeight*0.05));
-		this.textArea.addText("dsasad");
-		this.textArea.addText("dsasadadsadsasdas");
-		this.textArea.addText("dsasadadsadsasdasasdddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd");
+		this.textField.setSelect(false);
+		this.textArea.addText("System: press t for team chat");
+		this.textArea.addText("System: press y for all chat");
 		this.gui.addGUIObject(this.textArea);
 		this.gui.addGUIObject(this.textField);
 		

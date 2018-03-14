@@ -25,6 +25,7 @@ public class TextField extends GUIObject {
 	private int insertPosition = 0;
 	private Graphics g;
 	private char sendTo;
+	private boolean select = true; 
 		
 	public TextField(int x, int y, int width, int height) {
         super(x, y, width, height);
@@ -112,7 +113,11 @@ public class TextField extends GUIObject {
 	
 	@Override
 	boolean isSelectable() {
-		return true;
+		return select;
+	}
+	
+	public void setSelect(boolean select){
+		this.select = select;
 	}
 	
 	@Override
