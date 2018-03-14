@@ -3,6 +3,11 @@ package com.knightlore.render;
 import com.knightlore.render.hud.HUD;
 import com.knightlore.render.minimap.Minimap;
 
+/**
+ * 
+ * @author Joe Ellis
+ *
+ */
 public class Display implements IRenderable {
 
     private Renderer renderer;

@@ -1,6 +1,10 @@
 package com.knightlore.leveleditor;
 
-import java.io.*;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.Random;
 
 import javax.swing.JFileChooser;
@@ -75,7 +79,7 @@ public class LevelEditorWindow extends JFrame {
             return;
 
         try (FileOutputStream fos = new FileOutputStream(fc.getSelectedFile());
-             ObjectOutputStream objectOut = new ObjectOutputStream(fos)) {
+                ObjectOutputStream objectOut = new ObjectOutputStream(fos)) {
             objectOut.writeObject(panel.getMap());
         } catch (IOException e) {
             JOptionPane.showMessageDialog(this, "Something went wrong trying to save the map.", "Failed to Save Map",
@@ -90,7 +94,7 @@ public class LevelEditorWindow extends JFrame {
             return;
 
         try (FileInputStream fis = new FileInputStream(fc.getSelectedFile());
-             ObjectInputStream objectIn = new ObjectInputStream(fis)) {
+                ObjectInputStream objectIn = new ObjectInputStream(fis)) {
             Map m = (Map) objectIn.readObject();
             panel.removeAll();
             panel.initialise(m);
