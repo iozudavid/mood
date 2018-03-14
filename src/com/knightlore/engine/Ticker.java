@@ -58,6 +58,8 @@ public class Ticker {
     protected void tick() {
         tick++;
         for (TickListener t : tickListeners) {
+            if (t.interval() == 0)
+                continue;
             if (tick % t.interval() == 0) {
                 t.onTick();
             }
