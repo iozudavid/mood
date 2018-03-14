@@ -25,6 +25,9 @@ public class Ticker {
      */
     private final long TICK_MAX = Long.MAX_VALUE - 1337;
 
+    /**
+     * Listeners attached to this ticker.
+     */
     private List<TickListener> tickListeners;
 
     protected Ticker() {
@@ -58,8 +61,10 @@ public class Ticker {
     protected void tick() {
         tick++;
         for (TickListener t : tickListeners) {
+            // if there's not an interval, ignore it.
             if (t.interval() == 0)
                 continue;
+            
             if (tick % t.interval() == 0) {
                 t.onTick();
             }

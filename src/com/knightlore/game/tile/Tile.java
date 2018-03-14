@@ -7,8 +7,19 @@ import com.knightlore.game.entity.Entity;
 import com.knightlore.render.ColorUtils;
 import com.knightlore.render.graphic.Graphic;
 
+/**
+ * A tile is a unit 'block' of the map in the game world. The corridors, floors,
+ * etc, are made up of individual tiles.
+ * 
+ * @author Joe Ellis
+ *
+ */
 public abstract class Tile implements Serializable {
 
+    /**
+     * We calculate the minimap colour of any tile by simply averaging the
+     * colours in the corresponding texture. This can be overridden.
+     */
     private int minimapColor = ColorUtils.averageColor(getTexture().getPixels());
 
     public abstract Graphic getTexture();
