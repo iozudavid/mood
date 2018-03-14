@@ -86,8 +86,27 @@ public class TextField extends GUIObject {
 		// draw the characters of the string
 		g.setColor(Color.BLACK);
 		
-		if(text!=null)
-			g.drawChars(rawChars, 0, rawChars.length, rect.x, rect.y+hOffset);
+		if(text!=null){
+			int width = g.getFontMetrics().charsWidth(rawChars, 0, rawChars.length);
+			if(width<this.rect.width)
+				g.drawChars(rawChars, 0, rawChars.length, rect.x, rect.y+hOffset);
+			else{
+				width = g.getFontMetrics().charsWidth(rawChars, 0, rawChars.length);
+				char[] toDisplay = rawChars;
+				while(width>this.rect.width){
+					toDisplay = new char[toDisplay.length-1];
+					for(int i = toDisplay.length-1; i>=0; i--){
+						int j = (toDisplay.length-1)-i;
+						System.out.println(toDisplay.length);
+						System.out.println(rawChars.length);
+						toDisplay[i] = rawChars[rawChars.length-1-j];
+					}
+					width = g.getFontMetrics().charsWidth(toDisplay, 0, toDisplay.length);
+				}
+				g.drawChars(toDisplay, 0, toDisplay.length, rect.x, rect.y+hOffset);
+					
+			}
+		}
 		this.g=g;
 	}
 	

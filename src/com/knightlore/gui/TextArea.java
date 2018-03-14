@@ -66,7 +66,8 @@ public class TextArea extends GUIObject{
 		final int hOffset = g.getFontMetrics().getHeight();
 		final int wOffset = g.getFontMetrics().stringWidth(word);
 		char[] wordAsArray = word.toCharArray();
-		if(wOffset + this.positionXToRender < this.getRectangle().getWidth()){
+		if(wOffset + this.positionXToRender < this.getRectangle().getWidth() &&
+				this.positionYToRender < this.getRectangle().getHeight()){
 			// everything fits well
 			// so just draw it
 			g.drawChars(wordAsArray, 0, wordAsArray.length, this.positionXToRender, this.positionYToRender);
@@ -81,13 +82,13 @@ public class TextArea extends GUIObject{
 				//word is too big
 				this.fitBigText(word, g, parentRect);
 				return;
-			}else
+			}else{
 				//everything good
 				//draw it on the next line
 				g.drawChars(wordAsArray, 0, wordAsArray.length, this.positionXToRender, this.positionYToRender);
 				this.positionXToRender += wOffset;
+			}
 		} else{
-			System.out.println("FULLLLLLLLLLLLLLLLLLLLLLL");
 			//textarea full
 			//need to rerender everything without first message
 			//in order to free some space
@@ -107,7 +108,8 @@ public class TextArea extends GUIObject{
 			final int wOffset = g.getFontMetrics().charWidth(c);
 			char[] charAsArray = new char[1];
 			charAsArray[0] = c;
-			if(wOffset + this.positionXToRender < this.getRectangle().getWidth()){
+			if(wOffset + this.positionXToRender < this.getRectangle().getWidth() &&
+					this.positionYToRender < this.getRectangle().getHeight()){
 				// everything fits well
 				// so just draw it
 				g.drawChars(charAsArray, 0, 1, this.positionXToRender, this.positionYToRender);
@@ -117,7 +119,7 @@ public class TextArea extends GUIObject{
 				// so newline
 				this.positionXToRender = (int)this.getRectangle().getX();
 				this.positionYToRender += hOffset;
-				g.drawChars(wordAsArray, 0, wordAsArray.length, this.positionXToRender, this.positionYToRender);
+				g.drawChars(charAsArray, 0, 1, this.positionXToRender, this.positionYToRender);
 				this.positionXToRender += wOffset;
 			} else{
 				//textarea full
