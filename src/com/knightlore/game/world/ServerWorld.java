@@ -7,20 +7,21 @@ import com.knightlore.ai.TurretServer;
 import com.knightlore.ai.TurretShared;
 import com.knightlore.game.Player;
 import com.knightlore.game.entity.Entity;
+import com.knightlore.game.entity.SpectatorCamera;
 import com.knightlore.game.entity.ZombieServer;
 import com.knightlore.game.entity.pickup.ShotgunPickup;
-import com.knightlore.utils.RaycastHit;
-import com.knightlore.utils.RaycastHitType;
+import com.knightlore.utils.physics.RaycastHit;
+import com.knightlore.utils.physics.RaycastHitType;
 import com.knightlore.utils.Vector2D;
 
 public class ServerWorld extends GameWorld {
-    
+
     @Override
     public void setUpWorld(Long mapSeed) {
         super.setUpWorld(mapSeed);
         buildEntities();
     }
-    
+
     public void buildEntities() {
         // add the mobs
         ShotgunPickup shot = new ShotgunPickup(new Vector2D(8, 8));
@@ -37,16 +38,20 @@ public class ServerWorld extends GameWorld {
         }
         TurretShared tboi = new TurretServer(3, map.getRandomSpawnPoint(), Vector2D.UP);
         tboi.init();
-        for (int i = 0; i < 5; i++) {
+        for (int i = 0; i < 15; i++) {
             Player botPlayer = new Player(map.getRandomSpawnPoint(), Vector2D.UP);
             botPlayer.setInputModule(new BotInput());
             botPlayer.init();
-            botPlayer.setName("bot"+i);
+            botPlayer.setName("bot" + i);
             playerManager.addPlayer(botPlayer);
-            
+
         }
+
+        SpectatorCamera cam = new SpectatorCamera(new Vector2D(10, 20), Vector2D.UP);
+        cam.init();
+        ents.add(cam);
     }
-    
+
     @Override
     public void update() {
         super.update();
@@ -58,7 +63,7 @@ public class ServerWorld extends GameWorld {
             }
         }
     }
-    
+
     @Override
     /**
      * Casts a ray against all world, entities and players. returns a structure
@@ -69,44 +74,44 @@ public class ServerWorld extends GameWorld {
             System.err.println("can't raycast with <= 0 segments");
             return null;
         }
-        
+
         Vector2D step = Vector2D.mul(direction.normalised(), maxDist / segments);
-        
+
         Vector2D p = pos;
         int x, y;
-        
+
         for (int i = 0; i < segments; i++) {
             x = (int) p.getX();
             y = (int) p.getY();
             if (map.getTile(x, y).blockLOS()) {
-                return new RaycastHit(RaycastHitType.wall, p, null);
+                return new RaycastHit(RaycastHitType.WALL, p, null);
             }
-            
+
             double sqrDist;
             double sqrSize;
-            
+
             // cast against players
             List<Player> playerList = playerManager.getPlayers();
             for (int n = 0; n < playerList.size(); n++) {
-                if(playerList.get(n) == ignore) {
+                if (playerList.get(n) == ignore) {
                     continue;
                 }
                 sqrSize = playerList.get(n).getSize() * playerList.get(n).getSize();
                 sqrDist = playerList.get(n).getPosition().sqrDistTo(p);
                 if (sqrDist < sqrSize) {
-                    return new RaycastHit(RaycastHitType.player, p, playerList.get(n));
+                    return new RaycastHit(RaycastHitType.PLAYER, p, playerList.get(n));
                 }
             }
-            
+
             // now against entities
             for (int n = 0; n < ents.size(); n++) {
-                if(ents.get(n) == ignore) {
+                if (ents.get(n) == ignore) {
                     continue;
                 }
                 sqrSize = ents.get(n).getSize() * ents.get(n).getSize();
                 sqrDist = ents.get(n).getPosition().sqrDistTo(p);
                 if (sqrDist < sqrSize) {
-                    return new RaycastHit(RaycastHitType.entity, p, ents.get(n));
+                    return new RaycastHit(RaycastHitType.ENTITY, p, ents.get(n));
                 }
             }
             // FIXME? for some reason bounding rectangles don't work properly?
@@ -117,30 +122,30 @@ public class ServerWorld extends GameWorld {
             // the x,y is in one corner, with a width and a height for the other
             // corner
             // this means that the bounding rectangle isn't centered on the
-            // player
+            // PLAYER
             /*
              * for (int n = 0; n < ents.size(); n++) { if
              * (Physics.pointInRectangleDoubleTest(p,
              * ents.get(n).getBoundingRectangle())) { return new
-             * RaycastHit(RaycastHitType.entity, p, ents.get(n)); } }
+             * RaycastHit(RaycastHitType.ENTITY, p, ents.get(n)); } }
              * 
              * List<Player> playerList = playerManager.getPlayers(); for(int
              * n=0;n<playerList.size();n++) { if
              * (Physics.pointInRectangleDoubleTest(p,
              * playerList.get(n).getBoundingRectangle())) { return new
-             * RaycastHit(RaycastHitType.entity, p, playerList.get(n)); } }
+             * RaycastHit(RaycastHitType.ENTITY, p, playerList.get(n)); } }
              */
             p = p.add(step);
         }
-        
-        return new RaycastHit(RaycastHitType.nothing, Vector2D.ZERO, null);
+
+        return new RaycastHit(RaycastHitType.NOTHING, Vector2D.ZERO, null);
     }
-    
+
     public Player createPlayer() {
         Vector2D pos = map.getRandomSpawnPoint();
         Player player = new Player(pos, Vector2D.UP);
         player.init();
-        // ents.add(player);
+        // ents.add(PLAYER);
         playerManager.addPlayer(player);
         return player;
     }

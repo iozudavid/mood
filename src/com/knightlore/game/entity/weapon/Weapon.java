@@ -1,7 +1,6 @@
 package com.knightlore.game.entity.weapon;
 
 import com.knightlore.engine.GameEngine;
-import com.knightlore.game.Player;
 import com.knightlore.game.entity.Entity;
 import com.knightlore.render.PixelBuffer;
 import com.knightlore.render.graphic.Graphic;
@@ -19,9 +18,9 @@ public abstract class Weapon {
         this.fireRate = fireRate;
     }
 
-    public abstract int damageInflicted(Player shooter, Entity target);
+    public abstract int damageInflicted(Entity shooter, Entity target);
 
-    public void fire(Player shooter) {
+    public void fire(Entity shooter) {
         this.timer = 0;
     }
 

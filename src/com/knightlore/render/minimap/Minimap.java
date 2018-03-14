@@ -90,22 +90,11 @@ public class Minimap implements TickListener {
         drawMap(theta);
         drawMinimapObjects(theta);
 
-        // this will be commented because current client
-        // will be rendered 2 times
-        // drawPlayer();
         drawBorder();
     }
 
     private void drawMap(double theta) {
         Vector2D pos = camera.getPosition();
-        Vector2D dir = camera.getDirection();
-
-        // comment this for now
-        // to rerender when other clients move
-        // if (pos.isEqualTo(prevPos) && dir.isEqualTo(prevDir)) {
-        // return;
-        // }
-
         display.flood(0x000000);
 
         // Find the positions to start rendering based on SCOPE.

@@ -15,11 +15,14 @@ import com.knightlore.game.entity.weapon.Weapon;
 import com.knightlore.network.NetworkObject;
 import com.knightlore.network.protocol.ClientController;
 import com.knightlore.network.protocol.ClientProtocol;
+import com.knightlore.render.GameFeed;
 import com.knightlore.render.PixelBuffer;
 import com.knightlore.render.graphic.sprite.DirectionalSprite;
 import com.knightlore.utils.Vector2D;
 
 public class Player extends Entity {
+
+    public int score = 0;
 
     private final int MAX_HEALTH = 100;
     private int currentHealth = MAX_HEALTH;
@@ -35,7 +38,6 @@ public class Player extends Entity {
     private InputModule inputModule = null;
     // private volatile boolean finished = false;
 
-    private String name = "noname";
 	private double timeToSend = 0;
 	private boolean respawn = false;
     
@@ -131,6 +133,7 @@ public class Player extends Entity {
 
     @Override
     public void onUpdate() {
+        super.onUpdate();
 
         hasShot = false;
         if (shootOnNextUpdate) {
@@ -154,6 +157,13 @@ public class Player extends Entity {
             }
         }
 
+        updateInertia();
+        prevPos = position;
+        prevDir = direction;
+        currentWeapon.update();
+    }
+
+    private void updateInertia() {
         final double p = 0.1D;
         inertiaX += (int) (p * -inertiaX);
         inertiaY += (int) (p * -inertiaY);
@@ -180,10 +190,6 @@ public class Player extends Entity {
 
             inertiaX += currentWeapon.getInertiaCoeffX() * diff;
         }
-
-        prevPos = position;
-        prevDir = direction;
-        currentWeapon.update();
     }
 
     private boolean shootOnNextUpdate;
@@ -252,38 +258,30 @@ public class Player extends Entity {
     }
 
     @Override
-    public void takeDamage(int damage) {
+    public void takeDamage(int damage, Entity inflictor) {
         currentHealth -= damage;
-        if(currentHealth <=0) {
-            System.out.println("Player "+getName()+ " died.");
-            Respawn();
+        if (currentHealth <= 0) {
+            System.out.println(name + " was killed by " + inflictor.getName());
+            GameEngine.getSingleton().getWorld().getGameManager().onPlayerDeath(this);
         }
     }
-    
-    private void Respawn() {
-        this.position = GameEngine.getSingleton().getWorld().getMap().getRandomSpawnPoint();
+
+    void respawn(Vector2D spawnPos) {
+        this.position = spawnPos;
         currentHealth = MAX_HEALTH;
         inputModule.onRespawn(this);
         this.respawn = true;
-        System.out.println("Player "+getName()+ " respawned.");
+        System.out.println(name + " respawned.");
     }
 
     public void setInputModule(InputModule inp) {
         this.inputModule = inp;
     }
 
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
     public void setOnNextShot(boolean b){
     	this.shootOnNextUpdate = b;
     }
-    
+
     public void setCurrentWeapon(Weapon currentWeapon) {
         this.currentWeapon = currentWeapon;
     }
@@ -298,4 +296,3 @@ public class Player extends Entity {
 
     
 }
-

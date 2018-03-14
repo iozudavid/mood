@@ -1,19 +1,24 @@
 package com.knightlore.game.tile;
 
-import com.knightlore.game.Player;
 import com.knightlore.game.Team;
+import com.knightlore.game.entity.Entity;
 import com.knightlore.render.graphic.Graphic;
 
 public class TurretTile extends Tile {
     private final Team team;
-    
+
     public TurretTile(Team team) {
         this.team = team;
     }
-    
+
     @Override
     public Graphic getTexture() {
         return AirTile.getInstance().getTexture();
+    }
+
+    @Override
+    public double getSolidity() {
+        return 0.1D;
     }
 
     @Override
@@ -22,10 +27,9 @@ public class TurretTile extends Tile {
     }
 
     @Override
-    public void onEntered(Player player) {
-        // Unsure
+    public void onEntered(Entity entity) {
     }
-    
+
     @Override
     public char toChar() {
         return 'T';
@@ -40,4 +44,10 @@ public class TurretTile extends Tile {
     public Tile copy() {
         return new TurretTile(team);
     }
+    
+    @Override
+    public double getOpacity() {
+        return 1D;
+    }
+    
 }

@@ -1,11 +1,11 @@
 package com.knightlore.game.tile;
 
-import com.knightlore.game.Player;
+import java.io.Serializable;
+
 import com.knightlore.game.Team;
+import com.knightlore.game.entity.Entity;
 import com.knightlore.render.ColorUtils;
 import com.knightlore.render.graphic.Graphic;
-
-import java.io.Serializable;
 
 public abstract class Tile implements Serializable {
 
@@ -27,7 +27,7 @@ public abstract class Tile implements Serializable {
 
     public abstract void onShot();
 
-    public abstract void onEntered(Player player);
+    public abstract void onEntered(Entity entity);
 
     public char toChar() {
         return ' ';

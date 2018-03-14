@@ -37,7 +37,8 @@ public class MapGenerator extends ProceduralAreaGenerator {
         rand = new Random(seed);
         grid = new Tile[width][height];
         PerlinNoiseGenerator perlinGenerator = new PerlinNoiseGenerator(width, height, seed);
-        // Initialize costGrid with perlin noise to make generated paths less optimal
+        // Initialize costGrid with perlin noise to make generated paths less
+        // optimal
         costGrid = perlinGenerator.createPerlinNoise();
         fillGrid();
         return new Map(grid, seed);
@@ -56,17 +57,17 @@ public class MapGenerator extends ProceduralAreaGenerator {
         RoomGenerator roomGenerator = new RoomGenerator();
         // place spawn room first
         Room room = roomGenerator.createRoom(rand.nextLong(), Team.blue);
-        setRoomPosition(room , grid.length/8, grid[0].length/8);
+        setRoomPosition(room, grid.length / 8, grid[0].length / 8);
         rooms.add(room);
-        
-        room = roomGenerator.createRoom(rand.nextLong(),Team.none);
-        
+
+        room = roomGenerator.createRoom(rand.nextLong(), Team.none);
+
         while (rooms.size() < MAX_ROOMS && setRoomPosition(room)) {
             rooms.add(room);
-            room = roomGenerator.createRoom(rand.nextLong(),Team.none);
+            room = roomGenerator.createRoom(rand.nextLong(), Team.none);
         }
     }
-    
+
     private boolean setRoomPosition(Room room) {
         List<Point> candidates = new ArrayList<Point>();
         for (int x = 0; x < grid.length - room.getWidth(); x++) {
@@ -87,7 +88,7 @@ public class MapGenerator extends ProceduralAreaGenerator {
             return true;
         }
     }
-    
+
     private boolean setRoomPosition(Room room, int maxX, int maxY) {
         List<Point> candidates = new ArrayList<Point>();
         for (int x = 0; x < maxX; x++) {
@@ -114,9 +115,9 @@ public class MapGenerator extends ProceduralAreaGenerator {
         int rightWallX = leftWallX + room.getWidth();
         int topWallY = room.getPosition().y;
         int bottomWallY = topWallY + room.getHeight();
-        for(int i=leftWallX; i < rightWallX; i++) {
-            for(int j=topWallY; j < bottomWallY; j++) {
-                //if(grid[i][j] != UndecidedTile.getInstance()) {
+        for (int i = leftWallX; i < rightWallX; i++) {
+            for (int j = topWallY; j < bottomWallY; j++) {
+                // if(grid[i][j] != UndecidedTile.getInstance()) {
                 if (grid[i][j] != UndecidedTile.getInstance()) {
                     return false;
                 }
@@ -134,7 +135,7 @@ public class MapGenerator extends ProceduralAreaGenerator {
                 // place appropriate room tile
                 grid[x][y] = r.getTile(x - xPos, y - yPos);
                 // modify cost grid
-                //costGrid[x][y] = Double.MAX_VALUE;
+                // costGrid[x][y] = Double.MAX_VALUE;
                 costGrid[x][y] = costGrid[x][y] * 5; // arbitrary value of 5
             }
         }
@@ -208,7 +209,7 @@ public class MapGenerator extends ProceduralAreaGenerator {
         for (int x = 0; x < grid.length; x++) {
             for (int y = 0; y < grid[0].length; y++) {
                 if (grid[x][y] == UndecidedTile.getInstance()) {
-                    grid[x][y] = Math.random() < 0.75 ? new BrickTile() : new MossBrickTile();
+                    grid[x][y] = Math.random() < 0.66 ? new BrickTile() : new MossBrickTile();
                 }
             }
         }
@@ -233,7 +234,7 @@ public class MapGenerator extends ProceduralAreaGenerator {
         int height = grid[0].length;
 
         PathFinder pathFinder = new PathFinder(costGrid);
-        
+
         Point start = rightmost.getCentre();
         int centreY = start.y;
         Point goal = new Point(width - 1, centreY - 2 + rand.nextInt(3));
@@ -243,7 +244,7 @@ public class MapGenerator extends ProceduralAreaGenerator {
         goal = new Point(goal.x - 1, goal.y);
         List<Point> path = pathFinder.findPath(start, goal);
         placePath(path);
-        
+
         start = secondRightmost.getCentre();
         centreY = start.y;
         goal = new Point(width - 1, centreY - 2 + rand.nextInt(3));

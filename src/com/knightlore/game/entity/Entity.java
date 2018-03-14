@@ -44,6 +44,8 @@ public abstract class Entity extends NetworkObject implements IMinimapObject, Pr
     private boolean creationCall;
     private boolean settingCall;
     
+    protected String name = "entity";
+
     // Allow you to create an entity with a specified UUID. Useful for creating
     // "synchronised" objects on the client-side.
     protected Entity(UUID uuid, double size, Vector2D position, Vector2D direction) {
@@ -79,19 +81,26 @@ public abstract class Entity extends NetworkObject implements IMinimapObject, Pr
     protected Entity(UUID uuid, Vector2D position, Vector2D direction) {
         this(uuid, 1, position, direction);
     }
-    
+
     public void render(PixelBuffer pix, int x, int y, double distanceTraveled) {
         /* ONLY CALLED IF THIS ENTITY IS THE CAMERA SUBJECT */
     }
 
     public abstract void onCollide(Player player);
 
+    @Override
+    public void onUpdate() {
+        Map map = GameEngine.getSingleton().getWorld().getMap();
+        Tile t = map.getTile((int) position.getX(), (int) position.getY());
+        t.onEntered(this);
+    }
+
     public Graphic getGraphic(Vector2D playerPos) {
         return getDirectionalSprite().getCurrentGraphic(position, direction, playerPos);
     }
 
     public abstract DirectionalSprite getDirectionalSprite();
-    
+
     public double getSize() {
         return size;
     }
@@ -314,7 +323,16 @@ public abstract class Entity extends NetworkObject implements IMinimapObject, Pr
     	this.size = s;
     }
     
-    public void takeDamage(int damage) {
+
+    public void takeDamage(int damage, Entity inflictor) {
         // DO NOTHING
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 }

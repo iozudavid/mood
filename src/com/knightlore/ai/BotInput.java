@@ -8,8 +8,9 @@ import java.util.Map;
 import com.knightlore.engine.GameEngine;
 import com.knightlore.game.Player;
 import com.knightlore.game.PlayerManager;
+import com.knightlore.game.entity.Entity;
 import com.knightlore.network.protocol.ClientController;
-import com.knightlore.utils.RaycastHit;
+import com.knightlore.utils.physics.RaycastHit;
 import com.knightlore.utils.Vector2D;
 
 /**
@@ -30,13 +31,13 @@ public final class BotInput extends InputModule {
     private final byte ZERO = 0;
     private long nextThinkTime = 0;
     private long fov = 60;
-    private Player target = null;
+    private Entity target = null;
     private Vector2D goalPos = Vector2D.ZERO;
     private List<Point> path = new ArrayList<Point>();
     private Vector2D lookPos = Vector2D.ZERO;
     
     @Override
-    public Map<ClientController, Byte> updateInput(Map<ClientController, Byte> inputState, Player myPlayer) {
+    public Map<ClientController, Byte> updateInput(Map<ClientController, Byte> inputState, Entity myPlayer) {
         long currentTime = GameEngine.ticker.getTime();
         if (nextThinkTime < currentTime) {
             think(myPlayer);
@@ -52,7 +53,7 @@ public final class BotInput extends InputModule {
         return axesToInput(inputState);
     }
     
-    private void move(Player myPlayer) {
+    private void move(Entity myPlayer) {
         Vector2D displacement = goalPos.subtract(myPlayer.getPosition());
         double dotRight = displacement.dot(myPlayer.getDirection().perpendicular());
         double dotForward = displacement.dot(myPlayer.getDirection());
@@ -76,7 +77,7 @@ public final class BotInput extends InputModule {
         
     }
     
-    private void aim(Player myPlayer) {
+    private void aim(Entity myPlayer) {
         
         Vector2D displacement = lookPos.subtract(myPlayer.getPosition());
         double dotRight = displacement.dot(myPlayer.getDirection().perpendicular());
@@ -101,20 +102,20 @@ public final class BotInput extends InputModule {
         
     }
     
-    private void getPath(Player myPlayer) {
+    private void getPath(Entity myPlayer) {
         Vector2D goal = GameEngine.getSingleton().getWorld().getMap().getRandomSpawnPoint();
         AIManager aiManager = GameEngine.getSingleton().getWorld().getAiManager();
         path = aiManager.findPath(myPlayer.getPosition(), goal);
         goalPos = myPlayer.getPosition();
     }
     
-    private void think(Player myPlayer) {
+    private void think(Entity myPlayer) {
         target = null;
         // Find our target
         PlayerManager playerManager = GameEngine.getSingleton().getWorld().getPlayerManager();
         List<Player> players = playerManager.getPlayers();
         for (int i = 0; i < players.size(); i++) {
-            Player player = players.get(i);
+            Entity player = players.get(i);
             Vector2D displacement = player.getPosition().subtract(myPlayer.getPosition());
             Vector2D dir = displacement.normalised();
             
@@ -134,7 +135,7 @@ public final class BotInput extends InputModule {
             // check actual Line of sight
             RaycastHit hit = GameEngine.getSingleton().getWorld().raycast(myPlayer.getPosition(), dir, 100, SIGHT_DIST,
                     myPlayer);
-            // did we not hit an entity?
+            // did we not hit an ENTITY?
             if (!hit.didHitEntity()) {
                 continue;
             }
@@ -194,7 +195,7 @@ public final class BotInput extends InputModule {
     }
     
     @Override
-    public void onRespawn(Player myPlayer) {
+    public void onRespawn(Entity myPlayer) {
         getPath(myPlayer);
         
     }

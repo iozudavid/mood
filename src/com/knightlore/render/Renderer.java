@@ -4,15 +4,14 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Stack;
 
-import com.knightlore.engine.GameEngine;
+import com.knightlore.game.Player;
 import com.knightlore.game.area.Map;
 import com.knightlore.game.entity.Entity;
 import com.knightlore.game.tile.AirTile;
 import com.knightlore.game.tile.Tile;
 import com.knightlore.game.world.ClientWorld;
+import com.knightlore.render.font.Font;
 import com.knightlore.render.graphic.Graphic;
-import com.knightlore.render.graphic.filter.LightingMask;
-import com.knightlore.render.graphic.filter.LightingMask.LightingMaskEquation;
 import com.knightlore.utils.Vector2D;
 
 /**
@@ -35,22 +34,10 @@ public class Renderer {
      */
     private ClientWorld world;
 
-    private LightingMask mask;
-    private LightingMaskEquation eq;
-
     public Renderer(int width, int height, Camera camera, ClientWorld world) {
         this.pix = new PixelBuffer(width, height);
         this.camera = camera;
         this.world = world;
-        this.mask = new LightingMask(0xFF0000);
-        this.eq = new LightingMaskEquation() {
-
-            @Override
-            public double getMix(double distance) {
-                int denom = (int) (550000 + 100000 * Math.sin(GameEngine.ticker.getTime() / 10D));
-                return 0;
-            }
-        };
     }
 
     private final int BLOCKINESS = 10; // how 'old school' you want to look.
@@ -72,7 +59,6 @@ public class Renderer {
     }
 
     private void drawPerspective(PixelBuffer pix, int offset) {
-
         Map map = world.getMap();
 
         final int width = pix.getWidth(), height = pix.getHeight();
@@ -206,6 +192,7 @@ public class Renderer {
 
     private void floorCast(PixelBuffer pix, int offset, int xx, double rayX, double rayY, int mapX, int mapY,
             double wallX, double distanceToWall, int drawEnd, boolean side) {
+        Map map = world.getMap();
         double floorXWall, floorYWall;
 
         if (!side && rayX > 0) {
@@ -246,6 +233,12 @@ public class Renderer {
 
             double currentFloorX = weight * floorXWall + (1 - weight) * camera.getxPos();
             double currentFloorY = weight * floorYWall + (1 - weight) * camera.getyPos();
+            Tile tile = map.getTile((int) currentFloorX, (int) currentFloorY);
+            if (tile == AirTile.getInstance()) {
+                floor = world.getEnvironment().getFloorTexture();
+            } else {
+                floor = tile.getTexture();
+            }
 
             int floorTexX, floorTexY;
             floorTexX = (int) ((currentFloorX * floor.getWidth()) % floor.getWidth());
@@ -253,7 +246,6 @@ public class Renderer {
 
             // floor
             int floorColor = floor.getPixels()[floor.getWidth() * floorTexY + floorTexX];
-            floorColor = mask.augmentColor(eq, floorColor, xx, y, pix.getWidth(), pix.getHeight());
             floorColor = ColorUtils.darken(floorColor, world.getEnvironment().getDarkness(), currentDist);
 
             pix.fillRect(floorColor, xx, y + offset, BLOCKINESS, 1);
@@ -261,12 +253,14 @@ public class Renderer {
             // ceiling
             int ceilColor = ceil.getPixels()[ceil.getWidth() * floorTexY + floorTexX];
             ceilColor = ColorUtils.darken(ceilColor, world.getEnvironment().getDarkness(), currentDist);
-            ceilColor = mask.augmentColor(eq, ceilColor, xx, y, pix.getWidth(), pix.getHeight());
             pix.fillRect(ceilColor, xx, h - y + offset, BLOCKINESS, 1);
         }
     }
 
     private void draw(PixelBuffer pix, PerspectiveRenderItem p, int offset) {
+        if (p.opacity == 0)
+            return;
+
         // calculate y coordinate on texture
         for (int yy = p.drawStart; yy < p.drawEnd; yy++) {
 
@@ -280,7 +274,6 @@ public class Renderer {
             color = ColorUtils.darken(color, world.getEnvironment().getDarkness(), p.distanceToWall);
             if (p.side)
                 color = ColorUtils.quickDarken(color);
-            color = mask.augmentColor(eq, color, p.xx, yy, pix.getWidth(), pix.getHeight());
             pix.fillRect(color, p.xx, drawY, BLOCKINESS, 1);
         }
     }
@@ -341,7 +334,7 @@ public class Renderer {
                     // 2) it's on the screen (left)
                     // 3) it's on the screen (right)
                     // 4) ZBuffer, with perpendicular distance
-                    if (transformY > 0 && stripe > 0 && stripe < pix.getWidth() && transformY < zbuffer[stripe])
+                    if (transformY > 0 && stripe > 0 && stripe < pix.getWidth() && transformY < zbuffer[stripe]) {
                         for (int y = drawStartY; y < drawEndY; y++) {
                             // 16 and 8 are factors to avoid division and
                             // floats.
@@ -357,12 +350,19 @@ public class Renderer {
 
                             color = ColorUtils.darken(color, world.getEnvironment().getDarkness(),
                                     camera.getPosition().distance(m.getPosition()));
-                            color = mask.augmentColor(eq, color, stripe, y, pix.getWidth(), pix.getHeight());
 
                             int drawY = y + offset;
 
                             pix.fillRect(color, stripe, drawY, BLOCKINESS, 1);
                         }
+
+                        if (m instanceof Player) {
+                            final double sc = (drawEndY - drawStartY) / 90D;
+                            final double sp = (drawEndY - drawStartY) / 50D;
+                            pix.drawString(Font.DEFAULT_WHITE, ((Player) m).getName(), spriteScreenX,
+                                    drawStartY + offset, sc, sp);
+                        }
+                    }
                 }
 
             }
@@ -370,7 +370,7 @@ public class Renderer {
     }
 
     private void drawCrosshair(PixelBuffer pix) {
-        final int CROSSHAIR_SIZE = 10;
+        final int CROSSHAIR_SIZE = 6;
         final int CROSSHAIR_WIDTH = 2;
         final int CROSSHAIR_COLOR = 0xFFFFFF;
         final int w = pix.getWidth() / 2, h = pix.getHeight() / 2;
