@@ -112,15 +112,29 @@ public class Prediction {
 					|| Math.abs(player.getyPos() - this.nextPrediction.getPosition().getY()) > this.maxTolerance
 					|| Math.abs(player.getxDir() - this.nextPrediction.getDirection().getX()) > this.maxTolerance
 					|| Math.abs(player.getyDir() - this.nextPrediction.getDirection().getY()) > this.maxTolerance)) {
-				player.setxPos(nextPrediction.getPosition().getX());
-				player.setyPos(nextPrediction.getPosition().getY());
-				player.setxDir(nextPrediction.getDirection().getX());
-				player.setyDir(nextPrediction.getDirection().getY());
+				if (this.isMoveActivated(ClientController.FORWARD, input)
+						|| this.isMoveActivated(ClientController.BACKWARD, input))
+					player.setxPos(nextPrediction.getPosition().getX());
+				if (this.isMoveActivated(ClientController.LEFT, input)
+						|| this.isMoveActivated(ClientController.RIGHT, input))
+					player.setyPos(nextPrediction.getPosition().getY());
+				if (this.isMoveActivated(ClientController.ROTATE_ANTI_CLOCKWISE, input)
+						|| this.isMoveActivated(ClientController.ROTATE_CLOCKWISE, input)) {
+					player.setxDir(nextPrediction.getDirection().getX());
+					player.setyDir(nextPrediction.getDirection().getY());
+				}
 			} else {
-				player.setxPos(smooth(player.getxPos(),this.nextPrediction.getPosition().getX()));
-				player.setyPos(smooth(player.getyPos(),this.nextPrediction.getPosition().getY()));
-				player.setxDir(smooth(player.getxDir(),this.nextPrediction.getDirection().getX()));
-				player.setyDir(smooth(player.getyDir(),this.nextPrediction.getDirection().getY()));
+				if (this.isMoveActivated(ClientController.FORWARD, input)
+						|| this.isMoveActivated(ClientController.BACKWARD, input))
+					player.setxPos(smooth(player.getxPos(), this.nextPrediction.getPosition().getX()));
+				if (this.isMoveActivated(ClientController.LEFT, input)
+						|| this.isMoveActivated(ClientController.RIGHT, input))
+					player.setyPos(smooth(player.getyPos(), this.nextPrediction.getPosition().getY()));
+				if (this.isMoveActivated(ClientController.ROTATE_ANTI_CLOCKWISE, input)
+						|| this.isMoveActivated(ClientController.ROTATE_CLOCKWISE, input)) {
+					player.setxDir(smooth(player.getxDir(), this.nextPrediction.getDirection().getX()));
+					player.setyDir(smooth(player.getyDir(), this.nextPrediction.getDirection().getY()));
+				}	
 			}
 		}
 		
@@ -137,7 +151,7 @@ public class Prediction {
 	}
 	
 	public boolean isMoveActivated(ClientController c, byte[] input){
-		for(int i=0; i<ClientProtocol.getIndexActionMap().size(); i++){
+		for(int i=0; i<ClientProtocol.getIndexActionMap().size(); i=i+2){
 			try {
 				if(c==ClientProtocol.getByIndex(i)){
 					if(input[i+1]==1)
