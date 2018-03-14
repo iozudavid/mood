@@ -46,7 +46,8 @@ public abstract class Weapon {
         // This must be a decimal from 0 to 1.
         float volume = 1 - (distance / SHOOT_SFX_CUTOFF_DISTANCE);
         if (volume > 0)
-            GameEngine.getSingleton().getSoundManager().play(shootSFX, volume);
+            GameEngine.getSingleton().getSoundManager()
+                    .playConcurrently(shootSFX, volume);
     }
 
     private int weaponBobX = 20, weaponBobY = 30;

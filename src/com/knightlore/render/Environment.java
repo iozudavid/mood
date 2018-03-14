@@ -1,7 +1,6 @@
 package com.knightlore.render;
 
 import com.knightlore.engine.audio.BackgroundMusic;
-import com.knightlore.engine.audio.SoundResource;
 import com.knightlore.render.graphic.Graphic;
 import com.knightlore.render.graphic.texture.Texture;
 
@@ -14,7 +13,6 @@ public enum Environment {
     private final int darkness;
     private final Graphic floorTexture;
     private final Graphic ceilingTexture;
-
     private final BackgroundMusic bgMusic;
 
     Environment(int darkness, Graphic floorTexture, Graphic ceilingTexture,

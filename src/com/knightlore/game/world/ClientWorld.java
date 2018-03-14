@@ -1,9 +1,8 @@
 package com.knightlore.game.world;
 
-import javax.sound.sampled.Clip;
-import javax.sound.sampled.LineUnavailableException;
-
+import com.knightlore.engine.GameEngine;
 import com.knightlore.engine.audio.BackgroundMusic;
+import com.knightlore.engine.audio.SoundManager;
 import com.knightlore.game.entity.Entity;
 import com.knightlore.render.Environment;
 
@@ -37,14 +36,7 @@ public class ClientWorld extends GameWorld {
 
     private void startBgMusic() {
         BackgroundMusic bgMusic = this.getEnvironment().getBgMusic();
-        Clip clip;
-        try {
-            clip = bgMusic.soundRes.getNewClip();
-        } catch (LineUnavailableException e) {
-            System.out.println(
-                    "No lines available to start background music - skipping.");
-            return;
-        }
-        clip.loop(Clip.LOOP_CONTINUOUSLY);
+        SoundManager soundManager = GameEngine.getSingleton().getSoundManager();
+        soundManager.loop(bgMusic.soundRes, soundManager.defaultVolume);
     }
 }

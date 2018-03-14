@@ -6,16 +6,18 @@ import java.util.HashMap;
 import java.util.Map.Entry;
 import java.util.UUID;
 
+import com.knightlore.GameSettings;
 import com.knightlore.ai.InputModule;
 import com.knightlore.ai.RemoteInput;
 import com.knightlore.engine.GameEngine;
+import com.knightlore.engine.audio.SoundManager;
+import com.knightlore.engine.audio.SoundResource;
 import com.knightlore.game.entity.Entity;
 import com.knightlore.game.entity.weapon.Shotgun;
 import com.knightlore.game.entity.weapon.Weapon;
 import com.knightlore.network.NetworkObject;
 import com.knightlore.network.protocol.ClientController;
 import com.knightlore.network.protocol.ClientProtocol;
-import com.knightlore.render.GameFeed;
 import com.knightlore.render.PixelBuffer;
 import com.knightlore.render.graphic.sprite.DirectionalSprite;
 import com.knightlore.utils.Vector2D;
@@ -36,6 +38,8 @@ public class Player extends Entity {
     private java.util.Map<ClientController, Runnable> ACTION_MAPPINGS = new HashMap<>();
     private java.util.Map<ClientController, Byte> inputState = new HashMap<>();
     private InputModule inputModule = null;
+
+    private SoundResource footstepSFX;
     // private volatile boolean finished = false;
 
     // Returns a new instance. See NetworkObject for details.
@@ -55,9 +59,11 @@ public class Player extends Entity {
         // Map possible inputs to the methods that handle them. Avoids long
         // if-statement chain.
         ACTION_MAPPINGS.put(ClientController.FORWARD, this::moveForward);
-        ACTION_MAPPINGS.put(ClientController.ROTATE_ANTI_CLOCKWISE, this::rotateAntiClockwise);
+        ACTION_MAPPINGS.put(ClientController.ROTATE_ANTI_CLOCKWISE,
+                this::rotateAntiClockwise);
         ACTION_MAPPINGS.put(ClientController.BACKWARD, this::moveBackward);
-        ACTION_MAPPINGS.put(ClientController.ROTATE_CLOCKWISE, this::rotateClockwise);
+        ACTION_MAPPINGS.put(ClientController.ROTATE_CLOCKWISE,
+                this::rotateClockwise);
         ACTION_MAPPINGS.put(ClientController.LEFT, this::strafeLeft);
         ACTION_MAPPINGS.put(ClientController.RIGHT, this::strafeRight);
         ACTION_MAPPINGS.put(ClientController.SHOOT, this::shoot);
@@ -68,7 +74,7 @@ public class Player extends Entity {
         moveSpeed = 0.120;
         strafeSpeed = 0.08;
         rotationSpeed = 0.06;
-
+        this.footstepSFX = new SoundResource("res/sfx/footstep.wav");
     }
 
     public Player(Vector2D pos, Vector2D dir) {
@@ -80,7 +86,8 @@ public class Player extends Entity {
         super.render(pix, x, y, distanceTraveled);
 
         if (currentWeapon != null) {
-            currentWeapon.render(pix, x, y, inertiaX, inertiaY, distanceTraveled, hasShot);
+            currentWeapon.render(pix, x, y, inertiaX, inertiaY,
+                    distanceTraveled, hasShot);
         }
     }
 
@@ -147,22 +154,34 @@ public class Player extends Entity {
         if (prevPos != null && prevDir != null) {
 
             Vector2D displacement = position.subtract(prevPos);
-            Vector2D temp = new Vector2D(plane.getX() / plane.magnitude(), plane.getY() / plane.magnitude());
+            Vector2D temp = new Vector2D(plane.getX() / plane.magnitude(),
+                    plane.getY() / plane.magnitude());
             double orthProjection = displacement.dot(temp);
             inertiaX -= orthProjection * currentWeapon.getInertiaCoeffX();
 
-            temp = new Vector2D(direction.getX() / direction.magnitude(), direction.getY() / direction.magnitude());
+            temp = new Vector2D(direction.getX() / direction.magnitude(),
+                    direction.getY() / direction.magnitude());
             orthProjection = displacement.dot(temp);
             inertiaY += orthProjection * currentWeapon.getInertiaCoeffY();
 
             double prevDirTheta = Math.atan2(prevDir.getY(), prevDir.getX());
-            double directionTheta = Math.atan2(direction.getY(), direction.getX());
+            double directionTheta = Math.atan2(direction.getY(),
+                    direction.getX());
             double diff = directionTheta - prevDirTheta;
+
+            SoundManager soundManager = GameEngine.getSingleton()
+                    .getSoundManager();
+            boolean playSound = false;
             if (diff > Math.PI) {
                 diff -= 2 * Math.PI;
+                playSound = true;
             } else if (diff < -Math.PI) {
                 diff += 2 * Math.PI;
+                playSound = true;
             }
+            if (playSound && GameSettings.isClient())
+                soundManager.playIfNotAlreadyPlaying(footstepSFX,
+                        soundManager.defaultVolume);
 
             inertiaX += currentWeapon.getInertiaCoeffX() * diff;
         }
@@ -234,7 +253,8 @@ public class Player extends Entity {
         currentHealth -= damage;
         if (currentHealth <= 0) {
             System.out.println(name + " was killed by " + inflictor.getName());
-            GameEngine.getSingleton().getWorld().getGameManager().onPlayerDeath(this);
+            GameEngine.getSingleton().getWorld().getGameManager()
+                    .onPlayerDeath(this);
         }
     }
 
