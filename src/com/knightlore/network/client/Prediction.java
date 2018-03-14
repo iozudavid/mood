@@ -21,8 +21,8 @@ public class Prediction {
 	private LinkedHashMap<Double, byte[]> clientInputHistory;
 	private PredictedState nextPrediction;
 	private ByteBuffer lastReceivedFromServer;
-	private final double maxTolerance = 0.2D;
-	private final double converge = 0.35D;
+	private final double maxTolerance = 0.3D;
+	private final double converge = 0.25D;
 	
 	public Prediction(){
 		this.clientInputHistory = new LinkedHashMap<>();
