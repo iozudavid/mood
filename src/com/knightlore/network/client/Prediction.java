@@ -119,7 +119,9 @@ public class Prediction {
 						|| this.isMoveActivated(ClientController.RIGHT, input))
 					player.setyPos(nextPrediction.getPosition().getY());
 				if (this.isMoveActivated(ClientController.ROTATE_ANTI_CLOCKWISE, input)
-						|| this.isMoveActivated(ClientController.ROTATE_CLOCKWISE, input)) {
+						|| this.isMoveActivated(ClientController.ROTATE_CLOCKWISE, input)
+						|| this.isMoveActivated(ClientController.FORWARD, input)
+						|| this.isMoveActivated(ClientController.BACKWARD, input)) {
 					player.setxDir(nextPrediction.getDirection().getX());
 					player.setyDir(nextPrediction.getDirection().getY());
 				}
@@ -131,7 +133,9 @@ public class Prediction {
 						|| this.isMoveActivated(ClientController.RIGHT, input))
 					player.setyPos(smooth(player.getyPos(), this.nextPrediction.getPosition().getY()));
 				if (this.isMoveActivated(ClientController.ROTATE_ANTI_CLOCKWISE, input)
-						|| this.isMoveActivated(ClientController.ROTATE_CLOCKWISE, input)) {
+						|| this.isMoveActivated(ClientController.ROTATE_CLOCKWISE, input)
+						|| this.isMoveActivated(ClientController.FORWARD, input)
+						|| this.isMoveActivated(ClientController.BACKWARD, input)) {
 					player.setxDir(smooth(player.getxDir(), this.nextPrediction.getDirection().getX()));
 					player.setyDir(smooth(player.getyDir(), this.nextPrediction.getDirection().getY()));
 				}	
