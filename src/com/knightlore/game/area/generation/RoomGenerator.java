@@ -4,17 +4,13 @@ import com.knightlore.game.Team;
 import com.knightlore.game.area.Room;
 import com.knightlore.game.area.RoomType;
 import com.knightlore.game.entity.pickup.PickupType;
-import com.knightlore.game.entity.pickup.ShotgunPickup;
-import com.knightlore.game.entity.weapon.Shotgun;
 import com.knightlore.game.tile.AirTile;
-import com.knightlore.game.tile.BreakibleTile;
 import com.knightlore.game.tile.BrickTile;
 import com.knightlore.game.tile.LavaTile;
 import com.knightlore.game.tile.PlayerSpawnTile;
 import com.knightlore.game.tile.Tile;
 import com.knightlore.game.tile.TurretTile;
 import com.knightlore.game.tile.UndecidedTile;
-import com.knightlore.utils.Vector2D;
 import com.knightlore.game.tile.PickupTile;
 
 import java.util.Random;
@@ -66,6 +62,11 @@ public class RoomGenerator extends ProceduralAreaGenerator {
                         if(rand.nextDouble() < 0.5) {
                             grid[width/2][height/2] = new PickupTile(PickupType.health);
                         }else {
+                            for(int i=0; i<width; i++) {
+                                for(int j=0; j<height; j++) {
+                                    grid[i][j] = new LavaTile();
+                                }
+                            }
                             grid[width/2][height/2] = new PickupTile(PickupType.shotgun);
                         }
                         break;

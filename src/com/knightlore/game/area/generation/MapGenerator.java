@@ -228,34 +228,6 @@ public class MapGenerator extends ProceduralAreaGenerator {
 
     private void placePath(List<Point> path) {
         for (Point p : path) {
-            //TODO: This but without enums
-            // OR GET ENUMS BACK
-            /*
-            TileType currentType = grid[p.x][p.y].getTileType();
-            if(currentType == TileType.air) {
-                continue;
-            }
-            if(currentType == TileType.spawn) {
-                continue;
-            }
-            if(currentType == TileType.weapon) {
-                continue;
-            }
-            
-            if(currentType == TileType.breakible) {
-                continue;
-            }
-            
-            if(currentType == TileType.turret) {
-                continue;
-            }
-            
-            grid[p.x][p.y] = PathTile.getInstance();
-            // changing cost grid, also...
-            // using arbitrary number 3
-            costGrid[p.x][p.y] = costGrid[p.x][p.y] * 3;
-            */
-            
             Tile currentTile = grid[p.x][p.y];
             if(currentTile == AirTile.getInstance()) {
                 continue;
@@ -288,7 +260,7 @@ public class MapGenerator extends ProceduralAreaGenerator {
         for (int x = 0; x < grid.length; x++) {
             for (int y = 0; y < grid[0].length; y++) {
                 if (grid[x][y] == UndecidedTile.getInstance()) {
-                    grid[x][y] = rand.nextDouble() < 0.66D ? new BrickTile() : new LavaTile();
+                    grid[x][y] = rand.nextDouble() < 0.66D ? new BrickTile() : new MossBrickTile();
                 }
                 if (grid[x][y] == PathTile.getInstance()) {
                     grid[x][y] = AirTile.getInstance();
