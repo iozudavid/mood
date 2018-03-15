@@ -7,6 +7,13 @@ import com.knightlore.game.entity.Entity;
 import com.knightlore.render.graphic.sprite.DirectionalSprite;
 import com.knightlore.utils.Vector2D;
 
+/**
+ * An item that a player can collect in the game world. A good example would be
+ * a weapon or health pickup.
+ * 
+ * @author Joe Ellis
+ *
+ */
 public abstract class PickupItem extends Entity {
 
     private static final double ROTATION_SPEED = 0.1D;
@@ -37,12 +44,13 @@ public abstract class PickupItem extends Entity {
         long t = GameEngine.ticker.getTime();
         zOffset = FLOOR_OFFSET + (int) (Math.sin(t * FLOAT_BOB_SPEED) * FLOAT_BOB_AMOUNT);
 
+        // Make the item rotate.
         double xprime = direction.getX() * Math.cos(ROTATION_SPEED) - direction.getY() * Math.sin(ROTATION_SPEED);
         double yprime = direction.getX() * Math.sin(ROTATION_SPEED) + direction.getY() * Math.cos(ROTATION_SPEED);
         direction = new Vector2D(xprime, yprime);
         plane = direction.perpendicular();
     }
-    
+
     @Override
     public DirectionalSprite getDirectionalSprite() {
         return sprite;

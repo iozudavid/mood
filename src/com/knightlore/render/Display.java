@@ -4,10 +4,30 @@ import com.knightlore.gui.GameChat;
 import com.knightlore.render.hud.HUD;
 import com.knightlore.render.minimap.Minimap;
 
+/**
+ * The display represents everything that is rendered onto the game canvas. The
+ * game renderer, minimap and HUD are encapsulated here. The Display class is
+ * responsible for compositing the individual screen components onto the main
+ * pixel buffer.
+ * 
+ * @author Joe Ellis
+ *
+ */
 public class Display implements IRenderable {
 
+    /**
+     * The renderer -- renders the game world and the perspective of the camera.
+     */
     private Renderer renderer;
+
+    /**
+     * The minimap -- renders the minimap.
+     */
     private Minimap minimap;
+
+    /**
+     * The HUD -- renders player health, etc.
+     */
     private HUD hud;
     private GameChat chat;
 

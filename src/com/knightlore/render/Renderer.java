@@ -4,7 +4,6 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Stack;
 
-import com.knightlore.game.Player;
 import com.knightlore.game.area.Map;
 import com.knightlore.game.entity.Entity;
 import com.knightlore.game.tile.AirTile;
@@ -358,12 +357,11 @@ public class Renderer {
                             pix.fillRect(color, stripe, drawY, BLOCKINESS, 1);
                         }
 
-                        if (m instanceof Player) {
-                            final double sc = (drawEndY - drawStartY) / 90D;
-                            final double sp = (drawEndY - drawStartY) / 50D;
-                            pix.drawString(Font.DEFAULT_WHITE, ((Player) m).getName(), spriteScreenX,
-                                    drawStartY + offset, sc, sp);
-                        }
+                        final double sc = (drawEndY - drawStartY) / 90D;
+                        final double sp = (drawEndY - drawStartY) / 50D;
+                        final int sw = pix.stringWidth(Font.DEFAULT_WHITE, m.getName(), sc, sp);
+                        pix.drawString(Font.DEFAULT_WHITE, m.getName(), spriteScreenX - sw / 2, drawStartY + offset,
+                                sc, sp);
                     }
                 }
 
