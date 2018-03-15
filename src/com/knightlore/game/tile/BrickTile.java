@@ -9,7 +9,7 @@ public class BrickTile extends Tile {
     }
 
     @Override
-    public Graphic getTexture() {
+    public Graphic getWallTexture() {
         return Texture.BRICK;
     }
 

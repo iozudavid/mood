@@ -155,7 +155,7 @@ public class Renderer {
 
                     wallX = RaycasterUtils.getWallHitPosition(camera, rayX, rayY, mapX, mapY, side, stepX, stepY);
 
-                    Graphic texture = map.getTile(mapX, mapY).getTexture();
+                    Graphic texture = map.getTile(mapX, mapY).getWallTexture();
 
                     // What pixel did we hit the texture on?
                     int texX = (int) (wallX * (texture.getSize()));
@@ -232,11 +232,14 @@ public class Renderer {
 
             double currentFloorX = weight * floorXWall + (1 - weight) * camera.getxPos();
             double currentFloorY = weight * floorYWall + (1 - weight) * camera.getyPos();
+
             Tile tile = map.getTile((int) currentFloorX, (int) currentFloorY);
             if (tile == AirTile.getInstance()) {
+                // if air, use the global floor texture.
                 floor = world.getEnvironment().getFloorTexture();
             } else {
-                floor = tile.getTexture();
+                // otherwise, use the tile floor texture.
+                floor = tile.getFloorTexture();
             }
 
             int floorTexX, floorTexY;
@@ -358,8 +361,8 @@ public class Renderer {
                         final double sc = (drawEndY - drawStartY) / 90D;
                         final double sp = (drawEndY - drawStartY) / 50D;
                         final int sw = pix.stringWidth(Font.DEFAULT_WHITE, m.getName(), sc, sp);
-                        pix.drawString(Font.DEFAULT_WHITE, m.getName(), spriteScreenX - sw / 2, drawStartY + offset,
-                                sc, sp);
+                        pix.drawString(Font.DEFAULT_WHITE, m.getName(), spriteScreenX - sw / 2, drawStartY + offset, sc,
+                                sp);
                     }
                 }
 
