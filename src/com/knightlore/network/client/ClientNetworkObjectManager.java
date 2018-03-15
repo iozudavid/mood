@@ -93,7 +93,7 @@ public class ClientNetworkObjectManager extends NetworkObjectManager {
     }
 
     public synchronized void objDestroyed(ByteBuffer buf) {
-        System.out.println("Receiving new object details from server");
+        System.out.println("Receiving object deletion message from server");
         UUID objID = UUID.fromString(NetworkUtils.getStringFromBuf(buf));
         NetworkObject toBeDestroyedObject = this.getNetworkObject(objID);
         this.networkObjects.remove(objID);
@@ -155,7 +155,7 @@ public class ClientNetworkObjectManager extends NetworkObjectManager {
             }
         }
     }
-    
+
     public boolean hasFinishedSetup() {
         return finishedSetUp;
     }
