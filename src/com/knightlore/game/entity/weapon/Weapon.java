@@ -1,5 +1,6 @@
 package com.knightlore.game.entity.weapon;
 
+import com.knightlore.GameSettings;
 import com.knightlore.game.entity.Entity;
 import com.knightlore.render.PixelBuffer;
 import com.knightlore.render.graphic.Graphic;
@@ -23,7 +24,7 @@ public abstract class Weapon {
         this.timer = 0;
     }
 
-    private int weaponBobX = 20, weaponBobY = 30;
+    private int weaponBobX = GameSettings.MOTION_BOB ? 20 : 0, weaponBobY = GameSettings.MOTION_BOB ? 30 : 0;
     private int inertiaCoeffX = 125, inertiaCoeffY = 35;
 
     public void render(PixelBuffer pix, int x, int y, int inertiaX, int inertiaY, double distanceTraveled,
@@ -56,7 +57,7 @@ public abstract class Weapon {
         }
         pix.drawGraphic(g, xx + xOffset + inertiaX, yy + yOffset + inertiaY, width, height);
     }
-    
+
     public void update() {
         timer++;
     }

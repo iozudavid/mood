@@ -7,6 +7,8 @@ public final class GameSettings {
     // TODO: FIXME here?
     static boolean client = false;
     static boolean server = false;
+    
+    public static boolean MOTION_BOB = true;
 
     private GameSettings() {
     }

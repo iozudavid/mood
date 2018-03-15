@@ -66,7 +66,7 @@ public class ServerWorld extends GameWorld {
 
     @Override
     /**
-     * Casts a ray against all world, entities and players. returns a structure
+     * Casts a ray against all world, entities and players. Returns a structure
      * holding information about what was hit
      */
     public RaycastHit raycast(Vector2D pos, Vector2D direction, int segments, double maxDist, Entity ignore) {
