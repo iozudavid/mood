@@ -278,7 +278,7 @@ public class Renderer {
         }
     }
 
-    private void drawSprites(PixelBuffer pix, double[] zbuffer, int offset) {
+    private synchronized void drawSprites(PixelBuffer pix, double[] zbuffer, int offset) {
         List<Entity> entities = world.getEntities();
         synchronized (entities) {
             entities.sort(new Comparator<Entity>() {

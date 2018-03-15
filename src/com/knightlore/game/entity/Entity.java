@@ -77,7 +77,11 @@ public abstract class Entity extends NetworkObject implements IMinimapObject, Pr
     }
 
     public abstract void onCollide(Player player);
-
+    
+    public void killConfirmed(Player victim) {
+        // do nothing
+    }
+    
     @Override
     public void onUpdate() {
         Map map = GameEngine.getSingleton().getWorld().getMap();

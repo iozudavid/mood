@@ -66,6 +66,7 @@ public abstract class GameWorld {
         ents = new LinkedList<>();
         aiManager = new AIManager(map);
         playerManager = new PlayerManager();
+        // TODO move this out
         gameManager = new FFAGame();
         gameManager.init();
     }

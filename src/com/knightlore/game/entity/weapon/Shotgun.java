@@ -44,5 +44,10 @@ public class Shotgun extends Weapon {
         return dmg;
 
     }
+
+    @Override
+    public WeaponType getWeaponType() {
+        return WeaponType.SHOTGUN;
+    }
     
 }

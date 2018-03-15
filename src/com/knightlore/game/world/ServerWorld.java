@@ -38,7 +38,7 @@ public class ServerWorld extends GameWorld {
         }
         TurretShared tboi = new TurretServer(3, map.getRandomSpawnPoint(), Vector2D.UP);
         tboi.init();
-        for (int i = 0; i < 15; i++) {
+        for (int i = 0; i < 5; i++) {
             Player botPlayer = new Player(map.getRandomSpawnPoint(), Vector2D.UP);
             botPlayer.setInputModule(new BotInput());
             botPlayer.init();
