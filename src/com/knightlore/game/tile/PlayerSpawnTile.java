@@ -30,7 +30,7 @@ public class PlayerSpawnTile extends Tile {
     }
     
     @Override
-    public Graphic getTexture() {
+    public Graphic getWallTexture() {
         return Texture.BUSH;
     }
 

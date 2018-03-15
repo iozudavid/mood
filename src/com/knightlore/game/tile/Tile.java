@@ -20,14 +20,24 @@ public abstract class Tile implements Serializable {
      * We calculate the minimap colour of any tile by simply averaging the
      * colours in the corresponding texture. This can be overridden.
      */
-    private int minimapColor = ColorUtils.averageColor(getTexture().getPixels());
+    private int minimapColor = ColorUtils.averageColor(getWallTexture().getPixels());
 
     /**
-     * Gets the texture of this tile.
+     * Gets the wall texture of this tile.
      * 
-     * @return the texture graphic of the tile.
+     * @return the wall texture graphic of the tile.
      */
-    public abstract Graphic getTexture();
+    public abstract Graphic getWallTexture();
+
+    /**
+     * Gets the floor texture of this tile. By default, this just returns the
+     * wall texture.
+     * 
+     * @return the floor texture graphic of the tile.
+     */
+    public Graphic getFloorTexture() {
+        return getWallTexture();
+    }
 
     /**
      * Gets the opacity of the tile. The opacity is a double in the range 0 <=

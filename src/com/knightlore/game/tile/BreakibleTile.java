@@ -17,9 +17,9 @@ public class BreakibleTile extends Tile {
     }
     
     @Override
-    public Graphic getTexture() {
+    public Graphic getWallTexture() {
         // TODO: Add a texture for breakible tiles
-        return BrickTile.getInstance().getTexture();
+        return BrickTile.getInstance().getWallTexture();
     }
 
     @Override

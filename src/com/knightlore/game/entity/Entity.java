@@ -5,6 +5,8 @@ import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.UUID;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
 
 import com.knightlore.engine.GameEngine;
 import com.knightlore.engine.TickListener;
@@ -15,6 +17,8 @@ import com.knightlore.game.buff.Buff;
 import com.knightlore.game.buff.BuffType;
 import com.knightlore.game.tile.Tile;
 import com.knightlore.network.NetworkObject;
+import com.knightlore.network.NetworkObjectManager;
+import com.knightlore.network.protocol.NetworkUtils;
 import com.knightlore.render.PixelBuffer;
 import com.knightlore.render.graphic.Graphic;
 import com.knightlore.render.graphic.sprite.DirectionalSprite;
@@ -71,6 +75,8 @@ public abstract class Entity extends NetworkObject implements TickListener, IMin
     protected int zOffset;
 
     protected String name = "entity";
+    
+    protected BlockingQueue<ByteBuffer> systemMessages;
 
     // Allow you to create an entity with a specified UUID. Useful for creating
     // "synchronised" objects on the client-side.
@@ -83,6 +89,8 @@ public abstract class Entity extends NetworkObject implements TickListener, IMin
         map = GameEngine.getSingleton().getWorld().getMap();
         // tick listener for buffs
         GameEngine.getSingleton().ticker.addTickListener(this);
+        
+        this.systemMessages = new LinkedBlockingQueue<>();
     }
 
     /**
@@ -436,6 +444,27 @@ public abstract class Entity extends NetworkObject implements TickListener, IMin
         //return (long) GameEngine.UPDATES_PER_SECOND / 2;
         // every sixteenth second
         return (long) GameEngine.UPDATES_PER_SECOND / 16;
+    }
+    
+    public void sendSystemMessage(String name, Entity inflictor){
+    	String message = "System : " + name + " was killed by " + inflictor.getName();
+    	ByteBuffer bf = ByteBuffer.allocate(NetworkObject.BYTE_BUFFER_DEFAULT_SIZE);
+    	NetworkUtils.putStringIntoBuf(bf, NetworkObjectManager.MANAGER_UUID.toString());
+    	NetworkUtils.putStringIntoBuf(bf, "displayMessage");
+    	NetworkUtils.putStringIntoBuf(bf, message);
+    	this.systemMessages.offer(bf);
+    }
+    
+    public ByteBuffer getSystemMessages(){
+    	if(this.systemMessages.size()==0)
+    		return null;
+    	try {
+			return this.systemMessages.take();
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+    	return null;
     }
 
     public String getName() {

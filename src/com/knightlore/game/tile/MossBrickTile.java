@@ -6,7 +6,7 @@ import com.knightlore.render.graphic.texture.Texture;
 public class MossBrickTile extends BrickTile {
 
     @Override
-    public Graphic getTexture() {
+    public Graphic getWallTexture() {
         return Texture.MOSSY_BRICK;
     }
 

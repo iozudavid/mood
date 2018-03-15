@@ -2,6 +2,7 @@ package com.knightlore.game.tile;
 
 import com.knightlore.game.Player;
 import com.knightlore.render.graphic.Graphic;
+import com.knightlore.render.graphic.texture.Texture;
 import com.knightlore.game.entity.Entity;
 import com.knightlore.game.entity.pickup.PickupItem;
 import com.knightlore.game.entity.pickup.PickupType;
@@ -16,11 +17,16 @@ public class PickupTile extends Tile {
     }
     
     @Override
-    public Graphic getTexture() {
+    public Graphic getWallTexture() {
         // TODO: Return some texture
-        return AirTile.getInstance().getTexture();
+        return AirTile.getInstance().getWallTexture();
     }
 
+    @Override
+    public Graphic getFloorTexture() {
+        return Texture.WEAPON_SPAWN;
+    }
+    
     @Override
     public void onShot() {
     }

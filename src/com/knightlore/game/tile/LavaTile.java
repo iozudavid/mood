@@ -21,7 +21,7 @@ public class LavaTile extends Tile {
     }
 
     @Override
-    public Graphic getTexture() {
+    public Graphic getWallTexture() {
         return LAVA_ANIM.getGraphic();
     }
 

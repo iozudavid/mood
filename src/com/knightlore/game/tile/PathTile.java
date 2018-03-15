@@ -15,8 +15,8 @@ public class PathTile extends Tile {
     }
     
     @Override
-    public Graphic getTexture() {
-        return AirTile.getInstance().getTexture();
+    public Graphic getWallTexture() {
+        return AirTile.getInstance().getWallTexture();
     }
 
     @Override
