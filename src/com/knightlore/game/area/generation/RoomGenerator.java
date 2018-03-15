@@ -20,9 +20,12 @@ import com.knightlore.game.tile.PickupTile;
 import java.util.Random;
 
 public class RoomGenerator extends ProceduralAreaGenerator {
+
     private static final int MIN_SIZE = 7;
     private static final int MAX_SIZE = 15;
-    
+    private static final int SPAWN_ROOM_MIN_CONNECTIONS = 1;
+    private static final int SPAWN_ROOM_MAX_CONNECTIONS = 2;
+
     public Room createRoom(long seed, RoomType rt) {
         rand = new Random(seed);
         int height, width;
@@ -37,9 +40,17 @@ public class RoomGenerator extends ProceduralAreaGenerator {
         resetGrid();
         fillGrid(rt);
         if(rt == RoomType.spawn) {
-            return new Room(grid, 1 , 1);
+            return new Room(grid, SPAWN_ROOM_MIN_CONNECTIONS , SPAWN_ROOM_MAX_CONNECTIONS);
         }
         return new Room(grid, 2, 6);
+        //fillGrid();
+        //if(team != Team.none) {
+        //    grid[width/2][height/2] = new PlayerSpawnTile(team);
+        //    grid[2][height/2] = new TurretTile(team);
+        //    grid[width-2][height/2] = new TurretTile(team);
+        //    return new Room(grid, SPAWN_ROOM_MIN_CONNECTIONS, SPAWN_ROOM_MAX_CONNECTIONS);
+        //}
+        //return new Room(grid);
     }
 
     @Override
