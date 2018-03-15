@@ -51,10 +51,14 @@ public class ShotgunPickup extends PickupItem {
     
     @Override
     public void onCollide(Player player) {
-        // wait for spawn protection before
-        if (GameEngine.ticker.getTime() >= spawnProtectTime) {
-            setExists(false);
-        }
+        System.out.println("DELETE! " + player.getName());
+        setExists(false);
+    }
+    
+    public void onDestroy() {
+        System.out.println("shotgun pickup collected");
+        super.onDestroy();
+        
     }
     
 }

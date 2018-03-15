@@ -283,14 +283,19 @@ public class Renderer {
     }
 
     private synchronized void drawSprites(PixelBuffer pix, double[] zbuffer, int offset) {
+        synchronized (world) {
         List<Entity> entities = world.getEntities();
-        synchronized (entities) {
             entities.sort(new Comparator<Entity>() {
 
                 @Override
                 public int compare(Entity o1, Entity o2) {
-                    final double distance1 = camera.getPosition().distance(o1.getPosition());
-                    final double distance2 = camera.getPosition().distance(o2.getPosition());
+                    // this is probably slow... 2 sqrts per comparison...
+                    //final double distance1 = camera.getPosition().distance(o1.getPosition());
+                    //final double distance2 = camera.getPosition().distance(o2.getPosition());
+                    // this is better?... 0 sqrts per comparison :)
+                    final double distance1 = camera.getPosition().sqrDistTo(o1.getPosition());
+                    final double distance2 = camera.getPosition().sqrDistTo(o2.getPosition());
+                    
                     return Double.compare(distance2, distance1);
                 }
 
