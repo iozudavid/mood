@@ -4,6 +4,7 @@ import java.nio.ByteBuffer;
 import java.util.UUID;
 
 import com.knightlore.game.Player;
+import com.knightlore.game.buff.BuffType;
 import com.knightlore.network.NetworkObject;
 import com.knightlore.render.graphic.sprite.DirectionalSprite;
 import com.knightlore.utils.Vector2D;
@@ -39,11 +40,17 @@ public class HealthPickup extends PickupItem {
     }
     
     @Override
+    public String getName() {
+        return "HEALTH";
+    }
+    
+    @Override
     public void onCollide(Player player) {
         System.out.println("Collided with health pickup");
         // update pickup manager
         addToPickupManager();
         // heal player
+        player.removeBuff(BuffType.fire);
         player.applyHeal(30);
         // set existence to false
         setExists(false);

@@ -30,6 +30,16 @@ public class PickupTile extends Tile {
     }
 
     @Override
+    public double getSolidity() {
+        return 0.0;
+    }
+    
+    @Override
+    public double getOpacity() {
+        return 0.0;
+    }
+    
+    @Override
     public char toChar() {
         return 'p';
     }

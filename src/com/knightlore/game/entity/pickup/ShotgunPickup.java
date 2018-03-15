@@ -45,6 +45,11 @@ public class ShotgunPickup extends PickupItem {
         // One class for both client and server.
         return this.getClass().getName();
     }
+    
+    @Override
+    public String getName() {
+        return "SHOTGUN";
+    }
 
     @Override
     public void onCollide(Player player) {

@@ -30,7 +30,7 @@ public class PickupManager implements TickListener{
                     continue;
                 }
                 PickupTile tile = (PickupTile) map.getTile(x, y);
-                Vector2D vector = Vector2D.fromGridRef(x+1, y+1); // for testing
+                Vector2D vector = Vector2D.fromGridRef(x, y);
                 PickupType type = tile.getPickupType();
                 PickupItem item;
                 switch(type){

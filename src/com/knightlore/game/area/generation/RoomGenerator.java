@@ -67,7 +67,7 @@ public class RoomGenerator extends ProceduralAreaGenerator {
                                     grid[i][j] = new LavaTile();
                                 }
                             }
-                            grid[width/2][height/2] = new PickupTile(PickupType.shotgun);
+                            grid[width/2][height/2] = new PickupTile(PickupType.health);
                         }
                         break;
             default: break;

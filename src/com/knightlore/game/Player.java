@@ -242,6 +242,7 @@ public class Player extends Entity implements TickListener{
         damage = (int) (damage * damageTakenModifier);
         int newHealth = currentHealth - damage;
         currentHealth = Math.max(0, Math.min(MAX_HEALTH, newHealth));
+        System.out.println("HP : " + currentHealth);
         if (currentHealth <= 0) {
             if(inflictor == null) {
                 System.out.println(name + " was killed by natural causes");

@@ -69,6 +69,11 @@ public abstract class PickupItem extends Entity {
         return spawnDelay;
     }
     
+    @Override
+    public String getName() {
+        return "NAME THIS";
+    }
+    
     public void addToPickupManager() {
         if(pickupManager != null) {
             pickupManager.addToQueue(this);

@@ -381,6 +381,15 @@ public abstract class Entity extends NetworkObject implements TickListener, IMin
         damageTakenModifier = d;
     }
     
+    public synchronized void removeBuff(BuffType bt) {
+        for(Iterator<Buff> iter = buffList.iterator(); iter.hasNext(); ) {
+            Buff b = iter.next();
+            if(b.getType() == bt) {
+                b.setDone(true);
+            }
+        }
+    }
+    
     private synchronized void addBuff(Buff buff) {
         buffList.add(buff);
         buff.onApply();
