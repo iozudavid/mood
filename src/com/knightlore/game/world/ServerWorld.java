@@ -38,7 +38,7 @@ public class ServerWorld extends GameWorld {
         }
         TurretShared tboi = new TurretServer(3, map.getRandomSpawnPoint(), Vector2D.UP);
         tboi.init();
-        for (int i = 0; i < 15; i++) {
+        for (int i = 0; i < 1; i++) {
             Player botPlayer = new Player(map.getRandomSpawnPoint(), Vector2D.UP);
             botPlayer.setInputModule(new BotInput());
             botPlayer.init();
@@ -66,7 +66,7 @@ public class ServerWorld extends GameWorld {
 
     @Override
     /**
-     * Casts a ray against all world, entities and players. returns a structure
+     * Casts a ray against all world, entities and players. Returns a structure
      * holding information about what was hit
      */
     public RaycastHit raycast(Vector2D pos, Vector2D direction, int segments, double maxDist, Entity ignore) {

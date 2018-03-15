@@ -14,7 +14,7 @@ public class PlayerSpawnTile extends Tile {
     }
 
     @Override
-    public Graphic getTexture() {
+    public Graphic getWallTexture() {
         return Texture.BUSH;
     }
 
@@ -38,9 +38,9 @@ public class PlayerSpawnTile extends Tile {
     }
 
     public char toChar() {
-        if (team == Team.none) {
+        if (team == Team.NONE) {
             return '0';
-        }else if(team == Team.blue) {
+        }else if(team == Team.BLUE) {
             return '1';
         }else {
             return '2';
@@ -48,22 +48,22 @@ public class PlayerSpawnTile extends Tile {
     }
 
     public Tile reflectTileX() {
-        if (team == Team.none) {
-            return new PlayerSpawnTile(Team.none);
-        } else if (team == Team.blue){
-            return new PlayerSpawnTile(Team.red);
+        if (team == Team.NONE) {
+            return new PlayerSpawnTile(Team.NONE);
+        } else if (team == Team.BLUE){
+            return new PlayerSpawnTile(Team.RED);
         } else {
-            return new PlayerSpawnTile(Team.blue);
+            return new PlayerSpawnTile(Team.BLUE);
         }
     }
 
     public Tile reflectTileY() {
-        if (team == Team.none) {
-            return new PlayerSpawnTile(Team.none);
-        } else if (team == Team.blue) {
-            return new PlayerSpawnTile(Team.red);
+        if (team == Team.NONE) {
+            return new PlayerSpawnTile(Team.NONE);
+        } else if (team == Team.BLUE) {
+            return new PlayerSpawnTile(Team.RED);
         } else {
-            return new PlayerSpawnTile(Team.blue);
+            return new PlayerSpawnTile(Team.BLUE);
         }
     }
     

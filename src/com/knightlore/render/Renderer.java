@@ -4,12 +4,12 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Stack;
 
-import com.knightlore.game.Player;
 import com.knightlore.game.area.Map;
 import com.knightlore.game.entity.Entity;
 import com.knightlore.game.tile.AirTile;
 import com.knightlore.game.tile.Tile;
 import com.knightlore.game.world.ClientWorld;
+import com.knightlore.gui.GameChat;
 import com.knightlore.render.font.Font;
 import com.knightlore.render.graphic.Graphic;
 import com.knightlore.utils.Vector2D;
@@ -56,6 +56,7 @@ public class Renderer {
 
         camera.render(pix, 0, 0);
         drawCrosshair(pix);
+        
     }
 
     private void drawPerspective(PixelBuffer pix, int offset) {
@@ -156,7 +157,7 @@ public class Renderer {
 
                     wallX = RaycasterUtils.getWallHitPosition(camera, rayX, rayY, mapX, mapY, side, stepX, stepY);
 
-                    Graphic texture = map.getTile(mapX, mapY).getTexture();
+                    Graphic texture = map.getTile(mapX, mapY).getWallTexture();
 
                     // What pixel did we hit the texture on?
                     int texX = (int) (wallX * (texture.getSize()));
@@ -233,11 +234,14 @@ public class Renderer {
 
             double currentFloorX = weight * floorXWall + (1 - weight) * camera.getxPos();
             double currentFloorY = weight * floorYWall + (1 - weight) * camera.getyPos();
+
             Tile tile = map.getTile((int) currentFloorX, (int) currentFloorY);
             if (tile == AirTile.getInstance()) {
+                // if air, use the global floor texture.
                 floor = world.getEnvironment().getFloorTexture();
             } else {
-                floor = tile.getTexture();
+                // otherwise, use the tile floor texture.
+                floor = tile.getFloorTexture();
             }
 
             int floorTexX, floorTexY;
@@ -260,7 +264,7 @@ public class Renderer {
     private void draw(PixelBuffer pix, PerspectiveRenderItem p, int offset) {
         if (p.opacity == 0)
             return;
-        
+
         // calculate y coordinate on texture
         for (int yy = p.drawStart; yy < p.drawEnd; yy++) {
 
@@ -356,12 +360,11 @@ public class Renderer {
                             pix.fillRect(color, stripe, drawY, BLOCKINESS, 1);
                         }
 
-                        if (m instanceof Player) {
-                            final double sc = (drawEndY - drawStartY) / 90D;
-                            final double sp = (drawEndY - drawStartY) / 50D;
-                            pix.drawString(Font.DEFAULT_WHITE, ((Player) m).getName(), spriteScreenX,
-                                    drawStartY + offset, sc, sp);
-                        }
+                        final double sc = (drawEndY - drawStartY) / 90D;
+                        final double sp = (drawEndY - drawStartY) / 50D;
+                        final int sw = pix.stringWidth(Font.DEFAULT_WHITE, m.getName(), sc, sp);
+                        pix.drawString(Font.DEFAULT_WHITE, m.getName(), spriteScreenX - sw / 2, drawStartY + offset, sc,
+                                sp);
                     }
                 }
 

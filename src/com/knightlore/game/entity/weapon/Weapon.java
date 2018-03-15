@@ -52,7 +52,7 @@ public abstract class Weapon {
             soundManager.playConcurrently(shootSFX, volume);
     }
 
-    private int weaponBobX = 20, weaponBobY = 30;
+    private int weaponBobX = GameSettings.MOTION_BOB ? 20 : 0, weaponBobY = GameSettings.MOTION_BOB ? 30 : 0;
     private int inertiaCoeffX = 125, inertiaCoeffY = 35;
 
     public void render(PixelBuffer pix, int x, int y, int inertiaX, int inertiaY, double distanceTraveled,

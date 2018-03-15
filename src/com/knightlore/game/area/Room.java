@@ -47,7 +47,7 @@ public class Room extends Area {
     public int getMinConnections() {
         return minConnections;
     }
-    
+
     public int getMaxConnections() {
         return maxConnections;
     }
@@ -83,6 +83,18 @@ public class Room extends Area {
         }
 
         Room r = (Room) o;
-        return position.equals(r.position);
+        if (getHeight() != r.getHeight() || getWidth() != r.getWidth()) {
+            return false;
+        }
+
+        for (int i = 0; i < this.getWidth(); i++) {
+            for (int j = 0; j < this.getHeight(); j++) {
+                if (!this.getTile(i, j).equals(r.getTile(i, j))) {
+                    return false;
+                }
+            }
+        }
+
+        return true;
     }
 }
