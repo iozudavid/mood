@@ -115,4 +115,9 @@ public abstract class Tile implements Serializable {
     }
 
     public abstract Tile copy();
+
+    @Override
+    public boolean equals(Object o) {
+        return (this == o || o.getClass().equals(this.getClass()));
+    }
 }
