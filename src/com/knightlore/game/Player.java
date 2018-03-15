@@ -15,8 +15,6 @@ import com.knightlore.GameSettings;
 import com.knightlore.ai.InputModule;
 import com.knightlore.ai.RemoteInput;
 import com.knightlore.engine.GameEngine;
-import com.knightlore.engine.audio.SoundManager;
-import com.knightlore.engine.audio.SoundResource;
 import com.knightlore.game.entity.Entity;
 import com.knightlore.game.entity.weapon.Shotgun;
 import com.knightlore.game.entity.weapon.Weapon;
@@ -56,7 +54,6 @@ public class Player extends Entity {
     private Vector2D prevPos, prevDir;
     private int inertiaX = 0, inertiaY = 0;
     private InputModule inputModule = new RemoteInput();
-    private SoundResource footstepSFX;
 
     // Returns a new instance. See NetworkObject for details.
     public static NetworkObject build(UUID uuid, ByteBuffer state) {
@@ -75,7 +72,6 @@ public class Player extends Entity {
         moveSpeed = 0.120;
         strafeSpeed = 0.08;
         rotationSpeed = 0.06;
-        footstepSFX = new SoundResource("res/sfx/footstep.wav");
     }
 
     public Player(Vector2D pos, Vector2D dir) {
@@ -212,13 +208,7 @@ public class Player extends Entity {
      * - this player represents the client's current player
      */
     private void playFootsteps(Vector2D displacement) {
-        if (GameSettings.isClient() && displacement.magnitude() > 0f && this
-                .equals(GameEngine.getSingleton().getCamera().getSubject())) {
-            SoundManager soundManager = GameEngine.getSingleton()
-                    .getSoundManager();
-            soundManager.playIfNotAlreadyPlaying(footstepSFX,
-                    soundManager.defaultVolume);
-        }
+        
     }
 
     private void updateInertia(Vector2D displacement) {
