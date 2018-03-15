@@ -251,7 +251,6 @@ public class Player extends Entity implements TickListener{
             
             removeAllBuffs();
             GameEngine.getSingleton().getWorld().getGameManager().onPlayerDeath(this);
-            //resetBuff(new Immune(this));
         }
     }
     

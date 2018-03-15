@@ -43,14 +43,6 @@ public class RoomGenerator extends ProceduralAreaGenerator {
             return new Room(grid, SPAWN_ROOM_MIN_CONNECTIONS , SPAWN_ROOM_MAX_CONNECTIONS);
         }
         return new Room(grid, 2, 6);
-        //fillGrid();
-        //if(team != Team.none) {
-        //    grid[width/2][height/2] = new PlayerSpawnTile(team);
-        //    grid[2][height/2] = new TurretTile(team);
-        //    grid[width-2][height/2] = new TurretTile(team);
-        //    return new Room(grid, SPAWN_ROOM_MIN_CONNECTIONS, SPAWN_ROOM_MAX_CONNECTIONS);
-        //}
-        //return new Room(grid);
     }
 
     @Override
