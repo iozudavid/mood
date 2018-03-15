@@ -1,26 +1,18 @@
 package com.knightlore.engine.audio;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
 import javax.sound.sampled.Clip;
 import javax.sound.sampled.FloatControl;
+import javax.sound.sampled.LineEvent;
+import javax.sound.sampled.LineEvent.Type;
+import javax.sound.sampled.LineListener;
 
-import com.knightlore.engine.GameObject;
-import com.knightlore.utils.pruner.Pruner;
-
-public class SoundManager extends GameObject {
+public class SoundManager implements LineListener {
     // 0-1, volume as a fraction.
     public final float defaultVolume;
-    // A list of ClipWrappers encapsulating Clips. Kept to ensure ephemeral
-    // clips are disposed of when completed.
-    public List<ClipWrapper> ephemeralClips;
 
     public SoundManager(float defaultVolume) {
         // The volume to play a clip at if not specified.
         this.defaultVolume = defaultVolume;
-        this.ephemeralClips = Collections.synchronizedList(new ArrayList<>());
     }
 
     public SoundManager() {
@@ -37,7 +29,8 @@ public class SoundManager extends GameObject {
      *            The volume to play it at.
      */
     public void playIfNotAlreadyPlaying(SoundResource res, float volume) {
-        play(res, volume, 1);
+        if (!res.isPlaying())
+            play(res, volume, 1);
     }
 
     /**
@@ -76,38 +69,26 @@ public class SoundManager extends GameObject {
      *            The number of times to play the clip.
      */
     private void play(SoundResource res, float volume, int numLoops) {
-        if (res.isPlaying())
-            // The clip is already playing: don't interrupt it.
-            return;
-
         Clip clip = res.getNewClip();
-        System.out.println("num controls: " + clip.getControls().length);
-        if (clip.getControls().length == 0)
-            return;
-        final FloatControl control = (FloatControl) clip
-                .getControl(FloatControl.Type.MASTER_GAIN);
+        final FloatControl control = (FloatControl) clip.getControl(FloatControl.Type.MASTER_GAIN);
         float range = control.getMaximum() - control.getMinimum();
         float gain = range * volume + control.getMinimum();
         control.setValue(gain);
         // The Clip library interprets 'numLoops' to mean the number of
         // additional times to repeat the resource, so a value of 0 means to
         // play once.
-        //clip.loop(numLoops - 1);
-        clip.start();
-        this.ephemeralClips.add(new ClipWrapper(clip));
+        clip.loop(numLoops - 1);
+        // Ensure that the update() method in this class is called when the clip
+        // finishes playing.
+        clip.addLineListener(this);
     }
 
+    // Called when any event occurs for the line of an audio clip.
     @Override
-    public void onUpdate() {
-        // Ensure all finished clips are cleared up.
-        Pruner.prune(ephemeralClips);
-    }
-
-    @Override
-    public void onDestroy() {
-    }
-
-    @Override
-    public void onCreate() {
+    public void update(LineEvent event) {
+        // Lines are ephemeral in this game, so ensure they are closed as soon
+        // as they finish playback, to avoid resource leaks.
+        if (event.getType() == Type.STOP)
+            event.getLine().close();
     }
 }

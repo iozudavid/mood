@@ -16,15 +16,20 @@ public class SoundResource {
     private byte[] data;
     private AudioFormat encoding;
     private Clip mostRecentClip;
+    public String path;
 
-    // Path to a WAV file to read.
+    /**
+     * @param path:
+     *            The path to a wave file to read. N.B. the wave file MUST use
+     *            16-bit PCM encoding!
+     */
     public SoundResource(String path) {
+        this.path = path;
         File f = new File(path);
         try (AudioInputStream stream = AudioSystem.getAudioInputStream(f)) {
             this.encoding = stream.getFormat();
             // Store the audio data in the byte array.
-            data = new byte[(int) (stream.getFrameLength()
-                    * stream.getFormat().getFrameSize())];
+            data = new byte[(int) (stream.getFrameLength() * stream.getFormat().getFrameSize())];
             stream.read(data, 0, data.length);
         } catch (IOException | UnsupportedAudioFileException e) {
             System.err.println("Error while reading sound file: ");
@@ -41,14 +46,12 @@ public class SoundResource {
         Clip clip = null;
         try {
             clip = AudioSystem.getClip();
-            clip.open(new AudioInputStream(new ByteArrayInputStream(data),
-                    encoding, data.length));
+            clip.open(new AudioInputStream(new ByteArrayInputStream(data), encoding, data.length));
+            this.mostRecentClip = clip;
         } catch (LineUnavailableException | IOException e) {
             // No audio lines available to start a new clip - ignore.
-            System.err.println(
-                    "Warning: no audio line available to play sound clip.");
+            System.err.println("Warning: no audio line available to play sound clip.");
         }
-        this.mostRecentClip = clip;
         return clip;
     }
 
