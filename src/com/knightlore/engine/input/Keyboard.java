@@ -3,6 +3,8 @@ package com.knightlore.engine.input;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 
+import com.knightlore.engine.GameEngine;
+import com.knightlore.engine.GameState;
 import com.knightlore.gui.GUICanvas;
 
 /**
@@ -51,10 +53,27 @@ public class Keyboard extends KeyAdapter {
             GUICanvas.inputRightArrow();
         }
     }
+    
+    public boolean isTyping(){
+    	return GUICanvas.isTyping();
+    }
 
     @Override
     public void keyTyped(KeyEvent e) {
-        GUICanvas.inputChar(e.getKeyChar());
+    	char eChar = e.getKeyChar();
+    	//vk_back_space not working here
+    	if(eChar=='\b')
+    		GUICanvas.deleteChar();
+    	else if(GameEngine.getSingleton().gameState==GameState.InGame && eChar=='t'){
+    		GUICanvas.startMessageTeam(e.getKeyChar());
+    	} else if(GameEngine.getSingleton().gameState==GameState.InGame && eChar=='y'){
+    		GUICanvas.startMessageAll(e.getKeyChar());
+    	} else if(GameEngine.getSingleton().gameState==GameState.InGame && eChar=='\n'){
+    		GUICanvas.sendMessage(e.getKeyChar());
+    	} else if(GameEngine.getSingleton().gameState==GameState.InGame && e.getKeyChar()==KeyEvent.VK_ESCAPE){
+    		GUICanvas.escape();
+    	} else
+    		GUICanvas.inputChar(e.getKeyChar());
     }
 
     /**

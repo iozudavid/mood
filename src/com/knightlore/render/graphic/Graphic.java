@@ -14,6 +14,8 @@ public class Graphic {
     protected int width, height;
     protected int[] pixels;
     
+    private BufferedImage img;
+
     public Graphic(BufferedImage img) {
         this(img, null);
     }
@@ -29,11 +31,9 @@ public class Graphic {
             filter.apply(pixels, PixelBuffer.CHROMA_KEY);
         }
     }
-
-    public Graphic(int width, int height, int[] pixels) {
-        this.width = width;
-        this.height = height;
-        this.pixels = pixels;
+    
+    public BufferedImage getImage(){
+    	return this.img;
     }
 
     public int[] getPixels() {

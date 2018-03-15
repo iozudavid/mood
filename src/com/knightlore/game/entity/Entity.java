@@ -3,6 +3,8 @@ package com.knightlore.game.entity;
 import java.awt.geom.Rectangle2D;
 import java.nio.ByteBuffer;
 import java.util.UUID;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
 
 import com.knightlore.engine.GameEngine;
 import com.knightlore.game.Player;
@@ -10,6 +12,8 @@ import com.knightlore.game.Team;
 import com.knightlore.game.area.Map;
 import com.knightlore.game.tile.Tile;
 import com.knightlore.network.NetworkObject;
+import com.knightlore.network.NetworkObjectManager;
+import com.knightlore.network.protocol.NetworkUtils;
 import com.knightlore.render.PixelBuffer;
 import com.knightlore.render.graphic.Graphic;
 import com.knightlore.render.graphic.sprite.DirectionalSprite;
@@ -69,6 +73,8 @@ public abstract class Entity extends NetworkObject implements IMinimapObject, Pr
     protected int zOffset;
 
     protected String name = "entity";
+    
+    protected BlockingQueue<ByteBuffer> systemMessages;
 
     // Allow you to create an entity with a specified UUID. Useful for creating
     // "synchronised" objects on the client-side.
@@ -79,6 +85,7 @@ public abstract class Entity extends NetworkObject implements IMinimapObject, Pr
         this.plane = direction.perpendicular();
         this.zOffset = 0;
         map = GameEngine.getSingleton().getWorld().getMap();
+        this.systemMessages = new LinkedBlockingQueue<>();
     }
 
     /**
@@ -334,6 +341,27 @@ public abstract class Entity extends NetworkObject implements IMinimapObject, Pr
 
     public void takeDamage(int damage, Entity inflictor) {
         // DO NOTHING
+    }
+    
+    public void sendSystemMessage(String name, Entity inflictor){
+    	String message = "System : " + name + " was killed by " + inflictor.getName();
+    	ByteBuffer bf = ByteBuffer.allocate(NetworkObject.BYTE_BUFFER_DEFAULT_SIZE);
+    	NetworkUtils.putStringIntoBuf(bf, NetworkObjectManager.MANAGER_UUID.toString());
+    	NetworkUtils.putStringIntoBuf(bf, "displayMessage");
+    	NetworkUtils.putStringIntoBuf(bf, message);
+    	this.systemMessages.offer(bf);
+    }
+    
+    public ByteBuffer getSystemMessages(){
+    	if(this.systemMessages.size()==0)
+    		return null;
+    	try {
+			return this.systemMessages.take();
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+    	return null;
     }
 
     public String getName() {
