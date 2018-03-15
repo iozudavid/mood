@@ -1,5 +1,7 @@
 package com.knightlore.render.minimap;
 
+import java.util.function.DoubleUnaryOperator;
+
 import com.knightlore.engine.GameEngine;
 import com.knightlore.engine.TickListener;
 import com.knightlore.game.area.Map;
@@ -8,7 +10,6 @@ import com.knightlore.game.world.ClientWorld;
 import com.knightlore.render.Camera;
 import com.knightlore.render.PixelBuffer;
 import com.knightlore.render.graphic.filter.LightingMask;
-import com.knightlore.render.graphic.filter.LightingMask.LightingMaskEquation;
 import com.knightlore.utils.Vector2D;
 
 /**
@@ -61,7 +62,7 @@ public class Minimap implements TickListener {
     private int width, height;
     private int[] pixelMap;
     private LightingMask mask;
-    private LightingMaskEquation eq;
+    private DoubleUnaryOperator eq; // for lighting mask
 
     private Camera camera;
     private ClientWorld world;
@@ -203,14 +204,8 @@ public class Minimap implements TickListener {
             }
         }
 
-        eq = new LightingMaskEquation() {
-
-            @Override
-            public double getMix(double distance) {
-                final double DARKNESS_COEFFICIENT = 50000D;
-                return (world.getEnvironment().getDarkness()) / DARKNESS_COEFFICIENT * distance;
-            }
-        };
+        final double DARKNESS_COEFFICIENT = 50000D;
+        eq = (double distance) -> (world.getEnvironment().getDarkness()) / DARKNESS_COEFFICIENT * distance;
     }
 
     public PixelBuffer getPixelBuffer() {

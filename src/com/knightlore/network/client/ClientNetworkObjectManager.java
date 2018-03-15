@@ -7,6 +7,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
 
 import com.knightlore.engine.GameEngine;
 import com.knightlore.game.Player;
@@ -25,11 +27,14 @@ public class ClientNetworkObjectManager extends NetworkObjectManager {
     private ArrayList<ByteBuffer> myPlayerStateOnServer;
 
     private ClientWorld clientWorld;
+    
+    private BlockingQueue<ByteBuffer> teamChat;
 
     public ClientNetworkObjectManager(ClientWorld world) {
         super();
         this.clientWorld = world;
         this.myPlayerStateOnServer = new ArrayList<>();
+        this.teamChat = new LinkedBlockingQueue<>();
         setNetworkConsumers();
     }
 
@@ -40,6 +45,7 @@ public class ClientNetworkObjectManager extends NetworkObjectManager {
         networkConsumers.put("objDestroyed", this::objDestroyed);
         networkConsumers.put("receiveMapSeed", this::receiveMapSeed);
         networkConsumers.put("receiveReadySignal", this::receiveReadySignal);
+        networkConsumers.put("displayMessage", this::displayMessage);
     }
 
     @Override
@@ -55,6 +61,11 @@ public class ClientNetworkObjectManager extends NetworkObjectManager {
 
     public Player getMyPlayer() {
         return myPlayer;
+    }
+    
+    public synchronized void displayMessage(ByteBuffer b){
+    	String message = NetworkUtils.getStringFromBuf(b);
+    	GameEngine.getSingleton().getDisplay().getChat().getTextArea().addText(message);
     }
 
     // Called remotely when a new network object is created on the server.
@@ -178,5 +189,20 @@ public class ClientNetworkObjectManager extends NetworkObjectManager {
 			return copyStates;
 		}
     }
+    public void addToChat(ByteBuffer message){
+    	this.teamChat.offer(message);
+    }
+    
+	public ByteBuffer takeNextMessageToSend() {
+		try {
+			if (this.teamChat.size() == 0)
+				return null;
+			return this.teamChat.take();
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;
+	}
 
 }

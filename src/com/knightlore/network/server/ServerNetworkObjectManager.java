@@ -9,10 +9,12 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.UUID;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.function.Predicate;
 
 import com.knightlore.engine.GameEngine;
 import com.knightlore.engine.TickListener;
 import com.knightlore.game.Player;
+import com.knightlore.game.entity.Entity;
 import com.knightlore.game.world.ServerWorld;
 import com.knightlore.network.NetworkObject;
 import com.knightlore.network.NetworkObjectManager;
@@ -190,6 +192,23 @@ public class ServerNetworkObjectManager extends NetworkObjectManager {
                     // Tuple<>(t.getValue().x, newState));
                     t.getValue().y = newState;
                 }
+                if(getNetworkObject(t.getKey()) instanceof Entity){
+                	Entity e = (Entity) getNetworkObject(t.getKey());
+                	ByteBuffer systemMessages = e.getSystemMessages();
+                	if(systemMessages!=null)
+                		this.sendToClients(systemMessages);
+                }
+                if(getNetworkObject(t.getKey()) instanceof Player){
+                	Player p = (Player)getNetworkObject(t.getKey());
+                	ByteBuffer toTeam = p.getTeamMessages();
+                	Predicate<Entity> predicate = (e) -> e.team==p.team;
+                	if(toTeam!=null)
+                		this.sendToClientsIf(toTeam, predicate);
+                	
+                	ByteBuffer toAll = p.getAllMessages();
+                	if(toAll!=null)
+                		this.sendToClients(toAll);
+                }        
             }
 
         }
@@ -198,6 +217,7 @@ public class ServerNetworkObjectManager extends NetworkObjectManager {
         else
             updateCount++;
     }
+        
 
     public synchronized NetworkObject getNetworkObject(UUID uuid) {
         if (networkObjects.containsKey(uuid))
@@ -217,5 +237,13 @@ public class ServerNetworkObjectManager extends NetworkObjectManager {
         }
     }
     
+    private void sendToClientsIf(ByteBuffer buf, Predicate<Entity> pred){
+    	synchronized (clientSenders) {
+            for (SendToClient s : clientSenders) {
+            	if (pred.test((Entity)getNetworkObject(s.getUUID())))
+            		s.send(buf);
+            }
+        }
+    }
 
 }

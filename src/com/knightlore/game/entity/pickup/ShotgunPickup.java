@@ -4,11 +4,16 @@ import java.nio.ByteBuffer;
 import java.util.UUID;
 
 import com.knightlore.game.Player;
-import com.knightlore.game.entity.Entity;
 import com.knightlore.network.NetworkObject;
 import com.knightlore.render.graphic.sprite.DirectionalSprite;
 import com.knightlore.utils.Vector2D;
 
+/**
+ * A shotgun pickup item.
+ * 
+ * @author Joe Ellis
+ *
+ */
 public class ShotgunPickup extends PickupItem {
 
     // Returns a new instance. See NetworkObject for details.

@@ -68,11 +68,11 @@ public class SendToServer implements Runnable {
                 System.err.println("ClientControl index out of range");
                 return null;
             }
-            if (InputManager.isKeyDown(keyCode)) {
-					buf.put((byte) 1);
-				} else {
-					buf.put((byte) 0);
-				}
+            if (InputManager.isKeyDown(keyCode) && !InputManager.getKeyboard().isTyping()) {
+                buf.put((byte) 1);
+            } else {
+                buf.put((byte) 0);
+            }
         }
         this.lastPosition = buf.position();
         return buf;
@@ -104,6 +104,7 @@ public class SendToServer implements Runnable {
         		}
         	}
             if (updateCounter++ >= REGULAR_UPDATE_FREQ) {
+
                 updateCounter = 1;
                 conn.send(currentState);
                 this.lastState = currentState;

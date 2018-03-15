@@ -106,6 +106,14 @@ public class GameObjectManager {
         }
     }
 
+    /**
+     * Greps the list of game objects and returns a list of all of those that
+     * are of a particular type.
+     * 
+     * @param c
+     *            the class type of the objects
+     * @return a list of objects of type c.
+     */
     public <T> ArrayList<T> findObjectsOfType(Class<T> c) {
         ArrayList<T> results = new ArrayList<T>();
         // FIXME find a nicer way of doing this
