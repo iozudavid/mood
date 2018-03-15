@@ -37,7 +37,14 @@ public class PixelBuffer {
      *            the colour to fill the pixel buffer with.
      */
     public void flood(int color) {
-        fillRect(color, 0, 0, getWidth(), getHeight());
+    	 for (int yy = 0; yy < 0 + getHeight(); yy++) {
+             for (int xx = 0; xx < 0 + getWidth(); xx++) {
+                 if (!inBounds(xx, yy))
+                     continue;
+                 pixels[xx + yy * WIDTH] = color;
+             }
+         }
+      //  fillRect(color, 0, 0, getWidth(), getHeight());
     }
 
     /**
@@ -90,20 +97,6 @@ public class PixelBuffer {
      *            the scaling in the y-direction.
      */
     public void drawGraphic(Graphic graphic, int x, int y, int width, int height) {
-        for (int yy = 0; yy < height; yy++) {
-            for (int xx = 0; xx < width; xx++) {
-                int drawX = x + xx;
-                int drawY = y + yy;
-
-                int texX = (int) ((xx / (double) width) * graphic.getWidth());
-                int texY = (int) ((yy / (double) height) * graphic.getHeight());
-                int color = graphic.getPixels()[texY * graphic.getWidth() + texX];
-                fillPixel(color, drawX, drawY);
-            }
-        }
-    }
-    
-    public void drawGraphicWithTransparency(Graphic graphic, int x, int y, int width, int height) {
         for (int yy = 0; yy < height; yy++) {
             for (int xx = 0; xx < width; xx++) {
                 int drawX = x + xx;

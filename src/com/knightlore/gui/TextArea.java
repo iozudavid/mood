@@ -8,12 +8,16 @@ import java.util.Iterator;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
+import com.knightlore.render.PixelBuffer;
+
 public class TextArea extends GUIObject{
 
 	private BlockingQueue<String> text;
 	private int positionXToRender;
 	private int positionYToRender;
-
+	private boolean active=true;
+	private boolean interactive=true;
+	
 	public TextArea(int x, int y, int width, int height) {
 		super(x, y, width, height);
 		this.text = new LinkedBlockingQueue<>();
@@ -28,14 +32,28 @@ public class TextArea extends GUIObject{
 		this.positionXToRender = 0;
 		this.positionYToRender = 0;
 	}
-
+	
+	
+	public void setActive(boolean b){
+		this.active = b;
+	}
+	
+	public void setInteractive(boolean b){
+		this.interactive = b;
+	}
+	
 	private Iterator<String> it = null;
 	private Iterator<String> it2 = null;
 	
 	@Override
 	void Draw(Graphics g, Rectangle parentRect) {
-		g.setColor(GuiUtils.makeTransparent(new Color(0x1F1F1F),255));
-		g.fillRect(this.getRectangle().x, this.getRectangle().y, this.getRectangle().width, this.getRectangle().height);
+		if(!this.interactive)
+			return;
+		if (this.active) {
+			g.setColor(new Color(0x1F1F1F));
+			g.fillRect(this.getRectangle().x, this.getRectangle().y, this.getRectangle().width,
+					this.getRectangle().height);
+		}
 		this.positionXToRender = (int)this.getRectangle().getX() + 1;
 		this.positionYToRender = (int)this.getRectangle().getY()+g.getFontMetrics().getHeight();
 		char[] space = new char[1];

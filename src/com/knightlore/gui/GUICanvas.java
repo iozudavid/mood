@@ -10,7 +10,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.knightlore.MainWindow;
+import com.knightlore.engine.GameEngine;
 import com.knightlore.engine.GameObject;
+import com.knightlore.engine.GameState;
 import com.knightlore.engine.input.InputManager;
 import com.knightlore.render.IRenderable;
 import com.knightlore.render.PixelBuffer;
@@ -28,10 +30,10 @@ public class GUICanvas extends GameObject implements IRenderable {
 	static TextField gameTextField;
 
 	private final List<GUIObject> guis;
-	private final Graphic canvasGraphic;
+	private Graphic canvasGraphic;
 	private final BufferedImage canvasImage;
-	private final Graphics2D canvasG2D;
-	private final int[] drawPixels;
+	private Graphics2D canvasG2D;
+	private int[] drawPixels;
 	
 	// the object that was selected when the mouse was pressed down
 	private GUIObject downSelected;
@@ -47,6 +49,15 @@ public class GUICanvas extends GameObject implements IRenderable {
 		HEIGHT = screenHeight;
 		guis = new ArrayList<GUIObject>();
 		canvasImage = new BufferedImage(WIDTH,HEIGHT, BufferedImage.TYPE_INT_ARGB);
+		initDraw();
+	}
+	
+	private void initDraw(){
+		for(int i=0; i<canvasImage.getWidth();i++){
+			for(int j=0; j<canvasImage.getHeight(); j++){
+				canvasImage.setRGB(i, j, PixelBuffer.CHROMA_KEY);				
+			}
+		}
 		canvasG2D = canvasImage.createGraphics();
 		canvasG2D.setComposite(AlphaComposite.SrcOver);
 		canvasGraphic = new Graphic(canvasImage);
@@ -119,8 +130,12 @@ public class GUICanvas extends GameObject implements IRenderable {
 		return activeTextField != null;
 	}
 	
+	
 	@Override
 	public void render(PixelBuffer pix, int x, int y) {
+		if (GameEngine.getSingleton().gameState == GameState.InGame) {
+			this.initDraw();
+		}
 		canvasG2D.setColor(BACKGROUND_COLOR);
 		for(int i=0;i<guis.size();i++){
 			guis.get(i).Draw(canvasG2D,rect);

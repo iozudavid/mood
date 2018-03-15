@@ -3,6 +3,9 @@ package com.knightlore.gui;
 import java.awt.Color;
 import java.util.ArrayList;
 
+import com.knightlore.render.ColorUtils;
+import com.knightlore.render.PixelBuffer;
+
 public class GuiUtils {
 	
 	public static int middleWidth(int screenWidth, int objWidth){
@@ -36,5 +39,11 @@ public class GuiUtils {
 	public static Color makeTransparent(Color source, int alpha) {
 		return new Color(source.getRed(), source.getGreen(), source.getBlue(), alpha);
 	}
+	
+	public static Color makeChromaColor(Color source, double percent) {
+		Color newColor;
+		newColor = new Color(ColorUtils.mixColor(source.getRGB(), PixelBuffer.CHROMA_KEY, percent));
+		return newColor;
+    }
 	
 }

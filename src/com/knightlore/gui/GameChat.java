@@ -8,10 +8,16 @@ public class GameChat {
 	private TextArea textArea;
 	private TextField textField;
 	private PixelBuffer pix;
+	private int screenWidth;
+	private int screenHeight;
+	private int count=0;
+	private boolean interactive=true;
 	
 	public GameChat(int screenWidth, int screenHeight){
 		this.gui = new GUICanvas((int)(screenWidth*0.3),(int)(screenHeight*0.35));
 		this.gui.init();
+		this.screenWidth = screenWidth;
+		this.screenHeight = screenHeight;
 		this.pix = new PixelBuffer((int)(screenWidth*0.3),(int)(screenHeight*0.35));
 		this.pix.flood(-16711936);
 		this.textArea = new TextArea(0,0,(int)(screenWidth*0.3),(int)(screenHeight*0.3));
@@ -25,14 +31,33 @@ public class GameChat {
 	}
 	
 	public void render(){
+		if(GUICanvas.activeTextField!=null){
+			this.interactive=true;
+			count=0;
+		} else if(count>100){
+			this.interactive = false;
+			count=0;
+		} 
+		if(this.interactive==true)
+			count++;
+		this.textArea.setActive(GUICanvas.activeTextField!=null);
+		if(GUICanvas.activeTextField!=null)
+			this.textArea.setInteractive(true);
+		else
+			this.textArea.setInteractive(this.interactive);
 		this.gui.render(pix,0,0);
 	}
 	
 	public PixelBuffer getPixelBuffer(){
-		return this.pix;
+		PixelBuffer copy = this.pix;
+		this.pix = new PixelBuffer((int)(screenWidth*0.3),(int)(screenHeight*0.35));
+		this.pix.flood(-16711936);
+		return copy;
 	}
 	
 	public TextArea getTextArea(){
+		this.interactive=true;
+		this.count=0;
 		return this.textArea;
 	}
 	
