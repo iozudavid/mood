@@ -30,7 +30,7 @@ public class SoundManager implements LineListener {
      */
     public void playIfNotAlreadyPlaying(SoundResource res, float volume) {
         if (!res.isPlaying())
-            play(res, volume, 1);
+            play(res, volume, 0);
     }
 
     /**
@@ -43,7 +43,7 @@ public class SoundManager implements LineListener {
      *            The volume to play it at.
      */
     public synchronized void playConcurrently(SoundResource res, float volume) {
-        play(res, volume, 1);
+        play(res, volume, 0);
     }
 
     /**
@@ -66,7 +66,7 @@ public class SoundManager implements LineListener {
      * @param volume:
      *            The volume to play the clip at.
      * @param numLoops:
-     *            The number of times to play the clip.
+     *            The number of times to repeat the clip after the first play.
      */
     private void play(SoundResource res, float volume, int numLoops) {
         Clip clip = res.getNewClip();
@@ -74,10 +74,7 @@ public class SoundManager implements LineListener {
         float range = control.getMaximum() - control.getMinimum();
         float gain = range * volume + control.getMinimum();
         control.setValue(gain);
-        // The Clip library interprets 'numLoops' to mean the number of
-        // additional times to repeat the resource, so a value of 0 means to
-        // play once.
-        clip.loop(numLoops - 1);
+        clip.loop(numLoops);
         // Ensure that the update() method in this class is called when the clip
         // finishes playing.
         clip.addLineListener(this);

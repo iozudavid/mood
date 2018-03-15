@@ -2,6 +2,7 @@ package com.knightlore.game.entity.weapon;
 
 import com.knightlore.GameSettings;
 import com.knightlore.engine.GameEngine;
+import com.knightlore.engine.audio.SoundManager;
 import com.knightlore.engine.audio.SoundResource;
 import com.knightlore.game.entity.Entity;
 import com.knightlore.render.PixelBuffer;
@@ -21,8 +22,7 @@ public abstract class Weapon {
 
     private SoundResource shootSFX;
 
-    public Weapon(Graphic graphic, boolean automatic, int fireRate,
-            SoundResource shootSFX) {
+    public Weapon(Graphic graphic, boolean automatic, int fireRate, SoundResource shootSFX) {
         this.graphic = graphic;
         this.automatic = automatic;
         this.fireRate = fireRate;
@@ -44,17 +44,19 @@ public abstract class Weapon {
         Vector2D theirPos = shooter.getPosition();
         float distance = (float) ourPos.distance(theirPos);
         // This must be a decimal from 0 to 1.
-        float volume = 1 - (distance / SHOOT_SFX_CUTOFF_DISTANCE);
+        float scale = 1 - (distance / SHOOT_SFX_CUTOFF_DISTANCE);
+        SoundManager soundManager = GameEngine.getSingleton().getSoundManager();
+        // Scale against the default volume of sound effects.
+        float volume = scale * soundManager.defaultVolume;
         if (volume > 0)
-            GameEngine.getSingleton().getSoundManager()
-                    .playConcurrently(shootSFX, volume);
+            soundManager.playConcurrently(shootSFX, volume);
     }
 
     private int weaponBobX = 20, weaponBobY = 30;
     private int inertiaCoeffX = 125, inertiaCoeffY = 35;
 
-    public void render(PixelBuffer pix, int x, int y, int inertiaX,
-            int inertiaY, double distanceTraveled, boolean muzzleFlash) {
+    public void render(PixelBuffer pix, int x, int y, int inertiaX, int inertiaY, double distanceTraveled,
+            boolean muzzleFlash) {
         // Used a linear equation to get the expression below.
         // With a screen height of 558, we want a scale of 5.
         // With a screen height of 800, we want a scale of 6.
@@ -78,12 +80,10 @@ public abstract class Weapon {
         }
 
         if (muzzleFlash) {
-            pix.fillOval(0xFCC07F, xx + xOffset + inertiaX + width / 4,
-                    yy + yOffset + inertiaY + height / 4, width / 2, height / 2,
-                    500);
+            pix.fillOval(0xFCC07F, xx + xOffset + inertiaX + width / 4, yy + yOffset + inertiaY + height / 4, width / 2,
+                    height / 2, 500);
         }
-        pix.drawGraphic(g, xx + xOffset + inertiaX, yy + yOffset + inertiaY,
-                width, height);
+        pix.drawGraphic(g, xx + xOffset + inertiaX, yy + yOffset + inertiaY, width, height);
     }
 
     public void update() {

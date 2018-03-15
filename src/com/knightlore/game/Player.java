@@ -59,11 +59,9 @@ public class Player extends Entity {
         // Map possible inputs to the methods that handle them. Avoids long
         // if-statement chain.
         ACTION_MAPPINGS.put(ClientController.FORWARD, this::moveForward);
-        ACTION_MAPPINGS.put(ClientController.ROTATE_ANTI_CLOCKWISE,
-                this::rotateAntiClockwise);
+        ACTION_MAPPINGS.put(ClientController.ROTATE_ANTI_CLOCKWISE, this::rotateAntiClockwise);
         ACTION_MAPPINGS.put(ClientController.BACKWARD, this::moveBackward);
-        ACTION_MAPPINGS.put(ClientController.ROTATE_CLOCKWISE,
-                this::rotateClockwise);
+        ACTION_MAPPINGS.put(ClientController.ROTATE_CLOCKWISE, this::rotateClockwise);
         ACTION_MAPPINGS.put(ClientController.LEFT, this::strafeLeft);
         ACTION_MAPPINGS.put(ClientController.RIGHT, this::strafeRight);
         ACTION_MAPPINGS.put(ClientController.SHOOT, this::shoot);
@@ -86,8 +84,7 @@ public class Player extends Entity {
         super.render(pix, x, y, distanceTraveled);
 
         if (currentWeapon != null) {
-            currentWeapon.render(pix, x, y, inertiaX, inertiaY,
-                    distanceTraveled, hasShot);
+            currentWeapon.render(pix, x, y, inertiaX, inertiaY, distanceTraveled, hasShot);
         }
     }
 
@@ -140,51 +137,57 @@ public class Player extends Entity {
             }
         }
 
-        updateInertia();
+        if (prevDir != null && prevPos != null) {
+            // The difference between our previous and new positions.
+            Vector2D displacement = position.subtract(prevPos);
+            updateInertia(displacement);
+            playFootsteps(displacement);
+        }
         prevPos = position;
         prevDir = direction;
         currentWeapon.update();
     }
 
-    private void updateInertia() {
+    /**
+     * Play footstep sound iff:
+     * 
+     * - we're running on a client (we don't play sound effects on the server)
+     * 
+     * - our position has changed
+     * 
+     * - this player represents the client's current player
+     */
+    private void playFootsteps(Vector2D displacement) {
+        if (GameSettings.isClient() && displacement.magnitude() > 0f
+                && this.equals(GameEngine.getSingleton().getCamera().getSubject())) {
+            SoundManager soundManager = GameEngine.getSingleton().getSoundManager();
+            soundManager.playIfNotAlreadyPlaying(footstepSFX, soundManager.defaultVolume);
+        }
+
+    }
+
+    private void updateInertia(Vector2D displacement) {
         final double p = 0.1D;
         inertiaX += (int) (p * -inertiaX);
         inertiaY += (int) (p * -inertiaY);
+        Vector2D temp = new Vector2D(plane.getX() / plane.magnitude(), plane.getY() / plane.magnitude());
+        double orthProjection = displacement.dot(temp);
+        inertiaX -= orthProjection * currentWeapon.getInertiaCoeffX();
 
-        if (prevPos != null && prevDir != null) {
+        temp = new Vector2D(direction.getX() / direction.magnitude(), direction.getY() / direction.magnitude());
+        orthProjection = displacement.dot(temp);
+        inertiaY += orthProjection * currentWeapon.getInertiaCoeffY();
 
-            Vector2D displacement = position.subtract(prevPos);
-            Vector2D temp = new Vector2D(plane.getX() / plane.magnitude(),
-                    plane.getY() / plane.magnitude());
-            double orthProjection = displacement.dot(temp);
-            inertiaX -= orthProjection * currentWeapon.getInertiaCoeffX();
-
-            temp = new Vector2D(direction.getX() / direction.magnitude(),
-                    direction.getY() / direction.magnitude());
-            orthProjection = displacement.dot(temp);
-            inertiaY += orthProjection * currentWeapon.getInertiaCoeffY();
-
-            double prevDirTheta = Math.atan2(prevDir.getY(), prevDir.getX());
-            double directionTheta = Math.atan2(direction.getY(),
-                    direction.getX());
-            double diff = directionTheta - prevDirTheta;
-
-            SoundManager soundManager = GameEngine.getSingleton()
-                    .getSoundManager();
-            boolean playSound = false;
-            if (diff > Math.PI) {
-                diff -= 2 * Math.PI;
-                playSound = true;
-            } else if (diff < -Math.PI) {
-                diff += 2 * Math.PI;
-                playSound = true;
-            }
-            if (playSound && GameSettings.isClient())
-                soundManager.playIfNotAlreadyPlaying(footstepSFX,
-                        soundManager.defaultVolume);
-
-            inertiaX += currentWeapon.getInertiaCoeffX() * diff;
+        double prevDirTheta = Math.atan2(prevDir.getY(), prevDir.getX());
+        double directionTheta = Math.atan2(direction.getY(), direction.getX());
+        double diff = directionTheta - prevDirTheta;
+        if (diff > Math.PI) {
+            diff -= 2 * Math.PI;
+        } else if (diff < -Math.PI) {
+            diff += 2 * Math.PI;
         }
+
+        inertiaX += currentWeapon.getInertiaCoeffX() * diff;
     }
 
     private boolean shootOnNextUpdate;
@@ -253,8 +256,7 @@ public class Player extends Entity {
         currentHealth -= damage;
         if (currentHealth <= 0) {
             System.out.println(name + " was killed by " + inflictor.getName());
-            GameEngine.getSingleton().getWorld().getGameManager()
-                    .onPlayerDeath(this);
+            GameEngine.getSingleton().getWorld().getGameManager().onPlayerDeath(this);
         }
     }
 
