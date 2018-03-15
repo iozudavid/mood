@@ -12,6 +12,7 @@ public class GameChat {
 	private int screenHeight;
 	private int count=0;
 	private boolean interactive=true;
+	private final int timeToInteractive = 200;
 	
 	public GameChat(int screenWidth, int screenHeight){
 		this.gui = new GUICanvas((int)(screenWidth*0.3),(int)(screenHeight*0.35));
@@ -23,10 +24,10 @@ public class GameChat {
 		this.textArea = new TextArea(0,0,(int)(screenWidth*0.3),(int)(screenHeight*0.3));
 		this.textField = new TextField(0, (int)(this.textArea.getRectangle().getY()+this.textArea.getRectangle().getHeight()), (int)(screenWidth*0.3), (int)(screenHeight*0.05));
 		this.textField.setSelect(false);
-		this.textArea.addText("System: press t for team chat");
-		this.textArea.addText("System: press y for all chat");
 		this.gui.addGUIObject(this.textArea);
 		this.gui.addGUIObject(this.textField);
+		this.textArea.addText("System: access team chat by pressing t");
+		this.textArea.addText("System: access all chat by pressing y");
 		
 	}
 	
@@ -34,7 +35,7 @@ public class GameChat {
 		if(GUICanvas.activeTextField!=null){
 			this.interactive=true;
 			count=0;
-		} else if(count>100){
+		} else if(count>this.timeToInteractive){
 			this.interactive = false;
 			count=0;
 		} 

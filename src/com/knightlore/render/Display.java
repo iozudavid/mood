@@ -35,12 +35,13 @@ public class Display implements IRenderable {
 
         PixelBuffer hudBuffer = hud.getPixelBuffer();
         pix.composite(hudBuffer, x, y + renderer.getPixelBuffer().getHeight());
+
+        GameFeed.getInstance().getFeed(this.chat);
         
         PixelBuffer chatBuffer = chat.getPixelBuffer();
         pix.composite(chatBuffer, x, y);
                 
         
-   //     GameFeed.getInstance().render(pix, x, y);
         
         
     }
