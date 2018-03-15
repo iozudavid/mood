@@ -107,7 +107,7 @@ public abstract class Tile implements Serializable {
     }
 
     public boolean blockLOS() {
-        return false;
+        return getSolidity() == 1D;
     }
 
     public Team getTeam() {
