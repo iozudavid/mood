@@ -44,7 +44,7 @@ public class LavaTile extends Tile {
         
         // not quite sure which zombie class to use...
         if(entity instanceof Player || entity instanceof ZombieServer) {
-            entity.resetBuff(new Fire());
+            entity.resetBuff(new Fire(entity));
         }
 
     }

@@ -1,13 +1,9 @@
 package com.knightlore.game.tile;
 
-import com.knightlore.game.Player;
-import com.knightlore.game.buff.BuffType;
-import com.knightlore.game.buff.Fire;
-import com.knightlore.game.buff.Push;
+import com.knightlore.game.buff.Immune;
 import com.knightlore.game.entity.Entity;
 import com.knightlore.render.graphic.Graphic;
 import com.knightlore.render.graphic.texture.Texture;
-import com.knightlore.utils.Vector2D;
 
 // it's a singleton to avoid having multiple copies of air
 public class AirTile extends Tile {
@@ -41,7 +37,7 @@ public class AirTile extends Tile {
 
     @Override
     public void onEntered(Entity entity) {
-
+        //entity.resetBuff(new Immune(entity));
     }
 
     public char toChar() {

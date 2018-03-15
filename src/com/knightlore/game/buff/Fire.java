@@ -1,6 +1,5 @@
 package com.knightlore.game.buff;
 
-import com.knightlore.game.Player;
 import com.knightlore.game.entity.Entity;
 
 public class Fire extends Buff{
@@ -9,42 +8,23 @@ public class Fire extends Buff{
     private static final double FIRE_FREQUENCY = 0.5;
     private static final double FIRE_LENGTH = 8;
     
-    public Fire() {
-        super(FIRE_FREQUENCY, FIRE_LENGTH);
+    public Fire(Entity ent) {
+        super(ent, FIRE_FREQUENCY, FIRE_LENGTH);
     }
     
     @Override
-    public void onApply(Entity ent) {
+    public void onApply() {
         // TODO: Apply some fiery effect on the player's display
         ent.takeDamage(FIRE_DAMAGE,null);
-        counter++;
     }
 
     @Override
-    public void periodicEffect(Entity ent) {
-        if(counter >= maxSteps) {
-            // tell the player to remove this buff
-            done =  true;
-            return;
-        }
-        if(counter % applyGap == 0) {
-            ent.takeDamage(FIRE_DAMAGE,null);
-        }
-        counter++;
-        return;
+    public void periodicEffect() {
+        ent.takeDamage(FIRE_DAMAGE,null);
     }
-
-    /*
-    @Override
-    public void reset(Entity ent) {
-        if(counter >= 2) {
-            counter = 1;
-        }
-    }
-    */
     
     @Override
-    public void onRemove(Entity ent) {
+    public void onRemove() {
         // TODO: Remove fiery effect on the player's display
         
     }

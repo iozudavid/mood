@@ -101,6 +101,6 @@ public class PlayerSpawnTile extends Tile {
     @Override
     public void onEntered(Entity entity) {
         // just for testing the fire debuff
-        //entity.resetBuff(new Fire());
+        entity.resetBuff(new Fire(entity));
     }
 }

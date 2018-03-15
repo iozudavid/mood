@@ -7,24 +7,24 @@ public class Immune extends Buff {
     private static double IMMUNE_FREQUENCY = 1;
     private static double IMMUNE_LENGTH = 3;
     
-    public Immune() {
-        super(IMMUNE_FREQUENCY, IMMUNE_LENGTH);
+    public Immune(Entity ent) {
+        super(ent, IMMUNE_FREQUENCY, IMMUNE_LENGTH);
     }
 
     @Override
-    public void onApply(Entity ent) {
-        // TODO: Show visual affect
+    public void onApply() {
         ent.setDamageTakenModifier(0);
     }
 
     @Override
-    public void periodicEffect(Entity ent) {
+    public void periodicEffect() {
         // TODO: Possibly another visual affect
         // or sound
+
     }
 
     @Override
-    public void onRemove(Entity ent) {
+    public void onRemove() {
         // TODO: Remove visual affect
         ent.setDamageTakenModifier(1);
     }

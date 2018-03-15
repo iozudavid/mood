@@ -14,46 +14,42 @@ public class Slow extends Buff {
     
     private static final double SLOW_FREQUENCY = 0.5;
     private static final double SLOW_LENGTH = 1.0;
-    private int counter = 0;
     
-    public Slow() {
-        super(SLOW_FREQUENCY, SLOW_LENGTH);
+    public Slow(Entity ent) {
+        super(ent, SLOW_FREQUENCY, SLOW_LENGTH);
     }
     
     @Override
-    public void onApply(Entity p) {
+    public void onApply() {
         // TODO: Maybe make some kind of sound
         
-        originalMoveSpeed = p.getMoveSpeed();
-        originalRotateSpeed = p.getRotateSpeed();
-        originalStrafeSpeed = p.getStrafeSpeed();
+        originalMoveSpeed = ent.getMoveSpeed();
+        originalRotateSpeed = ent.getRotateSpeed();
+        originalStrafeSpeed = ent.getStrafeSpeed();
         
-        p.setMoveSpeed(SLOW_MOVE_SPEED);
-        p.setRotateSpeed(SLOW_ROTATE_SPEED);
-        p.setRotateSpeed(SLOW_STRAFE_SPEED);
+        ent.setMoveSpeed(SLOW_MOVE_SPEED);
+        ent.setRotateSpeed(SLOW_ROTATE_SPEED);
+        ent.setRotateSpeed(SLOW_STRAFE_SPEED);
     }
 
     @Override
-    public void periodicEffect(Entity p) {
-        if(counter >= maxSteps) {
-            done = true;
-            return;
-        }
-        counter++;
+    public void periodicEffect() {
     }
     
+    /*
     @Override
-    public void reset(Entity ent) {
+    public void reset() {
         done = false; //not sure of the necessity 
         counter = 0;
     }
+    */
 
     @Override
-    public void onRemove(Entity p) {
+    public void onRemove() {
         // TODO: Maybe make some kind of sound
-        p.setMoveSpeed(originalMoveSpeed);
-        p.setRotateSpeed(originalRotateSpeed);
-        p.setStrafeSpeed(originalStrafeSpeed);
+        ent.setMoveSpeed(originalMoveSpeed);
+        ent.setRotateSpeed(originalRotateSpeed);
+        ent.setStrafeSpeed(originalStrafeSpeed);
     }
 
     @Override

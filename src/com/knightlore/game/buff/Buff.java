@@ -1,17 +1,20 @@
 package com.knightlore.game.buff;
 
 import com.knightlore.engine.GameEngine;
-import com.knightlore.game.Player;
 import com.knightlore.game.entity.Entity;
 
 public abstract class Buff {
     
+    protected Entity ent;
     protected boolean done = false;
-    protected int applyGap;
-    protected int maxSteps;
-    protected int counter;
+    private int applyGap; // on multiples of the applyGap,
+                          // the counter will trigger the
+                          // periodic effect
+    private int maxSteps;
+    private int counter;
     
-    protected Buff(double frequency, double length) {
+    protected Buff(Entity ent, double frequency, double length) {
+        this.ent = ent;
         applyGap = calculateGap(frequency);
         maxSteps = calculateMaxSteps(length);
     }
@@ -20,28 +23,55 @@ public abstract class Buff {
      * 
      * @param ent
      */
-    public abstract void onApply(Entity ent);
+    public abstract void onApply();
     
     
-    /** The continuous affect of the buff. Will modify
-     *  remove if the buff should be removed on the next
-     *  call.
+    /** The continuous affect of the buff. loop() will
+     * call this periodically as appropriate
      * @param ent
      * @return
      */
-    public abstract void periodicEffect(Entity ent);
+    protected abstract void periodicEffect();
     
-    public void reset(Entity ent) {
+    /** Called by the onTick() method in Entity.
+     *  Manages all the mechanisms of each buff.
+     */
+    public void loop() {
+        if(counter >= maxSteps) {
+            done = true;
+            return;
+        }
+        
+        if(counter % applyGap == 0) {
+            periodicEffect();
+        }
+        counter++;
+    }
+    
+    /** Put a buff back to the beginning of its 
+     *  execution while ensuring the frequency of
+     *  the call of its periodic effect is not
+     *  changed
+     */
+    public void reset() {
         if(counter >= applyGap) {
             counter = 1;
         }
     }
     
+    /** Can manually set a buff to be done (ie. upon 
+     *  the death of a player)
+     * @param b
+     */
     public void setDone(boolean b) {
         done = b;
     }
     
-    public boolean getDone() {
+    /** Used by Entity to check whether a buff should be 
+     *  removed from the buffList
+     * @return
+     */
+    public boolean isDone() {
         return done;
     }
     
@@ -49,14 +79,14 @@ public abstract class Buff {
      *  of a buff
      * @param ent
      */
-    public abstract void onRemove(Entity ent);
+    public abstract void onRemove();
     
-    public int calculateGap(double frequency) {
+    private int calculateGap(double frequency) {
         double ticksPerSecond = Entity.getBuffTickRate() / GameEngine.UPDATES_PER_SECOND;
         return (int) (frequency / ticksPerSecond);
     }
     
-    public int calculateMaxSteps(double length) {
+    private int calculateMaxSteps(double length) {
         double ticksPerSecond = Entity.getBuffTickRate() / GameEngine.UPDATES_PER_SECOND;
         return (int) (length / ticksPerSecond);
     }

@@ -10,32 +10,25 @@ public class Push extends Buff {
     
     private static final double PUSH_FREQUENCY = 1 / 16;
     private static final double PUSH_LENGTH = 0.5;
-    private int counter = 0;
     
-    public Push(Vector2D d) {
-        super(PUSH_FREQUENCY, PUSH_LENGTH);
+    public Push(Entity ent, Vector2D d) {
+        super(ent, PUSH_FREQUENCY, PUSH_LENGTH);
         direction = d;
     }
     
     @Override
-    public void onApply(Entity ent) {
+    public void onApply() {
         ent.absoluteMove(direction, MOVE_DISTANCE);
     }
 
     @Override
-    public void periodicEffect(Entity ent) {
+    public void periodicEffect() {
         // TODO: PUSH PLAYER IN DIRECTION
-        if(counter >= maxSteps) {
-            done = true;
-        }
-        if(counter % 2 == 0) {
-            ent.absoluteMove(direction, MOVE_DISTANCE);
-        }
-        counter++;
+        ent.absoluteMove(direction, MOVE_DISTANCE);
     }
     
     @Override
-    public void onRemove(Entity ent) {
+    public void onRemove() {
     }
 
     @Override

@@ -2,7 +2,6 @@ package com.knightlore.game;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map.Entry;
 import java.util.UUID;
@@ -10,18 +9,15 @@ import java.util.UUID;
 import com.knightlore.engine.GameEngine;
 import com.knightlore.engine.TickListener;
 import com.knightlore.game.buff.Buff;
-import com.knightlore.game.buff.BuffType;
 import com.knightlore.game.buff.Immune;
 import com.knightlore.ai.InputModule;
 import com.knightlore.ai.RemoteInput;
-import com.knightlore.engine.GameEngine;
 import com.knightlore.game.entity.Entity;
 import com.knightlore.game.entity.weapon.Shotgun;
 import com.knightlore.game.entity.weapon.Weapon;
 import com.knightlore.network.NetworkObject;
 import com.knightlore.network.protocol.ClientController;
 import com.knightlore.network.protocol.ClientProtocol;
-import com.knightlore.render.GameFeed;
 import com.knightlore.render.PixelBuffer;
 import com.knightlore.render.graphic.sprite.DirectionalSprite;
 import com.knightlore.utils.Vector2D;
@@ -242,20 +238,6 @@ public class Player extends Entity implements TickListener{
     }
 
     @Override
-
-    /*
-    public void takeDamage(int damage) {
-        if (currentHealth == 0) {
-            System.out.println("Player" + getName() + " died");
-            respawn();
-            return;
-        }
-            int newHealth = currentHealth - damage;
-            currentHealth = Math.max(0, Math.min(MAX_HEALTH, newHealth));
-            System.out.println("HP: " + currentHealth);
-    }
-    */
-
     public void takeDamage(int damage, Entity inflictor) {
         damage = (int) (damage * damageTakenModifier);
         int newHealth = currentHealth - damage;
@@ -267,12 +249,9 @@ public class Player extends Entity implements TickListener{
                 System.out.println(name + " was killed by " + inflictor.getName());
             }
             
-            // remove buffs
-            for(Buff b : buffList) {
-                b.setDone(true);
-            }
-            resetBuff(new Immune());
+            removeAllBuffs();
             GameEngine.getSingleton().getWorld().getGameManager().onPlayerDeath(this);
+            //resetBuff(new Immune(this));
         }
     }
     

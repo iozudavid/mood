@@ -307,18 +307,24 @@ public abstract class Entity extends NetworkObject implements TickListener, IMin
     
     private synchronized void addBuff(Buff buff) {
         buffList.add(buff);
-        buff.onApply(this);
+        buff.onApply();
     }
     
     public synchronized void resetBuff(Buff rbuff) {
         BuffType bt = rbuff.getType();
         for(Buff buff : buffList) {
             if(buff.getType() == bt) {
-                buff.reset(this);
+                buff.reset();
                 return; //IMPORTANT WE RETURN
             }
         }
         addBuff(rbuff);
+    }
+    
+    public synchronized void removeAllBuffs() {
+        for(Iterator<Buff> iter = buffList.iterator() ; iter.hasNext(); ) {
+            iter.next().setDone(true);
+        }
     }
     
     @Override
@@ -326,10 +332,11 @@ public abstract class Entity extends NetworkObject implements TickListener, IMin
         
         for(Iterator<Buff> iter = buffList.iterator() ; iter.hasNext(); ) {
             Buff buff = iter.next();
-            buff.periodicEffect(this);
-            if(buff.getDone()) {
-                buff.onRemove(this);
+            if(buff.isDone()) {
+                buff.onRemove();
                 iter.remove();
+            }else {
+                buff.loop();
             }
         }
     }
