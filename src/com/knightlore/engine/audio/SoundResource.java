@@ -1,5 +1,6 @@
 package com.knightlore.engine.audio;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 
@@ -14,9 +15,7 @@ public class SoundResource {
     // The cached data of the audio file.
     private byte[] data;
     private AudioFormat encoding;
-    // Store the most recently-created clip, so we can restart it if necessary.
-    // Package-scope.
-    Clip mostRecentClip;
+    private Clip mostRecentClip;
 
     // Path to a WAV file to read.
     public SoundResource(String path) {
@@ -38,22 +37,25 @@ public class SoundResource {
      * allows the same audio file to be played multiple times concurrently, if
      * necessary.
      */
-    public void openNewClip() {
+    public Clip getNewClip() {
+        Clip clip = null;
         try {
-            this.mostRecentClip = AudioSystem.getClip();
-            this.mostRecentClip.open(this.encoding, this.data, 0,
-                    this.data.length);
-        } catch (LineUnavailableException e) {
+            clip = AudioSystem.getClip();
+            clip.open(new AudioInputStream(new ByteArrayInputStream(data),
+                    encoding, data.length));
+        } catch (LineUnavailableException | IOException e) {
             // No audio lines available to start a new clip - ignore.
-            System.out.println(
+            System.err.println(
                     "Warning: no audio line available to play sound clip.");
         }
+        this.mostRecentClip = clip;
+        return clip;
     }
 
     /**
      * Returns true if a clip is currently playing this audio resource.
      */
     public boolean isPlaying() {
-        return this.mostRecentClip != null && mostRecentClip.isActive();
+        return mostRecentClip != null && mostRecentClip.isActive();
     }
 }

@@ -39,6 +39,8 @@ public abstract class Weapon {
     }
 
     private void playShotSFX(Entity shooter) {
+        if (GameEngine.getSingleton().getCamera().getSubject() == shooter)
+            System.out.println("WE JUST SHOT, PLAY SOUND");
         // Determine volume to play sound effect based on distance from us.
         Vector2D ourPos = GameEngine.getSingleton().getCamera().getPosition();
         Vector2D theirPos = shooter.getPosition();

@@ -80,8 +80,11 @@ public class SoundManager extends GameObject {
             // The clip is already playing: don't interrupt it.
             return;
 
-        res.openNewClip();
-        FloatControl control = (FloatControl) res.mostRecentClip
+        Clip clip = res.getNewClip();
+        System.out.println("num controls: " + clip.getControls().length);
+        if (clip.getControls().length == 0)
+            return;
+        final FloatControl control = (FloatControl) clip
                 .getControl(FloatControl.Type.MASTER_GAIN);
         float range = control.getMaximum() - control.getMinimum();
         float gain = range * volume + control.getMinimum();
@@ -89,8 +92,9 @@ public class SoundManager extends GameObject {
         // The Clip library interprets 'numLoops' to mean the number of
         // additional times to repeat the resource, so a value of 0 means to
         // play once.
-        res.mostRecentClip.loop(numLoops - 1);
-        this.ephemeralClips.add(new ClipWrapper(res.mostRecentClip));
+        //clip.loop(numLoops - 1);
+        clip.start();
+        this.ephemeralClips.add(new ClipWrapper(clip));
     }
 
     @Override
