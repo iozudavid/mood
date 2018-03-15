@@ -17,7 +17,7 @@ public class RoomGeneratorTest {
 
         // When
         RoomGenerator generator = new RoomGenerator();
-        Room room = generator.createRoom(seed, Team.none);
+        Room room = generator.createRoom(seed, Team.NONE);
 
 
         // Then
@@ -43,8 +43,8 @@ public class RoomGeneratorTest {
 
         // When
         RoomGenerator generator = new RoomGenerator();
-        Room blueRoom = generator.createRoom(seed, Team.blue);
-        Room redRoom = generator.createRoom(seed, Team.red);
+        Room blueRoom = generator.createRoom(seed, Team.BLUE);
+        Room redRoom = generator.createRoom(seed, Team.RED);
 
         // Then
         Tile[][] expectedGrid = new Tile[8][10];
@@ -57,9 +57,9 @@ public class RoomGeneratorTest {
                 }
             }
         }
-        expectedGrid[2][5] = new TurretTile(Team.none);
-        expectedGrid[4][5] = new PlayerSpawnTile(Team.none);
-        expectedGrid[6][5] = new TurretTile(Team.none);
+        expectedGrid[2][5] = new TurretTile(Team.NONE);
+        expectedGrid[4][5] = new PlayerSpawnTile(Team.NONE);
+        expectedGrid[6][5] = new TurretTile(Team.NONE);
         Room expectedRoom = new Room(expectedGrid);
 
         assertThat(blueRoom, is(redRoom));
