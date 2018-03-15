@@ -19,6 +19,7 @@ import com.knightlore.network.NetworkObjectManager;
 import com.knightlore.network.protocol.ClientController;
 import com.knightlore.network.protocol.ClientProtocol;
 import com.knightlore.network.protocol.NetworkUtils;
+import com.knightlore.render.GameFeed;
 import com.knightlore.render.PixelBuffer;
 import com.knightlore.render.graphic.sprite.DirectionalSprite;
 import com.knightlore.utils.Vector2D;
@@ -288,6 +289,7 @@ public class Player extends Entity {
         currentHealth -= damage;
         if (currentHealth <= 0) {
             System.out.println(name + " was killed by " + inflictor.getName());
+            this.sendSystemMessage(name, inflictor);
             GameEngine.getSingleton().getWorld().getGameManager().onPlayerDeath(this);
         }
     }

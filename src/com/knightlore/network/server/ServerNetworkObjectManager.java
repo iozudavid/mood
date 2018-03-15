@@ -191,6 +191,12 @@ public class ServerNetworkObjectManager extends NetworkObjectManager {
                     // Tuple<>(t.getValue().x, newState));
                     t.getValue().y = newState;
                 }
+                if(getNetworkObject(t.getKey()) instanceof Entity){
+                	Entity e = (Entity) getNetworkObject(t.getKey());
+                	ByteBuffer systemMessages = e.getSystemMessages();
+                	if(systemMessages!=null)
+                		this.sendToClients(systemMessages);
+                }
                 if(getNetworkObject(t.getKey()) instanceof Player){
                 	Player p = (Player)getNetworkObject(t.getKey());
                 	ByteBuffer toTeam = p.getTeamMessages();
