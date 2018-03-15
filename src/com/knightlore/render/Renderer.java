@@ -262,7 +262,7 @@ public class Renderer {
     private void draw(PixelBuffer pix, PerspectiveRenderItem p, int offset) {
         if (p.opacity == 0)
             return;
-        
+
         // calculate y coordinate on texture
         for (int yy = p.drawStart; yy < p.drawEnd; yy++) {
 
