@@ -37,7 +37,14 @@ public class PixelBuffer {
      *            the colour to fill the pixel buffer with.
      */
     public void flood(int color) {
-        fillRect(color, 0, 0, getWidth(), getHeight());
+    	 for (int yy = 0; yy < 0 + getHeight(); yy++) {
+             for (int xx = 0; xx < 0 + getWidth(); xx++) {
+                 if (!inBounds(xx, yy))
+                     continue;
+                 pixels[xx + yy * WIDTH] = color;
+             }
+         }
+      //  fillRect(color, 0, 0, getWidth(), getHeight());
     }
 
     /**
@@ -244,6 +251,15 @@ public class PixelBuffer {
             this.drawGraphic(g, x, y, (int) (g.getWidth() * scaling), (int) (g.getHeight() * scaling));
             x += g.getWidth() * scaling + spacing;
         }
+    }
+
+    public int stringWidth(Font font, String str, double scaling, double spacing) {
+        int width = 0;
+        for (char c : str.toCharArray()) {
+            Graphic g = font.getGraphic(c);
+            width += g.getWidth() * scaling + spacing;
+        }
+        return (int) (width - spacing);
     }
 
     /**

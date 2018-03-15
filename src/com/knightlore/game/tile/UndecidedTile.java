@@ -15,7 +15,7 @@ public class UndecidedTile extends Tile {
     }
 
     @Override
-    public Graphic getTexture() {
+    public Graphic getWallTexture() {
         return Texture.AIR;
     }
 

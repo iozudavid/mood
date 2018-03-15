@@ -9,7 +9,7 @@ public class BrickTile extends Tile {
     }
 
     @Override
-    public Graphic getTexture() {
+    public Graphic getWallTexture() {
         return Texture.BRICK;
     }
 
@@ -25,7 +25,7 @@ public class BrickTile extends Tile {
 
     @Override
     public void onEntered(Entity entity) {
-        System.out.println("touched brick");
+        // do nothing
     }
 
     @Override

@@ -17,6 +17,7 @@ public class FFAGame extends GameManager {
     private static final int WIN_SCORE = 10;
     private static final double ROUND_TIME_SECS = 10;
     private Entity winner;
+    
     public FFAGame(UUID uuid) {
         super(uuid);
     }
@@ -36,7 +37,7 @@ public class FFAGame extends GameManager {
             p.respawn(spawnPos);
         }
         
-        gameOverTick = GameEngine.ticker.getTime() + (long)(GameEngine.UPDATES_PER_SECOND * ROUND_TIME_SECS);
+        gameOverTick = GameEngine.ticker.getTime() + (long) (GameEngine.UPDATES_PER_SECOND * ROUND_TIME_SECS);
         
     }
     
@@ -52,7 +53,7 @@ public class FFAGame extends GameManager {
     }
     
     private void spawnPickup(Vector2D pos, WeaponType type) {
-        switch(type) {
+        switch (type) {
         case PISTOL:
             break;
         case SHOTGUN:
@@ -63,7 +64,7 @@ public class FFAGame extends GameManager {
         }
         
     }
-
+    
     @Override
     public void onCreate() {
         // TODO Auto-generated method stub
@@ -72,13 +73,12 @@ public class FFAGame extends GameManager {
     
     @Override
     public void onUpdate() {
-        
         // update ticks left
         if (gameState != gameState.FINISHED) {
             ticksLeft = gameOverTick - GameEngine.ticker.getTime();
         }
         
-     // check for winners
+        // check for winners
         PlayerManager playerManager = GameEngine.getSingleton().getWorld().getPlayerManager();
         List<Player> players = playerManager.getPlayers();
         
@@ -86,14 +86,14 @@ public class FFAGame extends GameManager {
             gameState = GameState.FINISHED;
             int highScore = Integer.MIN_VALUE;
             for (Player p : players) {
-                if (p.getScore() >= highScore) {
+                if (p.getScore() > highScore) {
                     winner = p;
-                    gameOver();
-                    return;
+                    highScore = p.getScore();
                 }
             }
+            gameOver();
+            return;
         }
-        
         
         for (Player p : players) {
             if (p.getScore() >= WIN_SCORE) {
@@ -138,7 +138,7 @@ public class FFAGame extends GameManager {
     
     @Override
     public void deserialize(ByteBuffer buffer) {
-        ticksLeft = buffer.getLong();        
+        ticksLeft = buffer.getLong();
     }
     
     @Override

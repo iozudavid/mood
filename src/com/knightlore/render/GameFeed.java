@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.ListIterator;
 
 import com.knightlore.engine.GameEngine;
+import com.knightlore.gui.GameChat;
 import com.knightlore.render.font.Font;
 
 public class GameFeed implements IRenderable {
@@ -34,6 +35,13 @@ public class GameFeed implements IRenderable {
             pix.drawString(Font.DEFAULT_WHITE, msg.message, x, y, 1, 2);
             y += 10;
         }
+    }
+    
+    public void getFeed(GameChat chat){
+    	for(GameFeedMessage message : this.messages){
+    		chat.getTextArea().addText("System: " + message.message);
+    	}
+    	this.messages.clear();
     }
 
     public void update() {

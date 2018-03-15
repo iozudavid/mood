@@ -5,6 +5,7 @@ import java.util.List;
 import com.knightlore.ai.BotInput;
 import com.knightlore.ai.TurretServer;
 import com.knightlore.ai.TurretShared;
+import com.knightlore.game.FFAGame;
 import com.knightlore.game.Player;
 import com.knightlore.game.entity.Entity;
 import com.knightlore.game.entity.SpectatorCamera;
@@ -19,6 +20,8 @@ public class ServerWorld extends GameWorld {
     @Override
     public void setUpWorld(Long mapSeed) {
         super.setUpWorld(mapSeed);
+        gameManager = new FFAGame();
+        gameManager.init();
         buildEntities();
     }
 
@@ -66,7 +69,7 @@ public class ServerWorld extends GameWorld {
 
     @Override
     /**
-     * Casts a ray against all world, entities and players. returns a structure
+     * Casts a ray against all world, entities and players. Returns a structure
      * holding information about what was hit
      */
     public RaycastHit raycast(Vector2D pos, Vector2D direction, int segments, double maxDist, Entity ignore) {

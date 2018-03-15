@@ -7,7 +7,7 @@ import com.knightlore.render.graphic.texture.Texture;
 public class BushTile extends Tile {
 
     @Override
-    public Graphic getTexture() {
+    public Graphic getWallTexture() {
         return Texture.BUSH;
     }
 

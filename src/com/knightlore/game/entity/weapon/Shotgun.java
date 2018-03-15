@@ -12,7 +12,6 @@ public class Shotgun extends Weapon {
     private final float sqrRange = 10;
     private long nextFireTime;
 
-
     public Shotgun() {
         super(WeaponSprite.SHOTGUN, false, (int) (GameEngine.UPDATES_PER_SECOND * 0.25D));
     }

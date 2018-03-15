@@ -8,6 +8,8 @@ import java.awt.event.MouseWheelListener;
 
 import javax.swing.SwingUtilities;
 
+import com.knightlore.utils.Vector2D;
+
 /**
  * Handles basic mouse input. This code was taken from my project at
  * https://github.com/joechrisellis/QuickGameEngine and modified slightly.
@@ -17,25 +19,36 @@ import javax.swing.SwingUtilities;
  */
 public final class Mouse implements MouseListener, MouseMotionListener, MouseWheelListener {
 
+    /**
+     * The current x and y positions of the mouse.
+     */
     private volatile int x, y;
+
+    /**
+     * The number of scroll clicks since the last time getScroll() was called.
+     */
     private volatile int scroll;
 
     private boolean leftHeld, rightHeld;
-    private boolean lastLeftHeld, lastRightHeld;
     private boolean leftClick, rightClick;
 
+    @Override
     public void mouseDragged(MouseEvent e) {
+        // update the X and Y positions.
+        // since we're dragging, set the appropriate booleans to true.
         x = e.getX();
         y = e.getY();
         leftHeld = SwingUtilities.isLeftMouseButton(e);
         rightHeld = SwingUtilities.isRightMouseButton(e);
     }
 
+    @Override
     public void mouseMoved(MouseEvent e) {
         x = e.getX();
         y = e.getY();
     }
 
+    @Override
     public void mouseClicked(MouseEvent e) {
         x = e.getX();
         y = e.getY();
@@ -43,30 +56,32 @@ public final class Mouse implements MouseListener, MouseMotionListener, MouseWhe
         rightClick = SwingUtilities.isRightMouseButton(e);
     }
 
+    @Override
     public void mouseReleased(MouseEvent e) {
         x = e.getX();
         y = e.getY();
 
-        if (SwingUtilities.isLeftMouseButton(e)) {
-            leftHeld = false;
-        } else {
-            rightHeld = false;
-        }
+        leftHeld = !SwingUtilities.isLeftMouseButton(e);
+        rightHeld = !SwingUtilities.isRightMouseButton(e);
     }
 
-    public void clearButtons() {
-        leftClick = false;
-        rightClick = false;
-    }
-
+    @Override
     public void mouseWheelMoved(MouseWheelEvent e) {
         scroll += e.getWheelRotation();
     }
 
     /**
+     * Sets the booleans for button clicks to false.
+     */
+    public void clearButtons() {
+        leftClick = false;
+        rightClick = false;
+    }
+
+    /**
      * Get the current x position of the mouse.
      * 
-     * @return int The current x position of the mouse.
+     * @return int the current x position of the mouse.
      */
     public int getX() {
         return x;
@@ -75,7 +90,7 @@ public final class Mouse implements MouseListener, MouseMotionListener, MouseWhe
     /**
      * Get the current y position of the mouse.
      * 
-     * @return int The current y position of the mouse.
+     * @return int the current y position of the mouse.
      */
     public int getY() {
         return y;
@@ -85,7 +100,7 @@ public final class Mouse implements MouseListener, MouseMotionListener, MouseWhe
      * Get the number of scroll wheel clicks since the last time this function
      * was called.
      * 
-     * @return int The number of scroll wheel clicks. Negative values if the
+     * @return int the number of scroll wheel clicks. Negative values if the
      *         mouse wheel was rotated up/away from the user, and positive
      *         values if the mouse wheel was rotated down/towards the user.
      */
@@ -121,7 +136,7 @@ public final class Mouse implements MouseListener, MouseMotionListener, MouseWhe
         return rightHeld;
     }
 
-    /* UNUSED */
+    /* UNUSED -- NEEDED SINCE WE ARE IMPLEMENTING AN INTERFACE */
     public void mouseEntered(MouseEvent e) {
     }
 

@@ -107,6 +107,7 @@ public class ZombieServer extends ZombieShared {
         currentHealth -= damage;
         if (currentHealth <= 0) {
             this.position = GameEngine.getSingleton().getWorld().getMap().getRandomSpawnPoint();
+            this.sendSystemMessage(this.getName(), inflictor);
             currentHealth = MAX_HEALTH;
         }
     }

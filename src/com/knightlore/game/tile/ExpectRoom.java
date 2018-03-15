@@ -17,7 +17,7 @@ public class ExpectRoom extends Tile {
     }
 
     @Override
-    public Graphic getTexture() {
+    public Graphic getWallTexture() {
         return Texture.AIR;
     }
 
