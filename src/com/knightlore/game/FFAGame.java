@@ -25,7 +25,7 @@ public class FFAGame extends GameManager {
     
     @Override
     public void onPlayerDeath(Player p) {
-        p.score -=1;
+        p.decreaseScore(1);
         Vector2D spawnPos = GameEngine.getSingleton().getWorld().getMap().getRandomSpawnPoint();
         p.respawn(spawnPos);
     }
@@ -42,7 +42,7 @@ public class FFAGame extends GameManager {
         PlayerManager playerManager = GameEngine.getSingleton().getWorld().getPlayerManager();
         List<Player> players = playerManager.getPlayers();
         for(Player p : players) {
-            if(p.score >= WIN_SCORE) {
+            if(p.getScore() >= WIN_SCORE) {
                 winner = p;
                 gameOver();
                 return;
@@ -58,7 +58,7 @@ public class FFAGame extends GameManager {
 
     @Override
     public void awardScore(Player p, int score) {
-        p.score += score;
+        p.increaseScore(score);
     }
 
     @Override
@@ -72,7 +72,5 @@ public class FFAGame extends GameManager {
         gameState = GameState.finished;
         System.out.println("GAME OVER");
         System.out.println(winner.getName() + " wins!");
-        
     }
-    
 }
