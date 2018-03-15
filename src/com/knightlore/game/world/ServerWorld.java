@@ -25,20 +25,17 @@ public class ServerWorld extends GameWorld {
     public void buildEntities() {
         
         // add the mobs
-        //ZombieServer zom = new ZombieServer(map.getRandomSpawnPoint());
-        //zom.init();
-        //ents.add(zom);
-
-        //TurretShared tboi = new TurretServer(3, map.getRandomSpawnPoint(), Vector2D.UP);
-        //tboi.init();
-
-        for (int i = 0; i < 15; i++) {
-            //Player botPlayer = new Player(map.getRandomSpawnPoint(), Vector2D.UP);
-            //botPlayer.setInputModule(new BotInput());
-            //botPlayer.init();
-            //botPlayer.setName("bot" + i);
-            //playerManager.addPlayer(botPlayer);
-
+        ZombieServer zom = new ZombieServer(map.getRandomSpawnPoint());
+        zom.init();
+        ents.add(zom);
+        TurretShared tboi = new TurretServer(3, map.getRandomSpawnPoint(), Vector2D.UP);
+        tboi.init();
+        for (int i = 0; i < 1; i++) {
+            Player botPlayer = new Player(map.getRandomSpawnPoint(), Vector2D.UP);
+            botPlayer.setInputModule(new BotInput());
+            botPlayer.init();
+            botPlayer.setName("bot" + i);
+            playerManager.addPlayer(botPlayer);
         }
 
         SpectatorCamera cam = new SpectatorCamera(new Vector2D(10, 20), Vector2D.UP);

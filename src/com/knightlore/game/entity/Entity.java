@@ -24,20 +24,39 @@ import com.knightlore.utils.pruner.Prunable;
 
 public abstract class Entity extends NetworkObject implements TickListener, IMinimapObject, Prunable {
 
-    protected double moveSpeed = .040;
-    protected double strafeSpeed = .01;
-    protected double rotationSpeed = .025;
+    /**
+     * The speed at which the entity can move when calling moveForward() and
+     * moveBackward().
+     */
+    protected double moveSpeed = .04;
 
+    /**
+     * The speed at which the entity can move when calling moveLeft() and
+     * moveRight().
+     */
+    protected double strafeSpeed = .01;
+
+    /**
+     * The speed at which the entity can rotate when calling rotateClockwise()
+     * and rotateAnticlockwise().
+     */
+    protected double rotationSpeed = .025;
     protected double damageTakenModifier = 1;
     
     protected ArrayList<Buff> buffList = new ArrayList<Buff>();
     private static final double BUFF_TICK_RATE = GameEngine.UPDATES_PER_SECOND / 16;
     
+    /**
+     * The map which the entity exists in. This is required for collision
+     * detection.
+     */
     private Map map;
 
+    /**
+     * The size of the bounding rectangle of the entity.
+     */
     protected double size;
-    // Initialise these with vectors to avoid null pointers before
-    // deserialisation occurs.
+
     protected Vector2D direction = Vector2D.ONE;
     protected Vector2D plane = Vector2D.ONE;
 
@@ -45,7 +64,12 @@ public abstract class Entity extends NetworkObject implements TickListener, IMin
     // anyone can set a team and get a team
     public Team team;
 
+    /**
+     * Used for rendering exclusively. A higher zOffset means that the entities
+     * are rendered more closely to the floor.
+     */
     protected int zOffset;
+
     protected String name = "entity";
 
     // Allow you to create an entity with a specified UUID. Useful for creating
@@ -84,23 +108,58 @@ public abstract class Entity extends NetworkObject implements TickListener, IMin
         this(uuid, 1, position, direction);
     }
 
+    /**
+     * This is called if this particular entity is the camera subject.
+     * Subclasses are free to override this. By default, it does nothing.
+     * 
+     * @param pix
+     *            the pixelbuffer to render to.
+     * @param x
+     *            the x-position of where to start rendering.
+     * @param y
+     *            the y-positon of where to start rendering.
+     * @param distanceTraveled
+     *            the distance that the entity has travelled since the last
+     *            update. Used to calculate inertia.
+     */
     public void render(PixelBuffer pix, int x, int y, double distanceTraveled) {
         /* ONLY CALLED IF THIS ENTITY IS THE CAMERA SUBJECT */
     }
 
+    /**
+     * Called when a player collides with this entity. Subclasses can override
+     * this to damage the player, increase their health, etc.
+     * 
+     * @param player
+     *            the player that intersects with this entity.
+     */
     public abstract void onCollide(Player player);
 
     @Override
     public void onUpdate() {
+        // Tell the tile that we're currently standing on that we've entered it.
         Map map = GameEngine.getSingleton().getWorld().getMap();
         Tile t = map.getTile((int) position.getX(), (int) position.getY());
         t.onEntered(this);
     }
 
+    /**
+     * Given the position of the player, returns the appropriate directional
+     * sprite graphic.
+     * 
+     * @param playerPos
+     *            the position of the player (from where are we looking?)
+     * @return the correct directional sprite graphic.
+     */
     public Graphic getGraphic(Vector2D playerPos) {
         return getDirectionalSprite().getCurrentGraphic(position, direction, playerPos);
     }
 
+    /**
+     * Gets the directional sprite of this entity.
+     * 
+     * @return the directional sprite for this entity.
+     */
     public abstract DirectionalSprite getDirectionalSprite();
 
     public double getSize() {
@@ -111,6 +170,11 @@ public abstract class Entity extends NetworkObject implements TickListener, IMin
         return direction;
     }
 
+    /**
+     * Gets an AWT.Rectangle2D.Double that bounds this entity.
+     * 
+     * @return an AWT.Rectangle2D.Double that bounds this entity.
+     */
     public Rectangle2D.Double getBoundingRectangle() {
         return new Rectangle2D.Double(getxPos(), getyPos(), size, size);
     }
@@ -159,6 +223,9 @@ public abstract class Entity extends NetworkObject implements TickListener, IMin
         return zOffset;
     }
 
+    /**
+     * Move this entity forward, accounting for collisions.
+     */
     protected synchronized void moveForward() {
         double xPos = position.getX(), yPos = position.getY();
         double xDir = direction.getX(), yDir = direction.getY();
@@ -169,6 +236,9 @@ public abstract class Entity extends NetworkObject implements TickListener, IMin
         position = new Vector2D(xPos, yPos);
     }
 
+    /**
+     * Move this entity backward, accounting for collisions.
+     */
     protected synchronized void moveBackward() {
         double xPos = position.getX(), yPos = position.getY();
         double xDir = direction.getX(), yDir = direction.getY();
@@ -179,6 +249,9 @@ public abstract class Entity extends NetworkObject implements TickListener, IMin
         position = new Vector2D(xPos, yPos);
     }
 
+    /**
+     * Move this entity left, accounting for collisions.
+     */
     protected synchronized void strafeLeft() {
         double xPos = position.getX(), yPos = position.getY();
         double xDir = direction.getX(), yDir = direction.getY();
@@ -189,6 +262,9 @@ public abstract class Entity extends NetworkObject implements TickListener, IMin
         position = new Vector2D(xPos, yPos);
     }
 
+    /**
+     * Move this entity right, accounting for collisions.
+     */
     protected synchronized void strafeRight() {
         double xPos = position.getX(), yPos = position.getY();
         double xDir = direction.getX(), yDir = direction.getY();

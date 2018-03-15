@@ -5,11 +5,26 @@ import java.awt.event.KeyEvent;
 
 import com.knightlore.gui.GUICanvas;
 
+/**
+ * The keyboard is the class responsible for detecting which keys are pressed at
+ * a low-level. The keyboard should be attached as a KeyListener to the game
+ * canvas so that it can monitor the state of the keyboard.
+ * 
+ * @author Joe Ellis
+ *
+ */
 public class Keyboard extends KeyAdapter {
 
+    /**
+     * Keys are represented by their AWT keycodes. This array maps AWT keycodes
+     * to a boolean value representing whether or not they are pressed. For
+     * instance, if keys[KeyEvent.VK_W] == true then the key 'w' is pressed.
+     */
     private boolean[] keys;
 
     public Keyboard() {
+        // 0-255 encapsulates the range of keycodes we might want to use
+        // sufficiently.
         keys = new boolean[256];
     }
 

@@ -246,6 +246,15 @@ public class PixelBuffer {
         }
     }
 
+    public int stringWidth(Font font, String str, double scaling, double spacing) {
+        int width = 0;
+        for (char c : str.toCharArray()) {
+            Graphic g = font.getGraphic(c);
+            width += g.getWidth() * scaling + spacing;
+        }
+        return (int) (width - spacing);
+    }
+
     /**
      * Gets the colour of the pixel at a given x-y position.
      * 

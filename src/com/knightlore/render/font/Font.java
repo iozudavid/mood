@@ -65,17 +65,17 @@ public class Font {
     public Graphic getGraphic(char c) {
         if (symbols.containsKey(c))
             return symbols.get(c);
-
+        
         c = Character.toUpperCase(c);
         if (symbols.containsKey(c))
             return symbols.get(c);
-
-        if (symbols.containsKey('?')) {
-            return symbols.get('?');
+        
+        final char[] backupSymbols = new char[] {'?', '!', ' '};
+        for(char x : backupSymbols) {
+            if(symbols.containsKey(x)) {
+                return symbols.get(x);
+            }
         }
-
-        if (symbols.containsKey(' '))
-            return symbols.get(' ');
 
         return Graphic.EMPTY;
     }

@@ -1,6 +1,5 @@
 package com.knightlore.game.entity.weapon;
 
-import com.knightlore.engine.GameEngine;
 import com.knightlore.game.entity.Entity;
 import com.knightlore.render.PixelBuffer;
 import com.knightlore.render.graphic.Graphic;
