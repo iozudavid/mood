@@ -111,7 +111,7 @@ public abstract class Tile implements Serializable {
     }
 
     public Team getTeam() {
-        return Team.none;
+        return Team.NONE;
     }
 
     public abstract Tile copy();

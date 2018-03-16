@@ -3,11 +3,14 @@ package com.knightlore.game;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
+import com.google.common.collect.ImmutableMap;
 import com.knightlore.GameSettings;
 import com.knightlore.ai.InputModule;
 import com.knightlore.ai.RemoteInput;
@@ -26,25 +29,29 @@ import com.knightlore.utils.Vector2D;
 
 public class Player extends Entity {
     
-    private int score = 0;
+    public static final int MAX_HEALTH = 100;
+    // Maps all inputs that the player could be making to their values.
+    private final ImmutableMap<ClientController, Runnable> ACTION_MAPPINGS = ImmutableMap
+            .<ClientController, Runnable>builder().put(ClientController.FORWARD, this::moveForward)
+            .put(ClientController.ROTATE_ANTI_CLOCKWISE, this::rotateAntiClockwise)
+            .put(ClientController.BACKWARD, this::moveBackward)
+            .put(ClientController.ROTATE_CLOCKWISE, this::rotateClockwise).put(ClientController.LEFT, this::strafeLeft)
+            .put(ClientController.RIGHT, this::strafeRight).put(ClientController.SHOOT, this::shoot).build();
     
-    private final int MAX_HEALTH = 100;
+    private final BlockingQueue<ByteBuffer> teamMessagesToSend = new LinkedBlockingQueue<>();
+    private final BlockingQueue<ByteBuffer> allMessagesToSend = new LinkedBlockingQueue<>();
+    private Map<ClientController, Byte> inputState = new HashMap<>();
+    
+    private int score = 0;
     private int currentHealth = MAX_HEALTH;
-    private Weapon currentWeapon;
+    private Weapon currentWeapon = new Shotgun();
+    private boolean shootOnNextUpdate;
     
     private boolean hasShot;
     private Vector2D prevPos, prevDir;
     private int inertiaX = 0, inertiaY = 0;
+    private InputModule inputModule = new RemoteInput();
     
-    // Maps all inputs that the player could be making to their values.
-    private java.util.Map<ClientController, Runnable> ACTION_MAPPINGS = new HashMap<>();
-    private java.util.Map<ClientController, Byte> inputState = new HashMap<>();
-    private InputModule inputModule = null;
-    // private volatile boolean finished = false;
-
-    private BlockingQueue<ByteBuffer> teamMessagesToSend;
-    private BlockingQueue<ByteBuffer> allMessagesToSend;
-
     // Returns a new instance. See NetworkObject for details.
     public static NetworkObject build(UUID uuid, ByteBuffer state) {
         System.out.println("Player build, state size: " + state.remaining());
@@ -56,28 +63,12 @@ public class Player extends Entity {
     
     public Player(UUID uuid, Vector2D pos, Vector2D dir) {
         super(uuid, 0.25D, pos, dir);
-        this.currentWeapon = new Shotgun();
-        this.inputModule = new RemoteInput();
-        this.teamMessagesToSend = new LinkedBlockingQueue<ByteBuffer>();
-        this.allMessagesToSend = new LinkedBlockingQueue<>();
-
-        // Map possible inputs to the methods that handle them. Avoids long
-        // if-statement chain.
-        ACTION_MAPPINGS.put(ClientController.FORWARD, this::moveForward);
-        ACTION_MAPPINGS.put(ClientController.ROTATE_ANTI_CLOCKWISE, this::rotateAntiClockwise);
-        ACTION_MAPPINGS.put(ClientController.BACKWARD, this::moveBackward);
-        ACTION_MAPPINGS.put(ClientController.ROTATE_CLOCKWISE, this::rotateClockwise);
-        ACTION_MAPPINGS.put(ClientController.LEFT, this::strafeLeft);
-        ACTION_MAPPINGS.put(ClientController.RIGHT, this::strafeRight);
-        ACTION_MAPPINGS.put(ClientController.SHOOT, this::shoot);
-        
         setNetworkConsumers();
         
         zOffset = 100;
         moveSpeed = 0.120;
         strafeSpeed = 0.08;
         rotationSpeed = 0.06;
-        
     }
     
     public Player(Vector2D pos, Vector2D dir) {
@@ -102,22 +93,18 @@ public class Player extends Entity {
     public void setInputState(ByteBuffer buf) {
         synchronized (inputState) {
             while (buf.hasRemaining()) {
-                // take the control
-                // using client protocol
-                // to fetch the order
-                ClientController control = null;
                 try {
-                    control = ClientProtocol.getByIndex(buf.getInt());
+                    ClientController control = ClientProtocol.getByIndex(buf.getInt());
+                    Byte value = buf.get();
+                    inputState.put(control, value);
                 } catch (IOException e) {
                     System.err.println("Index not good... " + e.getMessage());
                 }
-                Byte value = buf.get();
-                inputState.put(control, value);
             }
         }
         
     }
-
+    
     public void messageToTeam(ByteBuffer buf) {
         String message = NetworkUtils.getStringFromBuf(buf);
         message = "[" + this.team + "] " + this.name + ": " + message;
@@ -127,19 +114,22 @@ public class Player extends Entity {
         NetworkUtils.putStringIntoBuf(bf, message);
         this.teamMessagesToSend.offer(bf);
     }
-
-    public ByteBuffer getTeamMessages() {
-        if (this.teamMessagesToSend.size() == 0)
-            return null;
+    
+    public Optional<ByteBuffer> getTeamMessages() {
+        if (this.teamMessagesToSend.isEmpty()) {
+            return Optional.empty();
+        }
+        
         try {
-            return this.teamMessagesToSend.take();
+            return Optional.of(this.teamMessagesToSend.take());
         } catch (InterruptedException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
-        return null;
+        
+        return Optional.empty();
     }
-
+    
     public void messageToAll(ByteBuffer buf) {
         String message = NetworkUtils.getStringFromBuf(buf);
         message = "[all] " + this.name + ": " + message;
@@ -149,19 +139,22 @@ public class Player extends Entity {
         NetworkUtils.putStringIntoBuf(bf, message);
         this.allMessagesToSend.offer(bf);
     }
-
-    public ByteBuffer getAllMessages() {
-        if (this.allMessagesToSend.size() == 0)
-            return null;
+    
+    public Optional<ByteBuffer> getAllMessages() {
+        if (this.allMessagesToSend.isEmpty()) {
+            return Optional.empty();
+        }
+        
         try {
-            return this.allMessagesToSend.take();
+            return Optional.of(this.allMessagesToSend.take());
         } catch (InterruptedException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
-        return null;
+        
+        return Optional.empty();
     }
-
+    
     @Override
     public void onUpdate() {
         super.onUpdate();
@@ -200,7 +193,7 @@ public class Player extends Entity {
             inertiaY = 0;
             return;
         }
-
+        
         final double p = 0.1D;
         inertiaX += (int) (p * -inertiaX);
         inertiaY += (int) (p * -inertiaY);
@@ -228,8 +221,6 @@ public class Player extends Entity {
             inertiaX += currentWeapon.getInertiaCoeffX() * diff;
         }
     }
-    
-    private boolean shootOnNextUpdate;
     
     private void shoot() {
         if (currentWeapon == null)
@@ -260,10 +251,6 @@ public class Player extends Entity {
         shootOnNextUpdate = buf.getInt() == 1;
         currentHealth = buf.getInt();
         setScore(buf.getInt());
-    }
-    
-    public Weapon getCurrentWeapon() {
-        return currentWeapon;
     }
     
     @Override
@@ -305,6 +292,26 @@ public class Player extends Entity {
         }
     }
     
+    public void increaseScore(int value) {
+        if (value < 0) {
+            throw new IllegalArgumentException("Value cannot be negative");
+        }
+        
+        score += value;
+    }
+    
+    public void decreaseScore(int value) {
+        if (value < 0) {
+            throw new IllegalArgumentException("Value cannot be negative");
+        }
+        
+        score -= value;
+    }
+    
+    public int getScore() {
+        return score;
+    }
+    
     void respawn(Vector2D spawnPos) {
         this.position = spawnPos;
         currentHealth = MAX_HEALTH;
@@ -314,6 +321,10 @@ public class Player extends Entity {
     
     public void setInputModule(InputModule inp) {
         this.inputModule = inp;
+    }
+    
+    public Weapon getCurrentWeapon() {
+        return currentWeapon;
     }
     
     public void setCurrentWeapon(Weapon currentWeapon) {
@@ -326,10 +337,6 @@ public class Player extends Entity {
     
     public int getMaxHealth() {
         return MAX_HEALTH;
-    }
-    
-    public int getScore() {
-        return score;
     }
     
     public void setScore(int score) {

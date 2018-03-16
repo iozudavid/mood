@@ -114,13 +114,12 @@ public class FFAGame extends GameManager {
     
     @Override
     public void awardScore(Player p, int score) {
-        p.setScore(p.getScore() + score);
+        p.addScore(score);
     }
     
     @Override
     public void startLobby() {
-        gameState = GameState.LOBBY;
-        
+        gameState = GameState.LOBBY;   
     }
     
     @Override
@@ -128,7 +127,6 @@ public class FFAGame extends GameManager {
         gameState = GameState.FINISHED;
         System.out.println("GAME OVER");
         System.out.println(winner.getName() + " wins!");
-        
     }
     
     @Override

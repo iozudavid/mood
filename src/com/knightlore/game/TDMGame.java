@@ -71,9 +71,9 @@ public class TDMGame extends GameManager {
                 blueScore = 0;
                 redScore = 0;
                 for (Player p : playerManager.getPlayers()) {
-                    if (p.team == Team.blue) {
+                    if (p.team == Team.BLUE) {
                         blueScore += p.getScore();
-                    } else if (p.team == Team.red) {
+                    } else if (p.team == Team.RED) {
                         redScore += p.getScore();
                     }
                 }

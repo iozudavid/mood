@@ -10,10 +10,10 @@ public final class Utils {
      * @returns red or blue, or white if no team
      */
     public static int colorForTeam(Team t) {
-        if(t == Team.blue) {
+        if(t == Team.BLUE) {
             return 0xFF00FF88;
         }
-        if(t == Team.red) {
+        if(t == Team.RED) {
             return 0xFFFF0000;
         }
         return 0xFFFFFFFF;
