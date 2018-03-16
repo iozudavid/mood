@@ -31,7 +31,7 @@ public class Immune extends Buff {
 
     @Override
     public BuffType getType() {
-        return BuffType.immune;
+        return BuffType.IMMUNE;
     }
 
     @Override

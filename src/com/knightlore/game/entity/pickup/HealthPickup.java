@@ -50,7 +50,7 @@ public class HealthPickup extends PickupItem {
         // update pickup manager
         addToPickupManager();
         // heal player
-        player.removeBuff(BuffType.fire);
+        player.removeBuff(BuffType.FIRE);
         player.applyHeal(30);
         // set existence to false
         setExists(false);

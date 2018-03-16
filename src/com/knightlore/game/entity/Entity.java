@@ -4,6 +4,7 @@ import java.awt.geom.Rectangle2D;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -460,16 +461,18 @@ public abstract class Entity extends NetworkObject implements TickListener, IMin
     	this.systemMessages.offer(bf);
     }
     
-    public ByteBuffer getSystemMessages(){
-    	if(this.systemMessages.size()==0)
-    		return null;
+    public Optional<ByteBuffer> getSystemMessages(){
+    	if(this.systemMessages.isEmpty()) {
+            return Optional.empty();
+        }
+
     	try {
-			return this.systemMessages.take();
+			return Optional.of(this.systemMessages.take());
 		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-    	return null;
+    	return Optional.empty();
     }
 
     public String getName() {

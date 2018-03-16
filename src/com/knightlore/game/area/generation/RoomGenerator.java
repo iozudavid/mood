@@ -56,7 +56,7 @@ public class RoomGenerator extends ProceduralAreaGenerator {
         switch(rt) {
             case spawn : for(int i=midx-1 ; i<= midx+1; i++) {
                            for(int j=midy-1; j <=midy+1; j++) {
-                               grid[i][j] = new PlayerSpawnTile(Team.blue);
+                               grid[i][j] = new PlayerSpawnTile(Team.BLUE);
                            }
                          }
                          //grid[3][3] = new TurretTile(Team.blue);

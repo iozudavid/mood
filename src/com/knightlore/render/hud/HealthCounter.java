@@ -2,6 +2,7 @@ package com.knightlore.render.hud;
 
 import com.knightlore.engine.GameEngine;
 import com.knightlore.engine.TickListener;
+import com.knightlore.game.Player;
 import com.knightlore.render.ColorUtils;
 import com.knightlore.render.PixelBuffer;
 
@@ -22,7 +23,7 @@ public class HealthCounter extends HUDElement implements TickListener {
 
         pix.fillRect(0x450007, 0, 0, pix.getWidth(), HEIGHT);
 
-        double r = player.getCurrentHealth() / (double) player.getMaxHealth();
+        double r = player.getCurrentHealth() / (double) Player.MAX_HEALTH;
         for (int xx = 0; xx < r * pix.getWidth(); xx++) {
             int color = ColorUtils.mixColor(G1, G2, Math.sin(GameEngine.ticker.getTime() / 50D));
             pix.fillRect(color, xx, y, 1, HEIGHT);

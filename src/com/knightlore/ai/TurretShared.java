@@ -12,7 +12,7 @@ import com.knightlore.utils.Vector2D;
 public abstract class TurretShared extends Entity {
     
     protected int damage;
-    protected Team team = Team.none;
+    protected Team team = Team.NONE;
     
     protected long nextCheckTime = 0;
     protected static final long TURRET_CHECK_DELAY = 20;

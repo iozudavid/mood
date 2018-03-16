@@ -31,7 +31,7 @@ public class Fire extends Buff{
 
     @Override
     public BuffType getType() {
-        return BuffType.fire;
+        return BuffType.FIRE;
     }
     
     @Override

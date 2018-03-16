@@ -1,5 +1,7 @@
 package com.knightlore.render;
 
+import com.knightlore.GameSettings;
+import com.knightlore.engine.audio.FootstepHandler;
 import com.knightlore.game.area.Map;
 import com.knightlore.game.entity.Entity;
 import com.knightlore.utils.Vector2D;
@@ -12,6 +14,8 @@ import com.knightlore.utils.Vector2D;
  *
  */
 public class Camera implements IRenderable {
+    
+    private FootstepHandler fhandler;
 
     /**
      * This variable dictates the length of the plane (handedness) vector. The
@@ -22,12 +26,12 @@ public class Camera implements IRenderable {
     /**
      * How much should the camera bob when the player moves?
      */
-    private static final double MOTION_BOB_AMOUNT = 15.0D;
+    private static final double MOTION_BOB_AMOUNT = GameSettings.MOTION_BOB ? 15.0D : 0;
 
     /**
      * How fast should the camera bob when the player moves?
      */
-    private static final double MOTION_BOB_SPEED = 1.5D;
+    private static final double MOTION_BOB_SPEED = GameSettings.MOTION_BOB ? 1.5D : 0;
 
     /**
      * The entity that this camera is tracking.
@@ -49,6 +53,7 @@ public class Camera implements IRenderable {
     public Camera(Map map) {
         super();
         this.lastPos = new Vector2D(0, 0);
+        this.fhandler = new FootstepHandler();
     }
 
     @Override
@@ -56,6 +61,7 @@ public class Camera implements IRenderable {
         // Proxy method -- if the subject wants to do any rendering (e.g. a
         // player wants to render the current weapon) they can.
         subject.render(pix, x, y, getDistanceTraveled());
+        fhandler.playFootstepIfNecessary(getDistanceTraveled());
     }
 
     /**
@@ -169,6 +175,7 @@ public class Camera implements IRenderable {
     public void setSubject(Entity subject) {
         this.subject = subject;
         this.lastPos = subject.getPosition();
+        this.distanceTraveled = 0;
     }
 
     /**

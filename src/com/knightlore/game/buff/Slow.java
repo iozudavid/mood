@@ -35,14 +35,6 @@ public class Slow extends Buff {
     @Override
     public void periodicEffect() {
     }
-    
-    /*
-    @Override
-    public void reset() {
-        done = false; //not sure of the necessity 
-        counter = 0;
-    }
-    */
 
     @Override
     public void onRemove() {
@@ -54,7 +46,7 @@ public class Slow extends Buff {
 
     @Override
     public BuffType getType() {
-        return BuffType.slow;
+        return BuffType.SLOW;
     }
 
     @Override

@@ -14,9 +14,9 @@ import com.knightlore.utils.Vector2D;
 
 public class PlayerSpawnTile extends Tile {
     private final Team team;
-    private static PlayerSpawnTile instanceBlue = new PlayerSpawnTile(Team.blue);
-    private static PlayerSpawnTile instanceRed = new PlayerSpawnTile(Team.red);
-    private static PlayerSpawnTile instanceNone = new PlayerSpawnTile(Team.none);
+    private static PlayerSpawnTile instanceBlue = new PlayerSpawnTile(Team.BLUE);
+    private static PlayerSpawnTile instanceRed = new PlayerSpawnTile(Team.RED);
+    private static PlayerSpawnTile instanceNone = new PlayerSpawnTile(Team.NONE);
     
     private static Vector2D pushVector = Vector2D.DOWN;
     
@@ -44,10 +44,10 @@ public class PlayerSpawnTile extends Tile {
     
     @Override
     public Graphic getWallTexture() {
-        if( team == Team.blue) {
+        if( team == Team.BLUE) {
             return Texture.BLUE_BUSH;
         }
-        if( team == Team.red) {
+        if( team == Team.RED) {
             return Texture.RED_BUSH;
         }
         return Texture.BUSH;
@@ -55,10 +55,10 @@ public class PlayerSpawnTile extends Tile {
 
     @Override
     public Graphic getFloorTexture() {
-        if( team == Team.blue) {
+        if( team == Team.BLUE) {
             return BLUE_LAVA_ANIM.getGraphic();
         }
-        if( team == Team.red) {
+        if( team == Team.RED) {
             return RED_LAVA_ANIM.getGraphic();
         }
         return Texture.BUSH;
@@ -67,7 +67,7 @@ public class PlayerSpawnTile extends Tile {
     @Override
     public double getOpacity() {
         //return 0.5 + (Math.sin(GameEngine.ticker.getTime() * 0.05)) / 4;
-        return 0.37 + (Math.sin(GameEngine.ticker.getTime() * 0.05)) / 4;
+        return 0.2 + (Math.sin(GameEngine.ticker.getTime() * 0.05)) / 4;
     }
 
     @Override
@@ -85,9 +85,9 @@ public class PlayerSpawnTile extends Tile {
     }
 
     public char toChar() {
-        if (team == Team.none) {
+        if (team == Team.NONE) {
             return '0';
-        }else if(team == Team.blue) {
+        }else if(team == Team.BLUE) {
             return '1';
         }else {
             return '2';
@@ -95,22 +95,22 @@ public class PlayerSpawnTile extends Tile {
     }
 
     public Tile reflectTileX() {
-        if (team == Team.none) {
-            return new PlayerSpawnTile(Team.none);
-        } else if (team == Team.blue){
-            return new PlayerSpawnTile(Team.red);
+        if (team == Team.NONE) {
+            return new PlayerSpawnTile(Team.NONE);
+        } else if (team == Team.BLUE){
+            return new PlayerSpawnTile(Team.RED);
         } else {
-            return new PlayerSpawnTile(Team.blue);
+            return new PlayerSpawnTile(Team.BLUE);
         }
     }
 
     public Tile reflectTileY() {
-        if (team == Team.none) {
-            return new PlayerSpawnTile(Team.none);
-        } else if (team == Team.blue) {
-            return new PlayerSpawnTile(Team.red);
+        if (team == Team.NONE) {
+            return new PlayerSpawnTile(Team.NONE);
+        } else if (team == Team.BLUE) {
+            return new PlayerSpawnTile(Team.RED);
         } else {
-            return new PlayerSpawnTile(Team.blue);
+            return new PlayerSpawnTile(Team.BLUE);
         }
     }
     

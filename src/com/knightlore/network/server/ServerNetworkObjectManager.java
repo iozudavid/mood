@@ -1,12 +1,8 @@
 package com.knightlore.network.server;
 
 import java.nio.ByteBuffer;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
-import java.util.UUID;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.function.Predicate;
 
@@ -27,8 +23,8 @@ public class ServerNetworkObjectManager extends NetworkObjectManager {
     private static final int REGULAR_UPDATE_FREQ = 100;
     // Maps network objects to their most recent state. Used to check if the new
     // state has changed (if it hasn't, don't resend it).
-    private Map<UUID, Tuple<NetworkObject, ByteBuffer>> networkObjects = new HashMap<>();
-    private List<SendToClient> clientSenders = new CopyOnWriteArrayList<>();
+    private final Map<UUID, Tuple<NetworkObject, ByteBuffer>> networkObjects = new HashMap<>();
+    private final List<SendToClient> clientSenders = new CopyOnWriteArrayList<>();
     // Counter for REGULAR_UPDATE_FREQ
     private int updateCount = 1;
 
@@ -191,22 +187,21 @@ public class ServerNetworkObjectManager extends NetworkObjectManager {
                     // Tuple<>(t.getValue().x, newState));
                     t.getValue().y = newState;
                 }
+
                 if(getNetworkObject(t.getKey()) instanceof Entity){
                 	Entity e = (Entity) getNetworkObject(t.getKey());
-                	ByteBuffer systemMessages = e.getSystemMessages();
-                	if(systemMessages!=null)
-                		this.sendToClients(systemMessages);
+                	Optional<ByteBuffer> systemMessages = e.getSystemMessages();
+                    systemMessages.ifPresent(this::sendToClients);
                 }
+
                 if(getNetworkObject(t.getKey()) instanceof Player){
                 	Player p = (Player)getNetworkObject(t.getKey());
-                	ByteBuffer toTeam = p.getTeamMessages();
+                	Optional<ByteBuffer> toTeam = p.getTeamMessages();
                 	Predicate<Entity> predicate = (e) -> e.team==p.team;
-                	if(toTeam!=null)
-                		this.sendToClientsIf(toTeam, predicate);
+                    toTeam.ifPresent(byteBuffer -> this.sendToClientsIf(byteBuffer, predicate));
                 	
-                	ByteBuffer toAll = p.getAllMessages();
-                	if(toAll!=null)
-                		this.sendToClients(toAll);
+                	Optional<ByteBuffer> toAll = p.getAllMessages();
+                    toAll.ifPresent(this::sendToClients);
                 }        
             }
 

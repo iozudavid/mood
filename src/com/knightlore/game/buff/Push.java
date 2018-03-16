@@ -33,7 +33,7 @@ public class Push extends Buff {
     @Override
     public BuffType getType() {
         // TODO Auto-generated method stub
-        return BuffType.push;
+        return BuffType.PUSH;
     }
     
     @Override
