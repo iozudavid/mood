@@ -38,7 +38,7 @@ public class GameFeed implements IRenderable {
     }
     
     public void getFeed(GameChat chat){
-    	System.out.println(this.messages.size());
+    	//System.out.println(this.messages.size());
     	for(GameFeedMessage message : this.messages){
     		chat.getTextArea().addText("System: " + message.message);
     	}

@@ -83,11 +83,17 @@ public abstract class Buff {
     
     private int calculateGap(double frequency) {
         double ticksPerSecond = Entity.getBuffTickRate() / GameEngine.UPDATES_PER_SECOND;
+        if( (int) (frequency / ticksPerSecond) == 0) {
+            return 1;
+        }
         return (int) (frequency / ticksPerSecond);
     }
     
     private int calculateMaxSteps(double length) {
         double ticksPerSecond = Entity.getBuffTickRate() / GameEngine.UPDATES_PER_SECOND;
+        if( (int) (length / ticksPerSecond) == 0) {
+            return 1;
+        }
         return (int) (length / ticksPerSecond);
     }
     

@@ -233,7 +233,8 @@ public class MapGenerator extends ProceduralAreaGenerator {
                 continue;
             }
             
-            if(currentTile == PlayerSpawnTile.getInstance(Team.blue)) {
+            //if(currentTile == PlayerSpawnTile.getInstance(Team.blue)) {
+            if(currentTile instanceof PlayerSpawnTile) {
                 continue;
             }
             

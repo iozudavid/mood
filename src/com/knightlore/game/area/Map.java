@@ -6,6 +6,7 @@ import java.util.Random;
 
 import com.knightlore.game.Team;
 import com.knightlore.game.tile.AirTile;
+import com.knightlore.game.tile.PlayerSpawnTile;
 import com.knightlore.game.tile.Tile;
 import com.knightlore.utils.Vector2D;
 
@@ -42,6 +43,29 @@ public class Map extends Area {
         return candidates.get(index);
     }
 
+    public Vector2D getRandomSpawnPoint(Team team) {
+        List<Vector2D> candidates = new ArrayList<>();
+        for(int i = 0; i < getWidth(); i++) {
+            for( int j=0; j < getHeight(); j++) {
+                Tile currentTile = getTile(i,j);
+                if(! (currentTile instanceof PlayerSpawnTile)) {
+                    continue;
+                }
+                if(currentTile.getTeam() != team) {
+                    continue;
+                }
+                candidates.add(new Vector2D(i + 0.5, j + 0.5));
+            }
+        }
+        
+        if(candidates.size() == 0) {
+            return getRandomSpawnPoint();
+        }
+        Random rand = new Random();
+        int index = rand.nextInt(candidates.size());
+        return candidates.get(index);
+    }
+    
     public List<Vector2D> getTilePoints(Team team/*, TileType type*/) {
         /*List<Vector2D> positions = new ArrayList<>();
         for (int i = 0; i < getWidth(); i++) {

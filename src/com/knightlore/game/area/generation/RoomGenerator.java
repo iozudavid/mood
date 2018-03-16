@@ -51,23 +51,29 @@ public class RoomGenerator extends ProceduralAreaGenerator {
     protected void fillGrid(RoomType rt) {
         int width = grid.length;
         int height = grid[0].length;
+        int midx = width/2;
+        int midy = height/2;
         switch(rt) {
-            case spawn : grid[width/2][height/2] = PlayerSpawnTile.getInstance(Team.blue);
-                         grid[2][2] = new TurretTile(Team.blue);
-                         grid[2][height-3] = new TurretTile(Team.blue);
-                         grid[width-3][2] = new TurretTile(Team.blue);
-                         grid[width-3][height-3] = new TurretTile(Team.blue);
+            case spawn : for(int i=midx-1 ; i<= midx+1; i++) {
+                           for(int j=midy-1; j <=midy+1; j++) {
+                               grid[i][j] = new PlayerSpawnTile(Team.blue);
+                           }
+                         }
+                         //grid[3][3] = new TurretTile(Team.blue);
+                         //grid[3][height-4] = new TurretTile(Team.blue);
+                         //grid[width-4][3] = new TurretTile(Team.blue);
+                         //grid[width-4][height-3] = new TurretTile(Team.blue);
                          break; 
             case pickup :
                         if(rand.nextDouble() < 0.5) {
-                            grid[width/2][height/2] = new PickupTile(PickupType.health);
+                            grid[midx][midy] = new PickupTile(PickupType.health);
                         }else {
                             for(int i=0; i<width; i++) {
                                 for(int j=0; j<height; j++) {
                                     grid[i][j] = new LavaTile();
                                 }
                             }
-                            grid[width/2][height/2] = new PickupTile(PickupType.health);
+                            grid[midx][midy] = new PickupTile(PickupType.shotgun);
                         }
                         break;
             default: break;

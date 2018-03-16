@@ -5,10 +5,10 @@ import com.knightlore.utils.Vector2D;
 
 public class Push extends Buff {
 
-    private static double MOVE_DISTANCE = .15;
+    private static double MOVE_DISTANCE = .06;
     private Vector2D direction;
     
-    private static final double PUSH_FREQUENCY = 1 / 16;
+    private static final double PUSH_FREQUENCY = 1D / 16;
     private static final double PUSH_LENGTH = 0.5;
     
     public Push(Entity ent, Vector2D d) {
@@ -23,7 +23,6 @@ public class Push extends Buff {
 
     @Override
     public void periodicEffect() {
-        // TODO: PUSH PLAYER IN DIRECTION
         ent.absoluteMove(direction, MOVE_DISTANCE);
     }
     

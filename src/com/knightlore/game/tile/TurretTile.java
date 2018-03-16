@@ -20,6 +20,11 @@ public class TurretTile extends Tile {
     public double getSolidity() {
         return 0.1D;
     }
+    
+    @Override
+    public double getOpacity() {
+        return 0.0D;
+    }
 
     @Override
     public void onShot() {
@@ -43,11 +48,6 @@ public class TurretTile extends Tile {
     @Override
     public Tile copy() {
         return new TurretTile(team);
-    }
-    
-    @Override
-    public double getOpacity() {
-        return 1D;
     }
     
 }
