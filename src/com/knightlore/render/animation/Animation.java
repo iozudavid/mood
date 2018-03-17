@@ -3,27 +3,20 @@ package com.knightlore.render.animation;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.knightlore.engine.TickListener;
-import com.knightlore.render.graphic.Graphic;
-
-public class Animation implements TickListener {
-
-    private List<Graphic> frames;
-    private int currentFrame;
+public class Animation<T> {
     
-    private long interval;
-
-    public Animation(long interval) {
-        frames = new ArrayList<Graphic>();
-        currentFrame = 0;
-        this.interval = interval;
+    protected List<T> frames;
+    protected int currentFrame;
+    
+    public Animation() {
+        this.frames = new ArrayList<T>();
     }
 
-    public void addFrame(Graphic g) {
+    public void addFrame(T g) {
         frames.add(g);
     }
 
-    public Graphic getGraphic() {
+    public T getGraphic() {
         return frames.get(currentFrame);
     }
 
@@ -37,16 +30,6 @@ public class Animation implements TickListener {
 
     public void setFrame(int frame) {
         currentFrame = frame;
-    }
-
-    @Override
-    public long interval() {
-        return interval;
-    }
-    
-    @Override
-    public void onTick() {
-        nextFrame();
     }
 
 }

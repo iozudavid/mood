@@ -160,7 +160,7 @@ public abstract class Entity extends NetworkObject implements IMinimapObject, Pr
     }
 
     /**
-     * Gets the directional sprite of this entity.
+     * Gets the current directional sprite of this entity.
      * 
      * @return the directional sprite for this entity.
      */
