@@ -1,13 +1,13 @@
 package com.knightlore.game.tile;
 
 import com.knightlore.game.Player;
+import com.knightlore.game.entity.Entity;
 import com.knightlore.render.graphic.Graphic;
 import com.knightlore.render.graphic.texture.Texture;
 
 // it's a singleton to avoid having multiple copies of air
 public class AirTile extends Tile {
-
-    private static AirTile instance = new AirTile();
+    private static final AirTile instance = new AirTile();
 
     private AirTile() {
     }
@@ -17,7 +17,7 @@ public class AirTile extends Tile {
     }
 
     @Override
-    public Graphic getTexture() {
+    public Graphic getWallTexture() {
         return Texture.AIR;
     }
 
@@ -31,12 +31,13 @@ public class AirTile extends Tile {
     }
 
     @Override
-    public void onEntered(Player p) {
+    public Tile copy() {
+        return instance;
     }
 
     @Override
-    public TileType getTileType() {
-        return TileType.air;
+    public void onEntered(Entity entity) {
+        // TODO Auto-generated method stub
+        
     }
-
 }

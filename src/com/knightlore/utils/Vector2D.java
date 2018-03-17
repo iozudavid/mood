@@ -13,6 +13,7 @@ public final class Vector2D {
     public static final Vector2D LEFT = new Vector2D(-1, 0);
     public static final Vector2D RIGHT = new Vector2D(1, 0);
     public static final Vector2D ONE = new Vector2D(1, 1);
+    public static final Vector2D HALF = new Vector2D(0.5, 0.5);
     
     public static Vector2D add(Vector2D a, Vector2D b) {
         return new Vector2D(a.x + b.x, a.y + b.y);
@@ -29,7 +30,7 @@ public final class Vector2D {
     public static Vector2D sub(Vector2D a, Vector2D b) {
         return new Vector2D(a.x - b.x, a.y - b.y);
     }
-
+    
     public Vector2D(Point p) {
         this((double)p.x, (double)p.y);
     }
@@ -56,6 +57,10 @@ public final class Vector2D {
     // allocates a new vector, does not modify the original
     public Vector2D subtract(Vector2D v) {
         return new Vector2D(x - v.x, y - v.y);
+    }
+    
+    public Vector2D mul(Vector2D v) {
+        return new Vector2D(x * v.x, y * v.y);
     }
     
     // allocates a new vector, does not modify the original
@@ -114,12 +119,20 @@ public final class Vector2D {
      * @return
      */
     public Point toPoint() {
-        return new Point((int)Math.round(x), (int)Math.round(y));
+        return new Point((int)Math.floor(x), (int)Math.floor(y));
     }
     
     @Override
     public String toString() {
         return String.format("(%.20f, %.20f)", x, y);
+    }
+
+    public static Vector2D fromTilePoint(Point point) {
+        return new Vector2D(point.x+0.5,point.y+0.5);
+    }
+    
+    public static Vector2D fromPoint(Point point) {
+        return new Vector2D(point.x,point.y);
     }
     
 }

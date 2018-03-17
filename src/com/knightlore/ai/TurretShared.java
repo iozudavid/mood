@@ -12,14 +12,15 @@ import com.knightlore.utils.Vector2D;
 public abstract class TurretShared extends Entity {
     
     protected int damage;
-    protected Team team = Team.none;
+    protected Team team = Team.NONE;
     
     protected long nextCheckTime = 0;
     protected static final long TURRET_CHECK_DELAY = 20;
     
     protected Entity target = null;
     protected byte targetByte = 0;
-    protected double sqrRange = 25;
+    protected final double sqrRange = 25;
+    protected final double range = 5;
     
     protected TurretShared(double size, Vector2D position, Vector2D direction) {
         super(size, position, direction);
@@ -93,5 +94,10 @@ public abstract class TurretShared extends Entity {
     public String getClientClassName() {
         // turret client please :)
         return TurretClient.class.getName();
+    }
+    
+    @Override
+    public String getName() {
+        return "Turret";
     }
 }

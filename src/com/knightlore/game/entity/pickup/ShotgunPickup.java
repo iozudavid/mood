@@ -6,9 +6,14 @@ import java.util.UUID;
 import com.knightlore.game.Player;
 import com.knightlore.network.NetworkObject;
 import com.knightlore.render.graphic.sprite.DirectionalSprite;
-import com.knightlore.render.graphic.sprite.ShotgunSprite;
 import com.knightlore.utils.Vector2D;
 
+/**
+ * A shotgun pickup item.
+ * 
+ * @author Joe Ellis
+ *
+ */
 public class ShotgunPickup extends PickupItem {
 
     // Returns a new instance. See NetworkObject for details.
@@ -19,23 +24,18 @@ public class ShotgunPickup extends PickupItem {
         return obj;
     }
 
-    public ShotgunPickup(UUID uuid, Vector2D position) {
-        super(uuid, position);
+    public ShotgunPickup(Vector2D position) {
+        this(UUID.randomUUID(), position);
     }
 
-    public ShotgunPickup(Vector2D position) {
-        super(position);
-        sprite = DirectionalSprite.RED_SHOTGUN_DIRECTIONAL_SPRITE; // TODO
+    public ShotgunPickup(UUID uuid, Vector2D position) {
+        super(uuid, position);
+        sprite = DirectionalSprite.SHOTGUN_DIRECTIONAL_SPRITE;
     }
 
     @Override
     public int getMinimapColor() {
         return 0xFF00FF;
-    }
-
-    @Override
-    public DirectionalSprite getDirectionalSprite() {
-        return ShotgunSprite.RED_SHOTGUN_DIRECTIONAL_SPRITE;
     }
 
     @Override

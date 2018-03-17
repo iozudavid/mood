@@ -105,23 +105,29 @@ public class GameObjectManager {
             obj.onUpdate();
         }
     }
-    
-    public <T> ArrayList<T> findObjectsOfType(Class<T> c){
+
+    /**
+     * Greps the list of game objects and returns a list of all of those that
+     * are of a particular type.
+     * 
+     * @param c
+     *            the class type of the objects
+     * @return a list of objects of type c.
+     */
+    public <T> ArrayList<T> findObjectsOfType(Class<T> c) {
         ArrayList<T> results = new ArrayList<T>();
         // FIXME find a nicer way of doing this
         try {
-        for(int i=0;i<objects.size();i++) {
-           if(c.isInstance(objects.get(i))) {
-               results.add((T) objects.get(i));
-           }
-        }
-        }
-        catch(ClassCastException e) {
+            for (int i = 0; i < objects.size(); i++) {
+                if (c.isInstance(objects.get(i))) {
+                    results.add((T) objects.get(i));
+                }
+            }
+        } catch (ClassCastException e) {
             System.out.println("OCrap, object is instance of class, but not of same type");
             e.printStackTrace();
-        }
-        finally {
-            
+        } finally {
+
         }
         return results;
     }

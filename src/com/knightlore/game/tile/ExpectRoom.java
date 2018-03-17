@@ -1,11 +1,10 @@
 package com.knightlore.game.tile;
 
-import com.knightlore.game.Player;
+import com.knightlore.game.entity.Entity;
 import com.knightlore.render.graphic.Graphic;
 import com.knightlore.render.graphic.texture.Texture;
 
 public class ExpectRoom extends Tile {
-
     private char direction;
 
     public static final char RIGHT = 'r';
@@ -18,7 +17,7 @@ public class ExpectRoom extends Tile {
     }
 
     @Override
-    public Graphic getTexture() {
+    public Graphic getWallTexture() {
         return Texture.AIR;
     }
 
@@ -27,7 +26,7 @@ public class ExpectRoom extends Tile {
     }
 
     @Override
-    public void onEntered(Player p) {
+    public void onEntered(Entity entity) {
     }
 
     public char toChar() {
@@ -35,8 +34,7 @@ public class ExpectRoom extends Tile {
     }
 
     @Override
-    public TileType getTileType() {
-        return TileType.expect;
+    public Tile copy() {
+        return new ExpectRoom(direction);
     }
-
 }

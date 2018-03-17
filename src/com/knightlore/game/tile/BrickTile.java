@@ -1,16 +1,15 @@
 package com.knightlore.game.tile;
 
-import com.knightlore.game.Player;
+import com.knightlore.game.entity.Entity;
 import com.knightlore.render.graphic.Graphic;
 import com.knightlore.render.graphic.texture.Texture;
 
 public class BrickTile extends Tile {
-
     public BrickTile() {
     }
 
     @Override
-    public Graphic getTexture() {
+    public Graphic getWallTexture() {
         return Texture.BRICK;
     }
 
@@ -20,18 +19,11 @@ public class BrickTile extends Tile {
     }
 
     @Override
-    public int getMinimapColor() {
-        return 0x8C4100;
-    }
-
-    @Override
     public void onShot() {
-        System.out.println("shot brick");
     }
 
     @Override
-    public void onEntered(Player p) {
-        System.out.println("touched brick");
+    public void onEntered(Entity entity) {
     }
 
     @Override
@@ -45,8 +37,7 @@ public class BrickTile extends Tile {
     }
 
     @Override
-    public TileType getTileType() {
-        return TileType.brick;
+    public Tile copy() {
+        return new BrickTile();
     }
-
 }

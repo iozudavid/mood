@@ -3,7 +3,9 @@ package com.knightlore.game.area;
 import com.knightlore.game.tile.AirTile;
 import com.knightlore.game.tile.Tile;
 
-public abstract class Area {
+import java.io.Serializable;
+
+public abstract class Area implements Serializable {
     protected final int width, height;
     private final Tile[][] grid;
     private final double[][] costGrid;
@@ -72,5 +74,4 @@ public abstract class Area {
 
         return sBuilder.toString();
     }
-
 }

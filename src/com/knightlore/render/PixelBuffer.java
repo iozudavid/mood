@@ -1,5 +1,6 @@
 package com.knightlore.render;
 
+import com.knightlore.render.font.Font;
 import com.knightlore.render.graphic.Graphic;
 
 /**
@@ -36,7 +37,14 @@ public class PixelBuffer {
      *            the colour to fill the pixel buffer with.
      */
     public void flood(int color) {
-        fillRect(color, 0, 0, getWidth(), getHeight());
+    	 for (int yy = 0; yy < 0 + getHeight(); yy++) {
+             for (int xx = 0; xx < 0 + getWidth(); xx++) {
+                 if (!inBounds(xx, yy))
+                     continue;
+                 pixels[xx + yy * WIDTH] = color;
+             }
+         }
+      //  fillRect(color, 0, 0, getWidth(), getHeight());
     }
 
     /**
@@ -88,12 +96,15 @@ public class PixelBuffer {
      * @param scaleY
      *            the scaling in the y-direction.
      */
-    public void drawGraphic(Graphic graphic, int x, int y, int scaleX, int scaleY) {
-        for (int yy = 0; yy < graphic.getHeight() * scaleY; yy++) {
-            for (int xx = 0; xx < graphic.getWidth() * scaleX; xx++) {
+    public void drawGraphic(Graphic graphic, int x, int y, int width, int height) {
+        for (int yy = 0; yy < height; yy++) {
+            for (int xx = 0; xx < width; xx++) {
                 int drawX = x + xx;
                 int drawY = y + yy;
-                int color = graphic.getPixels()[xx / scaleX + (yy / scaleY) * graphic.getWidth()];
+
+                int texX = (int) ((xx / (double) width) * graphic.getWidth());
+                int texY = (int) ((yy / (double) height) * graphic.getHeight());
+                int color = graphic.getPixels()[texY * graphic.getWidth() + texX];
                 fillPixel(color, drawX, drawY);
             }
         }
@@ -234,6 +245,23 @@ public class PixelBuffer {
         }
     }
 
+    public void drawString(Font font, String str, int x, int y, double scaling, double spacing) {
+        for (char c : str.toCharArray()) {
+            Graphic g = font.getGraphic(c);
+            this.drawGraphic(g, x, y, (int) (g.getWidth() * scaling), (int) (g.getHeight() * scaling));
+            x += g.getWidth() * scaling + spacing;
+        }
+    }
+
+    public int stringWidth(Font font, String str, double scaling, double spacing) {
+        int width = 0;
+        for (char c : str.toCharArray()) {
+            Graphic g = font.getGraphic(c);
+            width += g.getWidth() * scaling + spacing;
+        }
+        return (int) (width - spacing);
+    }
+
     /**
      * Gets the colour of the pixel at a given x-y position.
      * 
@@ -256,9 +284,7 @@ public class PixelBuffer {
      *            the integer array that you want to copy the buffer into.
      */
     public void copy(int[] c) {
-        for (int i = 0; i < WIDTH * HEIGHT; i++) {
-            c[i] = pixels[i];
-        }
+        System.arraycopy(pixels, 0, c, 0, WIDTH * HEIGHT);
     }
 
     /**

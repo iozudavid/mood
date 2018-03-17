@@ -4,30 +4,36 @@ import java.awt.AlphaComposite;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics2D;
+import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.knightlore.MainWindow;
+import com.knightlore.engine.GameEngine;
 import com.knightlore.engine.GameObject;
+import com.knightlore.engine.GameState;
 import com.knightlore.engine.input.InputManager;
 import com.knightlore.render.IRenderable;
 import com.knightlore.render.PixelBuffer;
 import com.knightlore.render.graphic.Graphic;
-import com.knightlore.utils.Physics;
+import com.knightlore.utils.physics.Physics;
 import com.knightlore.utils.Vector2D;
 
 public class GUICanvas extends GameObject implements IRenderable {
-	// TODO remove this and make it screen size
-	private static final int TEMP_SIZE = 200;
-	private static final Color BACKGROUND_COLOR = new Color(0xFF000000,true);
 
-	private static TextField activeTextField;
+	private static int WIDTH;
+	private static int HEIGHT;
+	private static final Color BACKGROUND_COLOR = new Color(0xFF00FF00,true);
 
-	private final List<GUIObject> guis = new ArrayList<>();
-	private final Graphic canvasGraphic;
+	static TextField activeTextField;
+	static TextField gameTextField;
+
+	private final List<GUIObject> guis;
+	private Graphic canvasGraphic;
 	private final BufferedImage canvasImage;
-	private final Graphics2D canvasG2D;
-	private final int[] drawPixels;
+	private Graphics2D canvasG2D;
+	private int[] drawPixels;
 	
 	// the object that was selected when the mouse was pressed down
 	private GUIObject downSelected;
@@ -35,9 +41,23 @@ public class GUICanvas extends GameObject implements IRenderable {
 	private GUIObject lastSelected;
 	private boolean lastHeld;
 	
-	public GUICanvas () {
+	private Rectangle rect;
+	
+	public GUICanvas(int screenWidth, int screenHeight){
 		super();
-		canvasImage = new BufferedImage(TEMP_SIZE,TEMP_SIZE, BufferedImage.TYPE_INT_ARGB);
+		WIDTH = screenWidth;
+		HEIGHT = screenHeight;
+		guis = new ArrayList<GUIObject>();
+		canvasImage = new BufferedImage(WIDTH,HEIGHT, BufferedImage.TYPE_INT_ARGB);
+		initDraw();
+	}
+	
+	private void initDraw(){
+		for(int i=0; i<canvasImage.getWidth();i++){
+			for(int j=0; j<canvasImage.getHeight(); j++){
+				canvasImage.setRGB(i, j, PixelBuffer.CHROMA_KEY);				
+			}
+		}
 		canvasG2D = canvasImage.createGraphics();
 		canvasG2D.setComposite(AlphaComposite.SrcOver);
 		canvasGraphic = new Graphic(canvasImage);
@@ -54,6 +74,40 @@ public class GUICanvas extends GameObject implements IRenderable {
 		}
 	}
 	
+	public static void startMessageTeam(char c) {
+		if (activeTextField == null) {
+			if (gameTextField != null) {
+				activeTextField = gameTextField;
+				gameTextField.onMessage(c);
+			}
+		}else
+			inputChar(c);
+		
+	}
+	
+	public static void startMessageAll(char c) {
+		if (activeTextField == null) {
+			if (gameTextField != null) {
+				activeTextField = gameTextField;
+				gameTextField.onMessage(c);
+			}
+		}else
+			inputChar(c);
+		
+	}
+	
+	public static void sendMessage(char c) {
+		if (gameTextField != null) {
+			activeTextField=gameTextField;
+			gameTextField.onSendMessage(c);
+		}
+	}
+	
+	public static void escape(){
+		activeTextField = null;
+		gameTextField.escape();
+	}
+	
 	public static void inputLeftArrow(){
 		if (activeTextField != null) {
 			activeTextField.onLeftArrow();
@@ -66,20 +120,28 @@ public class GUICanvas extends GameObject implements IRenderable {
 		}
 	}
 	
+	public static void deleteChar() {
+		if (activeTextField != null) {
+			activeTextField.onDeleteChar();
+		}
+	}
+	
 	public static boolean isTyping() {
 		return activeTextField != null;
 	}
 	
+	
 	@Override
 	public void render(PixelBuffer pix, int x, int y) {
-		canvasG2D.setColor(BACKGROUND_COLOR);
-		canvasG2D.fillRect(x, y, TEMP_SIZE, TEMP_SIZE);
-		for (GUIObject gui : guis) {
-			gui.Draw(canvasG2D);
+		if (GameEngine.getSingleton().gameState == GameState.InGame) {
+			this.initDraw();
 		}
-
-		canvasImage.getRGB(0, 0, TEMP_SIZE, TEMP_SIZE, drawPixels, 0, TEMP_SIZE);
-		pix.drawGraphic(canvasGraphic, x, y);
+		canvasG2D.setColor(BACKGROUND_COLOR);
+		for(int i=0;i<guis.size();i++){
+			guis.get(i).Draw(canvasG2D,rect);
+		}
+		canvasImage.getRGB(0, 0, WIDTH, HEIGHT, drawPixels, 0, WIDTH);
+		pix.drawGraphic(canvasGraphic, x, y, WIDTH, HEIGHT);
 	}
 
 	@Override
@@ -116,6 +178,7 @@ public class GUICanvas extends GameObject implements IRenderable {
 		
 		// notify new gui of mouse enter
 		if (selected != null) {
+			System.out.println(selected);
 			// send mouse entered event
 			if (selected != lastSelected) {
 				selected.onMouseEnter();
@@ -157,6 +220,7 @@ public class GUICanvas extends GameObject implements IRenderable {
 
 	@Override
 	public void onDestroy() {
+		guis.clear();
 		canvasG2D.dispose();
 	}
 	
@@ -173,6 +237,8 @@ public class GUICanvas extends GameObject implements IRenderable {
 	}
 
 	public void addGUIObject(GUIObject gui) {
+		if(gui instanceof TextField)
+			gameTextField = (TextField) gui;
 		guis.add(gui);
 		sort();
 	}
@@ -184,4 +250,5 @@ public class GUICanvas extends GameObject implements IRenderable {
 	public static void setActiveTextField(TextField activeTextField) {
 		GUICanvas.activeTextField = activeTextField;
 	}
+	
 }

@@ -36,4 +36,9 @@ public abstract class ZombieShared extends Entity {
         // One class for both client and server.
         return ZombieClient.class.getName();
     }
+    
+    @Override
+    public String getName() {
+        return "Zombie";
+    }
 }

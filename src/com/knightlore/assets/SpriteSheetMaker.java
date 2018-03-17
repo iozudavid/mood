@@ -26,6 +26,7 @@ public class SpriteSheetMaker {
             System.out.println("Usage:");
             System.out.println("-static <dimensions> <directions> <name>");
             System.out.println("-animated <dimensions> <directions> <frames> <name>");
+            return;
         }
         
         // read operation mode
@@ -37,6 +38,7 @@ public class SpriteSheetMaker {
                 System.out.println("expected 4 arguments, got " + args.length);
                 System.out.println("Usage:");
                 System.out.println("-static <dimensions> <directions> <name>");
+                return;
             }
             // calc dimensions
             dimString = args[1].split("x");
@@ -54,6 +56,7 @@ public class SpriteSheetMaker {
                 System.out.println("expected 5 arguments, got " + args.length);
                 System.out.println("Usage:");
                 System.out.println("-animated <dimensions> <directions> <frames> <name>");
+                return;
             }
             // calc dimensions
             dimString = args[1].split("x");

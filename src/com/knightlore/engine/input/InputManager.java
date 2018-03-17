@@ -2,6 +2,12 @@ package com.knightlore.engine.input;
 
 import com.knightlore.utils.Vector2D;
 
+/**
+ * Central manager for input devices.
+ * 
+ * @author James Adey
+ *
+ */
 public class InputManager {
 
     private static Keyboard keyboard;

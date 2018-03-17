@@ -4,8 +4,7 @@ public class RaycasterUtils {
 
     public static double getWallHitPosition(Camera camera, double rayX, double rayY, int mapX, int mapY, boolean side,
             int stepX, int stepY) {
-        // add a texture
-        double wallX;// Exact position of where wall was hit
+        double wallX;
         if (side) {// If its a y-axis wall
             wallX = (camera.getxPos() + ((mapY - camera.getyPos() + (1 - stepY) / 2) / rayY) * rayX);
         } else {// X-axis wall
@@ -26,13 +25,13 @@ public class RaycasterUtils {
     }
 
     public static double getImpactDistance(Camera camera, double rayX, double rayY, int mapX, int mapY, boolean side,
-            int stepX, int stepY, double TILE_SIZE) {
+            int stepX, int stepY) {
         double distanceToWall;
         // Calculate distance to the point of impact
         if (!side) {
-            distanceToWall = Math.abs((mapX - camera.getxPos() + (1 - stepX) / 2) / (rayX / TILE_SIZE));
+            distanceToWall = Math.abs((mapX - camera.getxPos() + (1 - stepX) / 2) / (rayX));
         } else {
-            distanceToWall = Math.abs((mapY - camera.getyPos() + (1 - stepY) / 2) / (rayY / TILE_SIZE));
+            distanceToWall = Math.abs((mapY - camera.getyPos() + (1 - stepY) / 2) / (rayY));
         }
         return distanceToWall;
     }

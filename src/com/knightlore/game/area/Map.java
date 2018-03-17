@@ -7,7 +7,6 @@ import java.util.Random;
 import com.knightlore.game.Team;
 import com.knightlore.game.tile.AirTile;
 import com.knightlore.game.tile.Tile;
-import com.knightlore.game.tile.TileType;
 import com.knightlore.utils.Vector2D;
 
 public class Map extends Area {
@@ -23,12 +22,17 @@ public class Map extends Area {
         return seed;
     }
 
+    /**
+     * Finds a random air tile that exists
+     * 
+     * @returns the coordinate in the center of a tile
+     */
     public Vector2D getRandomSpawnPoint() {
         List<Vector2D> candidates = new ArrayList<>();
         for (int i = 0; i < getWidth(); i++) {
             for (int j = 0; j < getHeight(); j++) {
                 if (getTile(i, j) == AirTile.getInstance()) {
-                    candidates.add(new Vector2D(i, j));
+                    candidates.add(new Vector2D(i+0.5, j+0.5));
                 }
             }
         }
@@ -38,9 +42,8 @@ public class Map extends Area {
         return candidates.get(index);
     }
 
-    public List<Vector2D> getTilePoints(Team team, TileType type) {
-
-        List<Vector2D> positions = new ArrayList<>();
+    public List<Vector2D> getTilePoints(Team team/*, TileType type*/) {
+        /*List<Vector2D> positions = new ArrayList<>();
         for (int i = 0; i < getWidth(); i++) {
             for (int j = 0; j < getHeight(); j++) {
 
@@ -53,11 +56,11 @@ public class Map extends Area {
                     continue;
                 }
 
-                positions.add(new Vector2D(i, j));
+                positions.add(new Vector2D(i+0.5, j+0.5));
 
             }
         }
-        return positions;
+        return positions;*/
+        return new ArrayList<>();
     }
-
 }

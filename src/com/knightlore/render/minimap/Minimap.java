@@ -1,5 +1,7 @@
 package com.knightlore.render.minimap;
 
+import java.util.function.DoubleUnaryOperator;
+
 import com.knightlore.engine.GameEngine;
 import com.knightlore.engine.TickListener;
 import com.knightlore.game.area.Map;
@@ -7,6 +9,7 @@ import com.knightlore.game.tile.Tile;
 import com.knightlore.game.world.ClientWorld;
 import com.knightlore.render.Camera;
 import com.knightlore.render.PixelBuffer;
+import com.knightlore.render.graphic.filter.LightingMask;
 import com.knightlore.utils.Vector2D;
 
 /**
@@ -43,7 +46,7 @@ public class Minimap implements TickListener {
      * The resolution of the minimap. This is the size to draw a single pixel. A
      * larger number will give you better performance, but 'poorer quality'.
      */
-    public static final int RESOLUTION = 3;
+    public static final int RESOLUTION = 5;
 
     /**
      * The scope of the minimap. This range forms a box around the player.
@@ -58,23 +61,18 @@ public class Minimap implements TickListener {
 
     private int width, height;
     private int[] pixelMap;
-    private MinimapLightingMask mask;
+    private LightingMask mask;
+    private DoubleUnaryOperator eq; // for lighting mask
 
     private Camera camera;
     private ClientWorld world;
-
-    /**
-     * We keep track of the previous position and direction so we know not to
-     * re-render the minimap if nothing changes.
-     */
-    private Vector2D prevPos, prevDir;
 
     public Minimap(Camera camera, ClientWorld world, int size) {
         this.camera = camera;
         this.world = world;
         recreatePixelMap();
 
-        this.mask = new MinimapLightingMask(world.getEnvironment());
+        this.mask = new LightingMask(0x000000);
         this.display = new PixelBuffer(size, size);
 
         GameEngine.ticker.addTickListener(this);
@@ -93,26 +91,12 @@ public class Minimap implements TickListener {
         drawMap(theta);
         drawMinimapObjects(theta);
 
-        // this will be commented because current client
-        // will be rendered 2 times
-        // drawPlayer();
         drawBorder();
     }
 
     private void drawMap(double theta) {
         Vector2D pos = camera.getPosition();
-        Vector2D dir = camera.getDirection();
-
-        // comment this for now
-        // to rerender when other clients move
-        // if (pos.isEqualTo(prevPos) && dir.isEqualTo(prevDir)) {
-        // return;
-        // }
-
         display.flood(0x000000);
-
-        prevPos = pos;
-        prevDir = dir;
 
         // Find the positions to start rendering based on SCOPE.
         int startX = (int) Math.max(0, pos.getX() * scale - SCOPE),
@@ -130,14 +114,15 @@ public class Minimap implements TickListener {
                 Vector2D drawPos = transform(xx, yy, theta);
 
                 int color = pixelMap[xx + yy * width];
-                color = mask.adjustForLighting(display, color, (int) drawPos.getX(), (int) drawPos.getY());
+                color = mask.augmentColor(eq, color, (int) drawPos.getX(), (int) drawPos.getY(), display.getWidth(),
+                        display.getHeight());
 
                 /*
                  * Finally, draw the pixel at the correct position. We draw a
                  * rectangle of size 2 as a really basic form of interpolation
                  * (so we don't get 'holes' in the minimap).
                  */
-                final int INTERPOLATION_CONSTANT = 4;
+                final int INTERPOLATION_CONSTANT = 7;
                 display.fillSquare(color, (int) drawPos.getX(), (int) drawPos.getY(), INTERPOLATION_CONSTANT);
             }
         }
@@ -149,7 +134,8 @@ public class Minimap implements TickListener {
             pos = transform((int) (pos.getX() * scale), (int) (pos.getY() * scale), theta);
 
             int color = obj.getMinimapColor();
-            color = mask.adjustForLighting(display, color, (int) pos.getX(), (int) pos.getY());
+            color = mask.augmentColor(eq, color, (int) pos.getX(), (int) pos.getY(), display.getWidth(),
+                    display.getHeight());
             display.fillSquare(color, (int) pos.getX(), (int) pos.getY(), (int) (obj.getDrawSize() * scale));
         }
     }
@@ -179,14 +165,6 @@ public class Minimap implements TickListener {
         drawY += size / 2;
 
         return new Vector2D(drawX, drawY);
-    }
-
-    private void drawPlayer() {
-        // draw the player.
-        final int PLAYER_COLOR = 0xFFFFFF;
-
-        // display.fillSquare(PLAYER_COLOR, display.getWidth() / 2,
-        // display.getWidth() / 2, scale / 2);
     }
 
     /**
@@ -225,6 +203,9 @@ public class Minimap implements TickListener {
                 pixelMap[x + y * width] = tileColor != 0 ? tileColor : base;
             }
         }
+
+        final double DARKNESS_COEFFICIENT = 50000D;
+        eq = (double distance) -> (world.getEnvironment().getDarkness()) / DARKNESS_COEFFICIENT * distance;
     }
 
     public PixelBuffer getPixelBuffer() {

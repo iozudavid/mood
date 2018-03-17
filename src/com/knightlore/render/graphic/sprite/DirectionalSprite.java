@@ -21,6 +21,8 @@ public class DirectionalSprite {
             GraphicSheet.BLUE_SHOTGUN_SPRITES);
     
     public static final TurretSprite TURRET_DIRECTIONAL_SPRITE = new TurretSprite();
+    
+    public static final CameraSprite CAMERA_DIRECTIONAL_SPRITE = new CameraSprite(GraphicSheet.CAMERA_SPRITES);
 
     private List<Graphic> angles;
 
@@ -44,17 +46,31 @@ public class DirectionalSprite {
         double c = (2 * Math.PI) / angles.size();
         int i = (int) (Math.floor(theta / c));
 
-        // FIXME
-        // quick fix
-        // must be REMOVED
-        if (i >= angles.size())
-            return angles.get(angles.size() - 1);
-
+//        // FIXME
+//        // quick fix
+//        // must be REMOVED
+//        if (i >= angles.size())
+//            return angles.get(angles.size() - 1);
+        // for some reason, without this line turrets try to access sprite 32
+        i = i%angles.size();
+        
         return angles.get(i);
     }
 
     public void addGraphic(Graphic g) {
         angles.add(g);
+    }
+    
+    public List<Graphic> getAngles() {
+        return angles;
+    }
+    
+    public int getWidth() {
+        return angles.get(0).getWidth();
+    }
+    
+    public int getHeight() {
+        return angles.get(0).getHeight();
     }
 
 }

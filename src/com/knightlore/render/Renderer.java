@@ -4,18 +4,25 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Stack;
 
-import com.knightlore.MainWindow;
 import com.knightlore.game.area.Map;
 import com.knightlore.game.entity.Entity;
 import com.knightlore.game.tile.AirTile;
 import com.knightlore.game.tile.Tile;
 import com.knightlore.game.world.ClientWorld;
-import com.knightlore.gui.GUICanvas;
+import com.knightlore.gui.GameChat;
+import com.knightlore.render.font.Font;
 import com.knightlore.render.graphic.Graphic;
-import com.knightlore.render.minimap.Minimap;
 import com.knightlore.utils.Vector2D;
 
-public class Renderer implements IRenderable {
+/**
+ * Renders the game content.
+ * 
+ * @author Joe Ellis
+ *
+ */
+public class Renderer {
+
+    private PixelBuffer pix;
 
     /**
      * Viewport into the world. Can be bound to any entity.
@@ -27,25 +34,15 @@ public class Renderer implements IRenderable {
      */
     private ClientWorld world;
 
-    private Minimap minimap;
-
-    private GUICanvas gui;
-
-    public Renderer(Camera camera, ClientWorld world) {
+    public Renderer(int width, int height, Camera camera, ClientWorld world) {
+        this.pix = new PixelBuffer(width, height);
         this.camera = camera;
         this.world = world;
-        this.minimap = new Minimap(camera, world, 128);
     }
 
-    private final int BLOCKINESS = 3; // how 'old school' you want to look.
+    private final int BLOCKINESS = 10; // how 'old school' you want to look.
 
-    @Override
-    public void render(PixelBuffer pix, int x, int y) {
-        // FIXME: HACK
-        // if (camera == null || minimap == null) {
-        // return;
-        // }
-        // Can't render without a camera.
+    public void render() {
         if (camera == null || !camera.isSubjectSet()) {
             return;
         }
@@ -56,29 +53,13 @@ public class Renderer implements IRenderable {
         // draw the perspective and the crosshairs
         int offset = camera.getMotionBobOffset();
         drawPerspective(pix, offset);
+
+        camera.render(pix, 0, 0);
         drawCrosshair(pix);
-
-        if (gui != null) {
-            gui.render(pix, x, y);
-        }
-
-        minimap.render();
-
-        PixelBuffer minimapBuffer = minimap.getPixelBuffer();
-        pix.composite(minimapBuffer, pix.getWidth() - minimapBuffer.getWidth() - 10, 5);
-
+        
     }
 
-    /*
-     * NOTE: THIS ONLY AFFECTS THE RENDERING SIZE OF A TILE. If you change this
-     * variable, tiles will be drawn differently but the player will still move
-     * at their usual speed over a single tile. You might want to compensate a
-     * change here with a change in player move speed.
-     */
-    private final float TILE_SIZE = 1F;
-
     private void drawPerspective(PixelBuffer pix, int offset) {
-
         Map map = world.getMap();
 
         final int width = pix.getWidth(), height = pix.getHeight();
@@ -159,7 +140,7 @@ public class Renderer implements IRenderable {
                         hit = true;
 
                     distanceToWall = RaycasterUtils.getImpactDistance(camera, rayX, rayY, mapX, mapY, side, stepX,
-                            stepY, TILE_SIZE);
+                            stepY);
                     int lineHeight = RaycasterUtils.getDrawHeight(height, distanceToWall);
 
                     // calculate lowest and highest pixel to fill in current
@@ -176,7 +157,7 @@ public class Renderer implements IRenderable {
 
                     wallX = RaycasterUtils.getWallHitPosition(camera, rayX, rayY, mapX, mapY, side, stepX, stepY);
 
-                    Graphic texture = map.getTile(mapX, mapY).getTexture();
+                    Graphic texture = map.getTile(mapX, mapY).getWallTexture();
 
                     // What pixel did we hit the texture on?
                     int texX = (int) (wallX * (texture.getSize()));
@@ -200,7 +181,6 @@ public class Renderer implements IRenderable {
             // We know that we've hit the final tile (and opaque one). So now,
             // we can do the floorcast.
             floorCast(pix, offset, xx, rayX, rayY, mapX, mapY, wallX, distanceToWall, drawEnd, side);
-
         }
 
         while (!renderStack.isEmpty()) {
@@ -213,6 +193,7 @@ public class Renderer implements IRenderable {
 
     private void floorCast(PixelBuffer pix, int offset, int xx, double rayX, double rayY, int mapX, int mapY,
             double wallX, double distanceToWall, int drawEnd, boolean side) {
+        Map map = world.getMap();
         double floorXWall, floorYWall;
 
         if (!side && rayX > 0) {
@@ -234,14 +215,18 @@ public class Renderer implements IRenderable {
         distWall = distanceToWall;
         distPlayer = 0.0;
 
-        int h = MainWindow.HEIGHT;
+        int h = pix.getHeight();
         drawEnd = drawEnd < 0 ? h : drawEnd;
 
         Graphic floor = world.getEnvironment().getFloorTexture();
         Graphic ceil = world.getEnvironment().getCeilingTexture();
 
+        // stops us from getting weird rendering artifacts, since
+        // we start drawing a pixel after drawEnd to avoid indexing errors.
+        pix.fillRect(0x000000, xx, drawEnd + offset, BLOCKINESS, 1);
+
         // draw from drawEnd to the bottom of the screen
-        for (int y = drawEnd; y < h; y++) {
+        for (int y = drawEnd + 1; y < h; y++) {
             // TODO: maybe add a lookup table here for speed?
             currentDist = h / (2.0 * y - h);
 
@@ -250,6 +235,15 @@ public class Renderer implements IRenderable {
             double currentFloorX = weight * floorXWall + (1 - weight) * camera.getxPos();
             double currentFloorY = weight * floorYWall + (1 - weight) * camera.getyPos();
 
+            Tile tile = map.getTile((int) currentFloorX, (int) currentFloorY);
+            if (tile == AirTile.getInstance()) {
+                // if air, use the global floor texture.
+                floor = world.getEnvironment().getFloorTexture();
+            } else {
+                // otherwise, use the tile floor texture.
+                floor = tile.getFloorTexture();
+            }
+
             int floorTexX, floorTexY;
             floorTexX = (int) ((currentFloorX * floor.getWidth()) % floor.getWidth());
             floorTexY = (int) ((currentFloorY * floor.getHeight()) % floor.getHeight());
@@ -257,6 +251,7 @@ public class Renderer implements IRenderable {
             // floor
             int floorColor = floor.getPixels()[floor.getWidth() * floorTexY + floorTexX];
             floorColor = ColorUtils.darken(floorColor, world.getEnvironment().getDarkness(), currentDist);
+
             pix.fillRect(floorColor, xx, y + offset, BLOCKINESS, 1);
 
             // ceiling
@@ -267,6 +262,9 @@ public class Renderer implements IRenderable {
     }
 
     private void draw(PixelBuffer pix, PerspectiveRenderItem p, int offset) {
+        if (p.opacity == 0)
+            return;
+
         // calculate y coordinate on texture
         for (int yy = p.drawStart; yy < p.drawEnd; yy++) {
 
@@ -340,7 +338,7 @@ public class Renderer implements IRenderable {
                     // 2) it's on the screen (left)
                     // 3) it's on the screen (right)
                     // 4) ZBuffer, with perpendicular distance
-                    if (transformY > 0 && stripe > 0 && stripe < pix.getWidth() && transformY < zbuffer[stripe])
+                    if (transformY > 0 && stripe > 0 && stripe < pix.getWidth() && transformY < zbuffer[stripe]) {
                         for (int y = drawStartY; y < drawEndY; y++) {
                             // 16 and 8 are factors to avoid division and
                             // floats.
@@ -358,8 +356,16 @@ public class Renderer implements IRenderable {
                                     camera.getPosition().distance(m.getPosition()));
 
                             int drawY = y + offset;
+
                             pix.fillRect(color, stripe, drawY, BLOCKINESS, 1);
                         }
+
+                        final double sc = (drawEndY - drawStartY) / 90D;
+                        final double sp = (drawEndY - drawStartY) / 50D;
+                        final int sw = pix.stringWidth(Font.DEFAULT_WHITE, m.getName(), sc, sp);
+                        pix.drawString(Font.DEFAULT_WHITE, m.getName(), spriteScreenX - sw / 2, drawStartY + offset, sc,
+                                sp);
+                    }
                 }
 
             }
@@ -367,12 +373,16 @@ public class Renderer implements IRenderable {
     }
 
     private void drawCrosshair(PixelBuffer pix) {
-        final int CROSSHAIR_SIZE = 10;
+        final int CROSSHAIR_SIZE = 6;
         final int CROSSHAIR_WIDTH = 2;
         final int CROSSHAIR_COLOR = 0xFFFFFF;
         final int w = pix.getWidth() / 2, h = pix.getHeight() / 2;
         pix.fillRect(CROSSHAIR_COLOR, w - CROSSHAIR_SIZE, h - CROSSHAIR_WIDTH / 2, CROSSHAIR_SIZE * 2, CROSSHAIR_WIDTH);
         pix.fillRect(CROSSHAIR_COLOR, w - CROSSHAIR_WIDTH / 2, h - CROSSHAIR_SIZE, CROSSHAIR_WIDTH, CROSSHAIR_SIZE * 2);
+    }
+
+    public PixelBuffer getPixelBuffer() {
+        return pix;
     }
 
 }

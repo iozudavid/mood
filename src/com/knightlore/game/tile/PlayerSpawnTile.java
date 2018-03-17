@@ -1,28 +1,26 @@
 package com.knightlore.game.tile;
 
 import com.knightlore.engine.GameEngine;
-import com.knightlore.game.Player;
 import com.knightlore.game.Team;
+import com.knightlore.game.entity.Entity;
 import com.knightlore.render.graphic.Graphic;
 import com.knightlore.render.graphic.texture.Texture;
 
 public class PlayerSpawnTile extends Tile {
+    private final Team team;
 
-    public Team team = Team.none;
-
-    public PlayerSpawnTile(Team t) {
-        team = t;
+    public PlayerSpawnTile(Team team) {
+        this.team = team;
     }
 
     @Override
-    public Graphic getTexture() {
+    public Graphic getWallTexture() {
         return Texture.BUSH;
     }
 
     @Override
     public double getOpacity() {
-        double opacity = 0.5 + (Math.sin(GameEngine.ticker.getTime() * 0.05)) / 4;
-        return opacity;
+        return 0.5 + (Math.sin(GameEngine.ticker.getTime() * 0.05)) / 4;
     }
 
     @Override
@@ -39,15 +37,10 @@ public class PlayerSpawnTile extends Tile {
     public void onShot() {
     }
 
-    @Override
-    public void onEntered(Player p) {
-
-    }
-
     public char toChar() {
-        if (team == Team.none) {
+        if (team == Team.NONE) {
             return '0';
-        }else if(team == Team.blue) {
+        }else if(team == Team.BLUE) {
             return '1';
         }else {
             return '2';
@@ -55,22 +48,22 @@ public class PlayerSpawnTile extends Tile {
     }
 
     public Tile reflectTileX() {
-        if (team == Team.none) {
-            return new PlayerSpawnTile(Team.none);
-        } else if (team == Team.blue){
-            return new PlayerSpawnTile(Team.red);
+        if (team == Team.NONE) {
+            return new PlayerSpawnTile(Team.NONE);
+        } else if (team == Team.BLUE){
+            return new PlayerSpawnTile(Team.RED);
         } else {
-            return new PlayerSpawnTile(Team.blue);
+            return new PlayerSpawnTile(Team.BLUE);
         }
     }
 
     public Tile reflectTileY() {
-        if (team == Team.none) {
-            return new PlayerSpawnTile(Team.none);
-        } else if (team == Team.blue) {
-            return new PlayerSpawnTile(Team.red);
+        if (team == Team.NONE) {
+            return new PlayerSpawnTile(Team.NONE);
+        } else if (team == Team.BLUE) {
+            return new PlayerSpawnTile(Team.RED);
         } else {
-            return new PlayerSpawnTile(Team.blue);
+            return new PlayerSpawnTile(Team.BLUE);
         }
     }
     
@@ -85,8 +78,11 @@ public class PlayerSpawnTile extends Tile {
     }
 
     @Override
-    public TileType getTileType() {
-        return TileType.spawn;
+    public Tile copy() {
+        return new PlayerSpawnTile(team);
     }
 
+    @Override
+    public void onEntered(Entity entity) {
+    }
 }

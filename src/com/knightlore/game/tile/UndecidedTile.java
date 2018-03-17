@@ -1,11 +1,11 @@
 package com.knightlore.game.tile;
 
-import com.knightlore.game.Player;
+import com.knightlore.game.entity.Entity;
 import com.knightlore.render.graphic.Graphic;
 import com.knightlore.render.graphic.texture.Texture;
 
 public class UndecidedTile extends Tile {
-    private static UndecidedTile instance = new UndecidedTile();
+    private static final UndecidedTile instance = new UndecidedTile();
 
     private UndecidedTile() {
     }
@@ -15,7 +15,7 @@ public class UndecidedTile extends Tile {
     }
 
     @Override
-    public Graphic getTexture() {
+    public Graphic getWallTexture() {
         return Texture.AIR;
     }
 
@@ -24,7 +24,7 @@ public class UndecidedTile extends Tile {
     }
 
     @Override
-    public void onEntered(Player p) {
+    public void onEntered(Entity entity) {
     }
 
     @Override
@@ -33,8 +33,8 @@ public class UndecidedTile extends Tile {
     }
 
     @Override
-    public TileType getTileType() {
-        return TileType.undecided;
+    public Tile copy() {
+        return instance;
     }
 
 }
