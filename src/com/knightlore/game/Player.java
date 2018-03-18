@@ -159,7 +159,7 @@ public class Player extends Entity {
 
     @Override
     public Graphic getGraphic(Vector2D playerPos) {
-        DirectionalSprite frame = animation.getGraphic();
+        DirectionalSprite frame = animation.getFrame();
         return frame.getCurrentGraphic(position, direction, playerPos);
     }
 
