@@ -12,6 +12,7 @@ import com.knightlore.game.tile.PlayerSpawnTile;
 import com.knightlore.game.tile.Tile;
 import com.knightlore.game.tile.TurretTile;
 import com.knightlore.game.tile.UndecidedTile;
+import com.knightlore.utils.Vector2D;
 import com.knightlore.game.tile.PickupTile;
 
 import java.util.Random;
@@ -56,10 +57,14 @@ public class RoomGenerator extends ProceduralAreaGenerator {
         int midy = height/2;
         switch(rt) {
             case spawn :
+                for(int i=midx-1; i <= midx+1; i++){
+                    grid[i][midy-1] = new PlayerSpawnTile(Team.BLUE, Vector2D.DOWN);
+                }
+                grid[midx-1][midy] = new PlayerSpawnTile(Team.BLUE, Vector2D.LEFT);
+                grid[midx][midy] = new PlayerSpawnTile(Team.BLUE);
+                grid[midx+1][midy] = new PlayerSpawnTile(Team.BLUE, Vector2D.RIGHT);
                 for(int i=midx-1 ; i<= midx+1; i++) {
-                    for(int j=midy-1; j <=midy+1; j++) {
-                        grid[i][j] = new PlayerSpawnTile(Team.BLUE);
-                    }
+                    grid[i][midy+1] = new PlayerSpawnTile(Team.BLUE, Vector2D.UP);
                 }
                 break; 
             case pickup :
@@ -112,7 +117,6 @@ public class RoomGenerator extends ProceduralAreaGenerator {
     private void removeRightWall() {
         for(int y=1; y < grid[0].length -1 ; y++) {
             grid[grid.length-1][y] = AirTile.getInstance();
-            //grid[grid.length-1][y] = new MossBrickTile();
         }
     }
     

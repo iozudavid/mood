@@ -444,7 +444,7 @@ public abstract class Entity extends NetworkObject implements TickListener, IMin
         // every half second...
         //return (long) GameEngine.UPDATES_PER_SECOND / 2;
         // every sixteenth second
-        return (long) GameEngine.UPDATES_PER_SECOND / 16;
+        return (long) GameEngine.UPDATES_PER_SECOND / 32;
     }
     
     public void sendSystemMessage(String name, Entity inflictor){

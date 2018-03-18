@@ -8,7 +8,7 @@ public class Push extends Buff {
     private static double MOVE_DISTANCE = .06;
     private Vector2D direction;
     
-    private static final double PUSH_FREQUENCY = 1D / 16;
+    private static final double PUSH_FREQUENCY = 1D / 32;
     private static final double PUSH_LENGTH = 0.5;
     
     public Push(Entity ent, Vector2D d) {

@@ -4,6 +4,7 @@ import com.knightlore.engine.GameEngine;
 import com.knightlore.game.Team;
 import com.knightlore.game.buff.BuffType;
 import com.knightlore.game.buff.Fire;
+import com.knightlore.game.buff.Immune;
 import com.knightlore.game.buff.Push;
 import com.knightlore.game.buff.Slow;
 import com.knightlore.game.entity.Entity;
@@ -14,11 +15,8 @@ import com.knightlore.utils.Vector2D;
 
 public class PlayerSpawnTile extends Tile {
     private final Team team;
-    private static PlayerSpawnTile instanceBlue = new PlayerSpawnTile(Team.BLUE);
-    private static PlayerSpawnTile instanceRed = new PlayerSpawnTile(Team.RED);
-    private static PlayerSpawnTile instanceNone = new PlayerSpawnTile(Team.NONE);
-    
-    private static Vector2D pushVector = Vector2D.DOWN;
+    private Vector2D pushVector = new Vector2D(0,0);
+    private boolean spawnable = false;
     
     private static Animation RED_LAVA_ANIM = new Animation((long) (GameEngine.UPDATES_PER_SECOND / 4));
     static {
@@ -40,6 +38,12 @@ public class PlayerSpawnTile extends Tile {
     
     public PlayerSpawnTile(Team team) {
         this.team = team;
+        spawnable = true;
+    }
+    
+    public PlayerSpawnTile(Team team, Vector2D v) {
+        this.team = team;
+        pushVector = v;
     }
     
     @Override
@@ -105,13 +109,16 @@ public class PlayerSpawnTile extends Tile {
     }
 
     public Tile reflectTileY() {
-        if (team == Team.NONE) {
-            return new PlayerSpawnTile(Team.NONE);
-        } else if (team == Team.BLUE) {
-            return new PlayerSpawnTile(Team.RED);
-        } else {
-            return new PlayerSpawnTile(Team.BLUE);
+        Team teamR;
+        switch(team) {
+            case BLUE : teamR = Team.RED; break;
+            case RED : teamR = Team.BLUE; break;
+            default : teamR = Team.NONE;
         }
+        Vector2D pushVectorR = 
+        new Vector2D(pushVector.getX()*-1, pushVector.getY());
+        return new PlayerSpawnTile(teamR, pushVectorR);
+         
     }
     
     @Override
@@ -124,6 +131,10 @@ public class PlayerSpawnTile extends Tile {
         return team;
     }
 
+    public boolean isSpawnable() {
+        return spawnable;
+    }
+    
     @Override
     public Tile copy() {
         return new PlayerSpawnTile(team);
@@ -131,6 +142,11 @@ public class PlayerSpawnTile extends Tile {
 
     @Override
     public void onEntered(Entity entity) {
-        entity.resetBuff(new Push(entity, pushVector));
+        if(pushVector.getX() == 0 &&
+           pushVector.getY() == 0) {
+            entity.resetBuff(new Immune(entity));
+        }else {
+            entity.resetBuff(new Push(entity, pushVector));
+        }
     }
 }
