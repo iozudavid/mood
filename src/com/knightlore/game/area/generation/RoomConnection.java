@@ -15,7 +15,7 @@ public class RoomConnection implements Comparable<RoomConnection> {
         this.distance = euclideanDistance(r1.getCentre(), r2.getCentre());
     }
 
-    private double euclideanDistance(Point p, Point q) {
+    double euclideanDistance(Point p, Point q) {
         int xDiff = p.x - q.x;
         int yDiff = p.y - q.y;
         return Math.sqrt(xDiff * xDiff + yDiff * yDiff);
