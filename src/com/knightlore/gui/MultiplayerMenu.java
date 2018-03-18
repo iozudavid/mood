@@ -51,8 +51,8 @@ public class MultiplayerMenu {
 		this.gui.addGUIObject(groupPort);
 		this.gui.addGUIObject(this.portText);
 		this.gui.addGUIObject(this.portTextField);
-		this.connectButton = new Button(GuiUtils.middleWidth(this.screenWidth/2, 300), GuiUtils.calculateHeight(this.screenHeight, 80), 300, 40, "Connect",20);
-		this.cancelButton = new Button((int)(GuiUtils.middleWidth(this.screenWidth/2, 300)+this.screenWidth/2), GuiUtils.calculateHeight(this.screenHeight, 80), 300, 40, "Cancel",20);
+		this.cancelButton = new Button(GuiUtils.middleWidth(this.screenWidth/2, 300), GuiUtils.calculateHeight(this.screenHeight, 80), 300, 40, "Cancel",20);
+		this.connectButton = new Button((int)(GuiUtils.middleWidth(this.screenWidth/2, 300)+this.screenWidth/2), GuiUtils.calculateHeight(this.screenHeight, 80), 300, 40, "Connect",20);
 		this.gui.addGUIObject(connectButton);
 		this.gui.addGUIObject(cancelButton);
 		
@@ -73,7 +73,7 @@ public class MultiplayerMenu {
 				ConnectionDetails.PORT = Integer.parseInt(MultiplayerMenu.this.portTextField.getText());
 				ConnectionDetails.SERVER_HOSTNAME = MultiplayerMenu.this.ipTextField.getText();
 				MultiplayerMenu.this.gui.destroy();
-				GameEngine.getSingleton().gameState = GameState.InGame;
+				GameEngine.getSingleton().startGame();
 			}
 		};
 		

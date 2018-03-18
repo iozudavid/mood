@@ -9,6 +9,8 @@ import com.knightlore.game.world.ClientWorld;
 import com.knightlore.game.world.GameWorld;
 import com.knightlore.game.world.ServerWorld;
 import com.knightlore.gui.GameChat;
+import com.knightlore.gui.MultiplayerMenu;
+import com.knightlore.gui.StartMenu;
 import com.knightlore.network.NetworkObjectManager;
 import com.knightlore.network.client.ClientManager;
 import com.knightlore.network.client.ClientNetworkObjectManager;
@@ -50,7 +52,7 @@ public class GameEngine implements Runnable {
     private NetworkObjectManager networkObjectManager;
 
     private Camera camera;
-    public GameState gameState = GameState.InGame;
+    public GameState gameState = GameState.StartMenu;
 
     private SoundManager soundManager;
 
@@ -100,7 +102,14 @@ public class GameEngine implements Runnable {
         // ALSO TODO, UNHOOK TEST WORLD
         System.out.println("Initialising World...");
 
-        // The NetworkObjectManager will call setUpWorld() on the world when
+		if (GameSettings.isClient()) {
+			final int w = screen.getWidth(), h = screen.getHeight();
+			this.display = new Display();
+		}
+    }
+    
+    public void startGame(){
+    	// The NetworkObjectManager will call setUpWorld() on the world when
         // it's ready to do so.
         if (GameSettings.isServer()) {
             world = new ServerWorld();
@@ -126,14 +135,21 @@ public class GameEngine implements Runnable {
                 // wait...
             }
             ClientWorld cworld = (ClientWorld) world;
-
             final int w = screen.getWidth(), h = screen.getHeight();
             Renderer renderer = new Renderer(w, 8 * h / 9, camera, cworld);
             Minimap minimap = new Minimap(camera, cworld, 128);
             HUD hud = new HUD(cn.getMyPlayer(), w, h / 9);
             GameChat chat = new GameChat(w,h);
-            this.display = new Display(renderer, minimap, hud, chat);
+            this.display.setGameChat(chat);
+            this.display.setHud(hud);
+            this.display.setMinimap(minimap);
+            this.display.setRenderer(renderer);
+            this.gameState=GameState.InGame;
         }
+        
+        // start the lobby
+        world.getGameManager().startLobby();
+        
     }
 
     /**
@@ -171,8 +187,7 @@ public class GameEngine implements Runnable {
 
     @Override
     public void run() {
-        // start the lobby
-        world.getGameManager().startLobby();
+
         /*
          * This piece of code limits the number of game updates per second to
          * whatever it is set to in the variable updatesPerSecond.
@@ -181,16 +196,18 @@ public class GameEngine implements Runnable {
         double delta = 0D;
         double ns = 1E9D / UPDATES_PER_SECOND;
         while (running) {
-            long now = System.nanoTime();
-            delta += (now - lastTime) / ns;
-            lastTime = now;
-            while (delta >= 1) {
-                gameObjectManager.updateObjects();
-                world.update();
-                GameFeed.getInstance().update();
-                delta -= 1;
-                ticker.tick();
-            }
+				long now = System.nanoTime();
+				delta += (now - lastTime) / ns;
+				lastTime = now;
+				while (delta >= 1) {
+					gameObjectManager.updateObjects();
+					if (this.gameState == GameState.InGame) {
+						world.update();
+						GameFeed.getInstance().update();
+					}
+					delta -= 1;
+					ticker.tick();
+				}
 
             if (!HEADLESS) {
                 screen.render(0, 0, display);

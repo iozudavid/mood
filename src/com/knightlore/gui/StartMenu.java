@@ -45,9 +45,10 @@ public class StartMenu {
 				//start new session
 				//on the local machine
 				ConnectionDetails.SERVER_HOSTNAME = "localhost";
+				ConnectionDetails.PORT=5000;
 				//remove this gui
 				StartMenu.this.gui.destroy();
-				GameEngine.getSingleton().gameState = GameState.InGame;
+				GameEngine.getSingleton().startGame();
 			}
 		};
 		
