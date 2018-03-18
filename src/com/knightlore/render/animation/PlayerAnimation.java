@@ -8,14 +8,16 @@ import com.knightlore.render.graphic.sprite.DirectionalSprite;
 
 public class PlayerAnimation extends Animation<DirectionalSprite> {
     
-    private final int FRAMES = 8;
+    private final int animationFrames = 8;
+    
+    private double distanceTraveled = 0D;
     
     private final double TRIGGER_NEXT_FRAME_DISTANCE = 0.2;
     private double nextFrameDistance;
     
     public PlayerAnimation(GraphicSheet sheet) {
         super();
-        for(int i = 0; i < FRAMES; i++) {
+        for(int i = 0; i < animationFrames; i++) {
             ArrayList<Graphic> angles = new ArrayList<Graphic>();
             for(int y = 0; y < 32; y++) {
                 angles.add(sheet.graphicAt(i, y));
@@ -26,7 +28,8 @@ public class PlayerAnimation extends Animation<DirectionalSprite> {
         }
     }
     
-    public void update(double distanceTraveled) {
+    public void update(double displacement) {
+        distanceTraveled += displacement;
         if(distanceTraveled > nextFrameDistance) {
             nextFrameDistance += TRIGGER_NEXT_FRAME_DISTANCE;
             nextFrame();

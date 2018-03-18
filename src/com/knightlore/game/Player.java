@@ -163,13 +163,9 @@ public class Player extends Entity {
         return frame.getCurrentGraphic(position, direction, playerPos);
     }
 
-    double distanceTraveled = 0;
-
     @Override
     public void onUpdate() {
         super.onUpdate();
-
-        animation.update(distanceTraveled);
 
         hasShot = false;
         if (shootOnNextUpdate) {
@@ -196,26 +192,13 @@ public class Player extends Entity {
         if (prevDir != null && prevPos != null) {
             // The difference between our previous and new positions.
             Vector2D displacement = position.subtract(prevPos);
-            distanceTraveled += displacement.magnitude();
             updateInertia(displacement);
-            playFootsteps(displacement);
+            animation.update(displacement.magnitude());
         }
+        
         prevPos = position;
         prevDir = direction;
         currentWeapon.update();
-    }
-
-    /**
-     * Play footstep sound iff:
-     * 
-     * - we're running on a client (we don't play sound effects on the server)
-     * 
-     * - our position has changed
-     * 
-     * - this player represents the client's current player
-     */
-    private void playFootsteps(Vector2D displacement) {
-
     }
 
     private void updateInertia(Vector2D displacement) {
