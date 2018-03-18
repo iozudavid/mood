@@ -32,7 +32,6 @@ public class MapGenerator extends ProceduralAreaGenerator {
     private int maxRooms;
     
     private List<RoomType> roomsToBuild = new LinkedList<>();
-    private static final int MAX_ROOMS = 10;
     private static final int ROOM_COST_MODIFIER = 5;
 
     private final List<Room> rooms = new LinkedList<>();
@@ -70,9 +69,15 @@ public class MapGenerator extends ProceduralAreaGenerator {
     }
 
     private void determineRoomsToBuild() {
+        // TODO: Ensure a more interesting mix of rooms
+        
         // TODO: Expand this if we need other types of
         // of room
-        roomsToBuild.add(RoomType.spawn);   
+        roomsToBuild.add(RoomType.spawn);
+        roomsToBuild.add(RoomType.pickup);
+        roomsToBuild.add(RoomType.middle);
+        roomsToBuild.add(RoomType.middle);
+        
         for(int i=1; i < maxRooms; i++) {
             double randInt = rand.nextDouble();
             if(randInt >= 0.66) {
@@ -89,21 +94,32 @@ public class MapGenerator extends ProceduralAreaGenerator {
         for(RoomType rt : roomsToBuild) {
             Room room = roomGenerator.createRoom(rand.nextLong(), rt);
             // TODO: potentially have different setRoomPositions
-            // implementations dependent on room type
-            if(setRoomPosition(room)) {
+            if(setRoomPosition(room, rt)) {
                 rooms.add(room);
             }
         }
     }
 
-    private boolean setRoomPosition(Room room) {
-        return setRoomPosition(room, grid.length, grid[0].length);
+    private boolean setRoomPosition(Room room, RoomType rt) {
+        // TODO: modify this for different rooms types
+        int width = grid.length;
+        int height = grid[0].length;
+        switch(rt){
+            case spawn :
+                return setRoomPosition(room,0,0, width/4, height);
+            case pickup :
+                return setRoomPosition(room, width/4, height/4, width*3/4 , height*3/4);
+            case middle :
+                return setRoomPosition(room, width-(room.getWidth()), 0, width+1, height);
+            default : return setRoomPosition(room, 0,0, width, height);
+        }
     }
 
-    private boolean setRoomPosition(Room room, int maxX, int maxY) {
+    private boolean setRoomPosition(Room room, int minX, int minY ,
+                                    int maxX, int maxY) {
         List<Point> candidates = new ArrayList<Point>();
-        for (int x = 0; x < maxX - room.getWidth(); x++) {
-            for (int y = 0; y < maxY - room.getHeight(); y++) {
+        for (int x = minX; x < maxX - room.getWidth(); x++) {
+            for (int y = minY; y < maxY - room.getHeight(); y++) {
                 room.setRoomPosition(new Point(x, y));
                 if (canBePlaced(room)) {
                     candidates.add(new Point(x, y));
@@ -308,4 +324,11 @@ public class MapGenerator extends ProceduralAreaGenerator {
         grid = symMap;
     }
 
+    public static void main(String args[]) {
+        Random r = new Random();
+        MapGenerator mg = new MapGenerator();
+        Map map = mg.createMap(40, 40, r.nextInt(1000));
+        System.out.println(map.toDebugString());
+    }
+    
 }

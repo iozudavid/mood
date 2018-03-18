@@ -46,6 +46,11 @@ public class LavaTile extends Tile {
 
     }
     
+    @Override
+    public char toChar() {
+        return 'L';
+    }
+    
     public double getSolidity() {
         return 0.75D;
     }

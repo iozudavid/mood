@@ -7,6 +7,7 @@ import com.knightlore.game.entity.pickup.PickupType;
 import com.knightlore.game.tile.AirTile;
 import com.knightlore.game.tile.BrickTile;
 import com.knightlore.game.tile.LavaTile;
+import com.knightlore.game.tile.MossBrickTile;
 import com.knightlore.game.tile.PlayerSpawnTile;
 import com.knightlore.game.tile.Tile;
 import com.knightlore.game.tile.TurretTile;
@@ -54,28 +55,29 @@ public class RoomGenerator extends ProceduralAreaGenerator {
         int midx = width/2;
         int midy = height/2;
         switch(rt) {
-            case spawn : for(int i=midx-1 ; i<= midx+1; i++) {
-                           for(int j=midy-1; j <=midy+1; j++) {
-                               grid[i][j] = new PlayerSpawnTile(Team.BLUE);
-                           }
-                         }
-                         //grid[3][3] = new TurretTile(Team.blue);
-                         //grid[3][height-4] = new TurretTile(Team.blue);
-                         //grid[width-4][3] = new TurretTile(Team.blue);
-                         //grid[width-4][height-3] = new TurretTile(Team.blue);
-                         break; 
+            case spawn :
+                for(int i=midx-1 ; i<= midx+1; i++) {
+                    for(int j=midy-1; j <=midy+1; j++) {
+                        grid[i][j] = new PlayerSpawnTile(Team.BLUE);
+                    }
+                }
+                break; 
             case pickup :
-                        if(rand.nextDouble() < 0.5) {
-                            grid[midx][midy] = new PickupTile(PickupType.health);
-                        }else {
-                            for(int i=0; i<width; i++) {
-                                for(int j=0; j<height; j++) {
-                                    grid[i][j] = new LavaTile();
-                                }
-                            }
-                            grid[midx][midy] = new PickupTile(PickupType.shotgun);
+                if(rand.nextDouble() < 0.5) {
+                    grid[midx][midy] = new PickupTile(PickupType.health);
+                }else {
+                    for(int i=0; i<width; i++) {
+                        for(int j=0; j<height; j++) {
+                            grid[i][j] = new LavaTile();
                         }
-                        break;
+                    }
+                    grid[midx][midy] = new PickupTile(PickupType.shotgun);
+                }
+                break;
+            case middle :
+                fillGrid(RoomType.pickup);
+                removeRightWall();
+                return;
             default: break;
         }
         fillUndecidedTiles();
@@ -107,6 +109,13 @@ public class RoomGenerator extends ProceduralAreaGenerator {
         }
     }
 
+    private void removeRightWall() {
+        for(int y=1; y < grid[0].length -1 ; y++) {
+            grid[grid.length-1][y] = AirTile.getInstance();
+            //grid[grid.length-1][y] = new MossBrickTile();
+        }
+    }
+    
     private int getGaussianNum(int min, int max) {
         int mean = (max + min) / 2;
         int std_dev = (mean - min) / 2;
