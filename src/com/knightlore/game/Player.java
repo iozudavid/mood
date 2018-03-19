@@ -205,20 +205,17 @@ public class Player extends Entity {
             updateInertia(displacement);
 
             double dis = displacement.magnitude();
-            if (dis != 0) {
+            moveAnim.update(dis);
+            if (!moveAnim.expired()) {
                 currentAnim = moveAnim;
-                moveAnim.update(dis);
             } else {
                 currentAnim = standAnim;
             }
         }
 
         currentWeapon.update();
-
-        if (GameEngine.ticker.getTime() % 5 == 0) {
-            prevPos = position;
-            prevDir = direction;
-        }
+        prevPos = position;
+        prevDir = direction;
     }
 
     private void updateInertia(Vector2D displacement) {
@@ -271,8 +268,6 @@ public class Player extends Entity {
 
     @Override
     public synchronized void deserialize(ByteBuffer buf) {
-        prevPos = position;
-        prevDir = direction;
         super.deserialize(buf);
         shootOnNextUpdate = buf.getInt() == 1;
     }
