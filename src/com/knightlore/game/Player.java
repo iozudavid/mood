@@ -42,16 +42,20 @@ public class Player extends Entity {
             (long) (GameEngine.UPDATES_PER_SECOND / 10));
     
     private Animation<DirectionalSprite> currentAnim = standAnim;
-    
+
     public static final int MAX_HEALTH = 100;
+    private static final double SIZE = 0.25;
     // Maps all inputs that the player could be making to their values.
     private final ImmutableMap<ClientController, Runnable> ACTION_MAPPINGS = ImmutableMap
             .<ClientController, Runnable>builder().put(ClientController.FORWARD, this::moveForward)
             .put(ClientController.ROTATE_ANTI_CLOCKWISE, this::rotateAntiClockwise)
             .put(ClientController.BACKWARD, this::moveBackward)
-            .put(ClientController.ROTATE_CLOCKWISE, this::rotateClockwise).put(ClientController.LEFT, this::strafeLeft)
-            .put(ClientController.RIGHT, this::strafeRight).put(ClientController.SHOOT, this::shoot).build();
-    
+            .put(ClientController.ROTATE_CLOCKWISE, this::rotateClockwise)
+            .put(ClientController.LEFT, this::strafeLeft)
+            .put(ClientController.RIGHT, this::strafeRight)
+            .put(ClientController.SHOOT, this::shoot)
+            .build();
+
     private final BlockingQueue<ByteBuffer> teamMessagesToSend = new LinkedBlockingQueue<>();
     private final BlockingQueue<ByteBuffer> allMessagesToSend = new LinkedBlockingQueue<>();
     private Map<ClientController, Byte> inputState = new HashMap<>();
@@ -79,7 +83,7 @@ public class Player extends Entity {
     }
     
     public Player(UUID uuid, Vector2D pos, Vector2D dir) {
-        super(uuid, 0.25D, pos, dir);
+        super(uuid, SIZE, pos, dir);
         setNetworkConsumers();
         
         zOffset = 100;
@@ -102,12 +106,14 @@ public class Player extends Entity {
     }
     
     private void setNetworkConsumers() {
-        networkConsumers.put("setInputState", this::setInputState);
-        networkConsumers.put("messageToTeam", this::messageToTeam);
-        networkConsumers.put("messageToAll", this::messageToAll);
+        networkConsumers = ImmutableMap.of(
+                "setInputState", this::setInputState,
+                "messageToTeam", this::messageToTeam,
+                "messageToAll", this::messageToAll
+        );
     }
     
-    public void setInputState(ByteBuffer buf) {
+    private void setInputState(ByteBuffer buf) {
     	this.timeToSend  = buf.getDouble();
         synchronized (inputState) {
             while (buf.hasRemaining()) {
@@ -140,11 +146,9 @@ public class Player extends Entity {
                 inputState.put(control, value);
             }
         }
-
-        
     }
     
-    public void messageToTeam(ByteBuffer buf) {
+    private void messageToTeam(ByteBuffer buf) {
         String message = NetworkUtils.getStringFromBuf(buf);
         message = "[" + this.team + "] " + this.name + ": " + message;
         ByteBuffer bf = ByteBuffer.allocate(NetworkObject.BYTE_BUFFER_DEFAULT_SIZE);
@@ -169,7 +173,7 @@ public class Player extends Entity {
         return Optional.empty();
     }
     
-    public void messageToAll(ByteBuffer buf) {
+    private void messageToAll(ByteBuffer buf) {
         String message = NetworkUtils.getStringFromBuf(buf);
         message = "[all] " + this.name + ": " + message;
         ByteBuffer bf = ByteBuffer.allocate(NetworkObject.BYTE_BUFFER_DEFAULT_SIZE);

@@ -9,7 +9,6 @@ import com.knightlore.game.FFAGame;
 import com.knightlore.game.Player;
 import com.knightlore.game.entity.Entity;
 import com.knightlore.game.entity.SpectatorCamera;
-import com.knightlore.game.entity.ZombieServer;
 import com.knightlore.game.entity.pickup.ShotgunPickup;
 import com.knightlore.utils.physics.RaycastHit;
 import com.knightlore.utils.physics.RaycastHitType;

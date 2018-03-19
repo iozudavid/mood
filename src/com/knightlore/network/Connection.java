@@ -1,15 +1,18 @@
 package com.knightlore.network;
 
 import java.nio.ByteBuffer;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
 import com.knightlore.network.server.Prunable;
 
 public abstract class Connection implements Runnable, Prunable {
-
+    public static final Charset CHARSET = StandardCharsets.UTF_8;
     // Wait 5 seconds without receiving packets before disconnecting.
     protected static int TIMEOUT_MILLIS = 500 * 1000;
+
     // protected static int TIMEOUT_MILLIS = 30 * 1000;
 
     public volatile boolean terminated;
