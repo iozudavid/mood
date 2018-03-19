@@ -33,7 +33,7 @@ public class GameFeed implements IRenderable {
             y += 10;
         }
     }
-    
+
     public void getFeed(GameChat chat) {
     	for(GameFeedMessage message: this.messages) {
     		chat.getTextArea().addText("System: " + message.message);
