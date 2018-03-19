@@ -18,14 +18,23 @@ public class PlayerGraphicMatrix {
     private final static GraphicSheet[][][] playerMatrix = new GraphicSheet[Color.values().length][Weapon
             .values().length][Stance.values().length];
     static {
+        playerMatrix[Color.BLUE.ordinal()][Weapon.SHOTGUN.ordinal()][Stance.STAND.ordinal()] = new GraphicSheet(
+                "res/models/pl_blue_shotgun_stand_anim_sprites.png", 128);
+        playerMatrix[Color.BLUE.ordinal()][Weapon.PISTOL.ordinal()][Stance.STAND.ordinal()] = new GraphicSheet(
+                "res/models/pl_blue_pistol_stand_anim_sprites.png", 128);
         playerMatrix[Color.BLUE.ordinal()][Weapon.SHOTGUN.ordinal()][Stance.MOVE.ordinal()] = new GraphicSheet(
-                "res/models/pl_blue_shotgun_anim_sprites.png", 128);
+                "res/models/pl_blue_shotgun_walk_anim_sprites.png", 128);
         playerMatrix[Color.BLUE.ordinal()][Weapon.PISTOL.ordinal()][Stance.MOVE.ordinal()] = new GraphicSheet(
-                "res/models/pl_blue_pistol_anim_sprites.png", 128);
+                "res/models/pl_blue_pistol_walk_anim_sprites.png", 128);
+        
+        playerMatrix[Color.RED.ordinal()][Weapon.SHOTGUN.ordinal()][Stance.STAND.ordinal()] = new GraphicSheet(
+                "res/models/pl_red_shotgun_stand_anim_sprites.png", 128);
+        playerMatrix[Color.RED.ordinal()][Weapon.PISTOL.ordinal()][Stance.STAND.ordinal()] = new GraphicSheet(
+                "res/models/pl_red_pistol_stand_anim_sprites.png", 128);
         playerMatrix[Color.RED.ordinal()][Weapon.SHOTGUN.ordinal()][Stance.MOVE.ordinal()] = new GraphicSheet(
-                "res/models/pl_red_shotgun_anim_sprites.png", 128);
+                "res/models/pl_red_shotgun_walk_anim_sprites.png", 128);
         playerMatrix[Color.RED.ordinal()][Weapon.PISTOL.ordinal()][Stance.MOVE.ordinal()] = new GraphicSheet(
-                "res/models/pl_red_pistol_anim_sprites.png", 128);
+                "res/models/pl_red_pistol_walk_anim_sprites.png", 128);
     }
 
     public static GraphicSheet getGraphic(Color color, Weapon weapon, Stance stance) {
