@@ -24,22 +24,24 @@ import com.knightlore.network.protocol.ClientController;
 import com.knightlore.network.protocol.ClientProtocol;
 import com.knightlore.network.protocol.NetworkUtils;
 import com.knightlore.render.PixelBuffer;
+import com.knightlore.render.animation.PlayerAnimation;
+import com.knightlore.render.graphic.Graphic;
+import com.knightlore.render.graphic.GraphicSheet;
 import com.knightlore.render.graphic.sprite.DirectionalSprite;
 import com.knightlore.utils.Vector2D;
 
 public class Player extends Entity {
+
+    private PlayerAnimation animation = new PlayerAnimation(GraphicSheet.BLUE_PLAYER_ANIM_WIELDING_SHOTGUN);
+
     public static final int MAX_HEALTH = 100;
     // Maps all inputs that the player could be making to their values.
     private final ImmutableMap<ClientController, Runnable> ACTION_MAPPINGS = ImmutableMap
-            .<ClientController, Runnable>builder()
-            .put(ClientController.FORWARD, this::moveForward)
-            .put(ClientController.ROTATE_ANTI_CLOCKWISE,
-                    this::rotateAntiClockwise)
+            .<ClientController, Runnable>builder().put(ClientController.FORWARD, this::moveForward)
+            .put(ClientController.ROTATE_ANTI_CLOCKWISE, this::rotateAntiClockwise)
             .put(ClientController.BACKWARD, this::moveBackward)
-            .put(ClientController.ROTATE_CLOCKWISE, this::rotateClockwise)
-            .put(ClientController.LEFT, this::strafeLeft)
-            .put(ClientController.RIGHT, this::strafeRight)
-            .put(ClientController.SHOOT, this::shoot).build();
+            .put(ClientController.ROTATE_CLOCKWISE, this::rotateClockwise).put(ClientController.LEFT, this::strafeLeft)
+            .put(ClientController.RIGHT, this::strafeRight).put(ClientController.SHOOT, this::shoot).build();
 
     private final BlockingQueue<ByteBuffer> teamMessagesToSend = new LinkedBlockingQueue<>();
     private final BlockingQueue<ByteBuffer> allMessagesToSend = new LinkedBlockingQueue<>();
@@ -69,7 +71,7 @@ public class Player extends Entity {
         setNetworkConsumers();
 
         zOffset = 100;
-        moveSpeed = 0.120;
+        moveSpeed = 0.060;
         strafeSpeed = 0.08;
         rotationSpeed = 0.06;
     }
@@ -81,8 +83,7 @@ public class Player extends Entity {
     @Override
     public void render(PixelBuffer pix, int x, int y, double distanceTraveled) {
         super.render(pix, x, y, distanceTraveled);
-        currentWeapon.render(pix, x, y, inertiaX, inertiaY, distanceTraveled,
-                hasShot);
+        currentWeapon.render(pix, x, y, inertiaX, inertiaY, distanceTraveled, hasShot);
     }
 
     private void setNetworkConsumers() {
@@ -95,8 +96,7 @@ public class Player extends Entity {
         synchronized (inputState) {
             while (buf.hasRemaining()) {
                 try {
-                    ClientController control = ClientProtocol
-                            .getByIndex(buf.getInt());
+                    ClientController control = ClientProtocol.getByIndex(buf.getInt());
                     Byte value = buf.get();
                     inputState.put(control, value);
                 } catch (IOException e) {
@@ -110,10 +110,8 @@ public class Player extends Entity {
     public void messageToTeam(ByteBuffer buf) {
         String message = NetworkUtils.getStringFromBuf(buf);
         message = "[" + this.team + "] " + this.name + ": " + message;
-        ByteBuffer bf = ByteBuffer
-                .allocate(NetworkObject.BYTE_BUFFER_DEFAULT_SIZE);
-        NetworkUtils.putStringIntoBuf(bf,
-                NetworkObjectManager.MANAGER_UUID.toString());
+        ByteBuffer bf = ByteBuffer.allocate(NetworkObject.BYTE_BUFFER_DEFAULT_SIZE);
+        NetworkUtils.putStringIntoBuf(bf, NetworkObjectManager.MANAGER_UUID.toString());
         NetworkUtils.putStringIntoBuf(bf, "displayMessage");
         NetworkUtils.putStringIntoBuf(bf, message);
         this.teamMessagesToSend.offer(bf);
@@ -137,10 +135,8 @@ public class Player extends Entity {
     public void messageToAll(ByteBuffer buf) {
         String message = NetworkUtils.getStringFromBuf(buf);
         message = "[all] " + this.name + ": " + message;
-        ByteBuffer bf = ByteBuffer
-                .allocate(NetworkObject.BYTE_BUFFER_DEFAULT_SIZE);
-        NetworkUtils.putStringIntoBuf(bf,
-                NetworkObjectManager.MANAGER_UUID.toString());
+        ByteBuffer bf = ByteBuffer.allocate(NetworkObject.BYTE_BUFFER_DEFAULT_SIZE);
+        NetworkUtils.putStringIntoBuf(bf, NetworkObjectManager.MANAGER_UUID.toString());
         NetworkUtils.putStringIntoBuf(bf, "displayMessage");
         NetworkUtils.putStringIntoBuf(bf, message);
         this.allMessagesToSend.offer(bf);
@@ -159,6 +155,12 @@ public class Player extends Entity {
         }
 
         return Optional.empty();
+    }
+
+    @Override
+    public Graphic getGraphic(Vector2D playerPos) {
+        DirectionalSprite frame = animation.getFrame();
+        return frame.getCurrentGraphic(position, direction, playerPos);
     }
 
     @Override
@@ -191,24 +193,12 @@ public class Player extends Entity {
             // The difference between our previous and new positions.
             Vector2D displacement = position.subtract(prevPos);
             updateInertia(displacement);
-            playFootsteps(displacement);
+            animation.update(displacement.magnitude());
         }
+
         prevPos = position;
         prevDir = direction;
         currentWeapon.update();
-    }
-
-    /**
-     * Play footstep sound iff:
-     * 
-     * - we're running on a client (we don't play sound effects on the server)
-     * 
-     * - our position has changed
-     * 
-     * - this player represents the client's current player
-     */
-    private void playFootsteps(Vector2D displacement) {
-        
     }
 
     private void updateInertia(Vector2D displacement) {
@@ -221,13 +211,11 @@ public class Player extends Entity {
         final double p = 0.1D;
         inertiaX += (int) (p * -inertiaX);
         inertiaY += (int) (p * -inertiaY);
-        Vector2D temp = new Vector2D(plane.getX() / plane.magnitude(),
-                plane.getY() / plane.magnitude());
+        Vector2D temp = new Vector2D(plane.getX() / plane.magnitude(), plane.getY() / plane.magnitude());
         double orthProjection = displacement.dot(temp);
         inertiaX -= orthProjection * currentWeapon.getInertiaCoeffX();
 
-        temp = new Vector2D(direction.getX() / direction.magnitude(),
-                direction.getY() / direction.magnitude());
+        temp = new Vector2D(direction.getX() / direction.magnitude(), direction.getY() / direction.magnitude());
         orthProjection = displacement.dot(temp);
         inertiaY += orthProjection * currentWeapon.getInertiaCoeffY();
 
@@ -301,8 +289,7 @@ public class Player extends Entity {
         if (currentHealth <= 0) {
             System.out.println(name + " was killed by " + inflictor.getName());
             this.sendSystemMessage(name, inflictor);
-            GameEngine.getSingleton().getWorld().getGameManager()
-                    .onPlayerDeath(this);
+            GameEngine.getSingleton().getWorld().getGameManager().onPlayerDeath(this);
         }
     }
 
