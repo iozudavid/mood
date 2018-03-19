@@ -4,6 +4,7 @@ import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Rectangle;
 import java.nio.ByteBuffer;
+import java.util.Optional;
 import java.util.UUID;
 
 import com.knightlore.engine.GameEngine;
@@ -13,6 +14,8 @@ import com.knightlore.network.NetworkObject;
 import com.knightlore.network.client.ClientNetworkObjectManager;
 import com.knightlore.network.protocol.NetworkUtils;
 import com.knightlore.utils.Vector2D;
+import com.knightlore.utils.funcptrs.BooleanFunction;
+import com.knightlore.utils.funcptrs.VoidFunction;
 
 public class TextField extends GUIObject {
     private static final Color upColour = Color.WHITE;
@@ -27,6 +30,7 @@ public class TextField extends GUIObject {
 	private Graphics g;
 	private char sendTo;
 	private boolean select = true; 
+	private Optional<BooleanFunction<Character>> restrictText = Optional.empty();
 		
 	public TextField(int x, int y, int width, int height) {
         super(x, y, width, height);
@@ -54,6 +58,10 @@ public class TextField extends GUIObject {
 	
 	public String getText() {
 	    return text;
+	}
+	
+	public void setRestriction(BooleanFunction<Character> restrict){
+		this.restrictText=Optional.of(restrict);
 	}
 	
 	public void displayText(String t){
@@ -138,6 +146,10 @@ public class TextField extends GUIObject {
 	}
 
 	void onInputChar(char c) {
+		if(this.restrictText.isPresent()){
+			if(!this.restrictText.get().check(c))
+				return;
+		}
 		if(text.length()==0)
 			insertString = c + "|";
 		else

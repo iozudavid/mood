@@ -6,6 +6,7 @@ import com.knightlore.engine.GameEngine;
 import com.knightlore.engine.GameState;
 import com.knightlore.network.ConnectionDetails;
 import com.knightlore.render.PixelBuffer;
+import com.knightlore.utils.funcptrs.BooleanFunction;
 import com.knightlore.utils.funcptrs.VoidFunction;
 
 public class MultiplayerMenu {
@@ -43,6 +44,13 @@ public class MultiplayerMenu {
 		this.gui.addGUIObject(this.ipTextField);
 		this.portText = new Text(GuiUtils.middleWidth(this.screenWidth, 50), GuiUtils.calculateHeight(this.screenHeight, 50), 50, 40, "Port", 20);
 		this.portTextField = new TextField(GuiUtils.middleWidth(this.screenWidth, 300), GuiUtils.calculateHeight(this.screenHeight, 57), 300, 40, "5000");
+		this.portTextField.setRestriction(new BooleanFunction<Character>() {
+
+			@Override
+			public boolean check(Character value) {
+				return Character.isDigit(value);
+			}
+		});
 		ArrayList<GUIObject> objsPort = new ArrayList<>();
 		objsPort.add(portText);
 		objsPort.add(portTextField);

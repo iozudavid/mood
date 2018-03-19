@@ -8,8 +8,8 @@ import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
-import com.knightlore.MainWindow;
 import com.knightlore.engine.GameEngine;
 import com.knightlore.engine.GameObject;
 import com.knightlore.engine.GameState;
@@ -17,8 +17,9 @@ import com.knightlore.engine.input.InputManager;
 import com.knightlore.render.IRenderable;
 import com.knightlore.render.PixelBuffer;
 import com.knightlore.render.graphic.Graphic;
-import com.knightlore.utils.physics.Physics;
 import com.knightlore.utils.Vector2D;
+import com.knightlore.utils.funcptrs.VoidFunction;
+import com.knightlore.utils.physics.Physics;
 
 public class GUICanvas extends GameObject implements IRenderable {
 
@@ -42,6 +43,7 @@ public class GUICanvas extends GameObject implements IRenderable {
 	private boolean lastHeld;
 	
 	private Rectangle rect;
+	private static Optional<VoidFunction> onPressEscape;
 	
 	public GUICanvas(int screenWidth, int screenHeight){
 		super();
@@ -104,8 +106,12 @@ public class GUICanvas extends GameObject implements IRenderable {
 	}
 	
 	public static void escape(){
-		activeTextField = null;
-		gameTextField.escape();
+		if (activeTextField != null) {
+			activeTextField = null;
+			gameTextField.escape();
+		} else if(onPressEscape.isPresent()){
+			onPressEscape.get().call();
+		}
 	}
 	
 	public static void inputLeftArrow(){
@@ -249,6 +255,10 @@ public class GUICanvas extends GameObject implements IRenderable {
 
 	public static void setActiveTextField(TextField activeTextField) {
 		GUICanvas.activeTextField = activeTextField;
+	}
+	
+	public static void setOnEscFunction(VoidFunction func){
+		onPressEscape=Optional.of(func);
 	}
 	
 }

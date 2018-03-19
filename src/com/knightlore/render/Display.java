@@ -2,6 +2,7 @@ package com.knightlore.render;
 
 import com.knightlore.engine.GameEngine;
 import com.knightlore.gui.GameChat;
+import com.knightlore.gui.InGameMenu;
 import com.knightlore.gui.MultiplayerMenu;
 import com.knightlore.gui.StartMenu;
 import com.knightlore.render.hud.HUD;
@@ -35,6 +36,7 @@ public class Display implements IRenderable {
     private GameChat chat;
     private StartMenu startMenu;
     private MultiplayerMenu mpMenu;
+    private InGameMenu inGameMenu;
 
     public Display(){}
     
@@ -70,6 +72,7 @@ public class Display implements IRenderable {
 
 			PixelBuffer chatBuffer = chat.getPixelBuffer();
 			pix.composite(chatBuffer, x, y);
+			
 			this.clearDisplay();
 			break;
 			
@@ -112,6 +115,10 @@ public class Display implements IRenderable {
 		default:
 			return;
     	}
+    }
+    
+    public void setInGameMenu(InGameMenu gm){
+    	this.inGameMenu = gm;
     }
     
     public void setMinimap(Minimap m){

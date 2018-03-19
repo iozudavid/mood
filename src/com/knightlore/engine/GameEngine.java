@@ -9,6 +9,7 @@ import com.knightlore.game.world.ClientWorld;
 import com.knightlore.game.world.GameWorld;
 import com.knightlore.game.world.ServerWorld;
 import com.knightlore.gui.GameChat;
+import com.knightlore.gui.InGameMenu;
 import com.knightlore.gui.MultiplayerMenu;
 import com.knightlore.gui.StartMenu;
 import com.knightlore.network.NetworkObjectManager;
