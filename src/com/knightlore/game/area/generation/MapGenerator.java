@@ -74,14 +74,14 @@ public class MapGenerator extends ProceduralAreaGenerator {
         // TODO: Expand this if we need other types of
         // of room
         roomsToBuild.add(RoomType.spawn);
-        roomsToBuild.add(RoomType.pickup);
+        roomsToBuild.add(RoomType.weapon);
         roomsToBuild.add(RoomType.middle);
         roomsToBuild.add(RoomType.middle);
         
         for(int i=1; i < maxRooms; i++) {
             double randInt = rand.nextDouble();
             if(randInt >= 0.66) {
-                roomsToBuild.add(RoomType.pickup);
+                roomsToBuild.add(RoomType.health);
             }else {
                 roomsToBuild.add(RoomType.normal);
             }
@@ -107,8 +107,10 @@ public class MapGenerator extends ProceduralAreaGenerator {
         switch(rt){
             case spawn :
                 return setRoomPosition(room,0,0, width/4, height);
-            case pickup :
+            case weapon :
                 return setRoomPosition(room, width/4, height/4, width*3/4 , height*3/4);
+            case health:
+                return setRoomPosition(room, width/4, height/4, width, height);
             case middle :
                 return setRoomPosition(room, width-(room.getWidth()), 0, width+1, height);
             default : return setRoomPosition(room, 0,0, width, height);

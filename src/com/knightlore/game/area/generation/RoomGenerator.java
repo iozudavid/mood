@@ -23,6 +23,8 @@ public class RoomGenerator extends ProceduralAreaGenerator {
     private static final int MAX_SIZE = 15;
     private static final int SPAWN_ROOM_MIN_CONNECTIONS = 1;
     private static final int SPAWN_ROOM_MAX_CONNECTIONS = 2;
+    private static final int MAX_INTERNAL_WALLS = 4;
+    private static final double INTERNAL_WALL_PROBABILITY = 0.15;
 
     public Room createRoom(long seed, RoomType rt) {
         rand = new Random(seed);
@@ -67,28 +69,64 @@ public class RoomGenerator extends ProceduralAreaGenerator {
                     grid[i][midy+1] = new PlayerSpawnTile(Team.BLUE, Vector2D.UP);
                 }
                 break; 
-            case pickup :
-                if(rand.nextDouble() < 0.5) {
-                    grid[midx][midy] = new PickupTile(PickupType.health);
-                }else {
-                    for(int i=0; i<width; i++) {
-                        for(int j=0; j<height; j++) {
-                            grid[i][j] = new LavaTile();
-                        }
+            case health :
+                grid[midx][midy] = new PickupTile(PickupType.health);
+                break;
+            case weapon :
+                for(int i=0; i<width; i++) {
+                    for(int j=0; j<height; j++) {
+                        grid[i][j] = new LavaTile();
                     }
-                    grid[midx][midy] = new PickupTile(PickupType.shotgun);
                 }
+                grid[midx][midy] = new PickupTile(PickupType.shotgun);
                 break;
             case middle :
-                fillGrid(RoomType.pickup);
+                if(rand.nextDouble() > 0.5) {
+                    fillGrid(RoomType.weapon);
+                }else {
+                    fillGrid(RoomType.normal);
+                }
                 removeRightWall();
                 return;
-            default: break;
+            case normal :
+                addInternalWalls();
         }
         fillUndecidedTiles();
         addWalls();
     }
 
+    private void addInternalWalls() {
+        int width = grid.length;
+        int height = grid[0].length;
+        int numInternalWalls = 0;
+        for(int i=2; i<width-2; i++) {
+            if(numInternalWalls == MAX_INTERNAL_WALLS) { return; };
+            if(rand.nextDouble() <= INTERNAL_WALL_PROBABILITY) {
+                addVerticalInternalWall(i);
+            }
+        }
+        for(int j=2; j<height-2; j++) {
+            if(numInternalWalls == MAX_INTERNAL_WALLS) { return; };
+            if(rand.nextDouble() <= INTERNAL_WALL_PROBABILITY) {
+                addHorizontalInternalWall(j);
+            }
+        }
+    }
+    
+    private void addHorizontalInternalWall(int y) {
+        int width = grid.length;
+        for(int i=2; i< width-2; i++) {
+            grid[i][y] = new BrickTile();
+        }
+    }
+    
+    private void addVerticalInternalWall(int x) {
+        int height = grid[0].length;
+        for(int j=2; j< height-2; j++) {
+            grid[x][j] = new BrickTile();
+        }
+    }
+    
     private void addWalls() {
         int width = grid.length;
         int height = grid[0].length;
@@ -116,7 +154,7 @@ public class RoomGenerator extends ProceduralAreaGenerator {
 
     private void removeRightWall() {
         for(int y=1; y < grid[0].length -1 ; y++) {
-            grid[grid.length-1][y] = AirTile.getInstance();
+            grid[grid.length-1][y] = new LavaTile();
         }
     }
     

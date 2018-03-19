@@ -5,7 +5,7 @@ import com.knightlore.game.entity.Entity;
 public class Fire extends Buff{
 
     private static int FIRE_DAMAGE = 2;
-    private static final double FIRE_FREQUENCY = 0.5;
+    private static final double FIRE_FREQUENCY = 1;
     private static final double FIRE_LENGTH = 8;
     
     public Fire(Entity ent) {

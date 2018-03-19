@@ -49,7 +49,7 @@ public abstract class Entity extends NetworkObject implements TickListener, IMin
     protected double damageTakenModifier = 1;
     
     protected ArrayList<Buff> buffList = new ArrayList<Buff>();
-    private static final double BUFF_TICK_RATE = GameEngine.UPDATES_PER_SECOND / 16;
+    private static final double BUFF_TICK_RATE = GameEngine.UPDATES_PER_SECOND / 32;
     
     /**
      * The map which the entity exists in. This is required for collision
