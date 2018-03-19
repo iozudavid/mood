@@ -14,7 +14,7 @@ public abstract class Weapon {
     // How far away an entity should be from us before we don't play the shoot
     // sound. Sound effects for shots fired closer than this will have their
     // volume scaled linearly.
-    private float SHOOT_SFX_CUTOFF_DISTANCE = 10;
+    private static final float SHOOT_SFX_CUTOFF_DISTANCE = 10;
 
     protected Graphic graphic;
     protected boolean automatic;
@@ -22,7 +22,7 @@ public abstract class Weapon {
 
     private SoundResource shootSFX;
 
-    public Weapon(Graphic graphic, boolean automatic, int fireRate, SoundResource shootSFX) {
+    Weapon(Graphic graphic, boolean automatic, int fireRate, SoundResource shootSFX) {
         this.graphic = graphic;
         this.automatic = automatic;
         this.fireRate = fireRate;
