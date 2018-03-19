@@ -1,17 +1,13 @@
 package com.knightlore.render.animation;
 
-import java.util.ArrayList;
-
 import com.knightlore.engine.TickListener;
-import com.knightlore.render.graphic.Graphic;
 
-public class TimedAnimation extends Animation<Graphic> implements TickListener {
+public class TimedAnimation<T> extends Animation<T> implements TickListener {
 
     private long interval;
 
     public TimedAnimation(long interval) {
-        frames = new ArrayList<Graphic>();
-        currentFrame = 0;
+        super();
         this.interval = interval;
     }
 
@@ -19,7 +15,7 @@ public class TimedAnimation extends Animation<Graphic> implements TickListener {
     public long interval() {
         return interval;
     }
-    
+
     @Override
     public void onTick() {
         nextFrame();
