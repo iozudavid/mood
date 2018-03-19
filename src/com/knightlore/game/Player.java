@@ -32,7 +32,7 @@ import com.knightlore.utils.Vector2D;
 
 public class Player extends Entity {
 
-    private PlayerAnimation animation = new PlayerAnimation(GraphicSheet.BLUE_PLAYER_ANIM_WIELDING_PISTOL);
+    private PlayerAnimation animation = new PlayerAnimation(GraphicSheet.BLUE_PLAYER_ANIM_WIELDING_SHOTGUN);
 
     public static final int MAX_HEALTH = 100;
     // Maps all inputs that the player could be making to their values.
@@ -195,7 +195,7 @@ public class Player extends Entity {
             updateInertia(displacement);
             animation.update(displacement.magnitude());
         }
-        
+
         prevPos = position;
         prevDir = direction;
         currentWeapon.update();
