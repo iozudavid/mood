@@ -26,13 +26,14 @@ import com.knightlore.network.protocol.NetworkUtils;
 import com.knightlore.render.PixelBuffer;
 import com.knightlore.render.animation.PlayerAnimation;
 import com.knightlore.render.graphic.Graphic;
-import com.knightlore.render.graphic.GraphicSheet;
+import com.knightlore.render.graphic.PlayerGraphicMatrix;
 import com.knightlore.render.graphic.sprite.DirectionalSprite;
 import com.knightlore.utils.Vector2D;
 
 public class Player extends Entity {
 
-    private PlayerAnimation animation = new PlayerAnimation(GraphicSheet.BLUE_PLAYER_ANIM_WIELDING_SHOTGUN);
+    private PlayerAnimation animation = new PlayerAnimation(PlayerGraphicMatrix.getGraphic(
+            PlayerGraphicMatrix.Color.BLUE, PlayerGraphicMatrix.Weapon.PISTOL, PlayerGraphicMatrix.Stance.MOVE));
 
     public static final int MAX_HEALTH = 100;
     // Maps all inputs that the player could be making to their values.

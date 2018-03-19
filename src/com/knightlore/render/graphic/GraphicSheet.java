@@ -39,12 +39,7 @@ public class GraphicSheet {
             ColorFilter.RED);
     public final static GraphicSheet BLUE_PLAYER_SPRITES = new GraphicSheet("res/models/player_sprites.png", 128,
             ColorFilter.BLUE);
-
-    public final static GraphicSheet BLUE_PLAYER_ANIM_WIELDING_SHOTGUN = new GraphicSheet(
-            "res/models/pl_blue_shotgun_anim_sprites.png", 128);
-    public final static GraphicSheet BLUE_PLAYER_ANIM_WIELDING_PISTOL = new GraphicSheet(
-            "res/models/pl_blue_pistol_anim_sprites.png", 128);
-
+    
     /**
      * A graphicsheet for the shotgun directional sprite.
      */
