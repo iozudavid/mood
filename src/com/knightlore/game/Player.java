@@ -275,7 +275,7 @@ public class Player extends Entity {
 
     @Override
     public DirectionalSprite getDirectionalSprite() {
-        return DirectionalSprite.RED_PLAYER_DIRECTIONAL_SPRITE;
+        return DirectionalSprite.PLAYER_DIRECTIONAL_SPRITE;
     }
 
     @Override
