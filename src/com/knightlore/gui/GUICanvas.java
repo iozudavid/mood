@@ -184,7 +184,6 @@ public class GUICanvas extends GameObject implements IRenderable {
 		
 		// notify new gui of mouse enter
 		if (selected != null) {
-			System.out.println(selected);
 			// send mouse entered event
 			if (selected != lastSelected) {
 				selected.onMouseEnter();

@@ -176,15 +176,16 @@ public class GameEngine implements Runnable {
     }
 
 	public void stop() {
-    	if(GameSettings.isClient()){
-    		window.dispose();
-    	}
+		this.gameObjectManager.stop();
         running = false;
         try {
             thread.join();
         } catch (InterruptedException e) {
             // should't happen as the thread shouldn't be interrupted
             e.printStackTrace();
+        }
+        if(GameSettings.isClient()){
+        	window.dispose();
         }
     }
 
@@ -203,7 +204,8 @@ public class GameEngine implements Runnable {
 				delta += (now - lastTime) / ns;
 				lastTime = now;
 				while (delta >= 1) {
-					gameObjectManager.updateObjects();
+					if(running)
+						gameObjectManager.updateObjects();
 					if (this.gameState == GameState.InGame) {
 						world.update();
 						GameFeed.getInstance().update();
@@ -211,7 +213,6 @@ public class GameEngine implements Runnable {
 					delta -= 1;
 					ticker.tick();
 				}
-
             if (!HEADLESS) {
                 screen.render(0, 0, display);
                 InputManager.clearMouse();
