@@ -36,7 +36,6 @@ public class Display implements IRenderable {
     private GameChat chat;
     private StartMenu startMenu;
     private MultiplayerMenu mpMenu;
-    private InGameMenu inGameMenu;
 
     public Display(){}
     
@@ -115,10 +114,6 @@ public class Display implements IRenderable {
 		default:
 			return;
     	}
-    }
-    
-    public void setInGameMenu(InGameMenu gm){
-    	this.inGameMenu = gm;
     }
     
     public void setMinimap(Minimap m){

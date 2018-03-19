@@ -9,10 +9,13 @@ import com.knightlore.network.TCPConnection;
 import com.knightlore.network.server.Receive;
 
 public class ClientManager implements Runnable {
+	
+	private static Socket server;
+	
     @Override
     public void run() {
         try {
-            Socket server = new Socket(ConnectionDetails.SERVER_HOSTNAME, ConnectionDetails.PORT);
+            server = new Socket(ConnectionDetails.SERVER_HOSTNAME, ConnectionDetails.PORT);
             System.out.println("Connected to server " + ConnectionDetails.SERVER_HOSTNAME);
             TCPConnection conn = new TCPConnection(server);
             new Thread(conn).start();
@@ -48,6 +51,15 @@ public class ClientManager implements Runnable {
             System.err.println("Unexpected interruption occured " + e.getMessage());
         }
 
+    }
+    
+    public static void disconnect(){
+    	try {
+			server.close();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
     }
 
 }

@@ -60,6 +60,14 @@ public class StartMenu {
 			}
 		};
 		
+		this.quitButton.clickFunction = new VoidFunction() {
+			
+			@Override
+			public void call() {
+				GameEngine.getSingleton().stop();
+			}
+		};
+		
 		gui.addGUIObject(coverImage);
 		gui.addGUIObject(name);
 		gui.addGUIObject(singlePlayerButton);

@@ -9,9 +9,6 @@ import com.knightlore.game.world.ClientWorld;
 import com.knightlore.game.world.GameWorld;
 import com.knightlore.game.world.ServerWorld;
 import com.knightlore.gui.GameChat;
-import com.knightlore.gui.InGameMenu;
-import com.knightlore.gui.MultiplayerMenu;
-import com.knightlore.gui.StartMenu;
 import com.knightlore.network.NetworkObjectManager;
 import com.knightlore.network.client.ClientManager;
 import com.knightlore.network.client.ClientNetworkObjectManager;
@@ -39,6 +36,7 @@ public class GameEngine implements Runnable {
     private static GameEngine singleton = null;
 
     private Thread thread;
+    private Thread clientThread;
     private volatile boolean running = false;
 
     public static final double UPDATES_PER_SECOND = 60D;
@@ -122,7 +120,8 @@ public class GameEngine implements Runnable {
             world = new ClientWorld();
             networkObjectManager = new ClientNetworkObjectManager((ClientWorld) world);
             ClientManager networkManager = new ClientManager();
-            new Thread(networkManager).start();
+            clientThread = new Thread(networkManager);
+            clientThread.start();
         }
 
         System.out.println("Initialising NetworkObjectManager...");
@@ -176,7 +175,10 @@ public class GameEngine implements Runnable {
         }
     }
 
-    public void stop() {
+	public void stop() {
+    	if(GameSettings.isClient()){
+    		window.dispose();
+    	}
         running = false;
         try {
             thread.join();

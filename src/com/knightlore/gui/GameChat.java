@@ -1,5 +1,8 @@
 package com.knightlore.gui;
 
+import com.knightlore.engine.GameEngine;
+import com.knightlore.engine.GameState;
+import com.knightlore.network.client.ClientManager;
 import com.knightlore.render.PixelBuffer;
 import com.knightlore.utils.funcptrs.VoidFunction;
 
@@ -43,6 +46,7 @@ public class GameChat {
 				GameChat.this.setPauseMenuVisible(!GameChat.this.lastVisible);
 			}
 		});
+		
 	}
 	
 	public void initHidden(){
@@ -54,6 +58,24 @@ public class GameChat {
 			@Override
 			public void call() {
 				GameChat.this.setPauseMenuVisible(false);
+			}
+		};
+		this.mainMenuButton.clickFunction = new VoidFunction() {
+			
+			@Override
+			public void call() {
+				ClientManager.disconnect();
+				GameChat.this.gui.destroy();
+				GameEngine.getSingleton().gameState=GameState.StartMenu;
+			}
+		};
+		this.exitButton.clickFunction = new VoidFunction() {
+			
+			@Override
+			public void call() {
+				ClientManager.disconnect();
+				GameChat.this.gui.destroy();
+				GameEngine.getSingleton().stop();
 			}
 		};
 	}
