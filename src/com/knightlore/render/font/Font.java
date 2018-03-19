@@ -16,18 +16,16 @@ import com.knightlore.render.graphic.filter.ColorFilter;
 
 public class Font {
 
-    public static final Font DEFAULT_BLACK = new Font("res/font/font.png", "ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890 ?!-+",
-            0x000000);
-    public static final Font DEFAULT_WHITE = new Font("res/font/font.png", "ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890 ?!-+",
-            0xFFFFFF);
+    public static final Font DEFAULT_WHITE = new Font("res/font/font.png",
+            "ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890 ?!-+", 0xFFFFFF);
 
     private static final int BOUNDS_COLOR = -65536; // pure red.
 
     private BufferedImage sheet;
     private Map<Character, Graphic> symbols;
 
-    public Font(String path, String order, int color) {
-        this.symbols = new HashMap<Character, Graphic>();
+    private Font(String path, String order, int color) {
+        this.symbols = new HashMap<>();
         load(path);
         populateSymbols(order, color);
     }
@@ -41,7 +39,7 @@ public class Font {
     }
 
     private void populateSymbols(String order, int color) {
-        List<Integer> bounds = new ArrayList<Integer>();
+        List<Integer> bounds = new ArrayList<>();
         for (int x = 0; x < sheet.getWidth(); x++) {
             if (sheet.getRGB(x, 0) == BOUNDS_COLOR)
                 bounds.add(x);
@@ -63,12 +61,14 @@ public class Font {
     }
 
     public Graphic getGraphic(char c) {
-        if (symbols.containsKey(c))
+        if (symbols.containsKey(c)) {
             return symbols.get(c);
+        }
         
         c = Character.toUpperCase(c);
-        if (symbols.containsKey(c))
+        if (symbols.containsKey(c)) {
             return symbols.get(c);
+        }
         
         final char[] backupSymbols = new char[] {'?', '!', ' '};
         for(char x : backupSymbols) {
