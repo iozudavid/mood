@@ -158,6 +158,10 @@ public class TextField extends GUIObject {
 	}
 	
 	void onSendMessage(char c) {
+	    // do not send if null or nothing to send
+	    if(text == null || text.length() == 0) {
+	        return;
+	    }
 		ClientNetworkObjectManager manager = (ClientNetworkObjectManager) GameEngine.getSingleton().getNetworkObjectManager();
 		ByteBuffer nextMessage = constructMessage(manager.getMyPlayer().getObjectId());
 		manager.addToChat(nextMessage);
