@@ -30,9 +30,9 @@ public class ServerWorld extends GameWorld {
         ShotgunPickup shot = new ShotgunPickup(new Vector2D(8, 8));
         shot.init();
         ents.add(shot);
-        ZombieServer zom = new ZombieServer(map.getRandomSpawnPoint());
-        zom.init();
-        ents.add(zom);
+//        ZombieServer zom = new ZombieServer(map.getRandomSpawnPoint());
+//        zom.init();
+//        ents.add(zom);
         // add pickups
         for (int i = 5; i < 9; i += 2) {
             ShotgunPickup shotI = new ShotgunPickup(new Vector2D(i, 3));

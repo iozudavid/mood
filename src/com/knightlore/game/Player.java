@@ -24,10 +24,24 @@ import com.knightlore.network.protocol.ClientController;
 import com.knightlore.network.protocol.ClientProtocol;
 import com.knightlore.network.protocol.NetworkUtils;
 import com.knightlore.render.PixelBuffer;
+import com.knightlore.render.animation.Animation;
+import com.knightlore.render.animation.PlayerMoveAnimation;
+import com.knightlore.render.animation.PlayerStandAnimation;
+import com.knightlore.render.graphic.Graphic;
+import com.knightlore.render.graphic.PlayerGraphicMatrix;
 import com.knightlore.render.graphic.sprite.DirectionalSprite;
 import com.knightlore.utils.Vector2D;
 
 public class Player extends Entity {
+    private PlayerMoveAnimation moveAnim = new PlayerMoveAnimation(PlayerGraphicMatrix.getGraphic(
+            PlayerGraphicMatrix.Color.BLUE, PlayerGraphicMatrix.Weapon.PISTOL, PlayerGraphicMatrix.Stance.MOVE));
+    
+    private PlayerStandAnimation standAnim = new PlayerStandAnimation(
+            PlayerGraphicMatrix.getGraphic(PlayerGraphicMatrix.Color.BLUE, PlayerGraphicMatrix.Weapon.PISTOL,
+                    PlayerGraphicMatrix.Stance.STAND),
+            (long) (GameEngine.UPDATES_PER_SECOND / 10));
+    
+    private Animation<DirectionalSprite> currentAnim = standAnim;
     
     public static final int MAX_HEALTH = 100;
     // Maps all inputs that the player could be making to their values.
@@ -66,7 +80,7 @@ public class Player extends Entity {
         setNetworkConsumers();
         
         zOffset = 100;
-        moveSpeed = 0.120;
+        moveSpeed = 0.060;
         strafeSpeed = 0.08;
         rotationSpeed = 0.06;
     }
@@ -156,6 +170,12 @@ public class Player extends Entity {
     }
     
     @Override
+    public Graphic getGraphic(Vector2D playerPos) {
+        DirectionalSprite frame = currentAnim.getFrame();
+        return frame.getCurrentGraphic(position, direction, playerPos);
+    }
+    
+    @Override
     public void onUpdate() {
         super.onUpdate();
         
@@ -180,14 +200,29 @@ public class Player extends Entity {
                 }
             }
         }
+        if (prevDir != null && prevPos != null) {
+            // The difference between our previous and new positions.
+            Vector2D displacement = position.subtract(prevPos);
+            updateInertia(displacement);
+            
+            double dis = displacement.magnitude();
+            if (dis != 0) {
+                currentAnim = moveAnim;
+                moveAnim.update(dis);
+            } else {
+                currentAnim = standAnim;
+            }
+        }
         
-        updateInertia();
-        prevPos = position;
-        prevDir = direction;
         currentWeapon.update();
+        
+        if (GameEngine.ticker.getTime() % 5 == 0) {
+            prevPos = position;
+            prevDir = direction;
+        }
     }
     
-    private void updateInertia() {
+    private void updateInertia(Vector2D displacement) {
         if (!GameSettings.MOTION_BOB) {
             inertiaX = 0;
             inertiaY = 0;
@@ -197,29 +232,24 @@ public class Player extends Entity {
         final double p = 0.1D;
         inertiaX += (int) (p * -inertiaX);
         inertiaY += (int) (p * -inertiaY);
+        Vector2D temp = new Vector2D(plane.getX() / plane.magnitude(), plane.getY() / plane.magnitude());
+        double orthProjection = displacement.dot(temp);
+        inertiaX -= orthProjection * currentWeapon.getInertiaCoeffX();
         
-        if (prevPos != null && prevDir != null) {
-            
-            Vector2D displacement = position.subtract(prevPos);
-            Vector2D temp = new Vector2D(plane.getX() / plane.magnitude(), plane.getY() / plane.magnitude());
-            double orthProjection = displacement.dot(temp);
-            inertiaX -= orthProjection * currentWeapon.getInertiaCoeffX();
-            
-            temp = new Vector2D(direction.getX() / direction.magnitude(), direction.getY() / direction.magnitude());
-            orthProjection = displacement.dot(temp);
-            inertiaY += orthProjection * currentWeapon.getInertiaCoeffY();
-            
-            double prevDirTheta = Math.atan2(prevDir.getY(), prevDir.getX());
-            double directionTheta = Math.atan2(direction.getY(), direction.getX());
-            double diff = directionTheta - prevDirTheta;
-            if (diff > Math.PI) {
-                diff -= 2 * Math.PI;
-            } else if (diff < -Math.PI) {
-                diff += 2 * Math.PI;
-            }
-            
-            inertiaX += currentWeapon.getInertiaCoeffX() * diff;
+        temp = new Vector2D(direction.getX() / direction.magnitude(), direction.getY() / direction.magnitude());
+        orthProjection = displacement.dot(temp);
+        inertiaY += orthProjection * currentWeapon.getInertiaCoeffY();
+        
+        double prevDirTheta = Math.atan2(prevDir.getY(), prevDir.getX());
+        double directionTheta = Math.atan2(direction.getY(), direction.getX());
+        double diff = directionTheta - prevDirTheta;
+        if (diff > Math.PI) {
+            diff -= 2 * Math.PI;
+        } else if (diff < -Math.PI) {
+            diff += 2 * Math.PI;
         }
+        
+        inertiaX += currentWeapon.getInertiaCoeffX() * diff;
     }
     
     private void shoot() {
@@ -247,6 +277,8 @@ public class Player extends Entity {
     
     @Override
     public synchronized void deserialize(ByteBuffer buf) {
+        prevPos = position;
+        prevDir = direction;
         super.deserialize(buf);
         shootOnNextUpdate = buf.getInt() == 1;
         currentHealth = buf.getInt();
@@ -272,7 +304,7 @@ public class Player extends Entity {
     
     @Override
     public DirectionalSprite getDirectionalSprite() {
-        return DirectionalSprite.RED_PLAYER_DIRECTIONAL_SPRITE;
+        return DirectionalSprite.PLAYER_DIRECTIONAL_SPRITE;
     }
     
     @Override

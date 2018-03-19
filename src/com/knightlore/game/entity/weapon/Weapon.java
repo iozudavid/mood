@@ -1,27 +1,55 @@
 package com.knightlore.game.entity.weapon;
 
 import com.knightlore.GameSettings;
+import com.knightlore.engine.GameEngine;
+import com.knightlore.engine.audio.SoundManager;
+import com.knightlore.engine.audio.SoundResource;
 import com.knightlore.game.entity.Entity;
 import com.knightlore.render.PixelBuffer;
 import com.knightlore.render.graphic.Graphic;
 import com.knightlore.render.graphic.sprite.WeaponSprite;
+import com.knightlore.utils.Vector2D;
 
 public abstract class Weapon {
+    // How far away an entity should be from us before we don't play the shoot
+    // sound. Sound effects for shots fired closer than this will have their
+    // volume scaled linearly.
+    private float SHOOT_SFX_CUTOFF_DISTANCE = 10;
 
     protected Graphic graphic;
     protected boolean automatic;
     protected int fireRate, timer;
 
-    public Weapon(Graphic graphic, boolean automatic, int fireRate) {
+    private SoundResource shootSFX;
+
+    public Weapon(Graphic graphic, boolean automatic, int fireRate, SoundResource shootSFX) {
         this.graphic = graphic;
         this.automatic = automatic;
         this.fireRate = fireRate;
+        this.shootSFX = shootSFX;
     }
 
     public abstract int damageInflicted(Entity shooter, Entity target);
 
     public void fire(Entity shooter) {
         this.timer = 0;
+
+        if (GameSettings.isClient())
+            playShotSFX(shooter);
+    }
+
+    private void playShotSFX(Entity shooter) {
+        // Determine volume to play sound effect based on distance from us.
+        Vector2D ourPos = GameEngine.getSingleton().getCamera().getPosition();
+        Vector2D theirPos = shooter.getPosition();
+        float distance = (float) ourPos.distance(theirPos);
+        // This must be a decimal from 0 to 1.
+        float scale = 1 - (distance / SHOOT_SFX_CUTOFF_DISTANCE);
+        SoundManager soundManager = GameEngine.getSingleton().getSoundManager();
+        // Scale against the default volume of sound effects.
+        float volume = scale * soundManager.defaultVolume;
+        if (volume > 0)
+            soundManager.playConcurrently(shootSFX, volume);
     }
 
     private int weaponBobX = GameSettings.MOTION_BOB ? 20 : 0, weaponBobY = GameSettings.MOTION_BOB ? 30 : 0;

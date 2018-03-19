@@ -20,12 +20,10 @@ public class BrickTile extends Tile {
 
     @Override
     public void onShot() {
-        System.out.println("shot brick");
     }
 
     @Override
     public void onEntered(Entity entity) {
-        // do nothing
     }
 
     @Override
