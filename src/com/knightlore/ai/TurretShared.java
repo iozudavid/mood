@@ -6,7 +6,6 @@ import java.util.UUID;
 import com.knightlore.game.Team;
 import com.knightlore.game.entity.Entity;
 import com.knightlore.render.graphic.sprite.DirectionalSprite;
-import com.knightlore.utils.Utils;
 import com.knightlore.utils.Vector2D;
 
 public abstract class TurretShared extends Entity {
@@ -82,7 +81,7 @@ public abstract class TurretShared extends Entity {
     
     @Override
     public int getMinimapColor() {
-        return Utils.colorForTeam(team);
+        return team.getColor();
     }
     
     @Override
