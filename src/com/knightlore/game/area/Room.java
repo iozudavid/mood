@@ -11,7 +11,7 @@ public class Room extends Area {
     private int minConnections = 2;
     private int maxConnections = 6;
     
-    private Point position;
+    private Point position = new Point(0, 0);
     private final List<Room> connections = new LinkedList<>();
 
     public Room(Tile[][] grid) {
@@ -83,6 +83,10 @@ public class Room extends Area {
         }
 
         Room r = (Room) o;
+        if (!getPosition().equals(r.getPosition())) {
+            return false;
+        }
+
         if (getHeight() != r.getHeight() || getWidth() != r.getWidth()) {
             return false;
         }

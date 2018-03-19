@@ -123,6 +123,7 @@ public class GameEngine implements Runnable {
             clientThread = new Thread(networkManager);
             clientThread.start();
         }
+        
 
         System.out.println("Initialising NetworkObjectManager...");
         networkObjectManager.init();
@@ -149,7 +150,7 @@ public class GameEngine implements Runnable {
         
         // start the lobby
         world.getGameManager().startLobby();
-        
+        world.getGameManager().beginGame();
     }
 
     /**
@@ -191,7 +192,9 @@ public class GameEngine implements Runnable {
 
     @Override
     public void run() {
-
+        // start the lobby
+        // finally... begin!
+  
         /*
          * This piece of code limits the number of game updates per second to
          * whatever it is set to in the variable updatesPerSecond.
