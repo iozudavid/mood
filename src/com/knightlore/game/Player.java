@@ -24,7 +24,9 @@ import com.knightlore.network.protocol.ClientController;
 import com.knightlore.network.protocol.ClientProtocol;
 import com.knightlore.network.protocol.NetworkUtils;
 import com.knightlore.render.PixelBuffer;
-import com.knightlore.render.animation.PlayerAnimation;
+import com.knightlore.render.animation.Animation;
+import com.knightlore.render.animation.PlayerMoveAnimation;
+import com.knightlore.render.animation.PlayerStandAnimation;
 import com.knightlore.render.graphic.Graphic;
 import com.knightlore.render.graphic.PlayerGraphicMatrix;
 import com.knightlore.render.graphic.sprite.DirectionalSprite;
@@ -32,8 +34,15 @@ import com.knightlore.utils.Vector2D;
 
 public class Player extends Entity {
 
-    private PlayerAnimation animation = new PlayerAnimation(PlayerGraphicMatrix.getGraphic(
+    private PlayerMoveAnimation moveAnim = new PlayerMoveAnimation(PlayerGraphicMatrix.getGraphic(
             PlayerGraphicMatrix.Color.BLUE, PlayerGraphicMatrix.Weapon.PISTOL, PlayerGraphicMatrix.Stance.MOVE));
+
+    private PlayerStandAnimation standAnim = new PlayerStandAnimation(
+            PlayerGraphicMatrix.getGraphic(PlayerGraphicMatrix.Color.BLUE, PlayerGraphicMatrix.Weapon.PISTOL,
+                    PlayerGraphicMatrix.Stance.STAND),
+            (long) (GameEngine.UPDATES_PER_SECOND / 10));
+
+    private Animation<DirectionalSprite> currentAnim = standAnim;
 
     public static final int MAX_HEALTH = 100;
     // Maps all inputs that the player could be making to their values.
@@ -160,7 +169,7 @@ public class Player extends Entity {
 
     @Override
     public Graphic getGraphic(Vector2D playerPos) {
-        DirectionalSprite frame = animation.getFrame();
+        DirectionalSprite frame = currentAnim.getFrame();
         return frame.getCurrentGraphic(position, direction, playerPos);
     }
 
@@ -194,12 +203,22 @@ public class Player extends Entity {
             // The difference between our previous and new positions.
             Vector2D displacement = position.subtract(prevPos);
             updateInertia(displacement);
-            animation.update(displacement.magnitude());
+
+            double dis = displacement.magnitude();
+            if (dis != 0) {
+                currentAnim = moveAnim;
+                moveAnim.update(dis);
+            } else {
+                currentAnim = standAnim;
+            }
         }
 
-        prevPos = position;
-        prevDir = direction;
         currentWeapon.update();
+
+        if (GameEngine.ticker.getTime() % 5 == 0) {
+            prevPos = position;
+            prevDir = direction;
+        }
     }
 
     private void updateInertia(Vector2D displacement) {
@@ -252,6 +271,8 @@ public class Player extends Entity {
 
     @Override
     public synchronized void deserialize(ByteBuffer buf) {
+        prevPos = position;
+        prevDir = direction;
         super.deserialize(buf);
         shootOnNextUpdate = buf.getInt() == 1;
     }

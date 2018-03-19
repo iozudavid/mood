@@ -20,6 +20,7 @@ public class Animation<T> {
 
     public Animation() {
         this.frames = new ArrayList<T>();
+        currentFrame = 0;
     }
 
     /**

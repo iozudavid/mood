@@ -8,7 +8,8 @@ import com.knightlore.render.graphic.texture.Texture;
 
 public class LavaTile extends Tile {
 
-    private static TimedAnimation LAVA_ANIM = new TimedAnimation((long) (GameEngine.UPDATES_PER_SECOND / 4));
+    private static TimedAnimation<Graphic> LAVA_ANIM = new TimedAnimation<Graphic>(
+            (long) (GameEngine.UPDATES_PER_SECOND / 4));
     static {
         LAVA_ANIM.addFrame(Texture.LAVA_F1);
         LAVA_ANIM.addFrame(Texture.LAVA_F2);

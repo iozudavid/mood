@@ -26,7 +26,7 @@ public class PlayerGraphicMatrix {
                 "res/models/pl_blue_shotgun_walk_anim_sprites.png", 128);
         playerMatrix[Color.BLUE.ordinal()][Weapon.PISTOL.ordinal()][Stance.MOVE.ordinal()] = new GraphicSheet(
                 "res/models/pl_blue_pistol_walk_anim_sprites.png", 128);
-        
+
         playerMatrix[Color.RED.ordinal()][Weapon.SHOTGUN.ordinal()][Stance.STAND.ordinal()] = new GraphicSheet(
                 "res/models/pl_red_shotgun_stand_anim_sprites.png", 128);
         playerMatrix[Color.RED.ordinal()][Weapon.PISTOL.ordinal()][Stance.STAND.ordinal()] = new GraphicSheet(
