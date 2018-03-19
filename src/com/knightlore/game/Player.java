@@ -8,6 +8,7 @@ import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.LinkedBlockingQueue;
 
 import com.google.common.collect.ImmutableMap;
@@ -72,10 +73,23 @@ public class Player extends Entity {
         moveSpeed = 0.120;
         strafeSpeed = 0.08;
         rotationSpeed = 0.06;
+        
     }
 
     public Player(Vector2D pos, Vector2D dir) {
         this(UUID.randomUUID(), pos, dir);
+    }
+    
+    public void sendStatsToScoreBoard(){
+    	if(GameSettings.isServer())
+    		return;
+        //add to scoreboard
+        CopyOnWriteArrayList<String> stats = new CopyOnWriteArrayList<>();
+        stats.add(this.getObjectId().toString());
+        stats.add(this.getName());
+        stats.add(this.team.toString());
+        stats.add(this.score+"");
+        GameEngine.getSingleton().getDisplay().getChat().addToTable(stats);
     }
 
     @Override
@@ -164,7 +178,7 @@ public class Player extends Entity {
     @Override
     public void onUpdate() {
         super.onUpdate();
-
+        this.sendStatsToScoreBoard();
         hasShot = false;
         if (shootOnNextUpdate) {
             currentWeapon.fire(this);
@@ -312,6 +326,7 @@ public class Player extends Entity {
         }
 
         score += value;
+        this.sendStatsToScoreBoard();
     }
 
     public void decreaseScore(int value) {
@@ -320,6 +335,7 @@ public class Player extends Entity {
         }
 
         score -= value;
+        this.sendStatsToScoreBoard();
     }
 
     public int getScore() {

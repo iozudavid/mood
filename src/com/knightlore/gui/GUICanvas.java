@@ -29,7 +29,7 @@ public class GUICanvas extends GameObject implements IRenderable {
 
 	static TextField activeTextField;
 	static TextField gameTextField;
-
+	
 	private final List<GUIObject> guis;
 	private Graphic canvasGraphic;
 	private final BufferedImage canvasImage;
@@ -43,7 +43,9 @@ public class GUICanvas extends GameObject implements IRenderable {
 	private boolean lastHeld;
 	
 	private Rectangle rect;
-	private static Optional<VoidFunction> onPressEscape;
+	private static Optional<VoidFunction> onPressEscape=Optional.empty();
+	private static Optional<VoidFunction> onPressQ=Optional.empty();
+	private static Optional<VoidFunction> onReleaseQ=Optional.empty();
 	
 	public GUICanvas(int screenWidth, int screenHeight){
 		super();
@@ -113,6 +115,20 @@ public class GUICanvas extends GameObject implements IRenderable {
 			onPressEscape.get().call();
 		}
 	}
+	
+	public static void pressQ(){
+		if(onPressQ.isPresent()){
+			onPressQ.get().call();
+		}
+	}
+	
+	public static void releaseQ(){
+		if(onReleaseQ.isPresent()){
+			System.out.println("HEREEEE");
+			onReleaseQ.get().call();
+		}
+	}
+	
 	
 	public static void inputLeftArrow(){
 		if (activeTextField != null) {
@@ -258,6 +274,14 @@ public class GUICanvas extends GameObject implements IRenderable {
 	
 	public static void setOnEscFunction(VoidFunction func){
 		onPressEscape=Optional.of(func);
+	}
+	
+	public static void setOnQFunction(VoidFunction func){
+		onPressQ=Optional.of(func);
+	}
+	
+	public static void setOnQReleaseFunction(VoidFunction func){
+		onReleaseQ=Optional.of(func);
 	}
 	
 }

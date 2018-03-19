@@ -65,7 +65,7 @@ public abstract class Entity extends NetworkObject implements IMinimapObject, Pr
 
     // cannot have invalid values
     // anyone can set a team and get a team
-    public Team team;
+    public Team team=Team.NONE;
 
     /**
      * Used for rendering exclusively. A higher zOffset means that the entities

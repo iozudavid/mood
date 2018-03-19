@@ -45,6 +45,10 @@ public class Keyboard extends KeyAdapter {
         if (e.getKeyCode() < 0 || e.getKeyCode() > keys.length) {
             return;
         }
+    
+        if(GameEngine.getSingleton().gameState==GameState.InGame && e.getKeyChar()=='q'){
+        	GUICanvas.releaseQ();
+        } 
         keys[e.getKeyCode()] = false;
         // determine if this was left or right
         if (e.getKeyCode() == KeyEvent.VK_LEFT) {
@@ -57,7 +61,7 @@ public class Keyboard extends KeyAdapter {
     public boolean isTyping(){
     	return GUICanvas.isTyping();
     }
-
+    
     @Override
     public void keyTyped(KeyEvent e) {
     	char eChar = e.getKeyChar();
@@ -72,6 +76,8 @@ public class Keyboard extends KeyAdapter {
     		GUICanvas.sendMessage(e.getKeyChar());
     	} else if(GameEngine.getSingleton().gameState==GameState.InGame && e.getKeyChar()==KeyEvent.VK_ESCAPE){
     		GUICanvas.escape();
+    	} else if(GameEngine.getSingleton().gameState==GameState.InGame && eChar=='q'){
+    		GUICanvas.pressQ();
     	} else
     		GUICanvas.inputChar(e.getKeyChar());
     }

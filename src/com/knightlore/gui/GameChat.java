@@ -24,7 +24,8 @@ public class GameChat {
 	private Button resumeButton;
 	private Button mainMenuButton;
 	private Button exitButton;
-	private boolean lastVisible=false;
+	private boolean lastPauseVisible=false;
+	private boolean lastScoreVisible=true;
 	private Image scoreBoardImage;
 	private Table scoreBoard;
 	
@@ -47,44 +48,45 @@ public class GameChat {
 		pauseImage.needBackground=true;
 		this.scoreBoardImage = new Image(GuiUtils.middleWidth(screenWidth, 150), GuiUtils.calculateHeight(screenHeight, 10), 150, 50, "res/graphics/ScoreBoard.png");	
 		scoreBoardImage.needBackground=true;
-		this.gui.addGUIObject(scoreBoardImage);
-		this.scoreBoard = new Table(GuiUtils.middleWidth(screenWidth, (int)(screenWidth*0.66)), GuiUtils.calculateHeight(screenHeight, 20), (int)(screenWidth*0.66), 20, 0, 3);
+		this.scoreBoard = new Table(GuiUtils.middleWidth(screenWidth, (int)(screenWidth*0.66)), GuiUtils.calculateHeight(screenHeight, 20), (int)(screenWidth*0.66), 20, 0);
 		ArrayList<String> header = new ArrayList<>();
 		header.add("Player Name");
 		header.add("Team");
 		header.add("Score");
-		CopyOnWriteArrayList<CopyOnWriteArrayList<String>> entries = new CopyOnWriteArrayList<>();
-		CopyOnWriteArrayList<String> entry1 = new CopyOnWriteArrayList<>();
-		entry1.add("Shackky");
-		entry1.add("Blue");
-		entry1.add("100");
-		entries.add(entry1);
-		CopyOnWriteArrayList<String> entry2 = new CopyOnWriteArrayList<>();
-		entry2.add("Shackky2");
-		entry2.add("Red");
-		entry2.add("1000");
-		entries.add(entry2);
-		CopyOnWriteArrayList<String> entry3 = new CopyOnWriteArrayList<>();
-		entry3.add("Shackky3");
-		entry3.add("Blue");
-		entry3.add("10000");
-		entries.add(entry3);
 		this.scoreBoard.setTableHeader(header);
-		this.scoreBoard.addTableEntry(entry2);
-		this.scoreBoard.addTableEntry(entry1);
-		this.scoreBoard.addTableEntry(entry3);
-		this.gui.addGUIObject(scoreBoard);
 		GUICanvas.setOnEscFunction(new VoidFunction() {
 			
 			@Override
 			public void call() {
-				GameChat.this.setPauseMenuVisible(!GameChat.this.lastVisible);
+				GameChat.this.setPauseMenuVisible(!GameChat.this.lastPauseVisible);
+			}
+		});
+		
+		GUICanvas.setOnQFunction(new VoidFunction() {
+			
+			@Override
+			public void call() {
+				if(GameChat.this.lastScoreVisible)
+					return;
+				GameChat.this.lastScoreVisible=true;
+				GameChat.this.setScoreMenuVisible();
+			}
+		});
+		
+		GUICanvas.setOnQReleaseFunction(new VoidFunction() {
+			
+			@Override
+			public void call() {
+				if(!GameChat.this.lastScoreVisible)
+					return;
+				GameChat.this.lastScoreVisible=false;
+				GameChat.this.setScoreMenuVisible();
 			}
 		});
 		
 	}
 	
-	public void initHidden(){
+	public void initPauseHidden(){
 		this.resumeButton = new Button(GuiUtils.middleWidth(screenWidth, 300), GuiUtils.calculateHeight(screenHeight, 30), 300, 40, "Resume", 20);
 		this.mainMenuButton = new Button(GuiUtils.middleWidth(screenWidth, 300), GuiUtils.calculateHeight(screenHeight, 40), 300, 40, "Main Menu", 20);
 		this.exitButton = new Button(GuiUtils.middleWidth(screenWidth, 300), GuiUtils.calculateHeight(screenHeight, 50), 300, 40, "Exit", 20);
@@ -146,10 +148,14 @@ public class GameChat {
 		return this.textArea;
 	}
 	
+	public void addToTable(CopyOnWriteArrayList<String> entry){
+		this.scoreBoard.addTableEntry(entry);
+	}
+	
 	public void setPauseMenuVisible(boolean b){
-		this.lastVisible = b;
+		this.lastPauseVisible = b;
 		if(b){
-			this.initHidden();
+			this.initPauseHidden();
 			this.gui.addGUIObject(pauseImage);
 			this.gui.addGUIObject(resumeButton);
 			this.gui.addGUIObject(mainMenuButton);
@@ -162,6 +168,16 @@ public class GameChat {
 			this.resumeButton=null;
 			this.mainMenuButton=null;
 			this.exitButton=null;
+		}
+	}
+	
+	public void setScoreMenuVisible(){
+		if(this.lastScoreVisible){
+			this.gui.addGUIObject(scoreBoardImage);
+			this.gui.addGUIObject(scoreBoard);
+		}else{
+			this.gui.removeGUIObject(scoreBoardImage);
+			this.gui.removeGUIObject(scoreBoard);
 		}
 	}
 	

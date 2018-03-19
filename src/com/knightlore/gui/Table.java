@@ -11,21 +11,17 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 public class Table extends GUIObject{
 	 
-	private int columnNo;
 	private HashMap<String,Double> headersAndWidth;
 	//...
 	private CopyOnWriteArrayList<CopyOnWriteArrayList<String>> entries;
 	
-	public Table(int x, int y, int width, int height, int depth, int columnNo) {
+	public Table(int x, int y, int width, int height, int depth) {
 	        super(x, y, width, height, depth);
-	        this.columnNo = columnNo;
 	        this.headersAndWidth = new LinkedHashMap<>();
 	        this.entries = new CopyOnWriteArrayList<>();
 	 }
 	
 	public void setTableHeader(ArrayList<String> headers){
-		if(headers.size()<this.columnNo)
-			return;
 		int maxNoOfChars=0;
 		for(String t : headers)
 			maxNoOfChars += t.toCharArray().length;
@@ -36,21 +32,24 @@ public class Table extends GUIObject{
 	
 	public void addTableEntry(CopyOnWriteArrayList<String> entry){
 		synchronized (this.entries) {
-			if (entry.size() < this.columnNo)
-				return;
+			for(CopyOnWriteArrayList<String> elem : this.entries){
+				if(elem.get(0).equals(entry.get(0))){
+					this.entries.remove(elem);
+					this.entries.add(entry);
+					return;
+				}
+			}
 			this.entries.add(entry);
 		}
 	}
 	
-	public void removeTableEntry(String entityName){
+	public void removeTableEntry(String uuid) {
 		synchronized (this.entries) {
 			CopyOnWriteArrayList<String> toBeRemoved = null;
 			for (CopyOnWriteArrayList<String> entry : this.entries) {
-				for (String data : entry) {
-					if (data.equals(entityName)) {
-						toBeRemoved = entry;
-						break;
-					}
+				if (entry.get(0).equals(uuid)) {
+					toBeRemoved = entry;
+					break;
 				}
 				if (toBeRemoved != null)
 					break;
@@ -111,8 +110,12 @@ public class Table extends GUIObject{
 			
 			// render the entries
 			for (CopyOnWriteArrayList<String> wholeEntry : this.entries) {
-				int i = 0;
+				int i = -1;
 				for (String entry : wholeEntry) {
+					if(i<0){
+						i++;
+						continue;
+					}
 					// draw cell
 					g.drawRect(lastX, lastY, (int) (this.rect.width * entriesWidth.get(i)),
 							g.getFontMetrics().getHeight() + 5);
