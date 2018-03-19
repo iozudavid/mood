@@ -10,12 +10,14 @@ import java.io.IOException;
 
 import javax.imageio.ImageIO;
 
+import com.knightlore.render.PixelBuffer;
 import com.knightlore.render.graphic.Graphic;
 
 public class Image extends GUIObject{
 
 	public Graphic graphic;
 	public BufferedImage sheet;
+	public boolean needBackground = false;
 
     public Image(int x, int y, int width, int height, int depth) {
     	
@@ -45,6 +47,10 @@ public class Image extends GUIObject{
 	@Override
 	void Draw(Graphics g, Rectangle parentRect) {
 		BufferedImage imageResized = resize(sheet, rect.width,rect.height);
+		if(this.needBackground){
+			g.setColor(GuiUtils.makeTransparent(new Color(0),255));
+			g.fillRect(rect.x, rect.y, rect.width, rect.height);
+		}
 		g.drawImage(imageResized, rect.x, rect.y, null);
 	}
 
