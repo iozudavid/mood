@@ -1,10 +1,19 @@
 package com.knightlore.game;
 
-import com.knightlore.engine.GameObject;
+import java.util.UUID;
 
-public abstract class GameManager extends GameObject {
+import com.knightlore.network.NetworkObject;
 
-    protected static GameState gameState = GameState.finished;
+public abstract class GameManager extends NetworkObject {
+
+    protected long gameOverTick;
+    protected long ticksLeft;
+
+    public GameManager(UUID uuid) {
+        super(uuid);
+    }
+
+    protected static GameState gameState = GameState.FINISHED;
 
     public static GameState getGameState() {
         return gameState;
@@ -19,5 +28,11 @@ public abstract class GameManager extends GameObject {
     public abstract void onPlayerDeath(Player p);
     
     public abstract void awardScore(Player p, int score);
+    
+    public String timeLeftString() {
+        long second = (ticksLeft / 1000) % 60;
+        long minute = (ticksLeft / (1000 * 60)) % 60;
+        return String.format("%02d:%02d", minute, second);
+    }
     
 }

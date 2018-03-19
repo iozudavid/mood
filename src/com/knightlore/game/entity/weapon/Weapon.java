@@ -105,5 +105,7 @@ public abstract class Weapon {
     public int getInertiaCoeffY() {
         return inertiaCoeffY;
     }
+    
+    public abstract WeaponType getWeaponType();
 
 }

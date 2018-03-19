@@ -138,7 +138,11 @@ public abstract class Entity extends NetworkObject implements IMinimapObject, Pr
      *            the player that intersects with this entity.
      */
     public abstract void onCollide(Player player);
-
+    
+    public void killConfirmed(Player victim) {
+        // do nothing
+    }
+    
     @Override
     public void onUpdate() {
         // Tell the tile that we're currently standing on that we've entered it.
