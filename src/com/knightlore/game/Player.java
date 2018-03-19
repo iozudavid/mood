@@ -21,9 +21,11 @@ import com.knightlore.game.entity.weapon.Shotgun;
 import com.knightlore.game.entity.weapon.Weapon;
 import com.knightlore.network.NetworkObject;
 import com.knightlore.network.NetworkObjectManager;
+import com.knightlore.network.client.ClientNetworkObjectManager;
 import com.knightlore.network.protocol.ClientController;
 import com.knightlore.network.protocol.ClientProtocol;
 import com.knightlore.network.protocol.NetworkUtils;
+import com.knightlore.render.GameFeed;
 import com.knightlore.render.PixelBuffer;
 import com.knightlore.render.animation.Animation;
 import com.knightlore.render.animation.PlayerMoveAnimation;
@@ -301,14 +303,12 @@ public class Player extends Entity {
     
     @Override
     public void onCreate() {
-        // TODO Auto-generated method stub
-        
+    	super.onCreate();
     }
     
     @Override
     public void onDestroy() {
-        // TODO Auto-generated method stub
-        
+    	super.onDestroy();
     }
     
     @Override

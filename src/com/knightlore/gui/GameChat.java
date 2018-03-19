@@ -44,6 +44,8 @@ public class GameChat {
 		this.textArea.addText("System: access team chat by pressing t");
 		this.textArea.addText("System: access all chat by pressing y");
 		this.textArea.addText("System: exit chat by pressing esc");
+		this.textArea.addText("System: acces pause menu by pressing esc");
+		this.textArea.addText("System: acces scoreboard menu by pressing and holding q");
 		this.pauseImage = new Image(GuiUtils.middleWidth(screenWidth, 150), GuiUtils.calculateHeight(screenHeight, 15), 150, 50, "res/graphics/Pause.png");
 		pauseImage.needBackground=true;
 		this.scoreBoardImage = new Image(GuiUtils.middleWidth(screenWidth, 150), GuiUtils.calculateHeight(screenHeight, 10), 150, 50, "res/graphics/ScoreBoard.png");	
@@ -150,6 +152,10 @@ public class GameChat {
 	
 	public void addToTable(CopyOnWriteArrayList<String> entry){
 		this.scoreBoard.addTableEntry(entry);
+	}
+	
+	public void removeFromTable(String uuid){
+		this.scoreBoard.removeTableEntry(uuid);
 	}
 	
 	public void setPauseMenuVisible(boolean b){

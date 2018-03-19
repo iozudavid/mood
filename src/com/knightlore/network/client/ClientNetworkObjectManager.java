@@ -87,6 +87,8 @@ public class ClientNetworkObjectManager extends NetworkObjectManager {
             // Entities need to exist in the world.
             if (obj instanceof Entity) {
                 clientWorld.addEntity((Entity) obj);
+            	GameEngine.getSingleton().getDisplay().getChat().getTextArea().addText("System: " + 
+                		obj.getClass().getSimpleName() + " " + ((Entity)obj).getName() + " has connected.");
             }
         } catch (NoSuchMethodException | SecurityException
                 | IllegalAccessException | IllegalArgumentException
@@ -106,11 +108,14 @@ public class ClientNetworkObjectManager extends NetworkObjectManager {
     public synchronized void objDestroyed(ByteBuffer buf) {
         System.out.println("Receiving object deletion message from server");
         UUID objID = UUID.fromString(NetworkUtils.getStringFromBuf(buf));
+        GameEngine.getSingleton().getDisplay().getChat().removeFromTable(objID.toString());
         NetworkObject toBeDestroyedObject = this.getNetworkObject(objID);
         this.networkObjects.remove(objID);
         toBeDestroyedObject.destroy();
         if (toBeDestroyedObject instanceof Entity) {
             clientWorld.removeEntity((Entity) toBeDestroyedObject);
+            GameEngine.getSingleton().getDisplay().getChat().getTextArea().addText("System: " + 
+            		toBeDestroyedObject.getClass().getSimpleName() + " " + ((Entity)toBeDestroyedObject).getName() + " has disconnected.");
         }
     }
 

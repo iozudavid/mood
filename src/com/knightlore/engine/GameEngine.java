@@ -104,6 +104,8 @@ public class GameEngine implements Runnable {
 		if (GameSettings.isClient()) {
 			final int w = screen.getWidth(), h = screen.getHeight();
 			this.display = new Display();
+			GameChat chat = new GameChat(w,h);
+            this.display.setGameChat(chat);
 		}
     }
     
@@ -140,8 +142,6 @@ public class GameEngine implements Runnable {
             Renderer renderer = new Renderer(w, 8 * h / 9, camera, cworld);
             Minimap minimap = new Minimap(camera, cworld, 128);
             HUD hud = new HUD(cn.getMyPlayer(), w, h / 9);
-            GameChat chat = new GameChat(w,h);
-            this.display.setGameChat(chat);
             this.display.setHud(hud);
             this.display.setMinimap(minimap);
             this.display.setRenderer(renderer);

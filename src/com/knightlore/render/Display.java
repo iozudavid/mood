@@ -72,6 +72,8 @@ public class Display implements IRenderable {
 			PixelBuffer chatBuffer = chat.getPixelBuffer();
 			pix.composite(chatBuffer, x, y);
 			
+			GameFeed.getInstance().render(pix, x, y);
+
 			this.clearDisplay();
 			break;
 			
