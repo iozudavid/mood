@@ -8,6 +8,8 @@ public final class GameSettings {
     static boolean client = false;
     static boolean server = false;
 
+    public static boolean MOTION_BOB = true;
+
     private GameSettings() {
     }
 

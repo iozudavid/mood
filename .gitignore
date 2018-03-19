@@ -94,6 +94,7 @@ local.properties
 
 # BLENDER STUFF
 *.blend1
+*_f*.png
 
 # macOS files
 .DS_Store

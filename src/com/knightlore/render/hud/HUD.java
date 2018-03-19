@@ -33,7 +33,7 @@ public class HUD {
 
         final int scoreX = display.getWidth() - 150;
         final int scoreY = display.getHeight() / 2 - 7;
-        display.drawString(Font.DEFAULT_WHITE, String.format("SCORE %d", myPlayer.score), scoreX, scoreY, 2, 2);
+        display.drawString(Font.DEFAULT_WHITE, String.format("SCORE %d", myPlayer.getScore()), scoreX, scoreY, 2, 2);
     }
 
     public PixelBuffer getPixelBuffer() {

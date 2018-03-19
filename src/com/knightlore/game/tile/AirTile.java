@@ -17,7 +17,7 @@ public class AirTile extends Tile {
     }
 
     @Override
-    public Graphic getTexture() {
+    public Graphic getWallTexture() {
         return Texture.AIR;
     }
 

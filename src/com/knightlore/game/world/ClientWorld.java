@@ -1,5 +1,8 @@
 package com.knightlore.game.world;
 
+import com.knightlore.engine.GameEngine;
+import com.knightlore.engine.audio.BackgroundMusic;
+import com.knightlore.engine.audio.SoundManager;
 import com.knightlore.game.entity.Entity;
 import com.knightlore.render.Environment;
 
@@ -25,8 +28,15 @@ public class ClientWorld extends GameWorld {
     public void setUpWorld(Long mapSeed) {
         super.setUpWorld(mapSeed);
         buildGUI();
+        startBgMusic();
     }
 
     public void buildGUI() {
+    }
+
+    private void startBgMusic() {
+        BackgroundMusic bgMusic = this.getEnvironment().getBgMusic();
+        SoundManager soundManager = GameEngine.getSingleton().getSoundManager();
+        soundManager.loop(bgMusic.soundRes, soundManager.defaultVolume);
     }
 }

@@ -2,6 +2,7 @@ package com.knightlore.game.entity;
 
 import java.awt.geom.Rectangle2D;
 import java.nio.ByteBuffer;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -168,7 +169,7 @@ public abstract class Entity extends NetworkObject implements IMinimapObject, Pr
     }
 
     /**
-     * Gets the directional sprite of this entity.
+     * Gets the current directional sprite of this entity.
      * 
      * @return the directional sprite for this entity.
      */
@@ -427,16 +428,18 @@ public abstract class Entity extends NetworkObject implements IMinimapObject, Pr
     	this.systemMessages.offer(bf);
     }
     
-    public ByteBuffer getSystemMessages(){
-    	if(this.systemMessages.size()==0)
-    		return null;
+    public Optional<ByteBuffer> getSystemMessages(){
+    	if(this.systemMessages.isEmpty()) {
+            return Optional.empty();
+        }
+
     	try {
-			return this.systemMessages.take();
+			return Optional.of(this.systemMessages.take());
 		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-    	return null;
+    	return Optional.empty();
     }
 
     public String getName() {

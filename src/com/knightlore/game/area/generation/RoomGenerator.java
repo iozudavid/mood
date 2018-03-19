@@ -27,7 +27,7 @@ public class RoomGenerator extends ProceduralAreaGenerator {
 
         resetGrid();
         fillGrid();
-        if(team != Team.none) {
+        if(team != Team.NONE) {
             grid[width/2][height/2] = new PlayerSpawnTile(team);
             grid[2][height/2] = new TurretTile(team);
             grid[width-2][height/2] = new TurretTile(team);
