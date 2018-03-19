@@ -1,7 +1,6 @@
 package com.knightlore.engine;
 
 import com.knightlore.utils.Vector2D;
-import com.knightlore.utils.pruner.Prunable;
 
 /**
  * A game object is any structure/entity in the game that has a 2D position.

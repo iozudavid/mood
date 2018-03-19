@@ -16,7 +16,6 @@ import com.knightlore.utils.physics.Physics;
 import com.knightlore.utils.physics.RaycastHit;
 import com.knightlore.utils.physics.RaycastHitType;
 import com.knightlore.utils.Vector2D;
-import com.knightlore.utils.pruner.Pruner;
 
 public abstract class GameWorld {
 
