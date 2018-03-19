@@ -432,21 +432,18 @@ public abstract class Entity extends NetworkObject implements IMinimapObject {
     public void takeDamage(int damage, Entity inflictor) {
         // DO NOTHING
     }
-
-    public void sendSystemMessage(String name, Entity inflictor) {
-        String message = "System : " + name + " was killed by "
-                + inflictor.getName();
-        ByteBuffer bf = ByteBuffer
-                .allocate(NetworkObject.BYTE_BUFFER_DEFAULT_SIZE);
-        NetworkUtils.putStringIntoBuf(bf,
-                NetworkObjectManager.MANAGER_UUID.toString());
-        NetworkUtils.putStringIntoBuf(bf, "displayMessage");
-        NetworkUtils.putStringIntoBuf(bf, message);
-        this.systemMessages.offer(bf);
+    
+    protected void sendSystemMessage(String name, Entity inflictor){
+    	String message = "System : " + name + " was killed by " + inflictor.getName();
+    	ByteBuffer bf = ByteBuffer.allocate(NetworkObject.BYTE_BUFFER_DEFAULT_SIZE);
+    	NetworkUtils.putStringIntoBuf(bf, NetworkObjectManager.MANAGER_UUID.toString());
+    	NetworkUtils.putStringIntoBuf(bf, "displayMessage");
+    	NetworkUtils.putStringIntoBuf(bf, message);
+    	this.systemMessages.offer(bf);
     }
-
-    public Optional<ByteBuffer> getSystemMessages() {
-        if (this.systemMessages.isEmpty()) {
+    
+    public Optional<ByteBuffer> getSystemMessages(){
+    	if(this.systemMessages.isEmpty()) {
             return Optional.empty();
         }
 

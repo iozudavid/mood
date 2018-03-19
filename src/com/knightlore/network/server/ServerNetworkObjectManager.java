@@ -9,8 +9,10 @@ import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.function.Consumer;
 import java.util.function.Predicate;
 
+import com.google.common.collect.ImmutableMap;
 import com.knightlore.engine.GameEngine;
 import com.knightlore.engine.TickListener;
 import com.knightlore.game.Player;
@@ -43,7 +45,7 @@ public class ServerNetworkObjectManager extends NetworkObjectManager {
     }
 
     private void setNetworkConsumers() {
-        this.networkConsumers.put("receiveName", this::receiveName);
+        networkConsumers = ImmutableMap.of("receiveName", this::receiveName);
     }
 
     @Override
@@ -144,7 +146,7 @@ public class ServerNetworkObjectManager extends NetworkObjectManager {
         sender.send(buf);
     }
 
-    public void sendPlayerIdentity(SendToClient sender, Player player) {
+    private void sendPlayerIdentity(SendToClient sender, Player player) {
         System.out.println("sending player identity " + player.getObjectId());
         ByteBuffer buf = ByteBuffer
                 .allocate(NetworkObject.BYTE_BUFFER_DEFAULT_SIZE);
@@ -219,10 +221,12 @@ public class ServerNetworkObjectManager extends NetworkObjectManager {
             }
 
         }
-        if (updateCount >= REGULAR_UPDATE_FREQ)
+        if (updateCount >= REGULAR_UPDATE_FREQ) {
             updateCount = 1;
-        else
+        }
+        else {
             updateCount++;
+        }
     }
 
     public synchronized NetworkObject getNetworkObject(UUID uuid) {
@@ -258,11 +262,13 @@ public class ServerNetworkObjectManager extends NetworkObjectManager {
         System.out.println("Name is now " + player.getName());
     }
 
+    
     private void sendToClientsIf(ByteBuffer buf, Predicate<Entity> pred) {
-        synchronized (clientSenders) {
+    	synchronized (clientSenders) {
             for (SendToClient s : clientSenders) {
-                if (pred.test((Entity) getNetworkObject(s.getUUID())))
+            	if (pred.test((Entity)getNetworkObject(s.getUUID()))) {
                     s.send(buf);
+                }
             }
         }
     }
