@@ -134,7 +134,7 @@ public class SpriteSheetMaker {
     
     static void createAnimated() {
         // TODO Auto-generated method stub
-        int totalWidth = width*numFrames;
+        int totalWidth = width * numFrames;
         int totalHeight = height * numDirs;
         
         BufferedImage outImg = new BufferedImage(totalWidth, totalHeight, BufferedImage.TYPE_INT_ARGB);
@@ -151,7 +151,7 @@ public class SpriteSheetMaker {
             int xPos = f * width;
             for (int d = 0; d < numDirs; d++) {
                 // get file name
-                fileName = baseFileName + "_" + (d) + "_f"+(f)+".png";
+                fileName = baseFileName + "_" + (d) + "_f" + (f) + ".png";
                 File file = new File(fileName);
                 // try to read the image
                 try {
@@ -161,6 +161,7 @@ public class SpriteSheetMaker {
                     System.out.println("Failed to read image " + fileName + ", see above error ^");
                     return;
                 }
+                
                 /*
                  * // wipe alpha out of the image for (int x = 0; x < width;
                  * x++) { for (int y = 0; y < height; y++) { int col =
@@ -191,6 +192,23 @@ public class SpriteSheetMaker {
         }
         
         System.out.println("Spritesheet written to: " + outFileName);
+        System.out.println("Removing source files...");
+        for (int f = 0; f < numFrames; f++) {
+            int xPos = f * width;
+            for (int d = 0; d < numDirs; d++) {
+                // get file name
+                fileName = baseFileName + "_" + (d) + "_f" + (f) + ".png";
+                File file = new File(fileName);
+                // try to read the image
+                try {
+                    file.delete();
+                } catch (Exception e) {
+                    System.err.println(e);
+                    System.out.println("Failed to delete " + fileName + ", see above error ^");
+                    return;
+                }
+            }
+        }
         System.out.println("Done.");
     }
     
