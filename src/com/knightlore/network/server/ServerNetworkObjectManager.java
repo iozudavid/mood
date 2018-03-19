@@ -103,6 +103,7 @@ public class ServerNetworkObjectManager extends NetworkObjectManager {
     }
 
     public synchronized void removeNetworkObject(NetworkObject obj) {
+        System.out.println("Removing " + obj.getObjectId());
         UUID uuid = obj.getObjectId();
         // Notify all clients of the destroyed object.
         this.sendToClients(getObjectDestroyMessage(obj));

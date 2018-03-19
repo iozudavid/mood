@@ -51,8 +51,9 @@ public class ShotgunPickup extends PickupItem {
     
     @Override
     public void onCollide(Player player) {
-        System.out.println("DELETE! " + player.getName());
-        setExists(false);
+        if (exists) {
+            this.destroy();
+        }
     }
     
     public void onDestroy() {

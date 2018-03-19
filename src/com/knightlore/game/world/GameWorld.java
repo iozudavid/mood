@@ -29,9 +29,8 @@ public abstract class GameWorld {
     protected GameManager gameManager = null;
     protected AIManager aiManager;
     protected List<Entity> ents;
-    
+
     public void update() {
-        Pruner.prune(ents);
     }
     
     private Map generateMap(int xSize, int ySize, long seed) {

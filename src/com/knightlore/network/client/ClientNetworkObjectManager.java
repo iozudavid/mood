@@ -114,7 +114,7 @@ public class ClientNetworkObjectManager extends NetworkObjectManager {
         UUID objID = UUID.fromString(NetworkUtils.getStringFromBuf(buf));
         NetworkObject toBeDestroyedObject = this.getNetworkObject(objID);
         this.networkObjects.remove(objID);
-        toBeDestroyedObject.destroy();
+        // toBeDestroyedObject.destroy(); FIXME
         if (toBeDestroyedObject instanceof Entity) {
             clientWorld.removeEntity((Entity) toBeDestroyedObject);
         }
@@ -140,8 +140,9 @@ public class ClientNetworkObjectManager extends NetworkObjectManager {
     @Override
     public synchronized NetworkObject getNetworkObject(UUID uuid) {
         synchronized (this.networkObjects) {
-            if (networkObjects.containsKey(uuid))
+            if (networkObjects.containsKey(uuid)) {
                 return networkObjects.get(uuid);
+            }
         }
         System.err.println("No network object with UUID " + uuid
                 + " could be found on this client.");

@@ -21,7 +21,6 @@ import com.knightlore.render.graphic.Graphic;
 import com.knightlore.render.graphic.sprite.DirectionalSprite;
 import com.knightlore.render.minimap.IMinimapObject;
 import com.knightlore.utils.Vector2D;
-import com.knightlore.utils.pruner.Prunable;
 
 /**
  * An entity is any physical object that exists in the game world that is not a
@@ -30,8 +29,7 @@ import com.knightlore.utils.pruner.Prunable;
  * @author Joe Ellis
  *
  */
-public abstract class Entity extends NetworkObject
-        implements IMinimapObject, Prunable {
+public abstract class Entity extends NetworkObject implements IMinimapObject {
 
     /**
      * The speed at which the entity can move when calling moveForward() and

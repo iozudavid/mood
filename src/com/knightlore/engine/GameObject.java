@@ -11,18 +11,15 @@ import com.knightlore.utils.pruner.Prunable;
  * @author James Adey
  *
  */
-public abstract class GameObject implements Prunable {
+public abstract class GameObject {
 
-    /**
-     * The position of the game object.
-     */
     protected Vector2D position;
 
     /**
      * Whether the entity currently exists. If this variable is set to false,
      * entities will be 'garbage collected' by the game engine.
      */
-    private boolean exists;
+    protected boolean exists = false;
 
     public GameObject() {
         this(Vector2D.ZERO);
@@ -30,7 +27,6 @@ public abstract class GameObject implements Prunable {
 
     public GameObject(Vector2D position) {
         this.position = position;
-        exists = true;
     }
 
     public void init() {
@@ -58,22 +54,6 @@ public abstract class GameObject implements Prunable {
         position = new Vector2D(position.getX(), yPos);
     }
 
-    @Override
-    public boolean exists() {
-        return exists;
-    }
-
-    /**
-     * Package internal; should not be accessed elsewhere. Only the game engine
-     * should call this method.
-     * 
-     * @param b
-     *            true if the game object exists, false otherwise.
-     */
-    protected void setExists(boolean b) {
-        exists = b;
-    }
-
     /**
      * Called when the component is first added to the GameObject, before it is
      * first updated. Use this to subscribe to listeners.
@@ -96,6 +76,7 @@ public abstract class GameObject implements Prunable {
      * Removes this game object from the game object manager.
      */
     public void destroy() {
+        exists = false;
         getGOM().removeGameObject(this);
     }
 
