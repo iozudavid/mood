@@ -9,10 +9,8 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
-import java.util.function.Consumer;
 
 import com.knightlore.GameSettings;
-import com.google.common.collect.ImmutableMap;
 import com.knightlore.engine.GameEngine;
 import com.knightlore.game.Player;
 import com.knightlore.game.entity.Entity;
@@ -43,14 +41,12 @@ public class ClientNetworkObjectManager extends NetworkObjectManager {
     }
 
     private void setNetworkConsumers() {
-        networkConsumers = ImmutableMap.<String, Consumer<ByteBuffer>>builder()
-                .put("registerPlayerIdentity", this::registerPlayerIdentity)
-                .put("newObjCreated", this::newObjCreated)
-                .put("objDestroyed", this::objDestroyed)
-                .put("receiveMapSeed", this::receiveMapSeed)
-                .put("receiveReadySignal", this::receiveReadySignal)
-                .put("displayMessage", this::displayMessage)
-                .build();
+        networkConsumers.put("registerPlayerIdentity", this::registerPlayerIdentity);
+        networkConsumers.put("newObjCreated", this::newObjCreated);
+        networkConsumers.put("objDestroyed", this::objDestroyed);
+        networkConsumers.put("receiveMapSeed", this::receiveMapSeed);
+        networkConsumers.put("receiveReadySignal", this::receiveReadySignal);
+        networkConsumers.put("displayMessage", this::displayMessage);
     }
 
     @Override

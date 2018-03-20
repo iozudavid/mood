@@ -1,19 +1,20 @@
 package com.knightlore.network;
 
 import java.nio.ByteBuffer;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.function.Consumer;
 
-import com.google.common.collect.ImmutableMap;
 import com.knightlore.network.client.ClientNetworkObjectManager;
 import com.knightlore.network.protocol.NetworkUtils;
 
 public abstract class NetworkObjectManager implements INetworkable, Runnable {
     // This is a special UUID that refers to the NetworkObjectManager itself.
     public static final UUID MANAGER_UUID = UUID.fromString("00000000-0000-0000-0000-000000000000");
-    protected ImmutableMap<String, Consumer<ByteBuffer>> networkConsumers;
+    protected Map<String, Consumer<ByteBuffer>> networkConsumers = new HashMap<>();
 
     private BlockingQueue<ByteBuffer> messages = new LinkedBlockingQueue<>();
 
@@ -28,7 +29,7 @@ public abstract class NetworkObjectManager implements INetworkable, Runnable {
     public abstract NetworkObject getNetworkObject(UUID uuid);
 
     @Override
-    public ImmutableMap<String, Consumer<ByteBuffer>> getNetworkConsumers() {
+    public Map<String, Consumer<ByteBuffer>> getNetworkConsumers() {
         return networkConsumers;
     }
 
@@ -73,20 +74,19 @@ public abstract class NetworkObjectManager implements INetworkable, Runnable {
             if (objID.equals(MANAGER_UUID)) {
                 // This message is directed at the NetworkManager, i.e. ourself.
                 cons = this.getNetworkConsumers().get(methodName);
-            }
-            else {
+            } else {
                 NetworkObject obj = this.getNetworkObject(objID);
                 cons = obj.getNetworkConsumers().get(methodName);
-                if(this instanceof ClientNetworkObjectManager){
-                	if(((ClientNetworkObjectManager)this).getMyPlayer()!= null && 
+                if (this instanceof ClientNetworkObjectManager) {
+                	if (((ClientNetworkObjectManager)this).getMyPlayer()!= null &&
                 			((ClientNetworkObjectManager)this).getMyPlayer().getObjectId().equals(objID) &&
-                				methodName.equals("deserialize")){
-                		if(((ClientNetworkObjectManager)this).hasFinishedSetup()){
-                			if(i==1){
+                				methodName.equals("deserialize")) {
+                		if(((ClientNetworkObjectManager)this).hasFinishedSetup() ){
+                			if(i==1) {
                 			buf.rewind();
                 			((ClientNetworkObjectManager)this).addToPlayerStateOnServer(buf);
                 			continue;
-                			}else
+                			} else
                 				i++;
                 		}
                 	}

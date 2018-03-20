@@ -106,11 +106,9 @@ public class Player extends Entity {
     }
     
     private void setNetworkConsumers() {
-        networkConsumers = ImmutableMap.of(
-                "setInputState", this::setInputState,
-                "messageToTeam", this::messageToTeam,
-                "messageToAll", this::messageToAll
-        );
+        networkConsumers.put("setInputState", this::setInputState);
+        networkConsumers.put("messageToTeam", this::messageToTeam);
+        networkConsumers.put("messageToAll", this::messageToAll);
     }
     
     private void setInputState(ByteBuffer buf) {

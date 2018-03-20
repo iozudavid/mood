@@ -9,10 +9,8 @@ import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.function.Consumer;
 import java.util.function.Predicate;
 
-import com.google.common.collect.ImmutableMap;
 import com.knightlore.engine.GameEngine;
 import com.knightlore.engine.TickListener;
 import com.knightlore.game.Player;
@@ -45,7 +43,7 @@ public class ServerNetworkObjectManager extends NetworkObjectManager {
     }
 
     private void setNetworkConsumers() {
-        networkConsumers = ImmutableMap.of("receiveName", this::receiveName);
+        networkConsumers.put("receiveName", this::receiveName);
     }
 
     @Override
