@@ -33,7 +33,6 @@ public class Prediction {
 	// this will be called when a packet
 	// is received from the server
 	public void onServerFrame(Player player, ByteBuffer received) {
-	    System.out.println("oh shit "+player.getName());
 		// remove the old history
 		// inputs before this packet was sent
 		received.position(0);

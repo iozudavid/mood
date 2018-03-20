@@ -305,7 +305,6 @@ public class Player extends Entity {
     
     @Override
     public synchronized void deserialize(ByteBuffer buf) {
-        System.out.println("deserialising " + name);
         prevPosServer = position;
         prevDirServer = direction;
         super.deserialize(buf);
