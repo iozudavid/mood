@@ -253,7 +253,6 @@ public class Player extends Entity {
             inertiaY = 0;
             return;
         }
-        
         final double p = 0.1D;
         inertiaX += (int) (p * -inertiaX);
         inertiaY += (int) (p * -inertiaY);

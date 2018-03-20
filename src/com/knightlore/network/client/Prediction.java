@@ -19,7 +19,7 @@ public class Prediction {
 
 	// first double is the input timestemp
 	private LinkedHashMap<Double, byte[]> clientInputHistory;
-	private PredictedState nextPrediction;
+	private Player nextPrediction;
 	private ByteBuffer lastReceivedFromServer;
 	private final double maxTolerance = 0.5D;
 	private final double converge = 0.35D;
@@ -55,7 +55,9 @@ public class Prediction {
 		boolean respawn = (received.getInt()==1 ? true:false);
 		// remove data inserted before this packet was sent
 		if (!Arrays.equals(this.lastReceivedFromServer.array(), received.array())) {
-			this.nextPrediction = new PredictedState(player, received);
+			if(this.nextPrediction==null){
+				this.nextPrediction = new Player(new Vector2D(xPos,yPos), new Vector2D(xDir, yDir));
+			}
 			Iterator<Map.Entry<Double, byte[]>> it = this.clientInputHistory.entrySet().iterator();
 			while (it.hasNext()) {
 				Entry<Double, byte[]> next = it.next();
@@ -66,20 +68,12 @@ public class Prediction {
 			// create a new player
 			// which will predict the next steps
 
-			this.nextPrediction.setPosition(xPos, yPos);
-			this.nextPrediction.setDirection(xDir, yDir);
-			this.nextPrediction.setOnShootNext(shootOnNext == 1 ? true : false);
+			this.nextPrediction.setxPos(xPos);
+			this.nextPrediction.setyPos(yPos);
+			this.nextPrediction.setxDir(xDir);
+			this.nextPrediction.setyDir(yDir);
+			this.nextPrediction.setOnNextShot(shootOnNext == 1 ? true : false);
 
-			// predict again the player state
-			// based on server packets
-			// and all the inputs inserted after this packet was sent
-	//		System.out.println("SIZE: " + this.clientInputHistory.size());
-//			System.out.println("========DIFFERENCE========");
-//			System.out.println(player.getxPos() + " -> " + this.nextPrediction.getPosition().getX());
-//			System.out.println(player.getyPos() + " -> " + this.nextPrediction.getPosition().getY());
-//			System.out.println(player.getxDir() + " -> " + this.nextPrediction.getDirection().getX());
-//			System.out.println(player.getyDir() + " -> " + this.nextPrediction.getDirection().getY());
-//			System.out.println("=========DIFFERENCE ENDED============");
 			synchronized (this.clientInputHistory) {
 				for (byte[] nextInput : this.clientInputHistory.values()) {
 					this.nextPrediction.setInputState(nextInput);
@@ -107,14 +101,6 @@ public class Prediction {
 					|| Math.abs(player.getyPos() - this.nextPrediction.getPosition().getY()) > this.maxTolerance
 					|| Math.abs(player.getxDir() - this.nextPrediction.getDirection().getX()) > this.maxTolerance
 					|| Math.abs(player.getyDir() - this.nextPrediction.getDirection().getY()) > this.maxTolerance)) {
-				if(this.nextPrediction!=null){
-				System.out.println("========DIFFERENCE========");
-				System.out.println(player.getxPos() + " -> " + this.nextPrediction.getPosition().getX());
-				System.out.println(player.getyPos() + " -> " + this.nextPrediction.getPosition().getY());
-				System.out.println(player.getxDir() + " -> " + this.nextPrediction.getDirection().getX());
-				System.out.println(player.getyDir() + " -> " + this.nextPrediction.getDirection().getY());
-				}
-				System.out.println("=========DIFFERENCE ENDED============");
 				if (this.isMoveActivated(ClientController.FORWARD, input)
 						|| this.isMoveActivated(ClientController.BACKWARD, input)
 						|| this.isMoveActivated(ClientController.LEFT, input)
