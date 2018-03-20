@@ -1,10 +1,12 @@
 package com.knightlore.render.minimap;
 
+import java.util.Iterator;
 import java.util.function.DoubleUnaryOperator;
 
 import com.knightlore.engine.GameEngine;
 import com.knightlore.engine.TickListener;
 import com.knightlore.game.area.Map;
+import com.knightlore.game.entity.Entity;
 import com.knightlore.game.tile.Tile;
 import com.knightlore.game.world.ClientWorld;
 import com.knightlore.render.Camera;
@@ -130,7 +132,9 @@ public class Minimap implements TickListener {
     }
 
     private void drawMinimapObjects(double theta) {
-        for (IMinimapObject obj : world.getEntities()) {
+        Iterator<Entity> iter = world.getEntityIterator();
+        while(iter.hasNext()) {
+            IMinimapObject obj = iter.next();
             Vector2D pos = obj.getPosition();
             pos = transform((int) (pos.getX() * scale), (int) (pos.getY() * scale), theta);
 
