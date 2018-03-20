@@ -224,8 +224,7 @@ public class Minimap implements TickListener {
     @Override
     public long interval() {
         // 3 seconds, no matter what the value of UPDATES_PER_SECOND is.
-        final long UPDATE_DELAY = (long) (3 * GameEngine.UPDATES_PER_SECOND);
-        return UPDATE_DELAY;
+        return (long) (3 * GameEngine.UPDATES_PER_SECOND);
     }
 
 }

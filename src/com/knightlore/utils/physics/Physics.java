@@ -61,18 +61,16 @@ public class Physics {
      */
     public static boolean lineIntersect(Vector2D start1, Vector2D end1, Vector2D start2, Vector2D end2) {
         // convert to parametric
-        Vector2D p1 = start1;
         Vector2D d1 = end1.subtract(start1);
-        Vector2D p2 = start2;
         Vector2D d2 = end2.subtract(start2);
         
-        System.out.println("Intersecting " + p1 + "+s." + d1 + "  with  " + p2 + "+t." + d2);
+        System.out.println("Intersecting " + start1 + "+s." + d1 + "  with  " + start2 + "+t." + d2);
         
-        double x1 = p1.getX();
-        double y1 = p1.getY();
+        double x1 = start1.getX();
+        double y1 = start1.getY();
         
-        double x2 = p2.getX();
-        double y2 = p2.getY();
+        double x2 = start2.getX();
+        double y2 = start2.getY();
         
         // argh... maths
         // Pa + s*Da = Pb + t*Db

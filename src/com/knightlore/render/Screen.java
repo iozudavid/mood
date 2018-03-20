@@ -79,8 +79,7 @@ public class Screen extends Canvas {
     }
 
     public static Dimension getScreenResolution() {
-        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-        return screenSize;
+        return Toolkit.getDefaultToolkit().getScreenSize();
     }
 
 }
