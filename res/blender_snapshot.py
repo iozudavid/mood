@@ -12,7 +12,7 @@ bpy.context.scene.render.resolution_x = width
 bpy.context.scene.render.resolution_y = height
 bpy.context.scene.render.use_antialiasing = False
 outputDir = os.path.dirname(bpy.data.filepath)
-fileName = "pl_blue_pistol_"
+fileName = "pl_blue_pistol_strafel_"
 
 NUM_DIRS = 32
 NUM_FRAMES = 8
