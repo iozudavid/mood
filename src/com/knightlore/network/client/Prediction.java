@@ -21,8 +21,8 @@ public class Prediction {
 	private LinkedHashMap<Double, byte[]> clientInputHistory;
 	private PredictedState nextPrediction;
 	private ByteBuffer lastReceivedFromServer;
-	private final double maxTolerance = 0.3D;
-	private final double converge = 0.25D;
+	private final double maxTolerance = 0.5D;
+	private final double converge = 0.35D;
 	
 	public Prediction(){
 		this.clientInputHistory = new LinkedHashMap<>();
@@ -32,7 +32,7 @@ public class Prediction {
 
 	// this will be called when a packet
 	// is received from the server
-	public Player onServerFrame(Player player, ByteBuffer received) {
+	public void onServerFrame(Player player, ByteBuffer received) {
 		// remove the old history
 		// inputs before this packet was sent
 		received.position(0);
@@ -96,26 +96,33 @@ public class Prediction {
 			}
 		}
 
-		
-		
-		return player;
-
 	}
 	
 	// called every client frame
 	public Player update(Player player, byte[] input, double packetNumber) {
 		//use last prediction based on server stats
 		//to construct the new position
-		
 		if (this.nextPrediction != null) {
 			if ((Math.abs(player.getxPos() - this.nextPrediction.getPosition().getX()) > this.maxTolerance
 					|| Math.abs(player.getyPos() - this.nextPrediction.getPosition().getY()) > this.maxTolerance
 					|| Math.abs(player.getxDir() - this.nextPrediction.getDirection().getX()) > this.maxTolerance
 					|| Math.abs(player.getyDir() - this.nextPrediction.getDirection().getY()) > this.maxTolerance)) {
+				if(this.nextPrediction!=null){
+				System.out.println("========DIFFERENCE========");
+				System.out.println(player.getxPos() + " -> " + this.nextPrediction.getPosition().getX());
+				System.out.println(player.getyPos() + " -> " + this.nextPrediction.getPosition().getY());
+				System.out.println(player.getxDir() + " -> " + this.nextPrediction.getDirection().getX());
+				System.out.println(player.getyDir() + " -> " + this.nextPrediction.getDirection().getY());
+				}
+				System.out.println("=========DIFFERENCE ENDED============");
 				if (this.isMoveActivated(ClientController.FORWARD, input)
-						|| this.isMoveActivated(ClientController.BACKWARD, input))
+						|| this.isMoveActivated(ClientController.BACKWARD, input)
+						|| this.isMoveActivated(ClientController.LEFT, input)
+						|| this.isMoveActivated(ClientController.RIGHT, input))
 					player.setxPos(nextPrediction.getPosition().getX());
-				if (this.isMoveActivated(ClientController.LEFT, input)
+				if (this.isMoveActivated(ClientController.FORWARD, input)
+						|| this.isMoveActivated(ClientController.BACKWARD, input)
+						|| this.isMoveActivated(ClientController.LEFT, input)
 						|| this.isMoveActivated(ClientController.RIGHT, input))
 					player.setyPos(nextPrediction.getPosition().getY());
 				if (this.isMoveActivated(ClientController.ROTATE_ANTI_CLOCKWISE, input)
@@ -127,9 +134,13 @@ public class Prediction {
 				}
 			} else {
 				if (this.isMoveActivated(ClientController.FORWARD, input)
-						|| this.isMoveActivated(ClientController.BACKWARD, input))
+						|| this.isMoveActivated(ClientController.BACKWARD, input)
+						|| this.isMoveActivated(ClientController.LEFT, input)
+						|| this.isMoveActivated(ClientController.RIGHT, input))
 					player.setxPos(smooth(player.getxPos(), this.nextPrediction.getPosition().getX()));
-				if (this.isMoveActivated(ClientController.LEFT, input)
+				if (this.isMoveActivated(ClientController.FORWARD, input)
+						|| this.isMoveActivated(ClientController.BACKWARD, input)
+						|| this.isMoveActivated(ClientController.LEFT, input)
 						|| this.isMoveActivated(ClientController.RIGHT, input))
 					player.setyPos(smooth(player.getyPos(), this.nextPrediction.getPosition().getY()));
 				if (this.isMoveActivated(ClientController.ROTATE_ANTI_CLOCKWISE, input)

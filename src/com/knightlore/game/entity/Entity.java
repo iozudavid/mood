@@ -52,7 +52,7 @@ public abstract class Entity extends NetworkObject implements IMinimapObject, Pr
     
     //this constant will decide
     //how smooth will be rendered other entities
-	private final double smoothiness = 0.25D;
+	private final double smoothiness = 0.1D;
 
     /**
      * The map which the entity exists in. This is required for collision
