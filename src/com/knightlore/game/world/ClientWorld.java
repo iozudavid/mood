@@ -4,12 +4,19 @@ import com.knightlore.engine.GameEngine;
 import com.knightlore.engine.audio.BackgroundMusic;
 import com.knightlore.engine.audio.SoundManager;
 import com.knightlore.game.entity.Entity;
+import com.knightlore.gui.GameHUD;
 import com.knightlore.render.Environment;
+import com.sun.javafx.webkit.theme.Renderer;
 
 public class ClientWorld extends GameWorld {
 
+    private GameHUD gameHUD;
+
     @Override
     public void update() {
+        if(gameHUD != null && gameManager != null) {
+            gameHUD.setTimeLeft(gameManager.timeLeftString());
+        }
     }
 
     public void addEntity(Entity ent) {
@@ -32,6 +39,7 @@ public class ClientWorld extends GameWorld {
     }
 
     public void buildGUI() {
+        gameHUD = new GameHUD(150,150);
     }
 
     private void startBgMusic() {

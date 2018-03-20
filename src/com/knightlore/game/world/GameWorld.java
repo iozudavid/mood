@@ -31,7 +31,7 @@ public abstract class GameWorld {
     protected List<Entity> ents;
     
     public void update() {
-        Pruner.prune(ents);
+        //Pruner.prune(ents);
     }
     
     private Map generateMap(int xSize, int ySize, long seed) {
