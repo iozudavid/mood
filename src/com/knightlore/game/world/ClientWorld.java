@@ -6,7 +6,6 @@ import com.knightlore.engine.audio.SoundManager;
 import com.knightlore.game.entity.Entity;
 import com.knightlore.gui.GameHUD;
 import com.knightlore.render.Environment;
-import com.sun.javafx.webkit.theme.Renderer;
 
 public class ClientWorld extends GameWorld {
 

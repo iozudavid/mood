@@ -57,8 +57,8 @@ public class FFAGame extends GameManager {
         case SHOTGUN:
             ShotgunPickup shotgun = new ShotgunPickup(pos, null);
             shotgun.init();
-            // hmm... probably shouldn't be allowed to do this
-            GameEngine.getSingleton().getWorld().getEntities().add(shotgun);
+            // nice adding :)
+            GameEngine.getSingleton().getWorld().addEntity(shotgun);
             System.out.println("Shotgun Pickup Created");
             break;
         }

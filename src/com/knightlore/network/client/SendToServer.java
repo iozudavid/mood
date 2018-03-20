@@ -153,11 +153,13 @@ public class SendToServer implements Runnable {
         Player player;
         while ((player = manager.getMyPlayer()) == null)
             // Wait for UUID to be set.
+        {
             try {
                 Thread.sleep(delay);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
+        }
         this.myUUID = player.getObjectId();
         this.currentState = getCurrentControlState(this.packetNumber);
         this.packetNumber++;

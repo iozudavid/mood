@@ -62,14 +62,14 @@ public final class BotInput extends InputModule {
         strafeInput = dblToAxis(dotRight, MOVE_ACC);
         walkInput = dblToAxis(dotForward, MOVE_ACC);
         //System.out.println(myPlayer.getName() + "->" + sqrDist);
-        if (path.size() == 0) {
+        if (path.isEmpty()) {
             getPath(myPlayer);
             strafeInput = 0;
             walkInput = 0;
         } else if (sqrDist < SQR_DIST_TO_NODE) {
             // remove last node
             path.remove(0);
-            if (path.size() > 0) {
+            if (!path.isEmpty()) {
                 // move to next node
                 goalPos = Vector2D.fromTilePoint(path.get(0));
             }

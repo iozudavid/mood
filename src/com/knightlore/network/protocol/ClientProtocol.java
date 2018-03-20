@@ -30,18 +30,21 @@ public final class ClientProtocol {
 
     // get the key by passing index in the array
     public static ClientController getByIndex(int i) throws IOException {
-        if (!indexAction.containsKey(i))
+        if (!indexAction.containsKey(i)) {
             throw new IOException();
+        }
         return indexAction.get(i);
     }
 
     // get the index by passing the key
     public static int getByKey(ClientController key) throws IOException {
-        if (!indexAction.containsValue(key))
+        if (!indexAction.containsValue(key)) {
             throw new IOException();
+        }
         for (int i : indexAction.keySet()) {
-            if (indexAction.get(i) == key)
+            if (indexAction.get(i) == key) {
                 return i;
+            }
         }
         return -1;
     }

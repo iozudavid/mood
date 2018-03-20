@@ -69,8 +69,9 @@ public class PickupManager implements TickListener{
             System.out.println("Adding to engine a pickup!");
             PickupItem item = pp.getItem();
             item.init();
-            List<Entity> ents = engine.getWorld().getEntities();
-            ents.add(item);
+            //List<Entity> ents = engine.getWorld().getEntities();
+            //ents.add(item);
+            engine.getWorld().addEntity(item);
         }
         // increment time (maybe try shorter intervals)
         currentTime += 1;

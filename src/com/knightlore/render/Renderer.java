@@ -47,8 +47,9 @@ public class Renderer {
             return;
         }
 
-        if (camera.getSubject().getDirection().isEqualTo(Vector2D.ZERO, 0.01))
+        if (camera.getSubject().getDirection().isEqualTo(Vector2D.ZERO, 0.01)) {
             return;
+        }
 
         // draw the perspective and the crosshairs
         int offset = camera.getMotionBobOffset();
@@ -135,8 +136,9 @@ public class Renderer {
                 if (tile != AirTile.getInstance()) {
 
                     double opacity = tile.getOpacity();
-                    if (opacity >= 1)
+                    if (opacity >= 1) {
                         hit = true;
+                    }
 
                     distanceToWall = RaycasterUtils.getImpactDistance(camera, rayX, rayY, mapX, mapY, side, stepX,
                             stepY);
@@ -261,8 +263,9 @@ public class Renderer {
     }
 
     private void draw(PixelBuffer pix, PerspectiveRenderItem p, int offset) {
-        if (p.opacity == 0)
+        if (p.opacity == 0) {
             return;
+        }
 
         // calculate y coordinate on texture
         for (int yy = p.drawStart; yy < p.drawEnd; yy++) {
@@ -275,16 +278,16 @@ public class Renderer {
             color = ColorUtils.mixColor(pix.pixelAt(p.xx, drawY), color, p.opacity);
 
             color = ColorUtils.darken(color, world.getEnvironment().getDarkness(), p.distanceToWall);
-            if (p.side)
+            if (p.side) {
                 color = ColorUtils.quickDarken(color);
+            }
             pix.fillRect(color, p.xx, drawY, GameSettings.actualBlockiness, 1);
         }
     }
 
     private synchronized void drawSprites(PixelBuffer pix, double[] zbuffer, int offset) {
         synchronized (world) {
-            Entity[] entities = new Entity[world.getEntities().size()];
-            world.getEntities().toArray(entities);
+            Entity[] entities = world.getEntityArray();
             Comparator<Entity> c = new Comparator<Entity>() {
 
                 @Override
@@ -321,11 +324,13 @@ public class Renderer {
                     // calculate width of the sprite
                     int spriteWidth = Math.abs((int) (pix.getHeight() / transformY));
                     int drawStartX = -spriteWidth / 2 + spriteScreenX;
-                    if (drawStartX < 0)
+                    if (drawStartX < 0) {
                         drawStartX = 0;
+                    }
                     int drawEndX = spriteWidth / 2 + spriteScreenX;
-                    if (drawEndX >= pix.getWidth())
+                    if (drawEndX >= pix.getWidth()) {
                         drawEndX = pix.getWidth() - 1;
+                    }
 
                     // loop through every vertical stripe of the sprite on
                     // screen
@@ -353,8 +358,9 @@ public class Renderer {
                                 int color = g.getPixels()[texX + g.getWidth() * texY];
 
                                 // dont draw transparent pixels.
-                                if (color == PixelBuffer.CHROMA_KEY)
+                                if (color == PixelBuffer.CHROMA_KEY) {
                                     continue;
+                                }
 
                                 color = ColorUtils.darken(color, world.getEnvironment().getDarkness(),
                                         camera.getPosition().distance(m.getPosition()));

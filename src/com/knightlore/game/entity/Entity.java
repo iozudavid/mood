@@ -387,10 +387,11 @@ public abstract class Entity extends NetworkObject implements IMinimapObject, Ti
 
             // before starting interpolation
             // we need to wait for setting entity up...
-            if (!this.creationCall)
+            if (!this.creationCall) {
                 this.creationCall = true;
-            else
+            } else {
                 this.settingCall = true;
+            }
         } else {
             size = buf.getDouble();
             double posX = buf.getDouble();

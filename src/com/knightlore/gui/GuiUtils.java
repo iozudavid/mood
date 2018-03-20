@@ -19,20 +19,24 @@ public class GuiUtils {
 	}
 	
 	public static int minX(ArrayList<GUIObject> g){
-		if(g.size()==0)
+		if(g.isEmpty()) {
 			return 0;
+		}
 		int min = g.get(0).getRectangle().x;
-		for(GUIObject obj : g)
+		for(GUIObject obj : g) {
 			min = Math.min(min, obj.getRectangle().x);
+		}
 		return min;
 	}
 	
 	public static int minY(ArrayList<GUIObject> g){
-		if(g.size()==0)
+		if(g.isEmpty()) {
 			return 0;
+		}
 		int min = g.get(0).getRectangle().y;
-		for(GUIObject obj : g)
+		for(GUIObject obj : g) {
 			min = Math.min(min, obj.getRectangle().y);
+		}
 		return min;
 	}
 	

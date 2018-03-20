@@ -44,8 +44,9 @@ public class TextArea extends GUIObject{
 	
 	@Override
 	void Draw(Graphics g, Rectangle parentRect) {
-		if(!this.interactive)
+		if(!this.interactive) {
 			return;
+		}
 		if (this.active) {
 			g.setColor(new Color(0x1F1F1F));
 			g.fillRect(this.getRectangle().x, this.getRectangle().y, this.getRectangle().width,

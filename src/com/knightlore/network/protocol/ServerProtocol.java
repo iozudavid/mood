@@ -93,40 +93,47 @@ public final class ServerProtocol {
 
     // get the key by passing index in the array
     public static ServerControl getIndexesByPosition(int i) throws IOException {
-        if (i > indexAction.size())
+        if (i > indexAction.size()) {
             throw new IOException();
+        }
         for (Integer[] element : indexAction.keySet()) {
-            if (i >= element[0] && i <= element[1])
+            if (i >= element[0] && i <= element[1]) {
                 return indexAction.get(element);
+            }
         }
         return null;
     }
 
     // get the index by passing the key
     public static Integer[] getIndexesByControl(ServerControl key) throws IOException {
-        if (!indexAction.containsValue(key))
+        if (!indexAction.containsValue(key)) {
             throw new IOException();
+        }
         for (Integer[] i : indexAction.keySet()) {
-            if (indexAction.get(i) == key)
+            if (indexAction.get(i) == key) {
                 return i;
+            }
         }
         return null;
     }
 
     // get the control by passing the position
     public static ServerControl getControlByPosition(int pos) throws IOException {
-        if (!positionAction.containsKey(pos))
+        if (!positionAction.containsKey(pos)) {
             throw new IOException();
+        }
         return positionAction.get(pos);
     }
 
     // get the position by passing the control
     public static Integer getPositionByControl(ServerControl key) throws IOException {
-        if (!positionAction.containsValue(key))
+        if (!positionAction.containsValue(key)) {
             throw new IOException();
+        }
         for (Integer i : positionAction.keySet()) {
-            if (positionAction.get(i) == key)
+            if (positionAction.get(i) == key) {
                 return i;
+            }
         }
         return null;
     }
@@ -173,8 +180,9 @@ public final class ServerProtocol {
     // used on client side
     public static boolean isDisconnectedState(byte[] packet) {
         for (int i = ServerProtocol.MESSAGE_STARTING_POINT; i < ServerProtocol.TOTAL_LENGTH; i++) {
-            if (packet[i] != ServerProtocol.disconnectedState[i - ServerProtocol.MESSAGE_STARTING_POINT])
+            if (packet[i] != ServerProtocol.disconnectedState[i - ServerProtocol.MESSAGE_STARTING_POINT]) {
                 return false;
+            }
         }
         return true;
     }

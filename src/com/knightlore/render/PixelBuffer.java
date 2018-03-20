@@ -39,8 +39,9 @@ public class PixelBuffer {
     public void flood(int color) {
     	 for (int yy = 0; yy < 0 + getHeight(); yy++) {
              for (int xx = 0; xx < 0 + getWidth(); xx++) {
-                 if (!inBounds(xx, yy))
+                 if (!inBounds(xx, yy)) {
                      continue;
+                 }
                  pixels[xx + yy * WIDTH] = color;
              }
          }
@@ -155,13 +156,15 @@ public class PixelBuffer {
      *            the height of the rectangle.
      */
     public void fillRect(int color, int x, int y, int w, int h) {
-        if (color == CHROMA_KEY)
+        if (color == CHROMA_KEY) {
             return;
+        }
 
         for (int yy = y; yy < y + h; yy++) {
             for (int xx = x; xx < x + w; xx++) {
-                if (!inBounds(xx, yy))
+                if (!inBounds(xx, yy)) {
                     continue;
+                }
                 pixels[xx + yy * WIDTH] = color;
             }
         }
@@ -272,8 +275,9 @@ public class PixelBuffer {
      * @return the colour at the x-y position -- 0 if it is out of bounds.
      */
     public int pixelAt(int x, int y) {
-        if (!inBounds(x, y))
+        if (!inBounds(x, y)) {
             return 0;
+        }
         return pixels[x + y * WIDTH];
     }
 
