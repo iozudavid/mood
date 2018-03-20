@@ -288,8 +288,7 @@ public class Renderer {
 
     private synchronized void drawSprites(PixelBuffer pix, double[] zbuffer, int offset) {
         synchronized (world) {
-            Entity[] entities = new Entity[world.getEntities().size()];
-            world.getEntities().toArray(entities);
+            Entity[] entities = world.getEntityArray();
             Comparator<Entity> c = new Comparator<Entity>() {
 
                 @Override
