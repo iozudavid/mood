@@ -362,7 +362,9 @@ public class Player extends Entity {
             }            
             removeAllBuffs();
             this.sendSystemMessage(name, inflictor);
+            System.out.println("CALLING ON PLAYER DEATH");
             GameEngine.getSingleton().getWorld().getGameManager().onPlayerDeath(this);
+            System.out.println("CALLED IT!");
         }
     }
 

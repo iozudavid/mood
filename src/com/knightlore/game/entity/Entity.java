@@ -503,6 +503,9 @@ public abstract class Entity extends NetworkObject implements IMinimapObject, Ti
     }
     
     public synchronized void resetBuff(Buff rbuff) {
+        //if(GameSettings.isClient()) {
+        //    return;
+        //}
         BuffType bt = rbuff.getType();
         for(Buff buff : buffList) {
             if(buff.getType() == bt) {
@@ -510,7 +513,6 @@ public abstract class Entity extends NetworkObject implements IMinimapObject, Ti
                 return; //IMPORTANT WE RETURN
             }
         }
-        System.out.println("Adding buff " + rbuff.toString());
         addBuff(rbuff);
     }
     
@@ -540,8 +542,6 @@ public abstract class Entity extends NetworkObject implements IMinimapObject, Ti
     
     @Override
     public long interval() {
-        // every half second...
-        //return (long) GameEngine.UPDATES_PER_SECOND / 2;
         // every sixteenth second
         return (long) GameEngine.UPDATES_PER_SECOND / 32;
     }

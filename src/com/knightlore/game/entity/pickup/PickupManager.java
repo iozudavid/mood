@@ -1,12 +1,10 @@
 package com.knightlore.game.entity.pickup;
 
-import java.util.List;
 import java.util.PriorityQueue;
 
 import com.knightlore.engine.GameEngine;
 import com.knightlore.engine.TickListener;
 import com.knightlore.game.area.Map;
-import com.knightlore.game.entity.Entity;
 import com.knightlore.game.tile.PickupTile;
 import com.knightlore.utils.Vector2D;
 
@@ -14,7 +12,6 @@ public class PickupManager implements TickListener{
 
     private double currentTime = 0.0;
     private GameEngine engine;
-    private boolean debug = true;
     
     // keep track of the pickup object and when to place
     private PriorityQueue<PickupPlacement> pickupQueue 
@@ -55,12 +52,7 @@ public class PickupManager implements TickListener{
     
     @Override
     public void onTick() {
-        
-        // something wrong with my logic here...
-        if(debug == true && pickupQueue.peek() != null) {
-            System.out.println("CURRENT TIME: " + currentTime);
-            System.out.println("NEXT ITEM TIME: " + pickupQueue.peek().getPlacementTime());
-        }
+
         // place pickups if appropriate
         while(pickupQueue.peek() != null && pickupQueue.peek().getPlacementTime() <= currentTime) {
             // get and remove from queue
