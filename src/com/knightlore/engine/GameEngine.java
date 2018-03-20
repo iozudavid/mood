@@ -5,6 +5,7 @@ import com.knightlore.MainWindow;
 import com.knightlore.engine.audio.SoundManager;
 import com.knightlore.engine.input.InputManager;
 import com.knightlore.engine.input.Mouse;
+import com.knightlore.game.entity.pickup.PickupManager;
 import com.knightlore.game.world.ClientWorld;
 import com.knightlore.game.world.GameWorld;
 import com.knightlore.game.world.ServerWorld;
@@ -48,6 +49,8 @@ public class GameEngine implements Runnable {
     private GameWorld world;
     private GameObjectManager gameObjectManager;
     private NetworkObjectManager networkObjectManager;
+    
+    private PickupManager pickupManager;
 
     private Camera camera;
     public GameState gameState = GameState.InGame;
@@ -70,7 +73,7 @@ public class GameEngine implements Runnable {
         this.gameObjectManager = new GameObjectManager();
         this.soundManager = new SoundManager();
     }
-
+    
     public SoundManager getSoundManager() {
         return soundManager;
     }
@@ -131,6 +134,11 @@ public class GameEngine implements Runnable {
 
         System.out.println("World Initialised Successfully.");
 
+        if (GameSettings.isServer()) {
+            // map must be initialised before handing it the pickup manager
+            pickupManager = new PickupManager(world.getMap());
+        }
+        
         if (GameSettings.isClient()) {
             ClientNetworkObjectManager cn = (ClientNetworkObjectManager) networkObjectManager;
             while (!cn.hasFinishedSetup()) {

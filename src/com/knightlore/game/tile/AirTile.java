@@ -37,4 +37,9 @@ public class AirTile extends Tile {
     @Override
     public void onEntered(Entity entity) {
     }
+
+    public char toChar() {
+        return ' ';
+    }
+    
 }

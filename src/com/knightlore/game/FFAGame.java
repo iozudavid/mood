@@ -44,7 +44,9 @@ public class FFAGame extends GameManager {
         // reduce their score for dying
         p.addScore(-1);
         // drop the weapon in their current position
+        
         spawnPickup(p.getPosition(), p.getCurrentWeapon().getWeaponType());
+        
         // generate random spawn point
         Vector2D spawnPos = GameEngine.getSingleton().getWorld().getMap().getRandomSpawnPoint();
         p.respawn(spawnPos);
@@ -55,7 +57,7 @@ public class FFAGame extends GameManager {
         case PISTOL:
             break;
         case SHOTGUN:
-            ShotgunPickup shotgun = new ShotgunPickup(pos);
+            ShotgunPickup shotgun = new ShotgunPickup(pos, null);
             shotgun.init();
             // nice adding :)
             GameEngine.getSingleton().getWorld().addEntity(shotgun);

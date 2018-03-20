@@ -8,6 +8,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 public class Room extends Area {
+
     private int minConnections = 2;
     private int maxConnections = 6;
     

@@ -52,7 +52,7 @@ public abstract class GameObject {
     public void setyPos(double yPos) {
         position = new Vector2D(position.getX(), yPos);
     }
-
+    
     /**
      * Called when the component is first added to the GameObject, before it is
      * first updated. Use this to subscribe to listeners.

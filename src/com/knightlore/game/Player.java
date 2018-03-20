@@ -10,11 +10,14 @@ import java.util.UUID;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
+import com.knightlore.engine.GameEngine;
+import com.knightlore.engine.TickListener;
+import com.knightlore.game.buff.Buff;
+import com.knightlore.game.buff.Immune;
 import com.google.common.collect.ImmutableMap;
 import com.knightlore.GameSettings;
 import com.knightlore.ai.InputModule;
 import com.knightlore.ai.RemoteInput;
-import com.knightlore.engine.GameEngine;
 import com.knightlore.game.entity.Entity;
 import com.knightlore.game.entity.weapon.Shotgun;
 import com.knightlore.game.entity.weapon.Weapon;
@@ -70,6 +73,8 @@ public class Player extends Entity {
     private int inertiaX = 0, inertiaY = 0;
     private InputModule inputModule = new RemoteInput();
 
+    private Entity lastInflictor;
+    
     // DO NOT REMOVE, THESE ARE USED FOR CLIENT PREDICTION!!!!!
     private double timeToSend = 0;
     private boolean respawn = false;
@@ -92,6 +97,12 @@ public class Player extends Entity {
         moveSpeed = 0.060;
         strafeSpeed = moveSpeed / 2;
         rotationSpeed = 0.06;
+
+        // add tick listener to game engine
+        // as some buffs will affect the player periodically
+        GameEngine.ticker.addTickListener(this);
+        
+        // Player.this.finished = true;
     }
 
     public Player(Vector2D pos, Vector2D dir) {
@@ -249,6 +260,7 @@ public class Player extends Entity {
         currentWeapon.update();
         prevPos = position;
         prevDir = direction;
+        checkDeath();
     }
 
     private void updateInertia(Vector2D displacement) {
@@ -338,15 +350,38 @@ public class Player extends Entity {
 
     @Override
     public void takeDamage(int damage, Entity inflictor) {
-        if (GameSettings.isServer()) {
-            currentHealth -= damage;
-            if (currentHealth <= 0) {
-                System.out.println(name + " was killed by " + inflictor.getName());
-                inflictor.killConfirmed(this);
-                this.sendSystemMessage(name, inflictor);
-                GameEngine.getSingleton().getWorld().getGameManager().onPlayerDeath(this);
-            }
+        if(GameSettings.isClient()) {
+            return;
         }
+        damage = (int) (damage * damageTakenModifier);
+        int newHealth = currentHealth - damage;
+        currentHealth = Math.max(0, Math.min(MAX_HEALTH, newHealth));
+        if(inflictor != null) {
+            lastInflictor = inflictor;
+        }
+    }
+
+    private void checkDeath() {
+        if(GameSettings.isClient()) {
+            return;
+        }
+        if (currentHealth <= 0) {
+            if(lastInflictor == null) {
+                System.out.println(name + " was killed by natural causes");
+            }else {
+                System.out.println(name + " was killed by " + lastInflictor.getName());
+                lastInflictor.killConfirmed(this);
+            }            
+            removeAllBuffs();
+            this.sendSystemMessage(name, lastInflictor);
+            System.out.println("CALLING ON PLAYER DEATH");
+            GameEngine.getSingleton().getWorld().getGameManager().onPlayerDeath(this);
+            System.out.println("CALLED IT!");
+        }
+    }
+    
+    public void applyHeal(int heal) {
+        takeDamage(-heal,null);
     }
 
     public void increaseScore(int value) {

@@ -1,6 +1,7 @@
 package com.knightlore.game.area;
 
 import com.knightlore.game.tile.AirTile;
+import com.knightlore.game.tile.PlayerSpawnTile;
 import com.knightlore.game.tile.Tile;
 
 import java.io.Serializable;
@@ -32,6 +33,8 @@ public abstract class Area implements Serializable {
                 Tile tile = grid[i][j];
                 if (tile.getSolidity() >= 1) {
                     costGrid[i][j] = Double.POSITIVE_INFINITY;
+                } else if(tile instanceof PlayerSpawnTile) {
+                    costGrid[i][j] = Double.POSITIVE_INFINITY;
                 } else {
                     costGrid[i][j] = 1 / (1 - tile.getSolidity());
                 }
@@ -56,14 +59,16 @@ public abstract class Area implements Serializable {
     }
 
     public int getWidth() {
-        return width;
+        return grid.length;
+        //return width;
     }
 
     public int getHeight() {
-        return height;
+        return grid[0].length;
+        //return height;
     }
 
-    public String toString() {
+    public String toDebugString() {
         StringBuilder sBuilder = new StringBuilder("AREA\n" + "WIDTH = " + width + "\n" + "HEIGHT = " + height + "\n");
         for (int j = 0; j < height; j++) {
             for (int i = 0; i < width; i++) {

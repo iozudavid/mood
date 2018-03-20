@@ -12,6 +12,9 @@ public final class GameSettings {
     static boolean client = false;
     static boolean server = false;
 
+    public static int desiredBlockiness = 10;
+    public static int actualBlockiness = desiredBlockiness;
+    
     // FIXME: enter dynamic player names in the GUI.
     public static String PLAYER_NAME = "Client Player";
 

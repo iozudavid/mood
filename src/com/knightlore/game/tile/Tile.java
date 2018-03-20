@@ -95,7 +95,7 @@ public abstract class Tile implements Serializable {
     public abstract void onEntered(Entity entity);
 
     public char toChar() {
-        return ' ';
+        return '?';
     }
 
     public Tile reflectTileX() {

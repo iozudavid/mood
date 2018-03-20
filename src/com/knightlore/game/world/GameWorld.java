@@ -12,6 +12,8 @@ import com.knightlore.game.PlayerManager;
 import com.knightlore.game.area.Map;
 import com.knightlore.game.area.generation.MapGenerator;
 import com.knightlore.game.entity.Entity;
+
+import com.knightlore.game.entity.pickup.PickupManager;
 import com.knightlore.utils.physics.Physics;
 import com.knightlore.utils.physics.RaycastHit;
 import com.knightlore.utils.physics.RaycastHitType;
@@ -19,9 +21,9 @@ import com.knightlore.utils.Vector2D;
 
 public abstract class GameWorld {
 
-    protected static final int TEST_XSIZE = 16;
-    protected static final int TEST_YSIZE = 32;
-    protected static final long TEST_SEED = 25L;
+    protected static final int TEST_XSIZE = 40;  //16;
+    protected static final int TEST_YSIZE = 60;  //32;
+    protected static final long TEST_SEED = 47L; //25L;
     
     protected Map map;
     protected PlayerManager playerManager;

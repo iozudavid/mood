@@ -2,6 +2,8 @@ package com.knightlore.game.entity;
 
 import java.awt.geom.Rectangle2D;
 import java.nio.ByteBuffer;
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.BlockingQueue;
@@ -9,9 +11,12 @@ import java.util.concurrent.LinkedBlockingQueue;
 
 import com.knightlore.GameSettings;
 import com.knightlore.engine.GameEngine;
+import com.knightlore.engine.TickListener;
 import com.knightlore.game.Player;
 import com.knightlore.game.Team;
 import com.knightlore.game.area.Map;
+import com.knightlore.game.buff.Buff;
+import com.knightlore.game.buff.BuffType;
 import com.knightlore.game.tile.Tile;
 import com.knightlore.network.NetworkObject;
 import com.knightlore.network.NetworkObjectManager;
@@ -29,7 +34,7 @@ import com.knightlore.utils.Vector2D;
  * @author Joe Ellis
  *
  */
-public abstract class Entity extends NetworkObject implements IMinimapObject {
+public abstract class Entity extends NetworkObject implements IMinimapObject, TickListener {
 
     /**
      * The speed at which the entity can move when calling moveForward() and
@@ -48,11 +53,15 @@ public abstract class Entity extends NetworkObject implements IMinimapObject {
      * and rotateAnticlockwise().
      */
     protected double rotationSpeed = .025;
+    
+    protected double damageTakenModifier = 1;
+    protected ArrayList<Buff> buffList = new ArrayList<Buff>();
+    private static final double BUFF_TICK_RATE = GameEngine.UPDATES_PER_SECOND / 16;
 
     // this constant will decide
     // how smooth will be rendered other entities
     private final double smoothiness = 0.1D;
-
+    
     /**
      * The map which the entity exists in. This is required for collision
      * detection.
@@ -93,6 +102,10 @@ public abstract class Entity extends NetworkObject implements IMinimapObject {
         this.plane = direction.perpendicular();
         this.zOffset = 0;
         map = GameEngine.getSingleton().getWorld().getMap();
+
+        // tick listener for buffs
+        GameEngine.getSingleton().ticker.addTickListener(this);
+        
         this.creationCall = false;
         this.settingCall = false;
         this.systemMessages = new LinkedBlockingQueue<>();
@@ -298,6 +311,19 @@ public abstract class Entity extends NetworkObject implements IMinimapObject {
     }
 
     /**
+    * Move the player irrespective of the direction they're facing 
+    */
+    public synchronized void absoluteMove(Vector2D absDir, double distance) {
+        double xPos = position.getX(), yPos = position.getY();
+        double xDir = absDir.getX() , yDir = absDir.getY();
+        Tile xTile = map.getTile((int) (xPos + xDir * distance), (int) (yPos));
+        Tile yTile = map.getTile((int) (xPos), (int) (yPos + yDir *distance));
+        xPos += xDir * distance * (1 - xTile.getSolidity());
+        yPos += yDir * distance * (1 - yTile.getSolidity());
+        position = new Vector2D(xPos, yPos);
+    }
+    
+    /**
      * Rotation is simply multiplication by the rotation matrix. We take the
      * position and plane vectors, then multiply them by the rotation matrix
      * (whose parameter is ROTATION_SPEED). This lets us rotate.
@@ -434,8 +460,99 @@ public abstract class Entity extends NetworkObject implements IMinimapObject {
         // DO NOTHING
     }
     
-    protected void sendSystemMessage(String name, Entity inflictor){
-    	String message = "System : " + name + " was killed by " + inflictor.getName();
+    public void setMoveSpeed(double speed) {
+        moveSpeed = speed;
+    }
+    
+    public double getMoveSpeed() {
+        return moveSpeed;
+    }
+    
+    public void setRotateSpeed(double speed) {
+        rotationSpeed = speed;
+    }
+    
+    public double getRotateSpeed() {
+        return rotationSpeed;
+    }
+    
+    public void setStrafeSpeed(double speed) {
+        strafeSpeed = speed;
+    }
+    
+    public double getStrafeSpeed() {
+        return strafeSpeed;
+    }
+    
+    public void setDamageTakenModifier(double d) {
+        damageTakenModifier = d;
+    }
+    
+    public synchronized void removeBuff(BuffType bt) {
+        for(Iterator<Buff> iter = buffList.iterator(); iter.hasNext(); ) {
+            Buff b = iter.next();
+            if(b.getType() == bt) {
+                b.setDone(true);
+            }
+        }
+    }
+    
+    private synchronized void addBuff(Buff buff) {
+        buffList.add(buff);
+        buff.onApply();
+    }
+    
+    public synchronized void resetBuff(Buff rbuff) {
+        //if(GameSettings.isClient()) {
+        //    return;
+        //}
+        BuffType bt = rbuff.getType();
+        for(Buff buff : buffList) {
+            if(buff.getType() == bt) {
+                buff.reset();
+                return; //IMPORTANT WE RETURN
+            }
+        }
+        addBuff(rbuff);
+    }
+    
+    public synchronized void removeAllBuffs() {
+        for(Iterator<Buff> iter = buffList.iterator() ; iter.hasNext(); ) {
+            iter.next().setDone(true);
+        }
+    }
+    
+    @Override
+    public synchronized void onTick() {
+        
+        for(Iterator<Buff> iter = buffList.iterator() ; iter.hasNext(); ) {
+            Buff buff = iter.next();
+            if(buff.isDone()) {
+                buff.onRemove();
+                iter.remove();
+            }else {
+                buff.loop();
+            }
+        }
+    }
+
+    public static double getBuffTickRate() {
+        return BUFF_TICK_RATE;
+    }
+    
+    @Override
+    public long interval() {
+        // every sixteenth second
+        return (long) GameEngine.UPDATES_PER_SECOND / 16;
+    }
+    
+    public void sendSystemMessage(String name, Entity inflictor){
+        String message;
+        if(inflictor == null) {
+            message = "System: " + name + " was killed by natural causes";
+        }else {
+            message = "System : " + name + " was killed by " + inflictor.getName();
+        }
     	ByteBuffer bf = ByteBuffer.allocate(NetworkObject.BYTE_BUFFER_DEFAULT_SIZE);
     	NetworkUtils.putStringIntoBuf(bf, NetworkObjectManager.MANAGER_UUID.toString());
     	NetworkUtils.putStringIntoBuf(bf, "displayMessage");

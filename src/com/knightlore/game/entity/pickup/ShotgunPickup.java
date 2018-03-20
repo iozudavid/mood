@@ -22,20 +22,27 @@ public class ShotgunPickup extends PickupItem {
     
     // Returns a new instance. See NetworkObject for details.
     public static NetworkObject build(UUID uuid, ByteBuffer state) {
-        NetworkObject obj = new ShotgunPickup(uuid, Vector2D.ONE);
+        NetworkObject obj = new ShotgunPickup(uuid, Vector2D.ONE, null);
         obj.init();
         obj.deserialize(state);
         return obj;
     }
-    
-    public ShotgunPickup(Vector2D position) {
-        this(UUID.randomUUID(), position);
+
+    public ShotgunPickup(Vector2D position, PickupManager pickupManager) {
+        this(UUID.randomUUID(), position, pickupManager);
+    }
+
+    public ShotgunPickup(UUID uuid, Vector2D position, PickupManager pickupManager) {
+        super(uuid, position, DirectionalSprite.SHOTGUN_DIRECTIONAL_SPRITE, pickupManager);
+        spawnDelay = 10;
     }
     
-    private ShotgunPickup(UUID uuid, Vector2D position) {
-        super(uuid, position, DirectionalSprite.SHOTGUN_DIRECTIONAL_SPRITE);
-        spawnProtectTime = GameEngine.ticker.getTime() + PICKUP_SPAWN_PROTECT_TIME;
-    }
+    // FIGURE OUT
+    //private ShotgunPickup(UUID uuid, Vector2D position) {
+    //    super(uuid, position, DirectionalSprite.SHOTGUN_DIRECTIONAL_SPRITE);
+    //    spawnProtectTime = GameEngine.ticker.getTime() + PICKUP_SPAWN_PROTECT_TIME;
+    //}
+    // FIGURE OUT
     
     @Override
     public int getMinimapColor() {
@@ -49,9 +56,17 @@ public class ShotgunPickup extends PickupItem {
     }
     
     @Override
+    public String getName() {
+        return "SHOTGUN";
+    }
+
+    @Override
     public void onCollide(Player player) {
-        if (exists) {
-            this.destroy();
+        if(exists) {
+        // update pickup manager
+        addToPickupManager();
+        // existence of object set to false
+        this.destroy();
         }
     }
     
