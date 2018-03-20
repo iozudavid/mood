@@ -68,7 +68,7 @@ public class MapGenerator extends ProceduralAreaGenerator {
     }
 
     private boolean setRoomPosition(Room room, int maxX, int maxY) {
-        List<Point> candidates = new ArrayList<Point>();
+        List<Point> candidates = new ArrayList<>();
         for (int x = 0; x < maxX - room.getWidth(); x++) {
             for (int y = 0; y < maxY - room.getHeight(); y++) {
                 room.setRoomPosition(new Point(x, y));

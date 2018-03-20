@@ -2,7 +2,6 @@ package com.knightlore.render;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.ListIterator;
 
 import com.knightlore.engine.GameEngine;
 import com.knightlore.gui.GameChat;

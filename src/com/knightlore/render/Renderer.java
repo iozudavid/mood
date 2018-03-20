@@ -70,7 +70,7 @@ public class Renderer {
          * adding new render items to a stack until we reach an opaque block.
          * The stack is then popped and rendered in turn.
          */
-        Stack<PerspectiveRenderItem> renderStack = new Stack<PerspectiveRenderItem>();
+        Stack<PerspectiveRenderItem> renderStack = new Stack<>();
 
         for (int xx = 0; xx < width; xx += BLOCKINESS) {
             // Calculate direction of the ray based on camera direction.
@@ -333,8 +333,8 @@ public class Renderer {
                     for (int stripe = drawStartX; stripe < drawEndX; stripe++) {
                         Graphic g = m.getGraphic(camera.getPosition());
 
-                        int texX = (int) (256 * (stripe - (-spriteWidth / 2 + spriteScreenX)) * g.getWidth()
-                                / spriteWidth) / 256;
+                        int texX = 256 * (stripe - (-spriteWidth / 2 + spriteScreenX)) * g.getWidth()
+                                / spriteWidth / 256;
 
                         // the conditions in the if are:
                         // 1) it's in front of camera plane so you don't see

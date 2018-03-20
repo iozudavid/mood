@@ -36,7 +36,5 @@ public class AirTile extends Tile {
 
     @Override
     public void onEntered(Entity entity) {
-        // TODO Auto-generated method stub
-        
     }
 }

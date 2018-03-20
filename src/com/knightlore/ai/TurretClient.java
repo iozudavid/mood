@@ -42,8 +42,6 @@ public final class TurretClient extends TurretShared {
 
     @Override
     public void onUpdate() {
-        // TODO Auto-generated method stub
-        
     }
     
 }

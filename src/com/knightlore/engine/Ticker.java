@@ -32,7 +32,7 @@ public class Ticker {
 
     protected Ticker() {
         tick = 0;
-        tickListeners = new ArrayList<TickListener>();
+        tickListeners = new ArrayList<>();
     }
 
     /**

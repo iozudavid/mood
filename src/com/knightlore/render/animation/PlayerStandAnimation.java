@@ -13,7 +13,7 @@ public class PlayerStandAnimation extends TimedAnimation<DirectionalSprite> {
     public PlayerStandAnimation(GraphicSheet sheet, long interval) {
         super(interval);
         for (int i = 0; i < animationFrames; i++) {
-            ArrayList<Graphic> angles = new ArrayList<Graphic>();
+            ArrayList<Graphic> angles = new ArrayList<>();
             for (int y = 0; y < 32; y++) {
                 angles.add(sheet.graphicAt(i, y));
             }

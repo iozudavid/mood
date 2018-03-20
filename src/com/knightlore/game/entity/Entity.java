@@ -345,7 +345,7 @@ public abstract class Entity extends NetworkObject implements IMinimapObject {
     @Override
     public synchronized void deserialize(ByteBuffer buf) {
         // interpolation only on client side
-        if (this.creationCall == false || this.settingCall == false
+        if (!this.creationCall || !this.settingCall
                 || GameSettings.isServer()) {
             size = buf.getDouble();
             double posX = buf.getDouble();
@@ -450,7 +450,6 @@ public abstract class Entity extends NetworkObject implements IMinimapObject {
         try {
             return Optional.of(this.systemMessages.take());
         } catch (InterruptedException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
         return Optional.empty();

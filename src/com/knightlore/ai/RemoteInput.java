@@ -20,7 +20,6 @@ public final class RemoteInput extends InputModule {
 
     @Override
     public void onRespawn(Entity myPlayer) {
-        // TODO Auto-generated method stub
     }
 
 }

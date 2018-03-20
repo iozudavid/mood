@@ -7,9 +7,7 @@ import java.util.UUID;
 import com.knightlore.engine.GameEngine;
 import com.knightlore.game.entity.Entity;
 import com.knightlore.game.entity.pickup.ShotgunPickup;
-import com.knightlore.game.entity.weapon.Shotgun;
 import com.knightlore.game.entity.weapon.WeaponType;
-import com.knightlore.network.NetworkObject;
 import com.knightlore.utils.Vector2D;
 
 public class FFAGame extends GameManager {

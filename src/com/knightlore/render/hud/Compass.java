@@ -18,11 +18,11 @@ public class Compass extends HUDElement {
     public void render(PixelBuffer pix, int x, int y) {
         if (player == null)
             return;
-        final int WIDTH = 100, HEIGHT = WIDTH;
+        final int WIDTH = 100;
 
         Vector2D v = new Vector2D(player.getyDir(), player.getxDir());
         Graphic g = compassSprite.getCurrentGraphic(Vector2D.ZERO, v, Vector2D.DOWN);
-        pix.drawGraphic(g, x, y, WIDTH, HEIGHT);
+        pix.drawGraphic(g, x, y, WIDTH, WIDTH);
     }
 
 }

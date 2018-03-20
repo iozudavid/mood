@@ -143,8 +143,7 @@ public class Camera implements IRenderable {
      */
     public synchronized Vector2D getPlane() {
         Vector2D plane = subject.getPlane();
-        Vector2D fovAdjustedPlane = new Vector2D(plane.getX() * FIELD_OF_VIEW, plane.getY() * FIELD_OF_VIEW);
-        return fovAdjustedPlane;
+        return new Vector2D(plane.getX() * FIELD_OF_VIEW, plane.getY() * FIELD_OF_VIEW);
     }
 
     public synchronized double getxPlane() {

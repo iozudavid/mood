@@ -2,7 +2,11 @@ package com.knightlore;
 
 public final class GameSettings {
 
-    public static final boolean FULLSCREEN = !true;
+    public static final boolean FULLSCREEN;
+
+    static {
+        FULLSCREEN = false;
+    }
 
     // TODO: FIXME here?
     static boolean client = false;

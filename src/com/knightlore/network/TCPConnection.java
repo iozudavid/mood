@@ -80,8 +80,7 @@ public class TCPConnection extends Connection {
                 }
                 byte[] tmp = new byte[size];
                 infoReceive.readFully(tmp);
-                ByteBuffer buf = ByteBuffer.wrap(tmp);
-                return buf;
+                return ByteBuffer.wrap(tmp);
             } catch (IOException e) {
                 System.err.println("Communication broke...");
                 this.terminated = true;

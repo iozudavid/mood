@@ -75,6 +75,7 @@ public class ClientNetworkObjectManager extends NetworkObjectManager {
     	GameChat c = d.getChat();
     	TextArea t = c.getTextArea();
     	t.addText(message);
+
     }
 
     // Called remotely when a new network object is created on the server.
@@ -119,8 +120,7 @@ public class ClientNetworkObjectManager extends NetworkObjectManager {
         System.out.println("Receiving object deletion message from server");
         UUID objID = UUID.fromString(NetworkUtils.getStringFromBuf(buf));
         NetworkObject toBeDestroyedObject = this.getNetworkObject(objID);
-        this.networkObjects.remove(objID);
-        // toBeDestroyedObject.destroy(); FIXME
+        toBeDestroyedObject.destroy();
         if (toBeDestroyedObject instanceof Entity) {
             clientWorld.removeEntity((Entity) toBeDestroyedObject);
         }
@@ -212,7 +212,6 @@ public class ClientNetworkObjectManager extends NetworkObjectManager {
                 return null;
             return this.teamChat.take();
         } catch (InterruptedException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
         return null;

@@ -94,26 +94,26 @@ public class ServerWorld extends GameWorld {
 
             // cast against players
             List<Player> playerList = playerManager.getPlayers();
-            for (int n = 0; n < playerList.size(); n++) {
-                if (playerList.get(n) == ignore) {
+            for (Player aPlayerList : playerList) {
+                if (aPlayerList == ignore) {
                     continue;
                 }
-                sqrSize = playerList.get(n).getSize() * playerList.get(n).getSize();
-                sqrDist = playerList.get(n).getPosition().sqrDistTo(p);
+                sqrSize = aPlayerList.getSize() * aPlayerList.getSize();
+                sqrDist = aPlayerList.getPosition().sqrDistTo(p);
                 if (sqrDist < sqrSize) {
-                    return new RaycastHit(RaycastHitType.PLAYER, p, playerList.get(n));
+                    return new RaycastHit(RaycastHitType.PLAYER, p, aPlayerList);
                 }
             }
 
             // now against entities
-            for (int n = 0; n < ents.size(); n++) {
-                if (ents.get(n) == ignore) {
+            for (Entity ent : ents) {
+                if (ent == ignore) {
                     continue;
                 }
-                sqrSize = ents.get(n).getSize() * ents.get(n).getSize();
-                sqrDist = ents.get(n).getPosition().sqrDistTo(p);
+                sqrSize = ent.getSize() * ent.getSize();
+                sqrDist = ent.getPosition().sqrDistTo(p);
                 if (sqrDist < sqrSize) {
-                    return new RaycastHit(RaycastHitType.ENTITY, p, ents.get(n));
+                    return new RaycastHit(RaycastHitType.ENTITY, p, ent);
                 }
             }
             // FIXME? for some reason bounding rectangles don't work properly?
