@@ -8,13 +8,16 @@ import javax.swing.JButton;
 import javax.swing.JPanel;
 
 public class TileChooserPanel extends JPanel {
-    private static final ImmutableList<Tile> options = ImmutableList.of(AirTile.getInstance(), new BrickTile(),
-            new BushTile());
+    private static final ImmutableList<Tile> OPTIONS = ImmutableList.of(
+            AirTile.getInstance(),
+            new BrickTile(),
+            new BushTile()
+    );
 
     public TileChooserPanel() {
         super();
         Box box = Box.createVerticalBox();
-        for (Tile o : options) {
+        for (Tile o : OPTIONS) {
             JButton button = new JButton(o.toString());
             button.addActionListener(e -> LevelEditorWindow.pen.stroke = o);
             box.add(button);

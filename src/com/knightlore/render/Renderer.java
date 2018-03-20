@@ -330,8 +330,8 @@ public class Renderer {
                     for (int stripe = drawStartX; stripe < drawEndX; stripe++) {
                         Graphic g = m.getGraphic(camera.getPosition());
 
-                        int texX = (int) (256 * (stripe - (-spriteWidth / 2 + spriteScreenX)) * g.getWidth()
-                                / spriteWidth) / 256;
+                        int texX = 256 * (stripe - (-spriteWidth / 2 + spriteScreenX)) * g.getWidth()
+                                / spriteWidth / 256;
 
                         // the conditions in the if are:
                         // 1) it's in front of camera plane so you don't see

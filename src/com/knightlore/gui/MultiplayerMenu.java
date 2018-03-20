@@ -52,7 +52,7 @@ public class MultiplayerMenu {
 		this.gui.addGUIObject(this.portText);
 		this.gui.addGUIObject(this.portTextField);
 		this.connectButton = new Button(GuiUtils.middleWidth(this.screenWidth/2, 300), GuiUtils.calculateHeight(this.screenHeight, 80), 300, 40, "Connect",20);
-		this.cancelButton = new Button((int)(GuiUtils.middleWidth(this.screenWidth/2, 300)+this.screenWidth/2), GuiUtils.calculateHeight(this.screenHeight, 80), 300, 40, "Cancel",20);
+		this.cancelButton = new Button(GuiUtils.middleWidth(this.screenWidth/2, 300)+this.screenWidth/2, GuiUtils.calculateHeight(this.screenHeight, 80), 300, 40, "Cancel",20);
 		this.gui.addGUIObject(connectButton);
 		this.gui.addGUIObject(cancelButton);
 		
