@@ -32,6 +32,9 @@ public abstract class GameWorld {
     private ConcurrentLinkedQueue<Entity> entsToAdd = new ConcurrentLinkedQueue<Entity>();
 
     public void update() {
+        while(entsToAdd.peek() != null) {
+            ents.add(entsToAdd.poll());
+        }
     }
     
     private Map generateMap(int xSize, int ySize, long seed) {
