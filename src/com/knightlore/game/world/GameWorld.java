@@ -16,7 +16,6 @@ import com.knightlore.utils.physics.Physics;
 import com.knightlore.utils.physics.RaycastHit;
 import com.knightlore.utils.physics.RaycastHitType;
 import com.knightlore.utils.Vector2D;
-import com.knightlore.utils.pruner.Pruner;
 
 public abstract class GameWorld {
 
@@ -29,9 +28,8 @@ public abstract class GameWorld {
     protected GameManager gameManager = null;
     protected AIManager aiManager;
     protected List<Entity> ents;
-    
+
     public void update() {
-        Pruner.prune(ents);
     }
     
     private Map generateMap(int xSize, int ySize, long seed) {

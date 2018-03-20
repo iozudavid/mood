@@ -8,10 +8,6 @@ import com.knightlore.render.Environment;
 
 public class ClientWorld extends GameWorld {
 
-    @Override
-    public void update() {
-    }
-
     public void addEntity(Entity ent) {
         this.ents.add(ent);
     }

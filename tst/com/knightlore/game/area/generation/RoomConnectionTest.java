@@ -5,7 +5,7 @@ import com.knightlore.game.tile.AirTile;
 import com.knightlore.game.tile.Tile;
 import org.junit.Test;
 
-import java.awt.*;
+import java.awt.Point;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.*;
