@@ -52,9 +52,9 @@ public class Prediction {
 		String name = NetworkUtils.getStringFromBuf(received);
 		player.setName(name);
 		int shootOnNext = received.getInt();
-		player.setOnNextShot(shootOnNext == 1 ? true : false);
+		player.setOnNextShot(shootOnNext == 1);
 		double timeSent = received.getDouble();
-        boolean respawn = (received.getInt() == 1 ? true : false);
+        boolean respawn = received.getInt() == 1;
         player.setRespawn(respawn);
         int currentHealth = received.getInt();
         player.setHealth(currentHealth);
@@ -79,7 +79,7 @@ public class Prediction {
 			this.nextPrediction.setyPos(yPos);
 			this.nextPrediction.setxDir(xDir);
 			this.nextPrediction.setyDir(yDir);
-			this.nextPrediction.setOnNextShot(shootOnNext == 1 ? true : false);
+			this.nextPrediction.setOnNextShot(shootOnNext == 1);
 
 			synchronized (this.clientInputHistory) {
 				for (byte[] nextInput : this.clientInputHistory.values()) {
@@ -162,10 +162,7 @@ public class Prediction {
 		for(int i=0; i<ClientProtocol.getIndexActionMap().size(); i=i+2){
 			try {
 				if(c==ClientProtocol.getByIndex(i)){
-					if(input[i+1]==1)
-						return true;
-					else
-						return false;
+					return input[i + 1] == 1;
 				}
 			} catch (IOException e) {
 				// TODO Auto-generated catch block

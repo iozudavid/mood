@@ -99,8 +99,7 @@ public class TextArea extends GUIObject{
 			if(wOffset + this.positionXToRender > this.getRectangle().getWidth()){
 				//word is too big
 				this.fitBigText(word, g, parentRect);
-				return;
-			}else{
+			} else {
 				//everything good
 				//draw it on the next line
 				g.drawChars(wordAsArray, 0, wordAsArray.length, this.positionXToRender, this.positionYToRender);
@@ -112,7 +111,6 @@ public class TextArea extends GUIObject{
 			//in order to free some space
 			it2.remove();
 			this.Draw(g, parentRect);
-			return;
 		}
 	}
 	

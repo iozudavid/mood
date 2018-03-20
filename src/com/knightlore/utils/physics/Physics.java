@@ -29,10 +29,7 @@ public class Physics {
         if (point.getY() < rect.y) {
             return false;
         }
-        if (point.getY() > rect.y + rect.height) {
-            return false;
-        }
-        return true;
+        return !(point.getY() > rect.y + rect.height);
     }
     
     // for use with physics
@@ -115,12 +112,8 @@ public class Physics {
             return false;
         }
         double s = (x2 - x1) + t * d2.getX() / d1.getX();
-        
-        if (s < 0 || s > 1) {
-            return false;
-        }
-        
-        return true;
+
+        return !(s < 0) && !(s > 1);
     }
     
     /**
