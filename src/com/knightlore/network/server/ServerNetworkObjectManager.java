@@ -1,8 +1,13 @@
 package com.knightlore.network.server;
 
 import java.nio.ByteBuffer;
-import java.util.*;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Optional;
+import java.util.UUID;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.function.Predicate;
 
@@ -33,6 +38,12 @@ public class ServerNetworkObjectManager extends NetworkObjectManager {
     public ServerNetworkObjectManager(ServerWorld world) {
         super();
         this.serverWorld = world;
+
+        setNetworkConsumers();
+    }
+
+    private void setNetworkConsumers() {
+        this.networkConsumers.put("receiveName", this::receiveName);
     }
 
     @Override
@@ -44,9 +55,11 @@ public class ServerNetworkObjectManager extends NetworkObjectManager {
     }
 
     private ByteBuffer getObjectCreationMessage(NetworkObject obj) {
-        // Leave room for the state (1 full buffer size), and the additional
-        // overhead as well.
-        ByteBuffer buf = ByteBuffer.allocate(2 * BYTE_BUFFER_DEFAULT_SIZE);
+        // Send the current state when sending the creation message.
+        ByteBuffer state = networkObjects.get(obj.getObjectId()).y;
+        // Leave room for the state and the additional overhead as well.
+        ByteBuffer buf = ByteBuffer
+                .allocate(state.position() + BYTE_BUFFER_DEFAULT_SIZE);
         // Send the message to the ClientNetworkObjectManager.
         NetworkUtils.putStringIntoBuf(buf, MANAGER_UUID.toString());
         // The remote method to call.
@@ -55,10 +68,8 @@ public class ServerNetworkObjectManager extends NetworkObjectManager {
         NetworkUtils.putStringIntoBuf(buf, obj.getClientClassName());
         // UUID of object to instantiate.
         NetworkUtils.putStringIntoBuf(buf, obj.getObjectId().toString());
-        // Send the current state when sending the creation message.
-        ByteBuffer state = networkObjects.get(obj.getObjectId()).y;
-        int stateLength = state.position();
-        buf.put(Arrays.copyOfRange(state.array(), 0, stateLength));
+        final ByteBuffer readOnlyState = state.asReadOnlyBuffer();
+        buf.put(readOnlyState);
         return buf;
     }
 
@@ -188,21 +199,22 @@ public class ServerNetworkObjectManager extends NetworkObjectManager {
                     t.getValue().y = newState;
                 }
 
-                if(getNetworkObject(t.getKey()) instanceof Entity){
-                	Entity e = (Entity) getNetworkObject(t.getKey());
-                	Optional<ByteBuffer> systemMessages = e.getSystemMessages();
+                if (getNetworkObject(t.getKey()) instanceof Entity) {
+                    Entity e = (Entity) getNetworkObject(t.getKey());
+                    Optional<ByteBuffer> systemMessages = e.getSystemMessages();
                     systemMessages.ifPresent(this::sendToClients);
                 }
 
-                if(getNetworkObject(t.getKey()) instanceof Player){
-                	Player p = (Player)getNetworkObject(t.getKey());
-                	Optional<ByteBuffer> toTeam = p.getTeamMessages();
-                	Predicate<Entity> predicate = (e) -> e.team==p.team;
-                    toTeam.ifPresent(byteBuffer -> this.sendToClientsIf(byteBuffer, predicate));
-                	
-                	Optional<ByteBuffer> toAll = p.getAllMessages();
+                if (getNetworkObject(t.getKey()) instanceof Player) {
+                    Player p = (Player) getNetworkObject(t.getKey());
+                    Optional<ByteBuffer> toTeam = p.getTeamMessages();
+                    Predicate<Entity> predicate = (e) -> e.team == p.team;
+                    toTeam.ifPresent(byteBuffer -> this
+                            .sendToClientsIf(byteBuffer, predicate));
+
+                    Optional<ByteBuffer> toAll = p.getAllMessages();
                     toAll.ifPresent(this::sendToClients);
-                }        
+                }
             }
 
         }
@@ -211,7 +223,6 @@ public class ServerNetworkObjectManager extends NetworkObjectManager {
         else
             updateCount++;
     }
-        
 
     public synchronized NetworkObject getNetworkObject(UUID uuid) {
         if (networkObjects.containsKey(uuid))
@@ -230,12 +241,27 @@ public class ServerNetworkObjectManager extends NetworkObjectManager {
             }
         }
     }
-    
-    private void sendToClientsIf(ByteBuffer buf, Predicate<Entity> pred){
-    	synchronized (clientSenders) {
+
+    /**
+     * Receive a player's requested name.
+     * 
+     * @param buf:
+     *            The message received from the client.
+     */
+    private void receiveName(ByteBuffer buf) {
+        System.out.println("Receiving player name");
+        UUID playerID = UUID.fromString(NetworkUtils.getStringFromBuf(buf));
+        Player player = (Player) GameEngine.getSingleton()
+                .getNetworkObjectManager().getNetworkObject(playerID);
+        player.setName(NetworkUtils.getStringFromBuf(buf));
+        System.out.println("Name is now " + player.getName());
+    }
+
+    private void sendToClientsIf(ByteBuffer buf, Predicate<Entity> pred) {
+        synchronized (clientSenders) {
             for (SendToClient s : clientSenders) {
-            	if (pred.test((Entity)getNetworkObject(s.getUUID())))
-            		s.send(buf);
+                if (pred.test((Entity) getNetworkObject(s.getUUID())))
+                    s.send(buf);
             }
         }
     }
