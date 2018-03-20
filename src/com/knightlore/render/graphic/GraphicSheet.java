@@ -35,19 +35,11 @@ public class GraphicSheet {
      * them.
      */
     public final static GraphicSheet PLAYER_SPRITES = new GraphicSheet("res/models/player_sprites.png", 128);
-    public final static GraphicSheet RED_PLAYER_SPRITES = new GraphicSheet("res/models/player_sprites.png", 128,
-            ColorFilter.RED);
-    public final static GraphicSheet BLUE_PLAYER_SPRITES = new GraphicSheet("res/models/player_sprites.png", 128,
-            ColorFilter.BLUE);
-
+    
     /**
      * A graphicsheet for the shotgun directional sprite.
      */
     public final static GraphicSheet SHOTGUN_SPRITES = new GraphicSheet("res/models/shotgun_sprites.png", 128);
-    public final static GraphicSheet RED_SHOTGUN_SPRITES = new GraphicSheet("res/models/shotgun_sprites.png", 128,
-            ColorFilter.RED);
-    public final static GraphicSheet BLUE_SHOTGUN_SPRITES = new GraphicSheet("res/models/shotgun_sprites.png", 128,
-            ColorFilter.BLUE);
 
     /**
      * A graphicsheet for the turret directional sprite.

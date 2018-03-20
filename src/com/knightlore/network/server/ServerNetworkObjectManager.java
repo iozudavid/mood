@@ -59,7 +59,7 @@ public class ServerNetworkObjectManager extends NetworkObjectManager {
         ByteBuffer state = networkObjects.get(obj.getObjectId()).y;
         // Leave room for the state and the additional overhead as well.
         ByteBuffer buf = ByteBuffer
-                .allocate(state.position() + BYTE_BUFFER_DEFAULT_SIZE);
+                .allocate(2 * BYTE_BUFFER_DEFAULT_SIZE);
         // Send the message to the ClientNetworkObjectManager.
         NetworkUtils.putStringIntoBuf(buf, MANAGER_UUID.toString());
         // The remote method to call.

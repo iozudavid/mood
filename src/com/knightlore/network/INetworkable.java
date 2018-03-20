@@ -18,11 +18,12 @@ public interface INetworkable {
 
     // This should be the inverse function of serialize.
     public void deserialize(ByteBuffer buffer);
-
+    
     // Networked objects must have a unique UUID.
     public UUID getObjectId();
 
     // Must return a map of all consumer methods you want to be callable over
     // the network, keyed by the methods' names.
     Map<String, Consumer<ByteBuffer>> getNetworkConsumers();
+
 }

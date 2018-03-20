@@ -119,6 +119,7 @@ public class GameEngine implements Runnable {
             ((ClientNetworkObjectManager) networkObjectManager)
                     .init(networkManager.getServerSender());
         }
+        
 
         System.out.println("Initialising NetworkObjectManager...");
 
@@ -138,6 +139,8 @@ public class GameEngine implements Runnable {
             GameChat chat = new GameChat(w, h);
             this.display = new Display(renderer, minimap, hud, chat);
         }
+        
+       
     }
 
     /**
@@ -176,7 +179,8 @@ public class GameEngine implements Runnable {
     @Override
     public void run() {
         // start the lobby
-        world.getGameManager().startLobby();
+        // finally... begin!
+        world.getGameManager().beginGame();
         /*
          * This piece of code limits the number of game updates per second to
          * whatever it is set to in the variable updatesPerSecond.
