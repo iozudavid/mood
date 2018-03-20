@@ -7,7 +7,6 @@ import com.knightlore.game.entity.pickup.PickupType;
 import com.knightlore.game.tile.AirTile;
 import com.knightlore.game.tile.BrickTile;
 import com.knightlore.game.tile.LavaTile;
-import com.knightlore.game.tile.MossBrickTile;
 import com.knightlore.game.tile.PlayerSpawnTile;
 import com.knightlore.game.tile.Tile;
 import com.knightlore.game.tile.TurretTile;
@@ -21,10 +20,13 @@ public class RoomGenerator extends ProceduralAreaGenerator {
 
     private static final int MIN_SIZE = 7;
     private static final int MAX_SIZE = 15;
+
     private static final int SPAWN_ROOM_MIN_CONNECTIONS = 1;
     private static final int SPAWN_ROOM_MAX_CONNECTIONS = 2;
-    private static final int MAX_INTERNAL_WALLS = 4;
-    private static final double INTERNAL_WALL_PROBABILITY = 0.15;
+    
+    private static final int MAX_INTERNAL_WALLS = 6;
+    private static final double INTERNAL_WALL_PROBABILITY = 0.5;
+    private static final int MINIMUM_SPLIT_LENGTH = 3;
 
     public Room createRoom(long seed, RoomType rt) {
         rand = new Random(seed);
@@ -44,12 +46,10 @@ public class RoomGenerator extends ProceduralAreaGenerator {
         }
         return new Room(grid, 2, 6);
     }
-
+    
     @Override
     protected void fillGrid() {
-        // TODO think about creating something more than just walls
-        fillUndecidedTiles();
-        addWalls();
+        // Not called here
     }
     
     protected void fillGrid(RoomType rt) {
@@ -89,41 +89,87 @@ public class RoomGenerator extends ProceduralAreaGenerator {
                 removeRightWall();
                 return;
             case normal :
-                addInternalWalls();
+                addInternalWalls(BrickTile.class);
         }
         fillUndecidedTiles();
         addWalls();
     }
 
-    private void addInternalWalls() {
-        int width = grid.length;
-        int height = grid[0].length;
-        int numInternalWalls = 0;
-        for(int i=2; i<width-2; i++) {
-            if(numInternalWalls == MAX_INTERNAL_WALLS) { return; };
-            if(rand.nextDouble() <= INTERNAL_WALL_PROBABILITY) {
-                addVerticalInternalWall(i);
+    private void addInternalWalls(Class roomClass) {
+        try {
+            int width = grid.length;
+            int height = grid[0].length;
+            int numInternalWalls = 0;
+            if(width > height) {
+                for(int i=2; i<width-3; i++) {
+                    if(numInternalWalls == MAX_INTERNAL_WALLS) { return; };
+                    if(rand.nextDouble() <= INTERNAL_WALL_PROBABILITY) {
+                        addVerticalInternalWall(i, roomClass);
+                        i++; // skip next iteration
+                    }
+                }
+            }else {
+                for(int j=2; j<height-3; j++) {
+                    if(numInternalWalls == MAX_INTERNAL_WALLS) { return; };
+                    if(rand.nextDouble() <= INTERNAL_WALL_PROBABILITY) {
+                        addHorizontalInternalWall(j, roomClass);
+                        j++; // skip next iteration
+                    }
+                }
             }
-        }
-        for(int j=2; j<height-2; j++) {
-            if(numInternalWalls == MAX_INTERNAL_WALLS) { return; };
-            if(rand.nextDouble() <= INTERNAL_WALL_PROBABILITY) {
-                addHorizontalInternalWall(j);
-            }
+            
+        }catch(InstantiationException e) {
+            System.out.println("Could not instantiate given class");
+        }catch(IllegalAccessException e) {
+            System.out.println("Could not cast class to Tile");
         }
     }
     
-    private void addHorizontalInternalWall(int y) {
+    private void addHorizontalInternalWall(int y, Class roomClass) throws InstantiationException, IllegalAccessException {
         int width = grid.length;
-        for(int i=2; i< width-2; i++) {
-            grid[i][y] = new BrickTile();
+        int distanceIntoRoom = 2 + rand.nextInt(width/4);
+        int start = distanceIntoRoom;
+        int end = (width - 1) - distanceIntoRoom;
+        // place straight wall
+        for(int i=start; i < end; i++) {
+            grid[i][y] = (Tile) roomClass.newInstance();
+        }
+        // now put in gaps
+        addHorizontalGaps(y , start, end);
+    }
+    
+    private void addVerticalInternalWall(int x, Class roomClass) throws InstantiationException, IllegalAccessException {
+        int height = grid[0].length;
+        int distanceIntoRoom = 2 + rand.nextInt(height/4);
+        int start = distanceIntoRoom;
+        int end = (height - 1) - distanceIntoRoom;
+        // place straight wall
+        for(int j=start; j < end; j++) {
+            grid[x][j] = (Tile) roomClass.newInstance();
+        }
+        // now put in gaps
+        addVerticalGaps(x, start, end);
+    }
+    
+    private void addHorizontalGaps(int y, int startx, int endx) {
+        int midx = startx + ( (endx - startx) / 2);
+        //TODO: Non-recursive definition
+        int gapApps = 0;
+        for(int i=0; i<gapApps; i++) {
+            int x = rand.nextInt(midx+1);
+            grid[x][y] = UndecidedTile.getInstance();
+            grid[midx + (midx-x)][y] = UndecidedTile.getInstance();
         }
     }
     
-    private void addVerticalInternalWall(int x) {
-        int height = grid[0].length;
-        for(int j=2; j< height-2; j++) {
-            grid[x][j] = new BrickTile();
+    private void addVerticalGaps(int x, int starty, int endy) {
+        int midy = starty + ( (endy - starty) / 2);
+        //TODO: Non-recursive definition
+        int gapApps = 0;
+        for(int j=0; j<gapApps; j++) {
+            int y = rand.nextInt(midy+1);
+            grid[x][y] = UndecidedTile.getInstance();
+            grid[x][midy + (midy-y)] = UndecidedTile.getInstance();
         }
     }
     
@@ -131,13 +177,13 @@ public class RoomGenerator extends ProceduralAreaGenerator {
         int width = grid.length;
         int height = grid[0].length;
         for (int i = 0; i < width; i++) {
-            grid[i][0] = new BrickTile();
-            grid[i][height - 1] = new BrickTile();
+            grid[i][0] = BrickTile.getInstance();
+            grid[i][height - 1] = BrickTile.getInstance();
         }
 
         for (int j = 0; j < height; j++) {
-            grid[0][j] = new BrickTile();
-            grid[width - 1][j] = new BrickTile();
+            grid[0][j] = BrickTile.getInstance();
+            grid[width - 1][j] = BrickTile.getInstance();
         }
     }
 
@@ -168,4 +214,5 @@ public class RoomGenerator extends ProceduralAreaGenerator {
 
         return (int) Math.round(gaussSize);
     }
+
 }

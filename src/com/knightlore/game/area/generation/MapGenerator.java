@@ -1,6 +1,7 @@
 package com.knightlore.game.area.generation;
 
 import java.awt.Point;
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -235,12 +236,10 @@ public class MapGenerator extends ProceduralAreaGenerator {
                 continue;
             }
             
-            //if(currentTile == PlayerSpawnTile.getInstance(Team.blue)) {
             if(currentTile instanceof PlayerSpawnTile) {
                 continue;
             }
             
-            // Change this later
             if(currentTile instanceof PickupTile) {
                 continue;
             }
@@ -249,7 +248,6 @@ public class MapGenerator extends ProceduralAreaGenerator {
                 continue;
             }
             
-            // Change this later
             if(currentTile instanceof TurretTile) {
                 continue;
             }
@@ -273,45 +271,37 @@ public class MapGenerator extends ProceduralAreaGenerator {
     }
 
     private void makeSymY() {
-        Room rightmost = rooms.get(0);
-        Room secondRightmost = rooms.get(0);
-        for (Room room : rooms) {
-            if (room.getCentre().getX() > rightmost.getCentre().getX()) {
-                rightmost = room;
-            }
-        }
-
-        for (Room room : rooms) {
-            if (!room.equals(rightmost) && room.getCentre().getX() > secondRightmost.getCentre().getX()) {
-                secondRightmost = room;
-            }
-        }
-
+        
         int width = grid.length;
         int height = grid[0].length;
-
-        PathFinder pathFinder = new PathFinder(costGrid);
-        pathFinder.setIsForMap(true);
-       
-        Point start = rightmost.getCentre();
-        int centreY = start.y;
-        Point goal = new Point(width - 1, centreY - 2 + rand.nextInt(3));
-        // have to set this manually so pathfinder doesn't complain
-        grid[goal.x][goal.y] = PathTile.getInstance();
-        // pathfinder can handle this goal
-        goal = new Point(goal.x - 1, goal.y);
-        List<Point> path = pathFinder.findPath(start, goal);
-        placePath(path);
-
-        start = secondRightmost.getCentre();
-        centreY = start.y;
-        goal = new Point(width - 1, centreY - 2 + rand.nextInt(3));
-        // have to set this manually so pathfinder doesn't complain
-        grid[goal.x][goal.y] = PathTile.getInstance();
-        // pathfinder can handle this goal
-        goal = new Point(goal.x - 1, goal.y);
-        path = pathFinder.findPath(start, goal);
-        placePath(path);
+        
+        int numConnectToReflect = rand.nextInt(rooms.size() / 3);
+        numConnectToReflect = Math.max(1, numConnectToReflect);
+        
+        for(int i=0; i < numConnectToReflect; i++) {
+            Room rightmost = rooms.get(0);
+            for (Room room : rooms) {
+                if (room.getCentre().getX() > rightmost.getCentre().getX()) {
+                    rightmost = room;
+                }
+            }
+            
+            // now that rightmost has been found, remove it
+            rooms.remove(rightmost);
+            // set up pathFinder
+            PathFinder pathFinder = new PathFinder(costGrid);
+            pathFinder.setIsForMap(true);
+           
+            Point start = rightmost.getCentre();
+            int centreY = start.y;
+            Point goal = new Point(width - 1, centreY - 2 + rand.nextInt(3));
+            // have to set this manually so pathfinder doesn't complain
+            grid[goal.x][goal.y] = PathTile.getInstance();
+            // pathfinder can handle this goal
+            goal = new Point(goal.x - 1, goal.y);
+            List<Point> path = pathFinder.findPath(start, goal);
+            placePath(path);
+        }
 
         // now flip
         Tile[][] symMap = new Tile[width * 2][height];
