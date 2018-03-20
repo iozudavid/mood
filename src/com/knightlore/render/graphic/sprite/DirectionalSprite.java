@@ -17,6 +17,9 @@ public class DirectionalSprite {
 
     public static final CameraSprite CAMERA_DIRECTIONAL_SPRITE = new CameraSprite(GraphicSheet.CAMERA_SPRITES);
 
+    public static final GravestoneSprite GRAVESTONE_DIRECTIONAL_SPRITE = new GravestoneSprite(
+            GraphicSheet.GRAVESTONE_SPRITES);
+
     private List<Graphic> angles;
 
     public DirectionalSprite() {
