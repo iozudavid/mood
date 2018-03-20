@@ -14,13 +14,13 @@ public interface TickListener {
     /**
      * What to do.
      */
-    public void onTick();
+    void onTick();
 
     /**
      * The interval between updates.
      * 
      * @return a long representing the interval between updates.
      */
-    public long interval();
+    long interval();
 
 }
