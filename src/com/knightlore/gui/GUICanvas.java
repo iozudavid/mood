@@ -136,8 +136,8 @@ public class GUICanvas extends GameObject implements IRenderable {
 			this.initDraw();
 		}
 		canvasG2D.setColor(BACKGROUND_COLOR);
-		for(int i=0;i<guis.size();i++){
-			guis.get(i).Draw(canvasG2D,rect);
+		for (GUIObject gui : guis) {
+			gui.Draw(canvasG2D, rect);
 		}
 		canvasImage.getRGB(0, 0, WIDTH, HEIGHT, drawPixels, 0, WIDTH);
 		pix.drawGraphic(canvasGraphic, x, y, WIDTH, HEIGHT);

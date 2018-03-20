@@ -76,9 +76,7 @@ public class GameObjectManager {
         // as modifying a list whilst iterating over it is a very bad idea.
 
         synchronized (notifyToCreate) {
-            Iterator<GameObject> it = notifyToCreate.iterator();
-            while (it.hasNext()) {
-                GameObject obj = it.next();
+            for (GameObject obj : notifyToCreate) {
                 // add the object to the update list
                 objects.add(obj);
                 // notify the object it has been created
@@ -88,9 +86,7 @@ public class GameObjectManager {
         }
         synchronized (notifyToDestroy) {
             // remove any objects that need deleting
-            Iterator<GameObject> it = notifyToDestroy.iterator();
-            while (it.hasNext()) {
-                GameObject obj = it.next();
+            for (GameObject obj : notifyToDestroy) {
                 // remove the object from the update list
                 objects.remove(obj);
                 // notify the object it has been effectively destroyed
@@ -116,9 +112,9 @@ public class GameObjectManager {
         ArrayList<T> results = new ArrayList<T>();
         // FIXME find a nicer way of doing this
         try {
-            for (int i = 0; i < objects.size(); i++) {
-                if (c.isInstance(objects.get(i))) {
-                    results.add((T) objects.get(i));
+            for (GameObject object : objects) {
+                if (c.isInstance(object)) {
+                    results.add((T) object);
                 }
             }
         } catch (ClassCastException e) {

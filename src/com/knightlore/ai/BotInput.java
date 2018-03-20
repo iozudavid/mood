@@ -114,24 +114,24 @@ public final class BotInput extends InputModule {
         // Find our target
         PlayerManager playerManager = GameEngine.getSingleton().getWorld().getPlayerManager();
         List<Player> players = playerManager.getPlayers();
-        for (int i = 0; i < players.size(); i++) {
-            Entity player = players.get(i);
+        for (Player player1 : players) {
+            Entity player = player1;
             Vector2D displacement = player.getPosition().subtract(myPlayer.getPosition());
             Vector2D dir = displacement.normalised();
-            
+
             double sqrDist = displacement.sqrMagnitude();
             // check if out of our sight distance
             if (sqrDist > SQR_SIGHT_DIST) {
                 continue;
             }
-            
+
             double dot = dir.dot(myPlayer.getDirection().normalised());
             double cosFOV = Math.cos(Math.toRadians(fov));
             // check out of field of view
             if (dot > cosFOV) {
                 continue;
             }
-            
+
             // check actual Line of sight
             RaycastHit hit = GameEngine.getSingleton().getWorld().raycast(myPlayer.getPosition(), dir, 100, SIGHT_DIST,
                     myPlayer);
