@@ -65,13 +65,7 @@ public class Prediction {
 			if(this.nextPrediction==null){
 				this.nextPrediction = new Player(new Vector2D(xPos,yPos), new Vector2D(xDir, yDir));
 			}
-			Iterator<Map.Entry<Double, byte[]>> it = this.clientInputHistory.entrySet().iterator();
-			while (it.hasNext()) {
-				Entry<Double, byte[]> next = it.next();
-				if (next.getKey() <= timeSent) {
-					it.remove();
-				}
-			}
+            this.clientInputHistory.entrySet().removeIf(next -> next.getKey() <= timeSent);
 			// create a new player
 			// which will predict the next steps
 

@@ -284,15 +284,10 @@ public class Renderer {
     private synchronized void drawSprites(PixelBuffer pix, double[] zbuffer, int offset) {
         synchronized (world) {
             List<Entity> entities = world.getEntities();
-            entities.sort(new Comparator<Entity>() {
-
-                @Override
-                public int compare(Entity o1, Entity o2) {
-                    final double distance1 = camera.getPosition().sqrDistTo(o1.getPosition());
-                    final double distance2 = camera.getPosition().sqrDistTo(o2.getPosition());
-                    return Double.compare(distance2, distance1);
-                }
-
+            entities.sort((o1, o2) -> {
+                final double distance1 = camera.getPosition().sqrDistTo(o1.getPosition());
+                final double distance2 = camera.getPosition().sqrDistTo(o2.getPosition());
+                return Double.compare(distance2, distance1);
             });
             synchronized (entities) {
                 for (Entity m : entities) {

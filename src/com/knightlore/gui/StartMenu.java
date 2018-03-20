@@ -38,26 +38,19 @@ public class StartMenu {
 		this.quitButton.setGraphic(new Image(0,0,0,0,"res/graphics/quit_to_right.png").graphic);
 		this.quitButton.setGraphic2(new Image(0,0,0,0,"res/graphics/quit_to_left.png").graphic);
 		
-		this.singlePlayerButton.clickFunction = new VoidFunction() {
-			
-			@Override
-			public void call() {
-				//start new session
-				//on the local machine
-				ConnectionDetails.SERVER_HOSTNAME = "localhost";
-				//remove this gui
-				StartMenu.this.gui.destroy();
-				GameEngine.getSingleton().gameState = GameState.InGame;
-			}
-		};
+		this.singlePlayerButton.clickFunction = () -> {
+            //start new session
+            //on the local machine
+            ConnectionDetails.SERVER_HOSTNAME = "localhost";
+            //remove this gui
+            StartMenu.this.gui.destroy();
+            GameEngine.getSingleton().gameState = GameState.InGame;
+        };
 		
-		this.multiPlayerButton.clickFunction = new VoidFunction(){
-			@Override
-			public void call(){
-				StartMenu.this.gui.destroy();
-				GameEngine.getSingleton().gameState = GameState.MultiplayerMenu;
-			}
-		};
+		this.multiPlayerButton.clickFunction = () -> {
+            StartMenu.this.gui.destroy();
+            GameEngine.getSingleton().gameState = GameState.MultiplayerMenu;
+        };
 		
 		gui.addGUIObject(coverImage);
 		gui.addGUIObject(name);
