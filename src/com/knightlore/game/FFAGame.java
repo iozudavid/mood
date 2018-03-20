@@ -45,8 +45,7 @@ public class FFAGame extends GameManager {
         p.addScore(-1);
         // drop the weapon in their current position
         
-        // THIS WAS KILLING THE TICKER FOR ME (TODO: FIND OUT SOLUTION)
-        //spawnPickup(p.getPosition(), p.getCurrentWeapon().getWeaponType());
+        spawnPickup(p.getPosition(), p.getCurrentWeapon().getWeaponType());
         
         // generate random spawn point
         Vector2D spawnPos = GameEngine.getSingleton().getWorld().getMap().getRandomSpawnPoint();

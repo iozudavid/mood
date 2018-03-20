@@ -73,6 +73,8 @@ public class Player extends Entity {
     private int inertiaX = 0, inertiaY = 0;
     private InputModule inputModule = new RemoteInput();
 
+    private Entity lastInflictor;
+    
     // DO NOT REMOVE, THESE ARE USED FOR CLIENT PREDICTION!!!!!
     private double timeToSend = 0;
     private boolean respawn = false;
@@ -258,6 +260,7 @@ public class Player extends Entity {
         currentWeapon.update();
         prevPos = position;
         prevDir = direction;
+        checkDeath();
     }
 
     private void updateInertia(Vector2D displacement) {
@@ -353,21 +356,30 @@ public class Player extends Entity {
         damage = (int) (damage * damageTakenModifier);
         int newHealth = currentHealth - damage;
         currentHealth = Math.max(0, Math.min(MAX_HEALTH, newHealth));
+        if(inflictor != null) {
+            lastInflictor = inflictor;
+        }
+    }
+
+    private void checkDeath() {
+        if(GameSettings.isClient()) {
+            return;
+        }
         if (currentHealth <= 0) {
-            if(inflictor == null) {
+            if(lastInflictor == null) {
                 System.out.println(name + " was killed by natural causes");
             }else {
-                System.out.println(name + " was killed by " + inflictor.getName());
-                inflictor.killConfirmed(this);
+                System.out.println(name + " was killed by " + lastInflictor.getName());
+                lastInflictor.killConfirmed(this);
             }            
             removeAllBuffs();
-            this.sendSystemMessage(name, inflictor);
+            this.sendSystemMessage(name, lastInflictor);
             System.out.println("CALLING ON PLAYER DEATH");
             GameEngine.getSingleton().getWorld().getGameManager().onPlayerDeath(this);
             System.out.println("CALLED IT!");
         }
     }
-
+    
     public void applyHeal(int heal) {
         takeDamage(-heal,null);
     }
