@@ -6,6 +6,7 @@ import com.knightlore.game.world.GameWorld;
 import com.knightlore.utils.Vector2D;
 
 import java.awt.*;
+import java.nio.ByteBuffer;
 import java.util.*;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -106,9 +107,9 @@ public class ZombieServer extends ZombieShared {
     public void takeDamage(int damage, Entity inflictor) {
         currentHealth -= damage;
         if (currentHealth <= 0) {
-            this.position = GameEngine.getSingleton().getWorld().getMap().getRandomSpawnPoint();
+            this.destroy();
             this.sendSystemMessage(this.getName(), inflictor);
-            currentHealth = MAX_HEALTH;
         }
     }
+
 }

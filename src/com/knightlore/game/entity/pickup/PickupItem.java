@@ -21,15 +21,11 @@ public abstract class PickupItem extends Entity {
     private static final double FLOAT_BOB_AMOUNT = 50.0;
     private static final double FLOAT_BOB_SPEED = 0.10;
     private static final int FLOOR_OFFSET = 100;
+    protected final DirectionalSprite sprite;
 
-    protected DirectionalSprite sprite;
-
-    public PickupItem(Vector2D position) {
-        super(PICKUP_SIZE, position, Vector2D.UP);
-    }
-
-    public PickupItem(UUID uuid, Vector2D position) {
+    PickupItem(UUID uuid, Vector2D position, DirectionalSprite sprite) {
         super(uuid, PICKUP_SIZE, position, Vector2D.UP);
+        this.sprite = sprite;
     }
 
     @Override
@@ -37,8 +33,9 @@ public abstract class PickupItem extends Entity {
         super.onUpdate();
         // FIXME: avoid null pointer for direction when this is called and the
         // constructor hasn't yet finished.
-        if (direction == null)
+        if (direction == null) {
             return;
+        }
 
         // Make the item bob up and down.
         long t = GameEngine.ticker.getTime();

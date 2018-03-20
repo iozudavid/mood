@@ -43,13 +43,15 @@ public class SoundResource {
      * necessary.
      */
     public Clip getNewClip() {
-        Clip clip = null;
+        // FIXME
+        Clip clip;
         try {
             clip = AudioSystem.getClip();
             clip.open(new AudioInputStream(new ByteArrayInputStream(data), encoding, data.length));
             this.mostRecentClip = clip;
-        } catch (LineUnavailableException | IOException e) {
+        } catch (LineUnavailableException | IOException | IllegalArgumentException e) {
             // No audio lines available to start a new clip - ignore.
+            clip = null;
             System.err.println("Warning: no audio line available to play sound clip.");
         }
         return clip;

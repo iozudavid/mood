@@ -104,19 +104,24 @@ public class GameEngine implements Runnable {
         // it's ready to do so.
         if (GameSettings.isServer()) {
             world = new ServerWorld();
-            networkObjectManager = new ServerNetworkObjectManager((ServerWorld) world);
+            networkObjectManager = new ServerNetworkObjectManager(
+                    (ServerWorld) world);
             ServerManager networkManager = new ServerManager();
             new Thread(networkManager).start();
+            ((ServerNetworkObjectManager) networkObjectManager).init();
         }
         if (GameSettings.isClient()) {
             world = new ClientWorld();
-            networkObjectManager = new ClientNetworkObjectManager((ClientWorld) world);
+            networkObjectManager = new ClientNetworkObjectManager(
+                    (ClientWorld) world);
             ClientManager networkManager = new ClientManager();
             new Thread(networkManager).start();
+            ((ClientNetworkObjectManager) networkObjectManager)
+                    .init(networkManager.getServerSender());
         }
+        
 
         System.out.println("Initialising NetworkObjectManager...");
-        networkObjectManager.init();
 
         System.out.println("World Initialised Successfully.");
 
@@ -131,9 +136,11 @@ public class GameEngine implements Runnable {
             Renderer renderer = new Renderer(w, 8 * h / 9, camera, cworld);
             Minimap minimap = new Minimap(camera, cworld, 128);
             HUD hud = new HUD(cn.getMyPlayer(), w, h / 9);
-            GameChat chat = new GameChat(w,h);
+            GameChat chat = new GameChat(w, h);
             this.display = new Display(renderer, minimap, hud, chat);
         }
+        
+       
     }
 
     /**
@@ -172,7 +179,8 @@ public class GameEngine implements Runnable {
     @Override
     public void run() {
         // start the lobby
-        world.getGameManager().startLobby();
+        // finally... begin!
+        world.getGameManager().beginGame();
         /*
          * This piece of code limits the number of game updates per second to
          * whatever it is set to in the variable updatesPerSecond.
@@ -230,9 +238,9 @@ public class GameEngine implements Runnable {
     public GameWorld getWorld() {
         return world;
     }
-    
-    public Display getDisplay(){
-    	return this.display;
+
+    public Display getDisplay() {
+        return this.display;
     }
 
 }

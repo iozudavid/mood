@@ -1,7 +1,6 @@
 package com.knightlore.assets;
 
 import java.awt.AlphaComposite;
-import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -9,18 +8,13 @@ import javax.imageio.ImageIO;
 
 public class SpriteSheetMaker {
     
-    static String baseFileName;
-    static String mode;
-    
-    static int width;
-    static int height;
-    static int numDirs;
-    static int numFrames;
-    
-    static Color alphaColor = Color.green;
-    
+    private static String baseFileName;
+    private static int width;
+    private static int height;
+    private static int numDirs;
+    private static int numFrames;
+
     public static void main(String[] args) {
-        // TODO Auto-generated method stub
         if (args.length == 0) {
             System.out.println("expected more arguments, got " + args.length);
             System.out.println("Usage:");
@@ -30,7 +24,7 @@ public class SpriteSheetMaker {
         }
         
         // read operation mode
-        mode = args[0];
+        String mode = args[0];
         String[] dimString;
         switch (mode) {
         case "-static":
@@ -74,7 +68,7 @@ public class SpriteSheetMaker {
         }
     }
     
-    static void createStatic() {
+    private static void createStatic() {
         
         int totalWidth = width;
         int totalHeight = height * numDirs;
@@ -87,8 +81,8 @@ public class SpriteSheetMaker {
         g2d.setComposite(alpha);
         
         // load in images, and output into buffer
-        BufferedImage img = null;
-        String fileName = null;
+        BufferedImage img;
+        String fileName;
         for (int i = 0; i < numDirs; i++) {
             // get file name
             fileName = baseFileName + "_" + (i) + ".png";
@@ -97,17 +91,11 @@ public class SpriteSheetMaker {
             try {
                 img = ImageIO.read(file);
             } catch (Exception e) {
-                System.err.println(e);
+                e.printStackTrace();
                 System.out.println("Failed to read image " + fileName + ", see above error ^");
                 return;
             }
-            /*
-             * // wipe alpha out of the image for (int x = 0; x < width; x++) {
-             * for (int y = 0; y < height; y++) { int col = img.getRGB(x, y);
-             * int r = (col & 0x00ff0000) >> 16; int g = (col & 0x0000ff00) >>
-             * 8; int b = (col & 0x000000ff); // set alpha if (r == 0 && g ==
-             * 255 && b == 0) { img.setRGB(x, y, 0x00ffffff); } } }
-             */
+
             // calc position
             int yPos = i * height;
             // splat image outside
@@ -122,7 +110,7 @@ public class SpriteSheetMaker {
         try {
             ImageIO.write(outImg, "png", outFile);
         } catch (Exception e) {
-            System.err.println(e);
+            e.printStackTrace();
             System.out.println("Failed to write final sprite sheet");
         } finally {
             g2d.dispose();
@@ -131,9 +119,8 @@ public class SpriteSheetMaker {
         System.out.println("Spritesheet written to: " + outFileName);
         System.out.println("Done.");
     }
-    
-    static void createAnimated() {
-        // TODO Auto-generated method stub
+
+    private static void createAnimated() {
         int totalWidth = width * numFrames;
         int totalHeight = height * numDirs;
         
@@ -145,8 +132,8 @@ public class SpriteSheetMaker {
         g2d.setComposite(alpha);
         
         // load in images, and output into buffer
-        BufferedImage img = null;
-        String fileName = null;
+        BufferedImage img;
+        String fileName;
         for (int f = 0; f < numFrames; f++) {
             int xPos = f * width;
             for (int d = 0; d < numDirs; d++) {
@@ -157,19 +144,11 @@ public class SpriteSheetMaker {
                 try {
                     img = ImageIO.read(file);
                 } catch (Exception e) {
-                    System.err.println(e);
+                    e.printStackTrace();
                     System.out.println("Failed to read image " + fileName + ", see above error ^");
                     return;
                 }
-                
-                /*
-                 * // wipe alpha out of the image for (int x = 0; x < width;
-                 * x++) { for (int y = 0; y < height; y++) { int col =
-                 * img.getRGB(x, y); int r = (col & 0x00ff0000) >> 16; int g =
-                 * (col & 0x0000ff00) >> 8; int b = (col & 0x000000ff); // set
-                 * alpha if (r == 0 && g == 255 && b == 0) { img.setRGB(x, y,
-                 * 0x00ffffff); } } }
-                 */
+
                 // calc position
                 int yPos = d * height;
                 // splat image outside
@@ -185,7 +164,7 @@ public class SpriteSheetMaker {
         try {
             ImageIO.write(outImg, "png", outFile);
         } catch (Exception e) {
-            System.err.println(e);
+            e.printStackTrace();
             System.out.println("Failed to write final sprite sheet");
         } finally {
             g2d.dispose();

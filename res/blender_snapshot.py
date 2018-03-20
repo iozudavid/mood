@@ -8,6 +8,7 @@ height = 128
 cam = bpy.data.cameras["Camera"]
 cam.type = "ORTHO"
 cam_obj = bpy.data.objects["Camera"]
+#pivot_obj = bpy.data.objects["Turret_Pivot"]
 bpy.context.scene.render.resolution_x = width
 bpy.context.scene.render.resolution_y = height
 bpy.context.scene.render.use_antialiasing = False
@@ -33,7 +34,6 @@ def take_snapshot(num, dist, animFrame):
     bpy.context.scene.render.filepath = filePath
     bpy.ops.render.render(write_still=True)
     print(angle)
-
 
 def doAnim():
     # compute frame step
