@@ -39,7 +39,7 @@ public class GameChat {
 			this.interactive = false;
 			count=0;
 		} 
-		if(this.interactive==true)
+		if(this.interactive)
 			count++;
 		this.textArea.setActive(GUICanvas.activeTextField!=null);
 		if(GUICanvas.activeTextField!=null)

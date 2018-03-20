@@ -155,9 +155,8 @@ public class SendToServer implements Runnable {
             // Wait for UUID to be set.
             try {
                 Thread.sleep(delay);
-            } catch (InterruptedException e1) {
-                // TODO Auto-generated catch block
-                e1.printStackTrace();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
             }
         this.myUUID = player.getObjectId();
         this.currentState = getCurrentControlState(this.packetNumber);

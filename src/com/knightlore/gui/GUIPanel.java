@@ -49,8 +49,8 @@ public class GUIPanel extends GUIObject {
         }
         // because sorted low -> high depth
         // standard iteration will draw them in order. lowest first
-        for(int i=0;i<children.size();i++){
-            children.get(i).Draw(g,rect);
+        for (GUIObject aChildren : children) {
+            aChildren.Draw(g, rect);
         }
     }
     

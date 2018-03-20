@@ -86,8 +86,7 @@ public abstract class GameObject {
      */
     private GameObjectManager getGOM() {
         GameEngine ge = GameEngine.getSingleton();
-        GameObjectManager gom = ge.getGameObjectManager();
-        return gom;
+        return ge.getGameObjectManager();
     }
 
 }

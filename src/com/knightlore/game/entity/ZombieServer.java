@@ -6,7 +6,6 @@ import com.knightlore.game.world.GameWorld;
 import com.knightlore.utils.Vector2D;
 
 import java.awt.*;
-import java.nio.ByteBuffer;
 import java.util.*;
 import java.util.List;
 import java.util.stream.Collectors;

@@ -1,8 +1,6 @@
 package com.knightlore.render.graphic;
 
 import java.awt.image.BufferedImage;
-import java.util.HashMap;
-import java.util.Map;
 
 import com.knightlore.render.PixelBuffer;
 import com.knightlore.render.graphic.filter.ColorFilter;

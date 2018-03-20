@@ -24,7 +24,7 @@ public final class ServerProtocol {
 
     private static final Map<Integer, ServerControl> positionAction;
     static {
-        positionAction = new HashMap<Integer, ServerControl>();
+        positionAction = new HashMap<>();
         positionAction.put(0, ServerControl.XPOS);
         positionAction.put(1, ServerControl.YPOS);
         positionAction.put(2, ServerControl.XDIR);
@@ -42,7 +42,7 @@ public final class ServerProtocol {
     // construct the server data
     private static final Map<Integer[], ServerControl> indexAction;
     static {
-        indexAction = new HashMap<Integer[], ServerControl>();
+        indexAction = new HashMap<>();
         try {
             // mentain 8 entries for each element
             indexAction.put(
@@ -71,7 +71,6 @@ public final class ServerProtocol {
                     ServerControl.YPLANE); // 48, 56
             // just this for now
         } catch (IOException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
     }

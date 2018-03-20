@@ -1,5 +1,6 @@
 package com.knightlore.render;
 
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Stack;
@@ -68,7 +69,7 @@ public class Renderer {
          * adding new render items to a stack until we reach an opaque block.
          * The stack is then popped and rendered in turn.
          */
-        Stack<PerspectiveRenderItem> renderStack = new Stack<PerspectiveRenderItem>();
+        Stack<PerspectiveRenderItem> renderStack = new Stack<>();
 
         for (int xx = 0; xx < width; xx += GameSettings.actualBlockiness) {
             // Calculate direction of the ray based on camera direction.
@@ -282,8 +283,9 @@ public class Renderer {
 
     private synchronized void drawSprites(PixelBuffer pix, double[] zbuffer, int offset) {
         synchronized (world) {
-            List<Entity> entities = world.getEntities();
-            entities.sort(new Comparator<Entity>() {
+            Entity[] entities = new Entity[world.getEntities().size()];
+            world.getEntities().toArray(entities);
+            Comparator<Entity> c = new Comparator<Entity>() {
 
                 @Override
                 public int compare(Entity o1, Entity o2) {
@@ -292,7 +294,8 @@ public class Renderer {
                     return Double.compare(distance2, distance1);
                 }
 
-            });
+            };
+            Arrays.sort(entities, c);
             synchronized (entities) {
                 for (Entity m : entities) {
                     double spriteX = m.getPosition().getX() - camera.getxPos();
@@ -329,8 +332,8 @@ public class Renderer {
                     for (int stripe = drawStartX; stripe < drawEndX; stripe++) {
                         Graphic g = m.getGraphic(camera.getPosition());
 
-                        int texX = (int) (256 * (stripe - (-spriteWidth / 2 + spriteScreenX)) * g.getWidth()
-                                / spriteWidth) / 256;
+                        int texX = 256 * (stripe - (-spriteWidth / 2 + spriteScreenX)) * g.getWidth()
+                                / spriteWidth / 256;
 
                         // the conditions in the if are:
                         // 1) it's in front of camera plane so you don't see

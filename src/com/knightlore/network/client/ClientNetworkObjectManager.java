@@ -15,10 +15,13 @@ import com.knightlore.engine.GameEngine;
 import com.knightlore.game.Player;
 import com.knightlore.game.entity.Entity;
 import com.knightlore.game.world.ClientWorld;
+import com.knightlore.gui.GameChat;
+import com.knightlore.gui.TextArea;
 import com.knightlore.network.NetworkObject;
 import com.knightlore.network.NetworkObjectManager;
 import com.knightlore.network.protocol.NetworkUtils;
 import com.knightlore.render.Camera;
+import com.knightlore.render.Display;
 
 public class ClientNetworkObjectManager extends NetworkObjectManager {
     private final Map<UUID, NetworkObject> networkObjects = new HashMap<>();
@@ -66,7 +69,13 @@ public class ClientNetworkObjectManager extends NetworkObjectManager {
     
     private synchronized void displayMessage(ByteBuffer b){
     	String message = NetworkUtils.getStringFromBuf(b);
-    	GameEngine.getSingleton().getDisplay().getChat().getTextArea().addText(message);
+    	assert(message != null);
+    	GameEngine g = GameEngine.getSingleton();
+    	Display d = g.getDisplay();
+    	GameChat c = d.getChat();
+    	TextArea t = c.getTextArea();
+    	t.addText(message);
+
     }
 
     // Called remotely when a new network object is created on the server.
@@ -111,8 +120,7 @@ public class ClientNetworkObjectManager extends NetworkObjectManager {
         System.out.println("Receiving object deletion message from server");
         UUID objID = UUID.fromString(NetworkUtils.getStringFromBuf(buf));
         NetworkObject toBeDestroyedObject = this.getNetworkObject(objID);
-        this.networkObjects.remove(objID);
-        // toBeDestroyedObject.destroy(); FIXME
+        toBeDestroyedObject.destroy();
         if (toBeDestroyedObject instanceof Entity) {
             clientWorld.removeEntity((Entity) toBeDestroyedObject);
         }
@@ -204,7 +212,6 @@ public class ClientNetworkObjectManager extends NetworkObjectManager {
                 return null;
             return this.teamChat.take();
         } catch (InterruptedException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
         return null;

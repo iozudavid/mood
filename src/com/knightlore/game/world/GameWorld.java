@@ -4,8 +4,6 @@ import java.util.LinkedList;
 import java.util.List;
 
 import com.knightlore.ai.AIManager;
-import com.knightlore.game.ClientFFAGame;
-import com.knightlore.game.FFAGame;
 import com.knightlore.game.GameManager;
 import com.knightlore.game.PlayerManager;
 
@@ -87,12 +85,12 @@ public abstract class GameWorld {
             if (map.getTile(x, y).blockLOS()) {
                 return new RaycastHit(RaycastHitType.WALL, p, null);
             } else {
-                for (int n = 0; n < ents.size(); n++) {
-                    if(ents.get(n) == ignore) {
+                for (Entity ent : ents) {
+                    if (ent == ignore) {
                         continue;
                     }
-                    if (Physics.pointInRectangleDoubleTest(p, ents.get(n).getBoundingRectangle())) {
-                        return new RaycastHit(RaycastHitType.ENTITY, p, ents.get(n));
+                    if (Physics.pointInRectangleDoubleTest(p, ent.getBoundingRectangle())) {
+                        return new RaycastHit(RaycastHitType.ENTITY, p, ent);
                     }
                 }
             }
@@ -109,5 +107,7 @@ public abstract class GameWorld {
     public void changeGameManager(GameManager game) {
         gameManager = game;
     }
+
+    public abstract void onPostEngineInit();
     
 }

@@ -3,16 +3,16 @@ package com.knightlore.render.graphic;
 public class PlayerGraphicMatrix {
 
     public enum Color {
-        RED, BLUE;
+        RED, BLUE
     }
 
     public enum Weapon {
-        PISTOL, SHOTGUN;
+        PISTOL, SHOTGUN
     }
 
     // 55
     public enum Stance {
-        MOVE, STRAFE, STAND;
+        MOVE, STRAFE, STAND
     }
 
     private final static GraphicSheet[][][] playerMatrix = new GraphicSheet[Color.values().length][Weapon

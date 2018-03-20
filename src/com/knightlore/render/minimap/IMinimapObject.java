@@ -4,10 +4,10 @@ import com.knightlore.utils.Vector2D;
 
 public interface IMinimapObject {
 
-    public Vector2D getPosition();
+    Vector2D getPosition();
 
-    public double getDrawSize();
+    double getDrawSize();
 
-    public int getMinimapColor();
+    int getMinimapColor();
 
 }

@@ -20,7 +20,7 @@ public class DirectionalSprite {
     private List<Graphic> angles;
 
     public DirectionalSprite() {
-        this(new ArrayList<Graphic>());
+        this(new ArrayList<>());
     }
 
     public DirectionalSprite(ArrayList<Graphic> angles) {
