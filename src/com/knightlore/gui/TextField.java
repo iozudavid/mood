@@ -20,9 +20,9 @@ public class TextField extends GUIObject {
     private static final Color hoverColour = Color.GRAY;
 
 	private SelectState state = SelectState.UP;
-	private String text;
-	private String insertString;
-	private char[] rawChars;
+	private String text = "";
+	private String insertString = "";
+	private char[] rawChars = new char[0];
 	private int insertPosition = 0;
 	private Graphics g;
 	private char sendTo;
@@ -138,6 +138,11 @@ public class TextField extends GUIObject {
 	}
 
 	void onInputChar(char c) {
+	    if(text == null) {
+	        System.err.println("tried to insert char into null string");
+	        text = "";
+	        return;
+	    }
 		if(text.length()==0)
 			insertString = c + "|";
 		else
