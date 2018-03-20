@@ -61,7 +61,6 @@ public class Prediction {
         int score = received.getInt();
         player.setScore(score);
         // remove data inserted before this packet was sent
-		System.out.println(score);
         if (!Arrays.equals(this.lastReceivedFromServer.array(), received.array())) {
 			if(this.nextPrediction==null){
 				this.nextPrediction = new Player(new Vector2D(xPos,yPos), new Vector2D(xDir, yDir));
