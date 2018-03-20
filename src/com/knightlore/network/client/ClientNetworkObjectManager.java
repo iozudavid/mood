@@ -68,6 +68,11 @@ public class ClientNetworkObjectManager extends NetworkObjectManager {
     }
     
     private synchronized void displayMessage(ByteBuffer b){
+        // can't put a message if the engine isn't done...
+        // silly network
+        if(!GameEngine.getSingleton().doneInit()) {
+            return;
+        }
     	String message = NetworkUtils.getStringFromBuf(b);
     	assert(message != null);
     	GameEngine g = GameEngine.getSingleton();

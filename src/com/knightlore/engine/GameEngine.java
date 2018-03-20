@@ -57,6 +57,12 @@ public class GameEngine implements Runnable {
 
     private SoundManager soundManager;
 
+    private boolean _doneInit = false;
+
+    public boolean doneInit() {
+        return _doneInit ;
+    }
+    
     private GameEngine() {
         if (HEADLESS) {
             window = null;
@@ -150,6 +156,7 @@ public class GameEngine implements Runnable {
         // build anything that requires the renderer
         // think gui
         world.onPostEngineInit();
+        _doneInit = true;
        
     }
 
