@@ -319,15 +319,7 @@ public class Player extends Entity {
 
         setScore(buf.getInt());
     }
-
-    @Override
-    public void onCreate() {
-    }
-
-    @Override
-    public void onDestroy() {
-    }
-
+    
     @Override
     public int getMinimapColor() {
         return 0xFFFFFF;

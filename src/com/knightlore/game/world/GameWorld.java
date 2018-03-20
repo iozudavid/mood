@@ -1,7 +1,9 @@
 package com.knightlore.game.world;
 
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 import com.knightlore.ai.AIManager;
 import com.knightlore.game.GameManager;
@@ -26,6 +28,8 @@ public abstract class GameWorld {
     protected GameManager gameManager = null;
     protected AIManager aiManager;
     protected List<Entity> ents;
+    
+    private ConcurrentLinkedQueue<Entity> entsToAdd = new ConcurrentLinkedQueue<Entity>();
 
     public void update() {
     }
@@ -46,8 +50,20 @@ public abstract class GameWorld {
         return aiManager;
     }
     
-    public List<Entity> getEntities() {
-        return ents;
+    public Iterator<Entity> getEntityIterator(){
+        return ents.iterator();
+    }
+    
+    /**
+     * 
+     * @returns a copy of the entities stored as an array
+     */
+    public Entity[] getEntityArray () {
+        return ents.toArray(new Entity[0]);
+    }
+    
+    public void addEntity(Entity ent) {
+        entsToAdd.offer(ent);
     }
     
     /**
