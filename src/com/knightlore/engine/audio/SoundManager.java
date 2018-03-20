@@ -29,8 +29,9 @@ public class SoundManager implements LineListener {
      *            The volume to play it at.
      */
     public void playIfNotAlreadyPlaying(SoundResource res, float volume) {
-        if (!res.isPlaying())
+        if (!res.isPlaying()) {
             play(res, volume, 0);
+        }
     }
 
     /**
@@ -90,7 +91,8 @@ public class SoundManager implements LineListener {
     public void update(LineEvent event) {
         // Lines are ephemeral in this game, so ensure they are closed as soon
         // as they finish playback, to avoid resource leaks.
-        if (event.getType() == Type.STOP)
+        if (event.getType() == Type.STOP) {
             event.getLine().close();
+        }
     }
 }

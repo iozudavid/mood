@@ -105,13 +105,15 @@ public class Prediction {
 				if (this.isMoveActivated(ClientController.FORWARD, input)
 						|| this.isMoveActivated(ClientController.BACKWARD, input)
 						|| this.isMoveActivated(ClientController.LEFT, input)
-						|| this.isMoveActivated(ClientController.RIGHT, input))
+						|| this.isMoveActivated(ClientController.RIGHT, input)) {
 					player.setxPos(nextPrediction.getPosition().getX());
+				}
 				if (this.isMoveActivated(ClientController.FORWARD, input)
 						|| this.isMoveActivated(ClientController.BACKWARD, input)
 						|| this.isMoveActivated(ClientController.LEFT, input)
-						|| this.isMoveActivated(ClientController.RIGHT, input))
+						|| this.isMoveActivated(ClientController.RIGHT, input)) {
 					player.setyPos(nextPrediction.getPosition().getY());
+				}
 				if (this.isMoveActivated(ClientController.ROTATE_ANTI_CLOCKWISE, input)
 						|| this.isMoveActivated(ClientController.ROTATE_CLOCKWISE, input)
 						|| this.isMoveActivated(ClientController.FORWARD, input)
@@ -123,13 +125,15 @@ public class Prediction {
 				if (this.isMoveActivated(ClientController.FORWARD, input)
 						|| this.isMoveActivated(ClientController.BACKWARD, input)
 						|| this.isMoveActivated(ClientController.LEFT, input)
-						|| this.isMoveActivated(ClientController.RIGHT, input))
+						|| this.isMoveActivated(ClientController.RIGHT, input)) {
 					player.setxPos(smooth(player.getxPos(), this.nextPrediction.getPosition().getX()));
+				}
 				if (this.isMoveActivated(ClientController.FORWARD, input)
 						|| this.isMoveActivated(ClientController.BACKWARD, input)
 						|| this.isMoveActivated(ClientController.LEFT, input)
-						|| this.isMoveActivated(ClientController.RIGHT, input))
+						|| this.isMoveActivated(ClientController.RIGHT, input)) {
 					player.setyPos(smooth(player.getyPos(), this.nextPrediction.getPosition().getY()));
+				}
 				if (this.isMoveActivated(ClientController.ROTATE_ANTI_CLOCKWISE, input)
 						|| this.isMoveActivated(ClientController.ROTATE_CLOCKWISE, input)
 						|| this.isMoveActivated(ClientController.FORWARD, input)

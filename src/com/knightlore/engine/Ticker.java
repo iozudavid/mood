@@ -62,8 +62,9 @@ public class Ticker {
         tick++;
         for (TickListener t : tickListeners) {
             // if there's not an interval, ignore it.
-            if (t.interval() == 0)
+            if (t.interval() == 0) {
                 continue;
+            }
             
             if (tick % t.interval() == 0) {
                 t.onTick();

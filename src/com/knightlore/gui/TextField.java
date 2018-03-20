@@ -77,8 +77,9 @@ public class TextField extends GUIObject {
 	
 	@Override
 	void Draw(Graphics g, Rectangle parentRect) {
-		if((GameEngine.getSingleton().gameState==GameState.InGame) && GUICanvas.activeTextField==null)
+		if((GameEngine.getSingleton().gameState==GameState.InGame) && GUICanvas.activeTextField==null) {
 			return;
+		}
 		// draw a background
 		g.setColor(Color.DARK_GRAY);
     	g.fillRect(rect.x-2, rect.y-2, rect.width+2, rect.height+2);
@@ -92,9 +93,9 @@ public class TextField extends GUIObject {
 		
 		if(text!=null){
 			int width = g.getFontMetrics().charsWidth(rawChars, 0, rawChars.length);
-			if(width<this.rect.width)
+			if(width<this.rect.width) {
 				g.drawChars(rawChars, 0, rawChars.length, rect.x, rect.y+hOffset);
-			else{
+			} else{
 				width = g.getFontMetrics().charsWidth(rawChars, 0, rawChars.length);
 				char[] toDisplay = rawChars;
 				while(width>this.rect.width){
@@ -143,10 +144,12 @@ public class TextField extends GUIObject {
 	        text = "";
 	        return;
 	    }
-		if(text.length()==0)
+
+		if(text.isEmpty()) {
 			insertString = c + "|";
-		else
+		} else {
 			insertString = text.substring(0, insertPosition)+c+'|'+text.substring(insertPosition);
+		}
 		text = insertString.replace("|", "");
 		insertPosition++;
 		displayText(insertString);
@@ -154,10 +157,11 @@ public class TextField extends GUIObject {
 	
 	void onMessage(char c) {
 		this.sendTo = c;
-		if(text==null || text.length()==0)
+		if(text==null || text.isEmpty()) {
 			insertString = "|";
-		else
+		} else {
 			insertString = text.substring(0, insertPosition)+'|'+text.substring(insertPosition);
+		}
 		text = insertString.replace("|", "");
 		displayText(insertString);
 	}
@@ -186,10 +190,11 @@ public class TextField extends GUIObject {
 	public ByteBuffer constructMessage(UUID uuid){
 		ByteBuffer bf = ByteBuffer.allocate(NetworkObject.BYTE_BUFFER_DEFAULT_SIZE);
 		NetworkUtils.putStringIntoBuf(bf, uuid.toString());
-		if(this.sendTo=='t')
+		if(this.sendTo=='t') {
 			NetworkUtils.putStringIntoBuf(bf, "messageToTeam");
-		else
+		} else {
 			NetworkUtils.putStringIntoBuf(bf, "messageToAll");
+		}
 		NetworkUtils.putStringIntoBuf(bf, this.text);
 		return bf;
 	}
@@ -214,9 +219,9 @@ public class TextField extends GUIObject {
 	}
 	
 	void onDeleteChar(){
-		if(text.length()==0 || insertPosition==0)
+		if(text.isEmpty() || insertPosition==0) {
 			return;
-		else if(insertPosition >= text.length()){
+		} else if(insertPosition >= text.length()){
 			insertPosition = text.length();
 			if(text.length()==1){
 				insertPosition = 0;
@@ -267,15 +272,17 @@ public class TextField extends GUIObject {
 			double oldDelta = deltaPos;
 			deltaPos -= width;
 			if(deltaPos<0){
-				if(oldDelta<Math.abs(deltaPos))
+				if(oldDelta<Math.abs(deltaPos)) {
 					this.insertPosition = --chooseLocation;
-				else
+				} else {
 					this.insertPosition = chooseLocation;
+				}
 				break;
 			}
 		}
-		if(deltaPos>0)
+		if(deltaPos>0) {
 			this.insertPosition = text.length();
+		}
 		}
 		insertString = text.substring(0, chooseLocation) + "|" + text.substring(chooseLocation);
 		displayText(insertString);

@@ -278,9 +278,10 @@ public class Player extends Entity {
     }
     
     private void shoot() {
-        if (currentWeapon == null)
+        if (currentWeapon == null) {
             return;
-        
+        }
+
         if (currentWeapon.canFire()) {
             shootOnNextUpdate = true;
         }

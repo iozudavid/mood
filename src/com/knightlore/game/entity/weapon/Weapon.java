@@ -34,8 +34,9 @@ public abstract class Weapon {
     public void fire(Entity shooter) {
         this.timer = 0;
 
-        if (GameSettings.isClient())
+        if (GameSettings.isClient()) {
             playShotSFX(shooter);
+        }
     }
 
     private void playShotSFX(Entity shooter) {
@@ -48,8 +49,9 @@ public abstract class Weapon {
         SoundManager soundManager = GameEngine.getSingleton().getSoundManager();
         // Scale against the default volume of sound effects.
         float volume = scale * soundManager.defaultVolume;
-        if (volume > 0)
+        if (volume > 0) {
             soundManager.playConcurrently(shootSFX, volume);
+        }
     }
 
     private int weaponBobX = GameSettings.MOTION_BOB ? 20 : 0, weaponBobY = GameSettings.MOTION_BOB ? 30 : 0;
