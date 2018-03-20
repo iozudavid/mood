@@ -2,6 +2,7 @@ package com.knightlore.engine;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.ListIterator;
 
 /**
  * Timekeeper for the game engine. Keeps track of the current tick value and
@@ -60,12 +61,14 @@ public class Ticker {
      */
     protected void tick() {
         tick++;
-        for (TickListener t : tickListeners) {
+        ListIterator<TickListener> itr = tickListeners.listIterator();
+        while (itr.hasNext()) {
+            TickListener t = itr.next();
             // if there's not an interval, ignore it.
             if (t.interval() == 0) {
                 continue;
             }
-            
+
             if (tick % t.interval() == 0) {
                 t.onTick();
             }
