@@ -447,4 +447,13 @@ public class Player extends Entity {
     public void killConfirmed(Player victim) {
         score += 1;
     }
+    
+    public void setRespawn(boolean b){
+        this.respawn = b;
+    }
+    
+    public void setHealth(int h){
+        this.currentHealth = h;
+    }
+
 }
