@@ -1,6 +1,5 @@
 package com.knightlore.ai;
 
-import java.nio.ByteBuffer;
 import java.util.List;
 
 import com.knightlore.engine.GameEngine;

@@ -9,7 +9,6 @@ import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.knightlore.MainWindow;
 import com.knightlore.engine.GameEngine;
 import com.knightlore.engine.GameObject;
 import com.knightlore.engine.GameState;

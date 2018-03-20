@@ -2,7 +2,6 @@ package com.knightlore.utils.physics;
 
 import java.awt.Rectangle;
 import java.awt.geom.Rectangle2D;
-import java.awt.geom.Rectangle2D.Double;
 
 import com.knightlore.engine.GameEngine;
 import com.knightlore.game.area.Map;

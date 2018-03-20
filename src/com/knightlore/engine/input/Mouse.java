@@ -8,8 +8,6 @@ import java.awt.event.MouseWheelListener;
 
 import javax.swing.SwingUtilities;
 
-import com.knightlore.utils.Vector2D;
-
 /**
  * Handles basic mouse input. This code was taken from my project at
  * https://github.com/joechrisellis/QuickGameEngine and modified slightly.

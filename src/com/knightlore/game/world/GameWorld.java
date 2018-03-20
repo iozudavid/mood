@@ -4,8 +4,6 @@ import java.util.LinkedList;
 import java.util.List;
 
 import com.knightlore.ai.AIManager;
-import com.knightlore.game.ClientFFAGame;
-import com.knightlore.game.FFAGame;
 import com.knightlore.game.GameManager;
 import com.knightlore.game.PlayerManager;
 

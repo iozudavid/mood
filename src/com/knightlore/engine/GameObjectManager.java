@@ -124,8 +124,6 @@ public class GameObjectManager {
         } catch (ClassCastException e) {
             System.out.println("OCrap, object is instance of class, but not of same type");
             e.printStackTrace();
-        } finally {
-
         }
         return results;
     }

@@ -3,12 +3,9 @@ package com.knightlore.gui;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Rectangle;
-import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
-
-import com.knightlore.render.PixelBuffer;
 
 public class TextArea extends GUIObject{
 
