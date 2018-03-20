@@ -107,5 +107,7 @@ public abstract class GameWorld {
     public void changeGameManager(GameManager game) {
         gameManager = game;
     }
+
+    public abstract void onPostEngineInit();
     
 }

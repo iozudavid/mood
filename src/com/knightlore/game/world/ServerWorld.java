@@ -151,4 +151,9 @@ public class ServerWorld extends GameWorld {
         playerManager.addPlayer(player);
         return player;
     }
+
+    @Override
+    public void onPostEngineInit() {
+        
+    }
 }

@@ -34,17 +34,22 @@ public class ClientWorld extends GameWorld {
     @Override
     public void setUpWorld(Long mapSeed) {
         super.setUpWorld(mapSeed);
-        buildGUI();
         startBgMusic();
     }
 
     public void buildGUI() {
         gameHUD = new GameHUD(150,150);
+        GameEngine.getSingleton().getDisplay().addGUICanvas(gameHUD);
     }
 
     private void startBgMusic() {
         BackgroundMusic bgMusic = this.getEnvironment().getBgMusic();
         SoundManager soundManager = GameEngine.getSingleton().getSoundManager();
         soundManager.loop(bgMusic.soundRes, soundManager.defaultVolume);
+    }
+
+    @Override
+    public void onPostEngineInit() {
+        buildGUI();
     }
 }
