@@ -49,12 +49,20 @@ public class Prediction {
 		// plane...
 		received.getDouble();
 		received.getDouble();
+		String name = NetworkUtils.getStringFromBuf(received);
+		player.setName(name);
 		int shootOnNext = received.getInt();
 		player.setOnNextShot(shootOnNext == 1 ? true : false);
 		double timeSent = received.getDouble();
-		boolean respawn = (received.getInt()==1 ? true:false);
-		// remove data inserted before this packet was sent
-		if (!Arrays.equals(this.lastReceivedFromServer.array(), received.array())) {
+        boolean respawn = (received.getInt() == 1 ? true : false);
+        player.setRespawn(respawn);
+        int currentHealth = received.getInt();
+        player.setHealth(currentHealth);
+        int score = received.getInt();
+        player.setScore(score);
+        // remove data inserted before this packet was sent
+		System.out.println(score);
+        if (!Arrays.equals(this.lastReceivedFromServer.array(), received.array())) {
 			if(this.nextPrediction==null){
 				this.nextPrediction = new Player(new Vector2D(xPos,yPos), new Vector2D(xDir, yDir));
 			}
