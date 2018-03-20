@@ -283,10 +283,7 @@ public class Player extends Entity {
     private void shoot() {
         if (currentWeapon == null) {
             return;
-<<<<<<< HEAD
-=======
         }
->>>>>>> 44163742f660040e2c3768489b633107109ce60a
 
         if (currentWeapon.canFire()) {
             shootOnNextUpdate = true;
@@ -322,15 +319,7 @@ public class Player extends Entity {
 
         setScore(buf.getInt());
     }
-
-    @Override
-    public void onCreate() {
-    }
-
-    @Override
-    public void onDestroy() {
-    }
-
+    
     @Override
     public int getMinimapColor() {
         return 0xFFFFFF;
