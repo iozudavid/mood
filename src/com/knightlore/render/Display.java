@@ -60,9 +60,6 @@ public class Display implements IRenderable {
         
         PixelBuffer chatBuffer = chat.getPixelBuffer();
         pix.composite(chatBuffer, x, y);
-                
-        
-        
         
     }
 

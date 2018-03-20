@@ -52,4 +52,9 @@ public class Shotgun extends Weapon {
 
     }
 
+    @Override
+    public WeaponType getWeaponType() {
+        return WeaponType.SHOTGUN;
+    }
+
 }

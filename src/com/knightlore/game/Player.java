@@ -33,12 +33,12 @@ import com.knightlore.render.graphic.sprite.DirectionalSprite;
 import com.knightlore.utils.Vector2D;
 
 public class Player extends Entity {
-
+    
     private PlayerMoveAnimation moveAnim = new PlayerMoveAnimation(PlayerGraphicMatrix.getGraphic(
-            PlayerGraphicMatrix.Color.BLUE, PlayerGraphicMatrix.Weapon.PISTOL, PlayerGraphicMatrix.Stance.MOVE));
+            PlayerGraphicMatrix.Color.BLUE, PlayerGraphicMatrix.Weapon.SHOTGUN, PlayerGraphicMatrix.Stance.MOVE));
 
     private PlayerStandAnimation standAnim = new PlayerStandAnimation(
-            PlayerGraphicMatrix.getGraphic(PlayerGraphicMatrix.Color.BLUE, PlayerGraphicMatrix.Weapon.PISTOL,
+            PlayerGraphicMatrix.getGraphic(PlayerGraphicMatrix.Color.BLUE, PlayerGraphicMatrix.Weapon.SHOTGUN,
                     PlayerGraphicMatrix.Stance.STAND),
             (long) (GameEngine.UPDATES_PER_SECOND / 10));
 
@@ -82,7 +82,7 @@ public class Player extends Entity {
 
         zOffset = 100;
         moveSpeed = 0.060;
-        strafeSpeed = 0.08;
+        strafeSpeed = moveSpeed / 2;
         rotationSpeed = 0.06;
     }
 
@@ -93,7 +93,10 @@ public class Player extends Entity {
     @Override
     public void render(PixelBuffer pix, int x, int y, double distanceTraveled) {
         super.render(pix, x, y, distanceTraveled);
-        currentWeapon.render(pix, x, y, inertiaX, inertiaY, distanceTraveled, hasShot);
+
+        if (currentWeapon != null) {
+            currentWeapon.render(pix, x, y, inertiaX, inertiaY, distanceTraveled, hasShot);
+        }
     }
 
     private void setNetworkConsumers() {
@@ -198,7 +201,6 @@ public class Player extends Entity {
                 }
             }
         }
-
         if (prevDir != null && prevPos != null) {
             // The difference between our previous and new positions.
             Vector2D displacement = position.subtract(prevPos);
@@ -249,6 +251,9 @@ public class Player extends Entity {
     }
 
     private void shoot() {
+        if (currentWeapon == null)
+            return;
+
         if (currentWeapon.canFire()) {
             shootOnNextUpdate = true;
         }
@@ -263,6 +268,8 @@ public class Player extends Entity {
     public ByteBuffer serialize() {
         ByteBuffer bb = super.serialize();
         bb.putInt(shootOnNextUpdate ? 1 : 0);
+        bb.putInt(currentHealth);
+        bb.putInt(getScore());
         return bb;
     }
 
@@ -270,6 +277,8 @@ public class Player extends Entity {
     public synchronized void deserialize(ByteBuffer buf) {
         super.deserialize(buf);
         shootOnNextUpdate = buf.getInt() == 1;
+        currentHealth = buf.getInt();
+        setScore(buf.getInt());
     }
 
     @Override
@@ -303,8 +312,10 @@ public class Player extends Entity {
     @Override
     public void takeDamage(int damage, Entity inflictor) {
         currentHealth -= damage;
+        
         if (currentHealth <= 0) {
             System.out.println(name + " was killed by " + inflictor.getName());
+            inflictor.killConfirmed(this);
             this.sendSystemMessage(name, inflictor);
             GameEngine.getSingleton().getWorld().getGameManager().onPlayerDeath(this);
         }
@@ -351,5 +362,26 @@ public class Player extends Entity {
 
     public int getCurrentHealth() {
         return currentHealth;
+    }
+
+    public int getMaxHealth() {
+        return MAX_HEALTH;
+    }
+
+    public void setScore(int score) {
+        if (score < 0) {
+            this.score = 0;
+        } else {
+            this.score = score;
+        }
+    }
+
+    public void addScore(int amount) {
+        setScore(score + amount);
+    }
+
+    @Override
+    public void killConfirmed(Player victim) {
+        score += 1;
     }
 }

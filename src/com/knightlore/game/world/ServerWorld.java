@@ -5,6 +5,7 @@ import java.util.List;
 import com.knightlore.ai.BotInput;
 import com.knightlore.ai.TurretServer;
 import com.knightlore.ai.TurretShared;
+import com.knightlore.game.FFAGame;
 import com.knightlore.game.Player;
 import com.knightlore.game.entity.Entity;
 import com.knightlore.game.entity.SpectatorCamera;
@@ -19,6 +20,8 @@ public class ServerWorld extends GameWorld {
     @Override
     public void setUpWorld(Long mapSeed) {
         super.setUpWorld(mapSeed);
+        gameManager = new FFAGame();
+        gameManager.init();
         buildEntities();
     }
 
@@ -38,7 +41,7 @@ public class ServerWorld extends GameWorld {
         }
         TurretShared tboi = new TurretServer(3, map.getRandomSpawnPoint(), Vector2D.UP);
         tboi.init();
-        for (int i = 0; i < 0; i++) {
+        for (int i = 0; i < 5; i++) {
             Player botPlayer = new Player(map.getRandomSpawnPoint(), Vector2D.UP);
             botPlayer.setInputModule(new BotInput());
             botPlayer.init();

@@ -74,7 +74,7 @@ public abstract class Entity extends NetworkObject implements IMinimapObject, Pr
     protected int zOffset;
 
     protected String name = "entity";
-    
+
     protected BlockingQueue<ByteBuffer> systemMessages;
 
     // Allow you to create an entity with a specified UUID. Useful for creating
@@ -138,6 +138,10 @@ public abstract class Entity extends NetworkObject implements IMinimapObject, Pr
      *            the player that intersects with this entity.
      */
     public abstract void onCollide(Player player);
+
+    public void killConfirmed(Player victim) {
+        // do nothing
+    }
 
     @Override
     public void onUpdate() {
@@ -343,28 +347,28 @@ public abstract class Entity extends NetworkObject implements IMinimapObject, Pr
     public void takeDamage(int damage, Entity inflictor) {
         // DO NOTHING
     }
-    
-    public void sendSystemMessage(String name, Entity inflictor){
-    	String message = "System : " + name + " was killed by " + inflictor.getName();
-    	ByteBuffer bf = ByteBuffer.allocate(NetworkObject.BYTE_BUFFER_DEFAULT_SIZE);
-    	NetworkUtils.putStringIntoBuf(bf, NetworkObjectManager.MANAGER_UUID.toString());
-    	NetworkUtils.putStringIntoBuf(bf, "displayMessage");
-    	NetworkUtils.putStringIntoBuf(bf, message);
-    	this.systemMessages.offer(bf);
+
+    public void sendSystemMessage(String name, Entity inflictor) {
+        String message = "System : " + name + " was killed by " + inflictor.getName();
+        ByteBuffer bf = ByteBuffer.allocate(NetworkObject.BYTE_BUFFER_DEFAULT_SIZE);
+        NetworkUtils.putStringIntoBuf(bf, NetworkObjectManager.MANAGER_UUID.toString());
+        NetworkUtils.putStringIntoBuf(bf, "displayMessage");
+        NetworkUtils.putStringIntoBuf(bf, message);
+        this.systemMessages.offer(bf);
     }
-    
-    public Optional<ByteBuffer> getSystemMessages(){
-    	if(this.systemMessages.isEmpty()) {
+
+    public Optional<ByteBuffer> getSystemMessages() {
+        if (this.systemMessages.isEmpty()) {
             return Optional.empty();
         }
 
-    	try {
-			return Optional.of(this.systemMessages.take());
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-    	return Optional.empty();
+        try {
+            return Optional.of(this.systemMessages.take());
+        } catch (InterruptedException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        return Optional.empty();
     }
 
     public String getName() {
