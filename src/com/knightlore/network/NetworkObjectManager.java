@@ -93,8 +93,9 @@ public abstract class NetworkObjectManager implements INetworkable, Runnable {
                 			buf.rewind();
                 			((ClientNetworkObjectManager)this).addToPlayerStateOnServer(buf);
                 			continue;
-                			} else
-                				i++;
+                			} else {
+                                i++;
+                            }
                 		}
                 	}
                 }

@@ -65,8 +65,9 @@ public class Ticker {
         while (itr.hasNext()) {
             TickListener t = itr.next();
             // if there's not an interval, ignore it.
-            if (t.interval() == 0)
+            if (t.interval() == 0) {
                 continue;
+            }
 
             if (tick % t.interval() == 0) {
                 t.onTick();

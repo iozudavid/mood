@@ -16,8 +16,9 @@ public class Compass extends HUDElement {
 
     @Override
     public void render(PixelBuffer pix, int x, int y) {
-        if (player == null)
+        if (player == null) {
             return;
+        }
         final int WIDTH = 100;
 
         Vector2D v = new Vector2D(player.getyDir(), player.getxDir());

@@ -87,7 +87,9 @@ public class ClientNetworkObjectManager extends NetworkObjectManager {
         UUID objID = UUID.fromString(NetworkUtils.getStringFromBuf(buf));
         if (networkObjects.containsKey(objID))
             // We already know about this object.
+        {
             return;
+        }
         try {
             Class<Entity> cls = (Class<Entity>) Class.forName(className);
             // Build the new object.
@@ -208,8 +210,9 @@ public class ClientNetworkObjectManager extends NetworkObjectManager {
 
     public ByteBuffer takeNextMessageToSend() {
         try {
-            if (this.teamChat.size() == 0)
+            if (this.teamChat.isEmpty()) {
                 return null;
+            }
             return this.teamChat.take();
         } catch (InterruptedException e) {
             e.printStackTrace();

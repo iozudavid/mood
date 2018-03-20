@@ -41,8 +41,9 @@ public class Font {
     private void populateSymbols(String order, int color) {
         List<Integer> bounds = new ArrayList<>();
         for (int x = 0; x < sheet.getWidth(); x++) {
-            if (sheet.getRGB(x, 0) == BOUNDS_COLOR)
+            if (sheet.getRGB(x, 0) == BOUNDS_COLOR) {
                 bounds.add(x);
+            }
         }
 
         ColorFilter filter = new ColorFilter(color, 1D);

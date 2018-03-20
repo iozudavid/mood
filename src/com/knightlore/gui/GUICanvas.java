@@ -81,8 +81,9 @@ public class GUICanvas extends GameObject implements IRenderable {
 				activeTextField = gameTextField;
 				gameTextField.onMessage(c);
 			}
-		}else
+		}else {
 			inputChar(c);
+		}
 		
 	}
 	
@@ -92,8 +93,9 @@ public class GUICanvas extends GameObject implements IRenderable {
 				activeTextField = gameTextField;
 				gameTextField.onMessage(c);
 			}
-		}else
+		}else {
 			inputChar(c);
+		}
 		
 	}
 	
@@ -238,8 +240,9 @@ public class GUICanvas extends GameObject implements IRenderable {
 	}
 
 	public void addGUIObject(GUIObject gui) {
-		if(gui instanceof TextField)
+		if(gui instanceof TextField) {
 			gameTextField = (TextField) gui;
+		}
 		guis.add(gui);
 		sort();
 	}

@@ -57,8 +57,9 @@ public abstract class GameWorld {
      * seed.
      */
     public void setUpWorld(Long mapSeed) {
-        if (mapSeed == null)
+        if (mapSeed == null) {
             mapSeed = TEST_SEED;
+        }
         map = new MapGenerator().createMap(TEST_XSIZE, TEST_YSIZE, mapSeed);
         ents = new LinkedList<>();
         aiManager = new AIManager(map);
