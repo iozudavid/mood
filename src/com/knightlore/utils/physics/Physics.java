@@ -18,17 +18,14 @@ public class Physics {
     
     // for use with physics
     public static Boolean pointInRectTest(Vector2D point, Rect rect) {
-        
+
         if (point.getX() < rect.x) {
             return false;
         }
         if (point.getX() > rect.x + rect.width) {
             return false;
         }
-        if (point.getY() < rect.y) {
-            return false;
-        }
-        return !(point.getY() > rect.y + rect.height);
+        return !(point.getY() < rect.y) && !(point.getY() > rect.y + rect.height);
     }
     
     // for use with physics

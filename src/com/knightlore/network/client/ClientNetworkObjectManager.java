@@ -64,9 +64,14 @@ public class ClientNetworkObjectManager extends NetworkObjectManager {
         return myPlayer;
     }
     
-    private synchronized void displayMessage(ByteBuffer b){
-    	String message = NetworkUtils.getStringFromBuf(b);
-    	GameEngine.getSingleton().getDisplay().getChat().getTextArea().addText(message);
+    private synchronized void displayMessage(ByteBuffer b) {
+        try {
+            String message = NetworkUtils.getStringFromBuf(b);
+            GameEngine.getSingleton().getDisplay().getChat().getTextArea().addText(message);
+        } catch (NullPointerException e) {
+            System.err.println("Catched null pointer");
+        }
+
     }
 
     // Called remotely when a new network object is created on the server.
@@ -111,8 +116,7 @@ public class ClientNetworkObjectManager extends NetworkObjectManager {
         System.out.println("Receiving object deletion message from server");
         UUID objID = UUID.fromString(NetworkUtils.getStringFromBuf(buf));
         NetworkObject toBeDestroyedObject = this.getNetworkObject(objID);
-        this.networkObjects.remove(objID);
-        // toBeDestroyedObject.destroy(); FIXME
+        toBeDestroyedObject.destroy();
         if (toBeDestroyedObject instanceof Entity) {
             clientWorld.removeEntity((Entity) toBeDestroyedObject);
         }
