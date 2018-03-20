@@ -56,7 +56,7 @@ public abstract class Entity extends NetworkObject implements IMinimapObject, Ti
     
     protected double damageTakenModifier = 1;
     protected ArrayList<Buff> buffList = new ArrayList<Buff>();
-    private static final double BUFF_TICK_RATE = GameEngine.UPDATES_PER_SECOND / 32;
+    private static final double BUFF_TICK_RATE = GameEngine.UPDATES_PER_SECOND / 16;
 
     // this constant will decide
     // how smooth will be rendered other entities
@@ -543,7 +543,7 @@ public abstract class Entity extends NetworkObject implements IMinimapObject, Ti
     @Override
     public long interval() {
         // every sixteenth second
-        return (long) GameEngine.UPDATES_PER_SECOND / 32;
+        return (long) GameEngine.UPDATES_PER_SECOND / 16;
     }
     
     public void sendSystemMessage(String name, Entity inflictor){
