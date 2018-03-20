@@ -41,6 +41,7 @@ public class GUICanvas extends GameObject implements IRenderable {
 	private boolean lastHeld;
 	
 	private Rectangle rect;
+    public boolean isVisible;
 	
 	public GUICanvas(int screenWidth, int screenHeight){
 		super();
@@ -49,6 +50,7 @@ public class GUICanvas extends GameObject implements IRenderable {
 		guis = new ArrayList<>();
 		canvasImage = new BufferedImage(WIDTH,HEIGHT, BufferedImage.TYPE_INT_ARGB);
 		initDraw();
+		isVisible = true;
 	}
 	
 	private void initDraw(){

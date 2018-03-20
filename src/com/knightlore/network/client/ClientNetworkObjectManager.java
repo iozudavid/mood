@@ -15,10 +15,13 @@ import com.knightlore.engine.GameEngine;
 import com.knightlore.game.Player;
 import com.knightlore.game.entity.Entity;
 import com.knightlore.game.world.ClientWorld;
+import com.knightlore.gui.GameChat;
+import com.knightlore.gui.TextArea;
 import com.knightlore.network.NetworkObject;
 import com.knightlore.network.NetworkObjectManager;
 import com.knightlore.network.protocol.NetworkUtils;
 import com.knightlore.render.Camera;
+import com.knightlore.render.Display;
 
 public class ClientNetworkObjectManager extends NetworkObjectManager {
     private final Map<UUID, NetworkObject> networkObjects = new HashMap<>();
@@ -64,13 +67,14 @@ public class ClientNetworkObjectManager extends NetworkObjectManager {
         return myPlayer;
     }
     
-    private synchronized void displayMessage(ByteBuffer b) {
-        try {
-            String message = NetworkUtils.getStringFromBuf(b);
-            GameEngine.getSingleton().getDisplay().getChat().getTextArea().addText(message);
-        } catch (NullPointerException e) {
-            System.err.println("Catched null pointer");
-        }
+    private synchronized void displayMessage(ByteBuffer b){
+    	String message = NetworkUtils.getStringFromBuf(b);
+    	assert(message != null);
+    	GameEngine g = GameEngine.getSingleton();
+    	Display d = g.getDisplay();
+    	GameChat c = d.getChat();
+    	TextArea t = c.getTextArea();
+    	t.addText(message);
 
     }
 

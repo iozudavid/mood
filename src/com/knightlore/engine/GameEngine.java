@@ -139,7 +139,9 @@ public class GameEngine implements Runnable {
             GameChat chat = new GameChat(w, h);
             this.display = new Display(renderer, minimap, hud, chat);
         }
-        
+        // build anything that requires the renderer
+        // think gui
+        world.onPostEngineInit();
        
     }
 

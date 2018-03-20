@@ -1,5 +1,6 @@
 package com.knightlore.render;
 
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Stack;
@@ -283,12 +284,19 @@ public class Renderer {
 
     private synchronized void drawSprites(PixelBuffer pix, double[] zbuffer, int offset) {
         synchronized (world) {
-            List<Entity> entities = world.getEntities();
-            entities.sort((o1, o2) -> {
-                final double distance1 = camera.getPosition().sqrDistTo(o1.getPosition());
-                final double distance2 = camera.getPosition().sqrDistTo(o2.getPosition());
-                return Double.compare(distance2, distance1);
-            });
+            Entity[] entities = new Entity[world.getEntities().size()];
+            world.getEntities().toArray(entities);
+            Comparator<Entity> c = new Comparator<Entity>() {
+
+                @Override
+                public int compare(Entity o1, Entity o2) {
+                    final double distance1 = camera.getPosition().sqrDistTo(o1.getPosition());
+                    final double distance2 = camera.getPosition().sqrDistTo(o2.getPosition());
+                    return Double.compare(distance2, distance1);
+                }
+
+            };
+            Arrays.sort(entities, c);
             synchronized (entities) {
                 for (Entity m : entities) {
                     double spriteX = m.getPosition().getX() - camera.getxPos();

@@ -1,5 +1,9 @@
 package com.knightlore.render;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import com.knightlore.gui.GUICanvas;
 import com.knightlore.gui.GameChat;
 import com.knightlore.render.hud.HUD;
 import com.knightlore.render.minimap.Minimap;
@@ -30,12 +34,14 @@ public class Display implements IRenderable {
      */
     private HUD hud;
     private GameChat chat;
-
+    private List<GUICanvas> guis;
+    
     public Display(Renderer renderer, Minimap minimap, HUD hud, GameChat chat) {
         this.renderer = renderer;
         this.minimap = minimap;
         this.hud = hud;
         this.chat = chat;
+        this.guis = new ArrayList<GUICanvas>();
     }
 
     @Override
@@ -45,6 +51,12 @@ public class Display implements IRenderable {
         minimap.render();
         hud.render();
         chat.render();
+        for(GUICanvas canvas : guis) {
+            if(!canvas.isVisible) {
+                continue;
+            }
+            canvas.render(pix, x, y);
+        }
 
         final int w = pix.getWidth(), h = pix.getHeight();
         pix.composite(renderer.getPixelBuffer(), x, y);
@@ -77,6 +89,14 @@ public class Display implements IRenderable {
     
     public GameChat getChat(){
     	return this.chat;
+    }
+    
+    public void addGUICanvas(GUICanvas g) {
+        guis.add(g);
+    }
+    
+    public void removeGUICanvas(GUICanvas g) {
+        guis.remove(g);
     }
 
 }

@@ -15,6 +15,7 @@ public class HealthCounter extends HUDElement implements TickListener {
 
     @Override
     public void render(PixelBuffer pix, int x, int y) {
+        assert(player != null);
         if (player == null)
             return;
         final int HEIGHT = 10;

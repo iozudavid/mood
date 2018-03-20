@@ -13,7 +13,7 @@ import com.knightlore.utils.Vector2D;
 public class FFAGame extends GameManager {
     
     private static final int WIN_SCORE = 10;
-    private static final double ROUND_TIME_SECS = 10;
+    private static final double ROUND_TIME_SECS = 300;
     private Entity winner;
     
     public FFAGame(UUID uuid) {
