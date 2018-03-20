@@ -55,6 +55,15 @@ public class StartMenu {
 			}
 		};
 		
+		this.settingsButton.clickFunction = new VoidFunction() {
+            
+            @Override
+            public void call() {
+                StartMenu.this.gui.destroy();
+                GameEngine.getSingleton().gameState = GameState.SettingsMenu;
+            }
+        };
+		
 		this.multiPlayerButton.clickFunction = new VoidFunction(){
 			@Override
 			public void call(){

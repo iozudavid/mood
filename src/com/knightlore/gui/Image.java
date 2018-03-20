@@ -20,7 +20,6 @@ public class Image extends GUIObject{
 	public boolean needBackground = false;
 
     public Image(int x, int y, int width, int height, int depth) {
-    	
         super(x,y,width,height,depth);
     }
 
