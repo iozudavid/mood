@@ -109,7 +109,7 @@ public class GameObjectManager {
      * @return a list of objects of type c.
      */
     public <T> ArrayList<T> findObjectsOfType(Class<T> c) {
-        ArrayList<T> results = new ArrayList<T>();
+        ArrayList<T> results = new ArrayList<>();
         // FIXME find a nicer way of doing this
         try {
             for (GameObject object : objects) {

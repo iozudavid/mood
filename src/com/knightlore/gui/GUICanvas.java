@@ -46,7 +46,7 @@ public class GUICanvas extends GameObject implements IRenderable {
 		super();
 		WIDTH = screenWidth;
 		HEIGHT = screenHeight;
-		guis = new ArrayList<GUIObject>();
+		guis = new ArrayList<>();
 		canvasImage = new BufferedImage(WIDTH,HEIGHT, BufferedImage.TYPE_INT_ARGB);
 		initDraw();
 	}

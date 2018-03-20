@@ -17,7 +17,7 @@ public final class ClientProtocol {
     // to create the packet
     private static final Map<Integer, ClientController> indexAction;
     static {
-        indexAction = new HashMap<Integer, ClientController>();
+        indexAction = new HashMap<>();
         indexAction.put(0, ClientController.FORWARD);
         indexAction.put(1, ClientController.LEFT);
         indexAction.put(2, ClientController.BACKWARD);

@@ -33,7 +33,7 @@ public final class BotInput extends InputModule {
     private long fov = 60;
     private Entity target = null;
     private Vector2D goalPos = Vector2D.ZERO;
-    private List<Point> path = new ArrayList<Point>();
+    private List<Point> path = new ArrayList<>();
     private Vector2D lookPos = Vector2D.ZERO;
     
     @Override

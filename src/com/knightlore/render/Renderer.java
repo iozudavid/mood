@@ -69,7 +69,7 @@ public class Renderer {
          * adding new render items to a stack until we reach an opaque block.
          * The stack is then popped and rendered in turn.
          */
-        Stack<PerspectiveRenderItem> renderStack = new Stack<PerspectiveRenderItem>();
+        Stack<PerspectiveRenderItem> renderStack = new Stack<>();
 
         for (int xx = 0; xx < width; xx += BLOCKINESS) {
             // Calculate direction of the ray based on camera direction.
