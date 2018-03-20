@@ -71,7 +71,6 @@ public final class ServerProtocol {
                     ServerControl.YPLANE); // 48, 56
             // just this for now
         } catch (IOException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
     }

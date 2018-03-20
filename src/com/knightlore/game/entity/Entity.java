@@ -450,7 +450,6 @@ public abstract class Entity extends NetworkObject implements IMinimapObject {
         try {
             return Optional.of(this.systemMessages.take());
         } catch (InterruptedException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
         return Optional.empty();

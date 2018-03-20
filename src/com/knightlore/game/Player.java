@@ -163,7 +163,6 @@ public class Player extends Entity {
         try {
             return Optional.of(this.teamMessagesToSend.take());
         } catch (InterruptedException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
 
@@ -188,7 +187,6 @@ public class Player extends Entity {
         try {
             return Optional.of(this.allMessagesToSend.take());
         } catch (InterruptedException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
 
@@ -310,21 +308,17 @@ public class Player extends Entity {
         super.deserialize(buf);
         shootOnNextUpdate = buf.getInt() == 1;
         this.timeToSend = buf.getDouble();
-        this.respawn = buf.getInt() == 1 ? true : false;
+        this.respawn = buf.getInt() == 1;
         currentHealth = buf.getInt();
         setScore(buf.getInt());
     }
 
     @Override
     public void onCreate() {
-        // TODO Auto-generated method stub
-
     }
 
     @Override
     public void onDestroy() {
-        // TODO Auto-generated method stub
-
     }
 
     @Override
