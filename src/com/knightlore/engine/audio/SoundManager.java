@@ -70,6 +70,11 @@ public class SoundManager implements LineListener {
      */
     private void play(SoundResource res, float volume, int numLoops) {
         Clip clip = res.getNewClip();
+        // FIXME
+        if (clip == null) {
+            return;
+        }
+
         final FloatControl control = (FloatControl) clip.getControl(FloatControl.Type.MASTER_GAIN);
         float range = control.getMaximum() - control.getMinimum();
         float gain = range * volume + control.getMinimum();

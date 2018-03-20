@@ -20,25 +20,22 @@ public class GameFeed implements IRenderable {
     }
 
     private List<GameFeedMessage> messages;
-    private final long MESSAGE_DURATION = (long) (GameEngine.UPDATES_PER_SECOND * 4);
+    private static final long MESSAGE_DURATION = (long) (GameEngine.UPDATES_PER_SECOND * 4);
 
     private GameFeed() {
-        this.messages = new ArrayList<GameFeedMessage>();
+        this.messages = new ArrayList<>();
     }
 
     @Override
     public void render(PixelBuffer pix, int x, int y) {
-        ListIterator<GameFeedMessage> itr = messages.listIterator();
-
-        while (itr.hasNext()) {
-            GameFeedMessage msg = itr.next();
+        for (GameFeedMessage msg : messages) {
             pix.drawString(Font.DEFAULT_WHITE, msg.message, x, y, 1, 2);
             y += 10;
         }
     }
-    
-    public void getFeed(GameChat chat){
-    	for(GameFeedMessage message : this.messages){
+
+    public void getFeed(GameChat chat) {
+    	for(GameFeedMessage message: this.messages) {
     		chat.getTextArea().addText("System: " + message.message);
     	}
     	this.messages.clear();
@@ -58,7 +55,7 @@ public class GameFeed implements IRenderable {
         private String message;
         private long timeWhenGone;
 
-        public GameFeedMessage(String message, long timeWhenGone) {
+        GameFeedMessage(String message, long timeWhenGone) {
             this.message = message;
             this.timeWhenGone = timeWhenGone;
         }

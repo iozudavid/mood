@@ -16,8 +16,10 @@ public class TCPConnection extends Connection {
 
     private DataInputStream infoReceive;
     private DataOutputStream infoSend;
+    private Socket socket;
 
     public TCPConnection(Socket socket) {
+        this.socket = socket;
         try {
             socket.setSoTimeout(TIMEOUT_MILLIS);
             this.infoReceive = new DataInputStream(socket.getInputStream());
@@ -28,17 +30,14 @@ public class TCPConnection extends Connection {
         }
     }
 
-    public void closeInputStream() {
+    /**
+     * Closes the input and output streams, and also the socket itself.
+     */
+    public void close() {
         try {
             infoReceive.close();
-        } catch (IOException e) {
-            System.err.println("Something wrong " + e.getMessage());
-        }
-    }
-
-    public void closeOutputStream() {
-        try {
             infoSend.close();
+            socket.close();
         } catch (IOException e) {
             System.err.println("Something wrong " + e.getMessage());
         }
@@ -51,7 +50,8 @@ public class TCPConnection extends Connection {
             try {
                 int dataLength = data.position();
                 if (dataLength == 0) {
-                    System.err.println("Error: Trying to send an empty ByteBuffer!");
+                    System.err.println(
+                            "Error: Trying to send an empty ByteBuffer!");
                     return;
                 }
                 // Copy buffer contents to avoid rewinding buffer (which has
@@ -74,7 +74,8 @@ public class TCPConnection extends Connection {
             try {
                 int size = infoReceive.readInt();
                 if (size == 0) {
-                    System.err.println("Error: Trying to receive an empty ByteBuffer!");
+                    System.err.println(
+                            "Error: Trying to receive an empty ByteBuffer!");
                     return null;
                 }
                 byte[] tmp = new byte[size];

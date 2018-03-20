@@ -17,8 +17,8 @@ import com.knightlore.utils.Vector2D;
  */
 public class ShotgunPickup extends PickupItem {
     
-    static final long PICKUP_SPAWN_PROTECT_TIME = 10;
-    long spawnProtectTime = 0;
+    private static final long PICKUP_SPAWN_PROTECT_TIME = 10;
+    private long spawnProtectTime = 0;
     
     // Returns a new instance. See NetworkObject for details.
     public static NetworkObject build(UUID uuid, ByteBuffer state) {
@@ -32,9 +32,8 @@ public class ShotgunPickup extends PickupItem {
         this(UUID.randomUUID(), position);
     }
     
-    public ShotgunPickup(UUID uuid, Vector2D position) {
-        super(uuid, position);
-        sprite = DirectionalSprite.SHOTGUN_DIRECTIONAL_SPRITE;
+    private ShotgunPickup(UUID uuid, Vector2D position) {
+        super(uuid, position, DirectionalSprite.SHOTGUN_DIRECTIONAL_SPRITE);
         spawnProtectTime = GameEngine.ticker.getTime() + PICKUP_SPAWN_PROTECT_TIME;
     }
     
@@ -51,8 +50,9 @@ public class ShotgunPickup extends PickupItem {
     
     @Override
     public void onCollide(Player player) {
-        System.out.println("DELETE! " + player.getName());
-        setExists(false);
+        if (exists) {
+            this.destroy();
+        }
     }
     
     public void onDestroy() {

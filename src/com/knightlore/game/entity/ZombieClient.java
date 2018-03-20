@@ -32,4 +32,5 @@ public class ZombieClient extends ZombieShared {
     @Override
     public void onCollide(Player player) {
     }
+
 }

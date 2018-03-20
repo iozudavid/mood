@@ -35,9 +35,9 @@ public class GameObjectManager {
     private List<GameObject> notifyToDestroy;
 
     public GameObjectManager() {
-        this.objects = new ArrayList<GameObject>();
-        this.notifyToCreate = new LinkedList<GameObject>();
-        this.notifyToDestroy = new LinkedList<GameObject>();
+        this.objects = new ArrayList<>();
+        this.notifyToCreate = new LinkedList<>();
+        this.notifyToDestroy = new LinkedList<>();
     }
 
     /**
@@ -81,7 +81,6 @@ public class GameObjectManager {
                 GameObject obj = it.next();
                 // add the object to the update list
                 objects.add(obj);
-                obj.setExists(true);
                 // notify the object it has been created
                 obj.onCreate();
             }
@@ -94,7 +93,6 @@ public class GameObjectManager {
                 GameObject obj = it.next();
                 // remove the object from the update list
                 objects.remove(obj);
-                obj.setExists(false);
                 // notify the object it has been effectively destroyed
                 obj.onDestroy();
             }

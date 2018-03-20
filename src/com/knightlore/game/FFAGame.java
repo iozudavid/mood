@@ -69,14 +69,12 @@ public class FFAGame extends GameManager {
     
     @Override
     public void onCreate() {
-        // TODO Auto-generated method stub
-        
     }
     
     @Override
     public void onUpdate() {
         // update ticks left
-        if (gameState != gameState.FINISHED) {
+        if (gameState != GameState.FINISHED) {
             ticksLeft = gameOverTick - GameEngine.ticker.getTime();
         }
         
@@ -108,8 +106,6 @@ public class FFAGame extends GameManager {
     
     @Override
     public void onDestroy() {
-        // TODO Auto-generated method stub
-        
     }
     
     @Override
@@ -119,7 +115,7 @@ public class FFAGame extends GameManager {
     
     @Override
     public void startLobby() {
-        gameState = GameState.LOBBY;   
+        gameState = GameState.LOBBY;
     }
     
     @Override

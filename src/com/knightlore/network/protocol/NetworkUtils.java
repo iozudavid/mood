@@ -2,22 +2,32 @@ package com.knightlore.network.protocol;
 
 import java.nio.ByteBuffer;
 
+import com.knightlore.network.Connection;
+
 public class NetworkUtils {
 
-    // Puts a String into a ByteBuffer.
+    /**
+     * Put a String into a ByteBuffer.
+     * 
+     * @param buf The ByteBuffer to insert into.
+     * @param string The String to insert.
+     */
     public static void putStringIntoBuf(ByteBuffer buf, String string) {
-        int len = string.length();
-        buf.putInt(len);
-        for (int i = 0; i < len; i++)
-            buf.putChar(string.charAt(i));
+        byte[] bytes = string.getBytes(Connection.CHARSET);
+        buf.putInt(bytes.length);
+        buf.put(bytes);
     }
 
-    // Gets a String from a ByteBuffer.
+    /**
+     * Gets a String from a ByteBuffer.
+     * 
+     * @param buf The ByteBuffer to use.
+     * @return The extracted String.
+     */
     public static String getStringFromBuf(ByteBuffer buf) {
         int len = buf.getInt();
-        char[] chars = new char[len];
-        for (int i = 0; i < len; i++)
-            chars[i] = buf.getChar();
-        return new String(chars);
+        byte[] bytes = new byte[len];
+        buf.get(bytes, 0, len);
+        return new String(bytes, Connection.CHARSET);
     }
 }
