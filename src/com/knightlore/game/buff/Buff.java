@@ -20,16 +20,12 @@ public abstract class Buff {
     }
     
     /** The affect the buff has on application
-     * 
-     * @param ent
      */
     public abstract void onApply();
     
     
     /** The continuous affect of the buff. loop() will
      * call this periodically as appropriate
-     * @param ent
-     * @return
      */
     protected abstract void periodicEffect();
     
@@ -77,7 +73,6 @@ public abstract class Buff {
     
     /** Anything that must be done upon the removal
      *  of a buff
-     * @param ent
      */
     public abstract void onRemove();
     

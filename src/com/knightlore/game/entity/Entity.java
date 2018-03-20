@@ -509,6 +509,7 @@ public abstract class Entity extends NetworkObject implements IMinimapObject, Ti
                 return; //IMPORTANT WE RETURN
             }
         }
+        System.out.println("Adding buff " + rbuff.toString());
         addBuff(rbuff);
     }
     

@@ -7,6 +7,7 @@ import com.knightlore.game.buff.Fire;
 import com.knightlore.game.buff.Immune;
 import com.knightlore.game.buff.Push;
 import com.knightlore.game.buff.Slow;
+import com.knightlore.game.buff.SpawnVision;
 import com.knightlore.game.entity.Entity;
 import com.knightlore.render.animation.Animation;
 import com.knightlore.render.animation.TimedAnimation;
@@ -42,6 +43,7 @@ public class PlayerSpawnTile extends Tile {
     public PlayerSpawnTile(Team team) {
         this.team = team;
         spawnable = true;
+        pushVector = Vector2D.UP;
     }
     
     public PlayerSpawnTile(Team team, Vector2D v) {
@@ -145,11 +147,11 @@ public class PlayerSpawnTile extends Tile {
 
     @Override
     public void onEntered(Entity entity) {
-        if(pushVector.getX() == 0 &&
-           pushVector.getY() == 0) {
+        if(spawnable) {
             entity.resetBuff(new Immune(entity));
         }else {
             entity.resetBuff(new Push(entity, pushVector));
+            entity.resetBuff(new SpawnVision(entity));
         }
     }
 }

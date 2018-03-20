@@ -67,7 +67,7 @@ public class GameEngine implements Runnable {
         this.gameObjectManager = new GameObjectManager();
         this.soundManager = new SoundManager();
     }
-
+    
     public SoundManager getSoundManager() {
         return soundManager;
     }

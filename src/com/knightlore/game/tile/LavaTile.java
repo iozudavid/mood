@@ -2,6 +2,7 @@ package com.knightlore.game.tile;
 
 import com.knightlore.game.Player;
 import com.knightlore.game.buff.Fire;
+import com.knightlore.game.buff.SpawnVision;
 import com.knightlore.game.entity.Entity;
 import com.knightlore.game.entity.ZombieServer;
 import com.knightlore.render.animation.TimedAnimation;

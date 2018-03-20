@@ -36,7 +36,6 @@ public class AirTile extends Tile {
 
     @Override
     public void onEntered(Entity entity) {
-        //entity.resetBuff(new Immune(entity));
     }
 
     public char toChar() {

@@ -4,6 +4,8 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Stack;
 
+import com.knightlore.GameSettings;
+import com.knightlore.engine.GameEngine;
 import com.knightlore.game.area.Map;
 import com.knightlore.game.entity.Entity;
 import com.knightlore.game.tile.AirTile;
@@ -39,8 +41,6 @@ public class Renderer {
         this.world = world;
     }
 
-    private final int BLOCKINESS = 10; // how 'old school' you want to look.
-
     public void render() {
         if (camera == null || !camera.isSubjectSet()) {
             return;
@@ -55,7 +55,6 @@ public class Renderer {
 
         camera.render(pix, 0, 0);
         drawCrosshair(pix);
-
     }
 
     private void drawPerspective(PixelBuffer pix, int offset) {
@@ -71,7 +70,7 @@ public class Renderer {
          */
         Stack<PerspectiveRenderItem> renderStack = new Stack<PerspectiveRenderItem>();
 
-        for (int xx = 0; xx < width; xx += BLOCKINESS) {
+        for (int xx = 0; xx < width; xx += GameSettings.actualBlockiness) {
             // Calculate direction of the ray based on camera direction.
             double cameraX = 2 * xx / (double) (width) - 1;
             double rayX = camera.getxDir() + camera.getxPlane() * cameraX;
@@ -222,7 +221,7 @@ public class Renderer {
 
         // stops us from getting weird rendering artifacts, since
         // we start drawing a pixel after drawEnd to avoid indexing errors.
-        pix.fillRect(0x000000, xx, drawEnd + offset, BLOCKINESS, 1);
+        pix.fillRect(0x000000, xx, drawEnd + offset, GameSettings.actualBlockiness, 1);
 
         // draw from drawEnd to the bottom of the screen
         for (int y = drawEnd + 1; y < h; y++) {
@@ -251,12 +250,12 @@ public class Renderer {
             int floorColor = floor.getPixels()[floor.getWidth() * floorTexY + floorTexX];
             floorColor = ColorUtils.darken(floorColor, world.getEnvironment().getDarkness(), currentDist);
 
-            pix.fillRect(floorColor, xx, y + offset, BLOCKINESS, 1);
+            pix.fillRect(floorColor, xx, y + offset, GameSettings.actualBlockiness, 1);
 
             // ceiling
             int ceilColor = ceil.getPixels()[ceil.getWidth() * floorTexY + floorTexX];
             ceilColor = ColorUtils.darken(ceilColor, world.getEnvironment().getDarkness(), currentDist);
-            pix.fillRect(ceilColor, xx, h - y + offset, BLOCKINESS, 1);
+            pix.fillRect(ceilColor, xx, h - y + offset, GameSettings.actualBlockiness, 1);
         }
     }
 
@@ -277,7 +276,7 @@ public class Renderer {
             color = ColorUtils.darken(color, world.getEnvironment().getDarkness(), p.distanceToWall);
             if (p.side)
                 color = ColorUtils.quickDarken(color);
-            pix.fillRect(color, p.xx, drawY, BLOCKINESS, 1);
+            pix.fillRect(color, p.xx, drawY, GameSettings.actualBlockiness, 1);
         }
     }
 
@@ -359,7 +358,7 @@ public class Renderer {
 
                                 int drawY = y + offset;
 
-                                pix.fillRect(color, stripe, drawY, BLOCKINESS, 1);
+                                pix.fillRect(color, stripe, drawY, GameSettings.actualBlockiness, 1);
                             }
 
                             final double sc = (drawEndY - drawStartY) / 90D;
