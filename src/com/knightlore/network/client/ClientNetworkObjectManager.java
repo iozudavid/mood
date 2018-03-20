@@ -9,6 +9,7 @@ import java.util.UUID;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
+import com.knightlore.GameSettings;
 import com.knightlore.engine.GameEngine;
 import com.knightlore.game.Player;
 import com.knightlore.game.entity.Entity;
@@ -25,8 +26,9 @@ public class ClientNetworkObjectManager extends NetworkObjectManager {
     private boolean finishedSetUp = false;
 
     private ClientWorld clientWorld;
-    
+
     private BlockingQueue<ByteBuffer> teamChat;
+    private SendToServer sendToServer;
 
     public ClientNetworkObjectManager(ClientWorld world) {
         super();
@@ -59,10 +61,11 @@ public class ClientNetworkObjectManager extends NetworkObjectManager {
     public Player getMyPlayer() {
         return myPlayer;
     }
-    
-    public synchronized void displayMessage(ByteBuffer b){
-    	String message = NetworkUtils.getStringFromBuf(b);
-    	GameEngine.getSingleton().getDisplay().getChat().getTextArea().addText(message);
+
+    public synchronized void displayMessage(ByteBuffer b) {
+        String message = NetworkUtils.getStringFromBuf(b);
+        GameEngine.getSingleton().getDisplay().getChat().getTextArea()
+                .addText(message);
     }
 
     // Called remotely when a new network object is created on the server.
@@ -143,6 +146,10 @@ public class ClientNetworkObjectManager extends NetworkObjectManager {
     }
 
     public synchronized void receiveReadySignal(ByteBuffer buf) {
+        // Once everything is set up, tell the server what we want our name to
+        // be.
+        System.out.println("Sending name");
+        sendName();
         Camera camera = new Camera(clientWorld.getMap());
         camera.setSubject(myPlayer);
         GameEngine.getSingleton().setCamera(camera);
@@ -150,10 +157,10 @@ public class ClientNetworkObjectManager extends NetworkObjectManager {
         this.finishedSetUp = true;
     }
 
-    @Override
-    public void init() {
+    public void init(SendToServer serverSender) {
         super.init();
 
+        this.sendToServer = serverSender;
         // Wait for all information to be received - e.g., map seed, object
         // details, player identity.
         while (!finishedSetUp) {
@@ -167,24 +174,38 @@ public class ClientNetworkObjectManager extends NetworkObjectManager {
         }
     }
 
+    /**
+     * Let the server know what our player's name is.
+     */
+    private void sendName() {
+        ByteBuffer buf = ByteBuffer.allocate(BYTE_BUFFER_DEFAULT_SIZE);
+        NetworkUtils.putStringIntoBuf(buf, MANAGER_UUID.toString());
+        NetworkUtils.putStringIntoBuf(buf, "receiveName");
+        // Let the server know who we are.
+        NetworkUtils.putStringIntoBuf(buf,
+                this.myPlayer.getObjectId().toString());
+        NetworkUtils.putStringIntoBuf(buf, GameSettings.PLAYER_NAME);
+        this.sendToServer.send(buf);
+    }
+
     public boolean hasFinishedSetup() {
         return finishedSetUp;
     }
-    
-    public void addToChat(ByteBuffer message){
-    	this.teamChat.offer(message);
+
+    public void addToChat(ByteBuffer message) {
+        this.teamChat.offer(message);
     }
-    
-	public ByteBuffer takeNextMessageToSend() {
-		try {
-			if (this.teamChat.size() == 0)
-				return null;
-			return this.teamChat.take();
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		return null;
-	}
+
+    public ByteBuffer takeNextMessageToSend() {
+        try {
+            if (this.teamChat.size() == 0)
+                return null;
+            return this.teamChat.take();
+        } catch (InterruptedException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        return null;
+    }
 
 }

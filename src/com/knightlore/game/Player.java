@@ -258,6 +258,7 @@ public class Player extends Entity {
     public ByteBuffer serialize() {
         ByteBuffer bb = super.serialize();
         bb.putInt(shootOnNextUpdate ? 1 : 0);
+        //NetworkUtils.putStringIntoBuf(bb, name);
         return bb;
     }
 
@@ -265,6 +266,7 @@ public class Player extends Entity {
     public synchronized void deserialize(ByteBuffer buf) {
         super.deserialize(buf);
         shootOnNextUpdate = buf.getInt() == 1;
+        //name = NetworkUtils.getStringFromBuf(buf);
     }
 
     @Override

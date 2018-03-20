@@ -39,13 +39,15 @@ public class SendToServer implements Runnable {
     public SendToServer(Connection conn) {
         this.conn = conn;
         // this.lock = new Object();
-        this.manager = (ClientNetworkObjectManager) GameEngine.getSingleton().getNetworkObjectManager();
+        this.manager = (ClientNetworkObjectManager) GameEngine.getSingleton()
+                .getNetworkObjectManager();
 
     }
 
     private synchronized ByteBuffer getCurrentControlState() {
         // ByteBuffer to store current input state.
-        ByteBuffer buf = ByteBuffer.allocate(NetworkObject.BYTE_BUFFER_DEFAULT_SIZE);
+        ByteBuffer buf = ByteBuffer
+                .allocate(NetworkObject.BYTE_BUFFER_DEFAULT_SIZE);
         // Let the server know which UUID this relates to.
         NetworkUtils.putStringIntoBuf(buf, myUUID.toString());
         // Call the setInputState method on our player.
@@ -63,7 +65,8 @@ public class SendToServer implements Runnable {
                 System.err.println("ClientControl index out of range");
                 return null;
             }
-            if (InputManager.isKeyDown(keyCode) && !InputManager.getKeyboard().isTyping()) {
+            if (InputManager.isKeyDown(keyCode)
+                    && !InputManager.getKeyboard().isTyping()) {
                 buf.put((byte) 1);
             } else {
                 buf.put((byte) 0);
@@ -90,11 +93,12 @@ public class SendToServer implements Runnable {
         // Send a controls update if either the controls have changed or
         // a regular update is due.
         synchronized (this.currentState) {
-        	ByteBuffer message = this.manager.takeNextMessageToSend();
-        	if(message!=null){
-        		conn.send(message);
-        	}
-            if (updateCounter++ >= REGULAR_UPDATE_FREQ || !Arrays.equals(currentState.array(), lastState.array())) {
+            ByteBuffer message = this.manager.takeNextMessageToSend();
+            if (message != null) {
+                this.send(message);
+            }
+            if (updateCounter++ >= REGULAR_UPDATE_FREQ || !Arrays
+                    .equals(currentState.array(), lastState.array())) {
                 updateCounter = 1;
                 conn.send(currentState);
                 this.lastState = currentState;
@@ -108,7 +112,7 @@ public class SendToServer implements Runnable {
         long delay = (long) (1 / freq);
 
         Player player;
-        while ((player = manager.getMyPlayer()) == null)
+            while ((player = manager.getMyPlayer()) == null)
             // Wait for UUID to be set.
             try {
                 Thread.sleep(delay);
@@ -117,7 +121,7 @@ public class SendToServer implements Runnable {
                 e1.printStackTrace();
             }
         this.myUUID = player.getObjectId();
-        
+
         this.currentState = getCurrentControlState();
         this.lastState = this.currentState;
 
@@ -134,6 +138,15 @@ public class SendToServer implements Runnable {
                 e.printStackTrace();
             }
         }
+    }
 
+    /**
+     * Send a ByteBuffer to the server.
+     * 
+     * @param buf:
+     *            The buffer to send.
+     */
+    public void send(ByteBuffer buf) {
+        conn.send(buf);
     }
 }

@@ -48,7 +48,7 @@ public abstract class NetworkObjectManager implements INetworkable, Runnable {
         return MANAGER_UUID;
     }
 
-    public void init() {
+    protected void init() {
         System.out.println("init called");
         new Thread(this).start();
         System.out.println("Object manager started");
