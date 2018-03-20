@@ -9,7 +9,7 @@ public final class GameSettings {
     static boolean server = false;
 
     // FIXME: enter dynamic player names in the GUI.
-    public static String PLAYER_NAME = "Will";
+    public static String PLAYER_NAME = "Client Player";
 
     public static boolean MOTION_BOB = true;
 
