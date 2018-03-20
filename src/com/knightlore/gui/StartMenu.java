@@ -47,8 +47,6 @@ public class StartMenu {
 				//on the local machine
 				ConnectionDetails.SERVER_HOSTNAME = "localhost";
 				ConnectionDetails.PORT=5000;
-				StartServer ss = new StartServer();
-				ss.start();
 				//remove this gui
 				StartMenu.this.gui.destroy();
 				GameEngine.getSingleton().startGame();
