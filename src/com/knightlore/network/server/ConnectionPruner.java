@@ -16,8 +16,8 @@ import com.knightlore.network.Connection;
  */
 public class ConnectionPruner implements Runnable {
     // The time to wait, in milliseconds, between checks for terminated threads.
-    private static int PERIOD_MILLIS = 1000;
-    private Map<UUID, Connection> conns;
+    private static final int PERIOD_MILLIS = 1000;
+    private  final Map<UUID, Connection> conns;
 
     public ConnectionPruner(Map<UUID, Connection> conns) {
         this.conns = conns;
@@ -26,7 +26,7 @@ public class ConnectionPruner implements Runnable {
     public void run() {
         while (true) {
             Iterator<Entry<UUID, Connection>> i = conns.entrySet().iterator();
-            Entry<UUID, Connection> next = null;
+            Entry<UUID, Connection> next;
             while (i.hasNext()) {
                 next = i.next();
                 UUID uuid = next.getKey();
@@ -43,7 +43,6 @@ public class ConnectionPruner implements Runnable {
                 // Reduce CPU usage by only checking periodically.
                 Thread.sleep(PERIOD_MILLIS);
             } catch (InterruptedException e) {
-                System.err.println("Pruner interrupted during sleep:");
                 e.printStackTrace();
             }
         }

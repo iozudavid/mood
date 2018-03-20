@@ -1,6 +1,5 @@
 package com.knightlore.game.tile;
 
-import com.knightlore.game.buff.Immune;
 import com.knightlore.game.entity.Entity;
 import com.knightlore.render.graphic.Graphic;
 import com.knightlore.render.graphic.texture.Texture;

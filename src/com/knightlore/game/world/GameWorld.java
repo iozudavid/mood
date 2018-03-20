@@ -4,6 +4,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import com.knightlore.ai.AIManager;
+import com.knightlore.game.ClientFFAGame;
 import com.knightlore.game.FFAGame;
 import com.knightlore.game.GameManager;
 import com.knightlore.game.PlayerManager;
@@ -17,7 +18,6 @@ import com.knightlore.utils.physics.Physics;
 import com.knightlore.utils.physics.RaycastHit;
 import com.knightlore.utils.physics.RaycastHitType;
 import com.knightlore.utils.Vector2D;
-import com.knightlore.utils.pruner.Pruner;
 
 public abstract class GameWorld {
 
@@ -27,12 +27,11 @@ public abstract class GameWorld {
     
     protected Map map;
     protected PlayerManager playerManager;
-    protected GameManager gameManager;
+    protected GameManager gameManager = null;
     protected AIManager aiManager;
     protected List<Entity> ents;
-    
+
     public void update() {
-        Pruner.prune(ents);
     }
     
     private Map generateMap(int xSize, int ySize, long seed) {
@@ -68,8 +67,6 @@ public abstract class GameWorld {
         ents = new LinkedList<>();
         aiManager = new AIManager(map);
         playerManager = new PlayerManager();
-        gameManager = new FFAGame();
-        gameManager.init();
     }
     
     public RaycastHit raycast(Vector2D pos, Vector2D direction, int segments, double maxDist, Entity ignore) {
@@ -107,6 +104,10 @@ public abstract class GameWorld {
 
     public GameManager getGameManager() {
         return gameManager;
+    }
+
+    public void changeGameManager(GameManager game) {
+        gameManager = game;
     }
     
 }

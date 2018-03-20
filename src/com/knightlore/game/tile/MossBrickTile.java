@@ -22,13 +22,11 @@ public class MossBrickTile extends BrickTile {
 
     @Override
     public Tile copy() {
-        // TODO Auto-generated method stub
         return new MossBrickTile();
     }
 
     @Override
     public char toChar() {
-        // TODO Auto-generated method stub
         return 'M';
     }
 

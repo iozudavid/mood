@@ -85,9 +85,6 @@ public class PathFinder {
     }
 
     private boolean isInBounds(Point p, double[][] grid) {
-        // modifying this because we don't want our path to
-        // be on the very edge of the map
-        //return p.x >= 0 && p.x < grid.length && p.y >= 0 && p.y < grid[0].length;
         if(!isForMap) {
             return p.x >= 0 && p.x < grid.length && p.y >= 0 && p.y < grid[0].length;
         }else {

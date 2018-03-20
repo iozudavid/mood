@@ -10,7 +10,7 @@ import com.knightlore.render.graphic.sprite.DirectionalSprite;
 import com.knightlore.utils.Vector2D;
 
 public class HealthPickup extends PickupItem {
-
+    
  // Returns a new instance. See NetworkObject for details.
     public static NetworkObject build(UUID uuid, ByteBuffer state) {
         NetworkObject obj = new HealthPickup(uuid, Vector2D.ONE, null);
@@ -24,8 +24,7 @@ public class HealthPickup extends PickupItem {
     }
     
     public HealthPickup(UUID uuid, Vector2D position, PickupManager pickupManager) {
-        super(uuid, position, pickupManager);
-        sprite = DirectionalSprite.BLUE_PLAYER_DIRECTIONAL_SPRITE;
+        super(uuid, position, DirectionalSprite.PLAYER_DIRECTIONAL_SPRITE, pickupManager);
         spawnDelay = 10;
     }
 
@@ -46,14 +45,15 @@ public class HealthPickup extends PickupItem {
     
     @Override
     public void onCollide(Player player) {
-        System.out.println("Collided with health pickup");
+        if(exists) {
         // update pickup manager
         addToPickupManager();
         // heal player
         player.removeBuff(BuffType.FIRE);
         player.applyHeal(30);
         // set existence to false
-        setExists(false);
+        this.destroy();
+        }
     }
 
 }

@@ -3,12 +3,14 @@ package com.knightlore.network.client;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.nio.ByteBuffer;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
+import com.knightlore.GameSettings;
 import com.knightlore.engine.GameEngine;
 import com.knightlore.game.Player;
 import com.knightlore.game.entity.Entity;
@@ -19,25 +21,27 @@ import com.knightlore.network.protocol.NetworkUtils;
 import com.knightlore.render.Camera;
 
 public class ClientNetworkObjectManager extends NetworkObjectManager {
-    private Map<UUID, NetworkObject> networkObjects = new HashMap<>();
+    private final Map<UUID, NetworkObject> networkObjects = new HashMap<>();
     private Player myPlayer = null;
     // Whether we've received enough information to start the game.
     private boolean finishedSetUp = false;
+    private ArrayList<ByteBuffer> myPlayerStateOnServer;
 
     private ClientWorld clientWorld;
-    
+
     private BlockingQueue<ByteBuffer> teamChat;
+    private SendToServer sendToServer;
 
     public ClientNetworkObjectManager(ClientWorld world) {
         super();
         this.clientWorld = world;
+        this.myPlayerStateOnServer = new ArrayList<>();
         this.teamChat = new LinkedBlockingQueue<>();
         setNetworkConsumers();
     }
 
     private void setNetworkConsumers() {
-        networkConsumers.put("registerPlayerIdentity",
-                this::registerPlayerIdentity);
+        networkConsumers.put("registerPlayerIdentity", this::registerPlayerIdentity);
         networkConsumers.put("newObjCreated", this::newObjCreated);
         networkConsumers.put("objDestroyed", this::objDestroyed);
         networkConsumers.put("receiveMapSeed", this::receiveMapSeed);
@@ -60,7 +64,7 @@ public class ClientNetworkObjectManager extends NetworkObjectManager {
         return myPlayer;
     }
     
-    public synchronized void displayMessage(ByteBuffer b){
+    private synchronized void displayMessage(ByteBuffer b){
     	String message = NetworkUtils.getStringFromBuf(b);
     	GameEngine.getSingleton().getDisplay().getChat().getTextArea().addText(message);
     }
@@ -68,7 +72,7 @@ public class ClientNetworkObjectManager extends NetworkObjectManager {
     // Called remotely when a new network object is created on the server.
     // WARNING: dank reflection in this method.
     @SuppressWarnings("unchecked")
-    public synchronized void newObjCreated(ByteBuffer buf) {
+    private synchronized void newObjCreated(ByteBuffer buf) {
         System.out.println("Receiving new object details from server");
         String className = NetworkUtils.getStringFromBuf(buf);
         UUID objID = UUID.fromString(NetworkUtils.getStringFromBuf(buf));
@@ -103,12 +107,12 @@ public class ClientNetworkObjectManager extends NetworkObjectManager {
         }
     }
 
-    public synchronized void objDestroyed(ByteBuffer buf) {
+    private synchronized void objDestroyed(ByteBuffer buf) {
         System.out.println("Receiving object deletion message from server");
         UUID objID = UUID.fromString(NetworkUtils.getStringFromBuf(buf));
         NetworkObject toBeDestroyedObject = this.getNetworkObject(objID);
         this.networkObjects.remove(objID);
-        toBeDestroyedObject.destroy();
+        // toBeDestroyedObject.destroy(); FIXME
         if (toBeDestroyedObject instanceof Entity) {
             clientWorld.removeEntity((Entity) toBeDestroyedObject);
         }
@@ -116,7 +120,7 @@ public class ClientNetworkObjectManager extends NetworkObjectManager {
 
     // Called remotely when we receive a message from the server to tell us what
     // the seed for the map to generate is.
-    public synchronized void receiveMapSeed(ByteBuffer buf) {
+    private synchronized void receiveMapSeed(ByteBuffer buf) {
         System.out.println("received map seed");
         long seed = buf.getLong();
         clientWorld.setUpWorld(seed);
@@ -124,7 +128,7 @@ public class ClientNetworkObjectManager extends NetworkObjectManager {
 
     // Called remotely when we receive a message from the server to tell us what
     // our UUID is.
-    public synchronized void registerPlayerIdentity(ByteBuffer buf) {
+    private synchronized void registerPlayerIdentity(ByteBuffer buf) {
         System.out.println("Registering player identity");
         UUID myPlayerUUID = UUID.fromString(NetworkUtils.getStringFromBuf(buf));
         myPlayer = (Player) networkObjects.get(myPlayerUUID);
@@ -134,15 +138,20 @@ public class ClientNetworkObjectManager extends NetworkObjectManager {
     @Override
     public synchronized NetworkObject getNetworkObject(UUID uuid) {
         synchronized (this.networkObjects) {
-            if (networkObjects.containsKey(uuid))
+            if (networkObjects.containsKey(uuid)) {
                 return networkObjects.get(uuid);
+            }
         }
         System.err.println("No network object with UUID " + uuid
                 + " could be found on this client.");
         return null;
     }
 
-    public synchronized void receiveReadySignal(ByteBuffer buf) {
+    private synchronized void receiveReadySignal(ByteBuffer buf) {
+        // Once everything is set up, tell the server what we want our name to
+        // be.
+        System.out.println("Sending name");
+        sendName();
         Camera camera = new Camera(clientWorld.getMap());
         camera.setSubject(myPlayer);
         GameEngine.getSingleton().setCamera(camera);
@@ -150,10 +159,10 @@ public class ClientNetworkObjectManager extends NetworkObjectManager {
         this.finishedSetUp = true;
     }
 
-    @Override
-    public void init() {
+    public void init(SendToServer serverSender) {
         super.init();
 
+        this.sendToServer = serverSender;
         // Wait for all information to be received - e.g., map seed, object
         // details, player identity.
         while (!finishedSetUp) {
@@ -167,24 +176,52 @@ public class ClientNetworkObjectManager extends NetworkObjectManager {
         }
     }
 
+    /**
+     * Let the server know what our player's name is.
+     */
+    private void sendName() {
+        ByteBuffer buf = ByteBuffer.allocate(BYTE_BUFFER_DEFAULT_SIZE);
+        NetworkUtils.putStringIntoBuf(buf, MANAGER_UUID.toString());
+        NetworkUtils.putStringIntoBuf(buf, "receiveName");
+        // Let the server know who we are.
+        NetworkUtils.putStringIntoBuf(buf,
+                this.myPlayer.getObjectId().toString());
+        NetworkUtils.putStringIntoBuf(buf, GameSettings.PLAYER_NAME);
+        this.sendToServer.send(buf);
+    }
+
     public boolean hasFinishedSetup() {
         return finishedSetUp;
     }
-    
-    public void addToChat(ByteBuffer message){
-    	this.teamChat.offer(message);
+
+    public void addToChat(ByteBuffer message) {
+        this.teamChat.offer(message);
     }
-    
-	public ByteBuffer takeNextMessageToSend() {
-		try {
-			if (this.teamChat.size() == 0)
-				return null;
-			return this.teamChat.take();
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		return null;
-	}
+
+    public ByteBuffer takeNextMessageToSend() {
+        try {
+            if (this.teamChat.size() == 0)
+                return null;
+            return this.teamChat.take();
+        } catch (InterruptedException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public void addToPlayerStateOnServer(ByteBuffer b) {
+        synchronized (this.myPlayerStateOnServer) {
+            this.myPlayerStateOnServer.add(b);
+        }
+    }
+
+    public ArrayList<ByteBuffer> getPlayerStateOnServer() {
+        synchronized (this.myPlayerStateOnServer) {
+            ArrayList<ByteBuffer> copyStates = new ArrayList<>(this.myPlayerStateOnServer);
+            this.myPlayerStateOnServer.clear();
+            return copyStates;
+        }
+    }
 
 }

@@ -17,6 +17,9 @@ import com.knightlore.utils.Vector2D;
  */
 public class ShotgunPickup extends PickupItem {
     
+    private static final long PICKUP_SPAWN_PROTECT_TIME = 10;
+    private long spawnProtectTime = 0;
+    
     // Returns a new instance. See NetworkObject for details.
     public static NetworkObject build(UUID uuid, ByteBuffer state) {
         NetworkObject obj = new ShotgunPickup(uuid, Vector2D.ONE, null);
@@ -30,16 +33,22 @@ public class ShotgunPickup extends PickupItem {
     }
 
     public ShotgunPickup(UUID uuid, Vector2D position, PickupManager pickupManager) {
-        super(uuid, position, pickupManager);
-        sprite = DirectionalSprite.SHOTGUN_DIRECTIONAL_SPRITE;
+        super(uuid, position, DirectionalSprite.SHOTGUN_DIRECTIONAL_SPRITE, pickupManager);
         spawnDelay = 10;
     }
-
+    
+    // FIGURE OUT
+    //private ShotgunPickup(UUID uuid, Vector2D position) {
+    //    super(uuid, position, DirectionalSprite.SHOTGUN_DIRECTIONAL_SPRITE);
+    //    spawnProtectTime = GameEngine.ticker.getTime() + PICKUP_SPAWN_PROTECT_TIME;
+    //}
+    // FIGURE OUT
+    
     @Override
     public int getMinimapColor() {
         return 0xFF00FF;
     }
-
+    
     @Override
     public String getClientClassName() {
         // One class for both client and server.
@@ -53,13 +62,18 @@ public class ShotgunPickup extends PickupItem {
 
     @Override
     public void onCollide(Player player) {
-        System.out.println("Collided with shotgun pickup!");
+        if(exists) {
         // update pickup manager
         addToPickupManager();
-        // give player shotgun
-        //player.giveWeapon(new Shotgun())
         // existence of object set to false
-        setExists(false);
+        this.destroy();
+        }
     }
-
+    
+    public void onDestroy() {
+        System.out.println("shotgun pickup collected");
+        super.onDestroy();
+        
+    }
+    
 }

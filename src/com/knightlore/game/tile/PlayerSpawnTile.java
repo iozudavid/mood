@@ -9,6 +9,7 @@ import com.knightlore.game.buff.Push;
 import com.knightlore.game.buff.Slow;
 import com.knightlore.game.entity.Entity;
 import com.knightlore.render.animation.Animation;
+import com.knightlore.render.animation.TimedAnimation;
 import com.knightlore.render.graphic.Graphic;
 import com.knightlore.render.graphic.texture.Texture;
 import com.knightlore.utils.Vector2D;
@@ -18,7 +19,8 @@ public class PlayerSpawnTile extends Tile {
     private Vector2D pushVector = new Vector2D(0,0);
     private boolean spawnable = false;
     
-    private static Animation RED_LAVA_ANIM = new Animation((long) (GameEngine.UPDATES_PER_SECOND / 4));
+    private static TimedAnimation<Graphic> RED_LAVA_ANIM = new TimedAnimation<Graphic>(
+            (long) (GameEngine.UPDATES_PER_SECOND / 4));
     static {
         RED_LAVA_ANIM.addFrame(Texture.RED_LAVA_F1);
         RED_LAVA_ANIM.addFrame(Texture.RED_LAVA_F2);
@@ -27,7 +29,8 @@ public class PlayerSpawnTile extends Tile {
         GameEngine.ticker.addTickListener(RED_LAVA_ANIM);
     }
     
-    private static Animation BLUE_LAVA_ANIM = new Animation((long) (GameEngine.UPDATES_PER_SECOND / 4));
+    private static TimedAnimation<Graphic> BLUE_LAVA_ANIM = new TimedAnimation<Graphic>(
+            (long) (GameEngine.UPDATES_PER_SECOND / 4));
     static {
         BLUE_LAVA_ANIM.addFrame(Texture.BLUE_LAVA_F1);
         BLUE_LAVA_ANIM.addFrame(Texture.BLUE_LAVA_F2);
@@ -60,10 +63,10 @@ public class PlayerSpawnTile extends Tile {
     @Override
     public Graphic getFloorTexture() {
         if( team == Team.BLUE) {
-            return BLUE_LAVA_ANIM.getGraphic();
+            return BLUE_LAVA_ANIM.getFrame();
         }
         if( team == Team.RED) {
-            return RED_LAVA_ANIM.getGraphic();
+            return RED_LAVA_ANIM.getFrame();
         }
         return Texture.BUSH;
     }

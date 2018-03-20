@@ -68,7 +68,6 @@ public class PickupManager implements TickListener{
             // add pickup to the engine
             System.out.println("Adding to engine a pickup!");
             PickupItem item = pp.getItem();
-            item.setExists(true);
             item.init();
             List<Entity> ents = engine.getWorld().getEntities();
             ents.add(item);
