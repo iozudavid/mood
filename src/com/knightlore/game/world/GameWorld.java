@@ -30,8 +30,15 @@ public abstract class GameWorld {
     protected List<Entity> ents;
     
     private ConcurrentLinkedQueue<Entity> entsToAdd = new ConcurrentLinkedQueue<Entity>();
+    private ConcurrentLinkedQueue<Entity> entsToRemove = new ConcurrentLinkedQueue<Entity>();
 
     public void update() {
+        while(entsToAdd.peek() != null) {
+            ents.add(entsToAdd.poll());
+        }
+        while(entsToRemove.peek() != null) {
+            ents.remove(entsToRemove.poll());
+        }
     }
     
     private Map generateMap(int xSize, int ySize, long seed) {
@@ -64,6 +71,10 @@ public abstract class GameWorld {
     
     public void addEntity(Entity ent) {
         entsToAdd.offer(ent);
+    }
+    
+    public void removeEntity(Entity ent) {
+        entsToRemove.offer(ent);
     }
     
     /**
