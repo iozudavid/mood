@@ -73,6 +73,8 @@ public class ClientNetworkObjectManager extends NetworkObjectManager {
     	GameEngine g = GameEngine.getSingleton();
     	Display d = g.getDisplay();
     	GameChat c = d.getChat();
+    	if(c==null)
+    	    return;
     	TextArea t = c.getTextArea();
     	t.addText(message);
 
@@ -102,8 +104,9 @@ public class ClientNetworkObjectManager extends NetworkObjectManager {
             // Entities need to exist in the world.
             if (obj instanceof Entity) {
                 clientWorld.addEntity((Entity) obj);
-            	GameEngine.getSingleton().getDisplay().getChat().getTextArea().addText("System: " + 
-                		obj.getClass().getSimpleName() + " " + ((Entity)obj).getName() + " has connected.");
+                if(GameEngine.getSingleton().getDisplay().getChat()!=null)
+                    GameEngine.getSingleton().getDisplay().getChat().getTextArea().addText("System: " + 
+                            obj.getClass().getSimpleName() + " " + ((Entity)obj).getName() + " has connected.");
             }
         } catch (NoSuchMethodException | SecurityException
                 | IllegalAccessException | IllegalArgumentException

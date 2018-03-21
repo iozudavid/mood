@@ -1,5 +1,6 @@
 package com.knightlore.gui;
 
+import java.awt.Color;
 import java.util.ArrayList;
 import java.util.concurrent.CopyOnWriteArrayList;
 
@@ -25,9 +26,10 @@ public class GameChat {
 	private Button mainMenuButton;
 	private Button exitButton;
 	private boolean lastPauseVisible=false;
-	private boolean lastScoreVisible=true;
+	private boolean lastScoreVisible=false;
 	private Image scoreBoardImage;
 	private Table scoreBoard;
+	private Text timeLeftText;
 	
 	public GameChat(int screenWidth, int screenHeight){
 		this.gui = new GUICanvas((int)(screenWidth),(int)(screenHeight));
@@ -56,6 +58,10 @@ public class GameChat {
 		header.add("Team");
 		header.add("Score");
 		this.scoreBoard.setTableHeader(header);
+		timeLeftText = new Text(GuiUtils.middleWidth(screenWidth, 128), 0, 128, 30, null, 30);
+		timeLeftText.currentColor=Color.WHITE;
+        gui.addGUIObject(timeLeftText);
+        timeLeftText.SetText("00:00");
 		GUICanvas.setOnEscFunction(new VoidFunction() {
 			
 			@Override
@@ -188,5 +194,9 @@ public class GameChat {
 			this.gui.removeGUIObject(scoreBoard);
 		}
 	}
+	
+    public void setTimeLeft(String time) {
+        timeLeftText.SetText(time);
+    }
 	
 }

@@ -162,7 +162,9 @@ public class GUICanvas extends GameObject implements IRenderable {
 			this.initDraw();
 		}
 		canvasG2D.setColor(BACKGROUND_COLOR);
-		for (GUIObject gui : guis) {
+		ArrayList<GUIObject> copyGuis = new ArrayList<>();
+		copyGuis.addAll(guis);
+		for (GUIObject gui : copyGuis) {
 			gui.Draw(canvasG2D, rect);
 		}
 		canvasImage.getRGB(0, 0, WIDTH, HEIGHT, drawPixels, 0, WIDTH);
@@ -176,7 +178,6 @@ public class GUICanvas extends GameObject implements IRenderable {
 	@Override
 	public void onUpdate() {
 		Vector2D mousePos = InputManager.getMousePos();
-		System.out.println(mousePos);
 		GUIObject selected = null;
 		// linear reverse search
 		for (int i = guis.size() - 1; i >= 0; i--) {

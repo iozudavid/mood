@@ -43,10 +43,13 @@ public class Display implements IRenderable {
     private SettingsMenu settingsMenu;
     private List<GUICanvas> guis;
 
-    public Display(){}
+    public Display(){
+        this.guis = new ArrayList<>();
+    }
     
 	public Display(Renderer renderer, Minimap minimap, HUD hud, GameChat chat, StartMenu startMenu,
 			MultiplayerMenu mpMenu) {
+	    this();
 		this.renderer = renderer;
 		this.minimap = minimap;
 		this.hud = hud;

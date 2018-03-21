@@ -181,6 +181,7 @@ public class SendToServer implements Runnable {
             this.tick();
 
         }
+        this.manager.getMyPlayer().destroy();
     }
 
     /**
