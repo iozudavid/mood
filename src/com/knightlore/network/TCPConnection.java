@@ -44,6 +44,11 @@ public class TCPConnection extends Connection {
 
     @Override
     public void send(ByteBuffer data) {
+        /*
+         * Effectively synchronise this method with itself, ensuring the stream
+         * is not written to in parallel. Don't use the 'synchronized' method
+         * modifier since we can run this in parallel with receive().
+         */
         Object lock = new Object();
         synchronized (lock) {
             try {
@@ -66,26 +71,37 @@ public class TCPConnection extends Connection {
 
     @Override
     public ByteBuffer receiveBlocking() {
+        /*
+         * Effectively synchronise this method with itself, ensuring the stream
+         * is not read from in parallel. Don't use the 'synchronized' method
+         * modifier since we can run this in parallel with send().
+         */
         Object lock = new Object();
         synchronized (lock) {
+            /*
+             * Whether the received packet is broken. If so, we should error
+             * out, since this is a reliable TCPConnection, so a malformed
+             * packet indicates a fatal game error.
+             */
+            boolean malformed = false;
             try {
-                int size;
+                int size = -1;
                 try {
                     size = infoReceive.readInt();
+                    if (size <= 0 || size > 2048) {
+                        malformed = true;
+                    }
                 } catch (NumberFormatException e) {
-                    System.err.println(
-                            "Warning: received malformed packet. Ignoring.");
-                    return null;
+                    malformed = true;
                 }
-                if (size <= 0 || size > 2048) {
-                    System.err.println(
-                            "Error: Trying to receive a ByteBuffer of size "
-                                    + size
-                                    + "! Assuming this is an error, ignoring.");
-                    return null;
+                if (malformed) {
+                    throw new IOException(
+                            "Fatal: received a malformed packet of size " + size
+                                    + " bytes. Usually this indicates an error in the "
+                                    + "client-server connection; try restarting "
+                                    + "your instance of the game.");
                 }
                 byte[] tmp = new byte[size];
-                // Reuse the same byte arrays to avoid heap thrashing.
                 infoReceive.read(tmp, 0, size);
                 return ByteBuffer.wrap(tmp, 0, size);
             } catch (IOException e) {

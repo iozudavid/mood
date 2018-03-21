@@ -1,5 +1,8 @@
 package com.knightlore.engine;
 
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
+
 import com.knightlore.GameSettings;
 import com.knightlore.MainWindow;
 import com.knightlore.engine.audio.SoundManager;
@@ -61,6 +64,8 @@ public class GameEngine implements Runnable {
     private SoundManager soundManager;
 
     private boolean _doneInit = false;
+
+    public static final Charset CHARSET = StandardCharsets.UTF_8;
 
     public boolean doneInit() {
         return _doneInit;
