@@ -16,7 +16,7 @@ public class TCPConnection extends Connection {
     private DataInputStream infoReceive;
     private DataOutputStream infoSend;
     private Socket socket;
-    
+
     public TCPConnection(Socket socket) {
         this.socket = socket;
         try {
@@ -69,10 +69,19 @@ public class TCPConnection extends Connection {
         Object lock = new Object();
         synchronized (lock) {
             try {
-                int size = infoReceive.readInt();
-                if (size == 0) {
+                int size;
+                try {
+                    size = infoReceive.readInt();
+                } catch (NumberFormatException e) {
                     System.err.println(
-                            "Error: Trying to receive an empty ByteBuffer!");
+                            "Warning: received malformed packet. Ignoring.");
+                    return null;
+                }
+                if (size <= 0 || size > 2048) {
+                    System.err.println(
+                            "Error: Trying to receive a ByteBuffer of size "
+                                    + size
+                                    + "! Assuming this is an error, ignoring.");
                     return null;
                 }
                 byte[] tmp = new byte[size];
