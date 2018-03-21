@@ -1,6 +1,7 @@
 package com.knightlore.game.area.generation;
 
 import com.knightlore.game.Team;
+import com.knightlore.game.area.Map;
 import com.knightlore.game.area.Room;
 import com.knightlore.game.area.RoomType;
 import com.knightlore.game.entity.pickup.PickupType;
@@ -31,28 +32,42 @@ public class RoomGenerator extends ProceduralAreaGenerator {
     private static final int MAX_DOMINANT_INTERNAL_WALLS = 4;
     private static final int MAX_SUBDOMINANT_INTERNAL_WALLS = 1;
     private static final double INTERNAL_WALL_PROBABILITY = 0.3;
-    private static final int MINIMUM_SPLIT_LENGTH = 3;
 
     private RoomType roomType = RoomType.NORMAL;
 
     public Room createRoom(long seed, RoomType rt) {
-        rand = new Random(seed);
-        int height = MIN_SIZE;
-        int width = MIN_SIZE;
-        if (rt != RoomType.SPAWN) {
-            width = getGaussianNum(MIN_SIZE, MAX_SIZE);
-            height = getGaussianNum(MIN_SIZE, MAX_SIZE);
-        }
-
-        grid = new Tile[width][height];
         roomType = rt;
+        rand = new Random(seed);
+        determineRoomSize();
         resetGrid();
         fillGrid();
         if (rt == RoomType.SPAWN) {
             return new Room(grid, SPAWN_ROOM_MIN_CONNECTIONS , SPAWN_ROOM_MAX_CONNECTIONS);
         }
-
         return new Room(grid, DEFAULT_MIN_CONNECTIONS, DEFAULT_MAX_CONNECTIONS);
+    }
+    
+    private void determineRoomSize() {
+        int width , height;
+        
+        switch(roomType) {
+        case SPAWN :
+            width = MIN_SIZE;
+            height = width;
+            break;
+        case BIG_LAVA_ROOM:
+            width = getGaussianNum(MAX_SIZE , MAX_SIZE*2);
+            height = getGaussianNum(MAX_SIZE -3 , MAX_SIZE);
+            break;
+        case LAVA_PLATFORM :
+            width = 2 ; //3 + rand.nextInt(3); //MAKE CONSTANT
+            height = width;
+            break;
+        default:
+            width = getGaussianNum(MIN_SIZE, MAX_SIZE);
+            height = getGaussianNum(MIN_SIZE, MAX_SIZE);
+        }
+        grid = new Tile[width][height];
     }
     
     @Override
@@ -72,7 +87,8 @@ public class RoomGenerator extends ProceduralAreaGenerator {
                 for(int i=midx-1 ; i<= midx+1; i++) {
                     grid[i][midy+1] = new PlayerSpawnTile(Team.BLUE, Vector2D.UP);
                 }
-
+                fillUndecidedTiles();
+                break;
             case WEAPON:
                 for(int i=0; i<width; i++) {
                     for(int j=0; j<height; j++) {
@@ -80,6 +96,7 @@ public class RoomGenerator extends ProceduralAreaGenerator {
                     }
                 }
                 grid[midx][midy] = new PickupTile(PickupType.shotgun);
+                fillUndecidedTiles();
                 break;
             case MIDDLE:
                 if(rand.nextDouble() > 0.5) {
@@ -90,11 +107,29 @@ public class RoomGenerator extends ProceduralAreaGenerator {
                     fillGrid();
                 }
                 removeRightWall();
-                return;
-
+                fillUndecidedTiles();
+                return; // does not use addWalls
+            case BIG_LAVA_ROOM:
+                MapGenerator mg = new MapGenerator();
+                Map subMap = mg.createMap(width, height, MapType.LAVA_SUBMAP);
+                for(int i=0; i<width; i++) {
+                    for(int j=0; j<height; j++) {
+                        // HAVE I GOT TO USE .copy()
+                        grid[i][j] = subMap.getTile(i, j);
+                    }
+                }
+                fillUndecidedTiles() ;
+                break;
+            case LAVA_PLATFORM:
+                if(rand.nextDouble() > 0.2) {
+                    grid[midx][midy] = new PickupTile(randomPickupType());
+                }
+                fillUndecidedTiles();
+                return; // does not use addWalls
             case NORMAL:
                 addInternalWalls(BrickTile.class);
                 addRandomPickup();
+                fillUndecidedTiles();
         }
         addWalls();
     }

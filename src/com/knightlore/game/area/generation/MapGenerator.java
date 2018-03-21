@@ -8,7 +8,6 @@ import java.util.PriorityQueue;
 import java.util.Queue;
 import java.util.Random;
 
-import com.knightlore.game.GameType;
 import com.knightlore.game.area.Map;
 import com.knightlore.game.area.Room;
 import com.knightlore.game.area.RoomType;
@@ -29,7 +28,7 @@ public class MapGenerator extends ProceduralAreaGenerator {
     private int maxRooms;
     
     private boolean symmetrical = true;
-    private GameType gameType;
+    private MapType mapType;
     
     private List<RoomType> roomsToBuild = new LinkedList<>();
     private static final int ROOM_COST_MODIFIER = 5;
@@ -41,17 +40,15 @@ public class MapGenerator extends ProceduralAreaGenerator {
     public MapGenerator() {
     }
 
-    public Map createMap(int width, int height, GameType gt) {
+    public Map createMap(int width, int height, MapType mt) {
         Random rand = new Random();
-        return createMap(width, height, gt, rand.nextLong());
+        return createMap(width, height, mt, rand.nextLong());
     }
 
-    public Map createMap(int width, int height, GameType gt, long seed) {
+    public Map createMap(int width, int height, MapType mt, long seed) {
         System.out.println("Creating map with seed: " + seed);
-        gameType = gt;
-        if(gt == GameType.FFA) {
-            symmetrical = false;
-        }
+        mapType = mt;
+        determineSymmetrical();
         rand = new Random(seed);
         if(symmetrical) {
             width = width / 2;
@@ -66,6 +63,20 @@ public class MapGenerator extends ProceduralAreaGenerator {
         return new Map(grid, seed);
     }
 
+    public void determineSymmetrical() {
+        switch(mapType) {
+        case FFA :
+            symmetrical = false;
+            break;
+        case TDM :
+            symmetrical = true;
+            break;
+        case LAVA_SUBMAP :
+            symmetrical = false;
+            break;
+        }
+    }
+    
     @Override
     protected void fillGrid() {
         resetGrid();
@@ -79,12 +90,24 @@ public class MapGenerator extends ProceduralAreaGenerator {
     }
 
     private void determineRoomsToBuild() {
+        if(mapType == MapType.LAVA_SUBMAP) {
+            roomsToBuild.add(RoomType.LAVA_PLATFORM);
+            roomsToBuild.add(RoomType.LAVA_PLATFORM);
+            roomsToBuild.add(RoomType.LAVA_PLATFORM);
+            return;
+        }
+        // TODO: A switch statement 
         if(symmetrical) {
             roomsToBuild.add(RoomType.MIDDLE);
             roomsToBuild.add(RoomType.MIDDLE);
         }
         
-        if(gameType == GameType.FFA) {
+        if(grid.length > 25 && grid[0].length > 25) {
+            System.out.println("ADDING BIG_LAVA_ROOM");
+            roomsToBuild.add(RoomType.BIG_LAVA_ROOM);
+        }
+        
+        if(mapType == MapType.FFA) {
             roomsToBuild.add(RoomType.NORMAL);
         }else {
             roomsToBuild.add(RoomType.SPAWN);
@@ -125,6 +148,8 @@ public class MapGenerator extends ProceduralAreaGenerator {
                 return setRoomPosition(room, width/4, height/4, width*3/4 , height*3/4);
             case MIDDLE :
                 return setRoomPosition(room, width-(room.getWidth()), 0, width+1, height);
+            case LAVA_PLATFORM:
+                return setRoomPosition(room, 2, 2, width-3, height-3);
             default:
                 return setRoomPosition(room, 0,0, width, height);
         }
@@ -255,8 +280,12 @@ public class MapGenerator extends ProceduralAreaGenerator {
     protected void fillUndecidedTiles() {
         for (int x = 0; x < grid.length; x++) {
             for (int y = 0; y < grid[0].length; y++) {
-                if (grid[x][y] == UndecidedTile.getInstance()) {
-                    grid[x][y] = rand.nextDouble() < 0.66D ? new BrickTile() : new MossBrickTile();
+                if (grid[x][y] instanceof UndecidedTile) {
+                    if(mapType == MapType.LAVA_SUBMAP) {
+                        grid[x][y] = new LavaTile();
+                    }else {
+                        grid[x][y] = rand.nextDouble() < 0.66D ? new BrickTile() : new MossBrickTile();
+                    }
                 }
                 if (grid[x][y] == PathTile.getInstance()) {
                     grid[x][y] = AirTile.getInstance();
@@ -317,7 +346,7 @@ public class MapGenerator extends ProceduralAreaGenerator {
     public static void main(String args[]) {
         Random r = new Random();
         MapGenerator mg = new MapGenerator();
-        Map map = mg.createMap(50, 50, GameType.FFA, r.nextInt(1000));
+        Map map = mg.createMap(70, 70, MapType.TDM, r.nextInt(1000));
         System.out.println(map.toDebugString());
     }
     
