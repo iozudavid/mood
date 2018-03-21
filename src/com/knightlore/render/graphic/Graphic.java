@@ -11,8 +11,14 @@ public class Graphic {
 
     protected int width, height;
     protected int[] pixels;
-    
+
     private BufferedImage img;
+
+    public Graphic(int width, int height, int[] pixels) {
+        this.width = width;
+        this.height = height;
+        this.pixels = pixels;
+    }
 
     public Graphic(BufferedImage img) {
         this(img, null);
@@ -22,16 +28,16 @@ public class Graphic {
         this.width = img.getWidth();
         this.height = img.getHeight();
         this.pixels = new int[width * height];
-        
+
         img.getRGB(0, 0, width, height, pixels, 0, width);
-        
-        if(filter != null) {
+
+        if (filter != null) {
             filter.apply(pixels, PixelBuffer.CHROMA_KEY);
         }
     }
-    
-    public BufferedImage getImage(){
-    	return this.img;
+
+    public BufferedImage getImage() {
+        return this.img;
     }
 
     public int[] getPixels() {

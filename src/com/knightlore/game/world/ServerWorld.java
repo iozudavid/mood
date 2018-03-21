@@ -3,16 +3,13 @@ package com.knightlore.game.world;
 import java.util.List;
 
 import com.knightlore.ai.BotInput;
-import com.knightlore.ai.TurretServer;
-import com.knightlore.ai.TurretShared;
 import com.knightlore.game.FFAGame;
 import com.knightlore.game.Player;
 import com.knightlore.game.entity.Entity;
 import com.knightlore.game.entity.SpectatorCamera;
-import com.knightlore.game.entity.pickup.ShotgunPickup;
+import com.knightlore.utils.Vector2D;
 import com.knightlore.utils.physics.RaycastHit;
 import com.knightlore.utils.physics.RaycastHitType;
-import com.knightlore.utils.Vector2D;
 
 public class ServerWorld extends GameWorld {
 
@@ -32,7 +29,7 @@ public class ServerWorld extends GameWorld {
         //ents.add(zom);
         //TurretShared tboi = new TurretServer(3, map.getRandomSpawnPoint(), Vector2D.UP);
         //tboi.init();
-        for (int i = 0; i < 0; i++) {
+        for (int i = 0; i < 3; i++) {
             Player botPlayer = new Player(map.getRandomSpawnPoint(), Vector2D.UP);
             botPlayer.setInputModule(new BotInput());
             botPlayer.init();

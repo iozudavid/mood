@@ -267,6 +267,9 @@ public class PixelBuffer {
      *            the spacing between letters.
      */
     public void drawString(Font font, String str, int x, int y, double scaling, double spacing) {
+        if (!inBounds(x, y))
+            return;
+
         for (char c : str.toCharArray()) {
             Graphic g = font.getGraphic(c);
             this.drawGraphic(g, x, y, (int) (g.getWidth() * scaling), (int) (g.getHeight() * scaling));

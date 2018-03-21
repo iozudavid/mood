@@ -7,6 +7,10 @@ import com.knightlore.render.ColorUtils;
 import com.knightlore.render.PixelBuffer;
 
 public class HealthCounter extends HUDElement implements TickListener {
+    
+    public static final int BASE = 0x450007;
+    public static final int G1 = 0xA10000;
+    public static final int G2 = 0x810000;
 
     public HealthCounter() {
         super();
@@ -17,8 +21,6 @@ public class HealthCounter extends HUDElement implements TickListener {
     public void render(PixelBuffer pix, int x, int y) {
         assert(player != null);
         final int HEIGHT = 10;
-        final int G1 = 0xA10000;
-        final int G2 = 0x810000;
 
         pix.fillRect(0x450007, 0, 0, pix.getWidth(), HEIGHT);
         
