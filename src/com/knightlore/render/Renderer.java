@@ -1,12 +1,13 @@
 package com.knightlore.render;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Stack;
 
 import com.knightlore.GameSettings;
-import com.knightlore.engine.GameEngine;
+import com.knightlore.game.Player;
 import com.knightlore.game.area.Map;
 import com.knightlore.game.entity.Entity;
 import com.knightlore.game.tile.AirTile;
@@ -14,6 +15,7 @@ import com.knightlore.game.tile.Tile;
 import com.knightlore.game.world.ClientWorld;
 import com.knightlore.render.font.Font;
 import com.knightlore.render.graphic.Graphic;
+import com.knightlore.render.hud.HealthCounter;
 import com.knightlore.utils.Vector2D;
 
 /**
@@ -299,8 +301,13 @@ public class Renderer {
 
             };
             Arrays.sort(entities, c);
+
+            List<Entity> visible = new ArrayList<Entity>();
+
             synchronized (entities) {
                 for (Entity m : entities) {
+                    boolean isVisible = false;
+
                     double spriteX = m.getPosition().getX() - camera.getxPos();
                     double spriteY = m.getPosition().getY() - camera.getyPos();
 
@@ -337,8 +344,8 @@ public class Renderer {
                     for (int stripe = drawStartX; stripe < drawEndX; stripe++) {
                         Graphic g = m.getGraphic(camera.getPosition());
 
-                        int texX = 256 * (stripe - (-spriteWidth / 2 + spriteScreenX)) * g.getWidth()
-                                / spriteWidth / 256;
+                        int texX = 256 * (stripe - (-spriteWidth / 2 + spriteScreenX)) * g.getWidth() / spriteWidth
+                                / 256;
 
                         // the conditions in the if are:
                         // 1) it's in front of camera plane so you don't see
@@ -348,6 +355,7 @@ public class Renderer {
                         // 3) it's on the screen (right)
                         // 4) ZBuffer, with perpendicular distance
                         if (transformY > 0 && stripe > 0 && stripe < pix.getWidth() && transformY < zbuffer[stripe]) {
+                            isVisible = true;
                             for (int y = drawStartY; y < drawEndY; y++) {
                                 // 16 and 8 are factors to avoid division and
                                 // floats.
@@ -369,17 +377,29 @@ public class Renderer {
 
                                 pix.fillRect(color, stripe, drawY, GameSettings.actualBlockiness, 1);
                             }
+                        }
+                    }
 
-                            final double sc = (drawEndY - drawStartY) / 90D;
-                            final double sp = (drawEndY - drawStartY) / 50D;
-                            final int sw = pix.stringWidth(Font.DEFAULT_WHITE, m.getName(), sc, sp);
-                            pix.drawString(Font.DEFAULT_WHITE, m.getName(), spriteScreenX - sw / 2, drawStartY + offset,
-                                    sc, sp);
+                    if (isVisible) {
+                        final double sc = (drawEndY - drawStartY) / 90D;
+                        final double sp = (drawEndY - drawStartY) / 50D;
+                        final int sw = pix.stringWidth(Font.DEFAULT_WHITE, m.getName(), sc, sp);
+                        pix.drawString(Font.DEFAULT_WHITE, m.getName(), spriteScreenX - sw / 2, drawStartY + offset, sc,
+                                sp);
+
+                        if (m instanceof Player) {
+                            pix.fillRect(HealthCounter.BASE, drawStartX, drawStartY - 20, drawEndX - spriteScreenX,
+                                    (int) sc * 3);
+                            double r = ((Player) m).getCurrentHealth() / (double) Player.MAX_HEALTH;
+                            pix.fillRect(HealthCounter.G1, drawStartX, drawStartY - 20,
+                                    (int) (r * (drawEndX - spriteScreenX)), (int) sc * 3);
                         }
                     }
                 }
             }
+
         }
+
     }
 
     private void drawCrosshair(PixelBuffer pix) {

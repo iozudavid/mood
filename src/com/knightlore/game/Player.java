@@ -10,14 +10,11 @@ import java.util.UUID;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
-import com.knightlore.engine.GameEngine;
-import com.knightlore.engine.TickListener;
-import com.knightlore.game.buff.Buff;
-import com.knightlore.game.buff.Immune;
 import com.google.common.collect.ImmutableMap;
 import com.knightlore.GameSettings;
 import com.knightlore.ai.InputModule;
 import com.knightlore.ai.RemoteInput;
+import com.knightlore.engine.GameEngine;
 import com.knightlore.game.entity.Entity;
 import com.knightlore.game.entity.weapon.Shotgun;
 import com.knightlore.game.entity.weapon.Weapon;
@@ -350,7 +347,7 @@ public class Player extends Entity {
 
     @Override
     public void takeDamage(int damage, Entity inflictor) {
-        if(GameSettings.isClient()) {
+        if(GameSettings.isClient()) {        
             return;
         }
         damage = (int) (damage * damageTakenModifier);
