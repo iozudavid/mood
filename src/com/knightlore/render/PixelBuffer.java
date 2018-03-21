@@ -1,5 +1,7 @@
 package com.knightlore.render;
 
+import java.util.HashMap;
+
 import com.knightlore.render.font.Font;
 import com.knightlore.render.graphic.Graphic;
 
@@ -37,15 +39,15 @@ public class PixelBuffer {
      *            the colour to fill the pixel buffer with.
      */
     public void flood(int color) {
-    	 for (int yy = 0; yy < 0 + getHeight(); yy++) {
-             for (int xx = 0; xx < 0 + getWidth(); xx++) {
-                 if (!inBounds(xx, yy)) {
-                     continue;
-                 }
-                 pixels[xx + yy * WIDTH] = color;
-             }
-         }
-      //  fillRect(color, 0, 0, getWidth(), getHeight());
+        for (int yy = 0; yy < 0 + getHeight(); yy++) {
+            for (int xx = 0; xx < 0 + getWidth(); xx++) {
+                if (!inBounds(xx, yy)) {
+                    continue;
+                }
+                pixels[xx + yy * WIDTH] = color;
+            }
+        }
+        // fillRect(color, 0, 0, getWidth(), getHeight());
     }
 
     /**
@@ -256,7 +258,14 @@ public class PixelBuffer {
         }
     }
 
+    private HashMap<TextWidthCache, Integer> twCache = new HashMap<TextWidthCache, Integer>();
+
     public int stringWidth(Font font, String str, double scaling, double spacing) {
+        TextWidthCache cached = new TextWidthCache(font, str, scaling, spacing);
+        if (twCache.containsKey(cached)) {
+            return twCache.get(cached);
+        }
+
         int width = 0;
         for (char c : str.toCharArray()) {
             Graphic g = font.getGraphic(c);
@@ -315,6 +324,20 @@ public class PixelBuffer {
 
     public int getHeight() {
         return HEIGHT;
+    }
+
+    private class TextWidthCache {
+        Font font;
+        String string;
+        double scaling;
+        double spacing;
+
+        public TextWidthCache(Font font, String string, double scaling, double spacing) {
+            this.font = font;
+            this.string = string;
+            this.scaling = scaling;
+            this.spacing = spacing;
+        }
     }
 
 }
