@@ -8,16 +8,13 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 import com.knightlore.ai.AIManager;
 import com.knightlore.game.GameManager;
 import com.knightlore.game.PlayerManager;
-
 import com.knightlore.game.area.Map;
 import com.knightlore.game.area.generation.MapGenerator;
 import com.knightlore.game.entity.Entity;
-
-import com.knightlore.game.entity.pickup.PickupManager;
+import com.knightlore.utils.Vector2D;
 import com.knightlore.utils.physics.Physics;
 import com.knightlore.utils.physics.RaycastHit;
 import com.knightlore.utils.physics.RaycastHitType;
-import com.knightlore.utils.Vector2D;
 
 public abstract class GameWorld {
 
@@ -29,8 +26,9 @@ public abstract class GameWorld {
     protected PlayerManager playerManager;
     protected GameManager gameManager = null;
     protected AIManager aiManager;
-    protected List<Entity> ents;
-
+    
+    private List<Entity> ents;
+    
     private ConcurrentLinkedQueue<Entity> entsToAdd = new ConcurrentLinkedQueue<Entity>();
     private ConcurrentLinkedQueue<Entity> entsToRemove = new ConcurrentLinkedQueue<Entity>();
 
@@ -41,10 +39,6 @@ public abstract class GameWorld {
         while (entsToRemove.peek() != null) {
             ents.remove(entsToRemove.poll());
         }
-    }
-
-    private Map generateMap(int xSize, int ySize, long seed) {
-        return new MapGenerator().createMap(xSize, ySize, seed);
     }
 
     public Map getMap() {

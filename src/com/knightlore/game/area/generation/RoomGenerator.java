@@ -9,7 +9,6 @@ import com.knightlore.game.tile.BrickTile;
 import com.knightlore.game.tile.LavaTile;
 import com.knightlore.game.tile.PlayerSpawnTile;
 import com.knightlore.game.tile.Tile;
-import com.knightlore.game.tile.TurretTile;
 import com.knightlore.game.tile.UndecidedTile;
 import com.knightlore.utils.Vector2D;
 import com.knightlore.game.tile.PickupTile;
@@ -17,48 +16,47 @@ import com.knightlore.game.tile.PickupTile;
 import java.util.Random;
 
 public class RoomGenerator extends ProceduralAreaGenerator {
-
     private static final int MIN_SIZE = 7;
     private static final int MAX_SIZE = 15;
 
+    private static final int DEFAULT_MIN_CONNECTIONS = 2;
+    private static final int DEFAULT_MAX_CONNECTIONS = 6;
     private static final int SPAWN_ROOM_MIN_CONNECTIONS = 1;
     private static final int SPAWN_ROOM_MAX_CONNECTIONS = 2;
     
     private static final int MAX_INTERNAL_WALLS = 6;
     private static final double INTERNAL_WALL_PROBABILITY = 0.5;
-    private static final int MINIMUM_SPLIT_LENGTH = 3;
+
+    private RoomType roomType = RoomType.NORMAL;
 
     public Room createRoom(long seed, RoomType rt) {
         rand = new Random(seed);
-        int height, width;
-        if(rt == RoomType.spawn) {
-            width = MIN_SIZE;
-            height = width;
-        }else {
+        int height = MIN_SIZE;
+        int width = MIN_SIZE;
+        if (rt != RoomType.SPAWN) {
             width = getGaussianNum(MIN_SIZE, MAX_SIZE);
             height = getGaussianNum(MIN_SIZE, MAX_SIZE);
         }
+
         grid = new Tile[width][height];
+        roomType = rt;
         resetGrid();
-        fillGrid(rt);
-        if(rt == RoomType.spawn) {
+        fillGrid();
+        if (rt == RoomType.SPAWN) {
             return new Room(grid, SPAWN_ROOM_MIN_CONNECTIONS , SPAWN_ROOM_MAX_CONNECTIONS);
         }
-        return new Room(grid, 2, 6);
+
+        return new Room(grid, DEFAULT_MIN_CONNECTIONS, DEFAULT_MAX_CONNECTIONS);
     }
     
     @Override
     protected void fillGrid() {
-        // Not called here
-    }
-    
-    protected void fillGrid(RoomType rt) {
         int width = grid.length;
         int height = grid[0].length;
         int midx = width/2;
         int midy = height/2;
-        switch(rt) {
-            case spawn :
+        switch(roomType) {
+            case SPAWN:
                 for(int i=midx-1; i <= midx+1; i++){
                     grid[i][midy-1] = new PlayerSpawnTile(Team.BLUE, Vector2D.DOWN);
                 }
@@ -68,11 +66,11 @@ public class RoomGenerator extends ProceduralAreaGenerator {
                 for(int i=midx-1 ; i<= midx+1; i++) {
                     grid[i][midy+1] = new PlayerSpawnTile(Team.BLUE, Vector2D.UP);
                 }
-                break; 
-            case health :
+                break;
+            case HEALTH:
                 grid[midx][midy] = new PickupTile(PickupType.health);
                 break;
-            case weapon :
+            case WEAPON:
                 for(int i=0; i<width; i++) {
                     for(int j=0; j<height; j++) {
                         grid[i][j] = new LavaTile();
@@ -80,15 +78,17 @@ public class RoomGenerator extends ProceduralAreaGenerator {
                 }
                 grid[midx][midy] = new PickupTile(PickupType.shotgun);
                 break;
-            case middle :
+            case MIDDLE:
                 if(rand.nextDouble() > 0.5) {
-                    fillGrid(RoomType.weapon);
-                }else {
-                    fillGrid(RoomType.normal);
+                    roomType = RoomType.WEAPON;
+                    fillGrid();
+                } else {
+                    roomType = RoomType.NORMAL;
+                    fillGrid();
                 }
                 removeRightWall();
                 return;
-            case normal :
+            case NORMAL:
                 addInternalWalls(BrickTile.class);
         }
         fillUndecidedTiles();

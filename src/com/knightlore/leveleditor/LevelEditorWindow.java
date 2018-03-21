@@ -21,13 +21,13 @@ import com.knightlore.game.tile.BrickTile;
 
 public class LevelEditorWindow extends JFrame {
 
-    public static Pen pen = new Pen(new BrickTile());
+    public static final Pen pen = new Pen(new BrickTile());
 
     public static final String TITLE = "KnightLore Level Editor";
     public static final int WIDTH = 1000;
-    public static final int HEIGHT = WIDTH;
+    public static final int HEIGHT = 1000;
 
-    private LevelEditorPanel panel;
+    private final LevelEditorPanel panel;
 
     public LevelEditorWindow(String title, int width, int height) {
         super(title);
