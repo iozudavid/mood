@@ -158,16 +158,16 @@ public class GUICanvas extends GameObject implements IRenderable {
 	@Override
 	public void render(PixelBuffer pix, int x, int y) {
 		if (GameEngine.getSingleton().guiState == GUIState.InGame) {
-			this.initDraw();
+			//this.initDraw();
 		}
 		canvasG2D.setColor(BACKGROUND_COLOR);
-		ArrayList<GUIObject> copyGuis = new ArrayList<>();
-		copyGuis.addAll(guis);
-		for (GUIObject gui : copyGuis) {
+		//ArrayList<GUIObject> copyGuis = new ArrayList<>();
+		//copyGuis.addAll(guis);
+		for (GUIObject gui : guis) {
 			gui.Draw(pix,x,y);
 		}
-		canvasImage.getRGB(0, 0, WIDTH, HEIGHT, drawPixels, 0, WIDTH);
-		pix.drawGraphic(canvasGraphic, x, y, WIDTH, HEIGHT);
+		//canvasImage.getRGB(0, 0, WIDTH, HEIGHT, drawPixels, 0, WIDTH);
+		//pix.drawGraphic(canvasGraphic, x, y, WIDTH, HEIGHT);
 	}
 
 	@Override
