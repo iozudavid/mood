@@ -30,8 +30,14 @@ public class Prediction {
 		this.lastReceivedFromServer = ByteBuffer.allocate(NetworkObject.BYTE_BUFFER_DEFAULT_SIZE);
 	}
 
-	// this will be called when a packet
-	// is received from the server
+	/**
+	 *  Called when a packet is receiving from the server
+	 *  containing informations about current player.
+	 *  Using this as a start point, apply all player's inputs which were performed
+	 *  after this packet was sent. This will generate the next prediction.
+	 * @param player - current player
+	 * @param received - ByteBuffer received from server
+	 */
 	public void onServerFrame(Player player, ByteBuffer received) {
 		// remove the old history
 		// inputs before this packet was sent
@@ -93,7 +99,15 @@ public class Prediction {
 
 	}
 	
-	// called every client frame
+	/**
+	 * Called when the client input commands from keyboard.
+	 * Takes the last prediction and use it to do server reconciliation
+	 * then generate new state by applying inputs to reconciliated state
+	 * @param player - current player
+	 * @param input - all keyboard inputs
+	 * @param packetNumber - number of packet sent
+	 * @return new player state
+	 */
 	public Player update(Player player, byte[] input, double packetNumber) {
 		//use last prediction based on server stats
 		//to construct the new position
@@ -151,11 +165,23 @@ public class Prediction {
 		return player;
 	}
 	
+	/**
+	 * Called when local machine needs to reconciliate with server.
+	 * @param playerState - player state on local machine
+	 * @param predictedState - player state predicted using server state
+	 * @return reconciled state
+	 */
 	public double smooth(double playerState, double predictedState){
 		double delta = playerState-predictedState;
 		return playerState-delta*this.converge;
 	}
 	
+	/**
+	 * Checks if a given move is performed.
+	 * @param c - move to be checked
+	 * @param input - set of inputs from user
+	 * @return whether that move is performed or not
+	 */
 	public boolean isMoveActivated(ClientController c, byte[] input){
 		for(int i=0; i<ClientProtocol.getIndexActionMap().size(); i=i+2){
 			try {

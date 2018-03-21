@@ -1,6 +1,7 @@
 package com.knightlore.game.area;
 
 import com.knightlore.game.tile.AirTile;
+import com.knightlore.game.tile.LavaTile;
 import com.knightlore.game.tile.PlayerSpawnTile;
 import com.knightlore.game.tile.Tile;
 
@@ -10,6 +11,7 @@ public abstract class Area implements Serializable {
     protected final int width, height;
     private final Tile[][] grid;
     private final double[][] costGrid;
+    private final double LAVA_TILE_COST = 20d;
 
     public Area(Tile[][] grid) {
         this.width = grid.length;

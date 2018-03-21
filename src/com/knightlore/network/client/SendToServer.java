@@ -47,6 +47,13 @@ public class SendToServer implements Runnable {
         this.prediction = new Prediction();
     }
 
+    /**
+     * Get the current ByteBuffer of all inputs performed by current client.
+     * 
+     * @param time
+     *            - packet number to be sent
+     * @return a ByteBuffer containing player's actual state
+     */
     private synchronized ByteBuffer getCurrentControlState(double time) {
         // ByteBuffer to store current input state.
         ByteBuffer buf = ByteBuffer
@@ -80,9 +87,9 @@ public class SendToServer implements Runnable {
         return buf;
     }
 
-    // this should be use to close this thread
-    // best way to do this as the thread will be blocked listening for the next
-    // string
+    /**
+     * Closes the stream as the buffer is blocked waiting for a packet to arrive.
+     */
     public void closeStream() {
         try {
             this.user = new BufferedReader(new InputStreamReader(System.in));
@@ -94,6 +101,10 @@ public class SendToServer implements Runnable {
         }
     }
 
+    /**
+     * Gets the player's states stored on server and use them in prediction
+     * class. Send new inputs to the server.
+     */
     public void tick() {
         // Send a controls update if either the controls have changed or
         // a regular update is due.
@@ -146,6 +157,10 @@ public class SendToServer implements Runnable {
         }
     }
 
+    /**
+     * Waits for manager to set the current player. Keep calling tick until the
+     * connection will break.
+     */
     @Override
     public void run() {
         double freq = (UPDATE_TICK_FREQ / 1000d);
@@ -188,7 +203,7 @@ public class SendToServer implements Runnable {
      * Send a ByteBuffer to the server.
      * 
      * @param buf:
-     *            The buffer to send.
+     *            The buffer to be sent.
      */
     public void send(ByteBuffer buf) {
         conn.send(buf);

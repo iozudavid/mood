@@ -1,9 +1,9 @@
 package com.knightlore.gui;
 
 import java.awt.Color;
-import java.awt.Graphics;
-import java.awt.Rectangle;
 import java.util.ArrayList;
+
+import com.knightlore.render.PixelBuffer;
 
 public class Group extends GUIObject{
 	
@@ -108,9 +108,8 @@ public class Group extends GUIObject{
 	}
 
 	@Override
-	void Draw(Graphics g, Rectangle parentRect) {
-		g.setColor(activeColor());
-		g.fillRect(rect.x, rect.y, rect.width, rect.height);
+	void Draw(PixelBuffer pix, int x, int y) {
+		pix.fillRect(activeColor().getRGB(),rect.x, rect.y, rect.width, rect.height);
 	}
 
 }
