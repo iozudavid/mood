@@ -1,10 +1,10 @@
 package com.knightlore.gui;
 
 import java.awt.Color;
-import java.awt.Graphics;
 import java.awt.Rectangle;
 
 import com.knightlore.engine.input.InputManager;
+import com.knightlore.render.PixelBuffer;
 import com.knightlore.utils.Vector2D;
 
 public class Slider extends GUIObject {
@@ -57,13 +57,13 @@ public class Slider extends GUIObject {
     }
 
     @Override
-    void Draw(Graphics g, Rectangle parentRect) {
-        g.setColor(Color.DARK_GRAY);
-        g.fillRect(rect.x, rect.y, rect.width, rect.height);
-        g.setColor(this.activeColor());
+    void Draw(PixelBuffer pix, int x, int y) {
+        int color = Color.DARK_GRAY.getRGB();
+        pix.fillRect(color, rect.x, rect.y, rect.width, rect.height);
+        color = this.activeColor().getRGB();
         this.sliderPos = new Rectangle((int) (rect.x + ((double) actualValue * (double) (rect.width))),
                 (int)sliderPos.getY(), (int)sliderPos.getWidth(), (int)sliderPos.getHeight());
-        g.fillRect(sliderPos.x, sliderPos.y, sliderPos.width, sliderPos.height);
+        pix.fillRect(color, sliderPos.x, sliderPos.y, sliderPos.width, sliderPos.height);
     }
 
     @Override

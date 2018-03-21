@@ -7,6 +7,9 @@ import java.util.Iterator;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
+import com.knightlore.render.PixelBuffer;
+import com.knightlore.render.font.Font;
+
 public class TextArea extends GUIObject{
 
 	private BlockingQueue<String> text;
@@ -43,20 +46,20 @@ public class TextArea extends GUIObject{
 	private Iterator<String> it2 = null;
 	
 	@Override
-	void Draw(Graphics g, Rectangle parentRect) {
+	void Draw(PixelBuffer pix, int x, int y) {
 		if(!this.interactive) {
 			return;
 		}
 		if (this.active) {
-			g.setColor(new Color(0x1F1F1F));
-			g.fillRect(this.getRectangle().x, this.getRectangle().y, this.getRectangle().width,
+			int color = new Color(0x1F1F1F).getRGB();
+			pix.fillRect(color, this.getRectangle().x, this.getRectangle().y, this.getRectangle().width,
 					this.getRectangle().height);
 		}
 		this.positionXToRender = (int)this.getRectangle().getX() + 1;
-		this.positionYToRender = (int)this.getRectangle().getY()+g.getFontMetrics().getHeight();
+		this.positionYToRender = (int)this.getRectangle().getY()+Font.DEFAULT_WHITE.getHeight();
 		char[] space = new char[1];
 		space[0] = ' ';
-		g.setColor(Color.white);
+		int color = Color.white.getRGB();
 		synchronized (this.text) {
 			it = this.text.iterator();
 			it2 = null;
@@ -68,27 +71,27 @@ public class TextArea extends GUIObject{
 				String currentText = it.next();
 				for (String word : currentText.split(" ")) {
 					// draw words
-					this.fitText(word, g, parentRect);
+					this.fitText(word, pix, x, y);
 					// draw space
-					g.drawChars(space, 0, 1, positionXToRender, positionYToRender);
-					positionXToRender += g.getFontMetrics().charWidth(' ');
+					pix.drawString(Font.DEFAULT_WHITE, space.toString(), positionXToRender, positionYToRender, 15, 2);
+					positionXToRender += pix.stringWidth(Font.DEFAULT_WHITE, " ", 15, 2);
 				}
 				// new line
 				this.positionXToRender = (int) this.getRectangle().getX();
-				this.positionYToRender += g.getFontMetrics().getHeight();
+				this.positionYToRender += Font.DEFAULT_WHITE.getHeight();
 			}
 		}
 	}
 	
-	private void fitText(String word, Graphics g, Rectangle parentRect){
-		final int hOffset = g.getFontMetrics().getHeight();
-		final int wOffset = g.getFontMetrics().stringWidth(word);
+	private void fitText(String word, PixelBuffer pix, int x, int y){
+		final int hOffset = Font.DEFAULT_WHITE.getHeight();
+		final int wOffset = pix.stringWidth(Font.DEFAULT_WHITE, word, 15, 2);
 		char[] wordAsArray = word.toCharArray();
 		if(wOffset + this.positionXToRender < this.getRectangle().getWidth() &&
 				this.positionYToRender < this.getRectangle().getHeight()){
 			// everything fits well
 			// so just draw it
-			g.drawChars(wordAsArray, 0, wordAsArray.length, this.positionXToRender, this.positionYToRender);
+			pix.drawString(Font.DEFAULT_WHITE, word, this.positionXToRender, this.positionYToRender, 15, 2);
 			this.positionXToRender += wOffset;
 		} else if(hOffset + this.positionYToRender < this.getRectangle().getHeight()){
 			// width will exceed
@@ -98,11 +101,11 @@ public class TextArea extends GUIObject{
 			//still bigger
 			if(wOffset + this.positionXToRender > this.getRectangle().getWidth()){
 				//word is too big
-				this.fitBigText(word, g, parentRect);
+				this.fitBigText(word, pix, x, y);
 			} else {
 				//everything good
 				//draw it on the next line
-				g.drawChars(wordAsArray, 0, wordAsArray.length, this.positionXToRender, this.positionYToRender);
+				pix.drawString(Font.DEFAULT_WHITE, word, this.positionXToRender, this.positionYToRender, 15, 2);
 				this.positionXToRender += wOffset;
 			}
 		} else{
@@ -110,39 +113,39 @@ public class TextArea extends GUIObject{
 			//need to rerender everything without first message
 			//in order to free some space
 			it2.remove();
-			this.Draw(g, parentRect);
+			this.Draw(pix, x, y);
 		}
 	}
 	
 	//word too big
 	//render as many chars as possible
 	//and go to next line
-	private void fitBigText(String word, Graphics g, Rectangle parentRect){
+	private void fitBigText(String word, PixelBuffer pix, int x, int y){
 		char[] wordAsArray = word.toCharArray();
 		for(char c : wordAsArray){
-			final int hOffset = g.getFontMetrics().getHeight();
-			final int wOffset = g.getFontMetrics().charWidth(c);
+			final int hOffset = Font.DEFAULT_WHITE.getHeight();
+			final int wOffset = pix.stringWidth(Font.DEFAULT_WHITE, c+"", 15, 2);
 			char[] charAsArray = new char[1];
 			charAsArray[0] = c;
 			if(wOffset + this.positionXToRender < this.getRectangle().getWidth() &&
 					this.positionYToRender < this.getRectangle().getHeight()){
 				// everything fits well
 				// so just draw it
-				g.drawChars(charAsArray, 0, 1, this.positionXToRender, this.positionYToRender);
+				pix.drawString(Font.DEFAULT_WHITE, charAsArray.toString(), this.positionXToRender, this.positionYToRender, 15, 2);
 				this.positionXToRender += wOffset;
 			} else if(hOffset + this.positionYToRender < this.getRectangle().getHeight()){
 				// width will exceed
 				// so newline
 				this.positionXToRender = (int)this.getRectangle().getX();
 				this.positionYToRender += hOffset;
-				g.drawChars(charAsArray, 0, 1, this.positionXToRender, this.positionYToRender);
+				pix.drawString(Font.DEFAULT_WHITE, charAsArray.toString(), this.positionXToRender, this.positionYToRender, 15, 2);
 				this.positionXToRender += wOffset;
 			} else{
 				//textarea full
 				//need to rerender everything without first message
 				//in order to free some space
 				it2.remove();
-				this.Draw(g, parentRect);
+				this.Draw(pix, x, y);
 				return;
 			}
 		}
