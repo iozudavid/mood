@@ -16,8 +16,8 @@ import com.knightlore.render.graphic.filter.ColorFilter;
 
 public class Font {
 
-    public static final Font DEFAULT_WHITE = new Font("res/font/font.png", "ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890 ?!-+|",
-            0xFFFFFF);
+    public static final Font DEFAULT_WHITE = new Font("res/font/font.png",
+            "ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890 ?!-+|:().", 0xFFFFFF);
 
     private static final int BOUNDS_COLOR = -65536; // pure red.
 
