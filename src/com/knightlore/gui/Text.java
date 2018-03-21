@@ -8,6 +8,8 @@ public class Text extends GUIObject {
     protected String text;
     protected char[] rawChars;
     private int fontSize;
+    public Color currentColor = Color.BLACK;
+    
     
     public Text(int x, int y, int width, int height, String text, int fontSize) {
         super(x, y, width, height, 0);
@@ -32,7 +34,7 @@ public class Text extends GUIObject {
     
     @Override
     void Draw(Graphics g, Rectangle parentRect) {
-        g.setColor(Color.BLACK);
+        g.setColor(currentColor);
         g.setFont(new java.awt.Font("Bookman Old Style Bold", 10, fontSize));
         int hOffset = g.getFontMetrics().getHeight();
         // draw the characters of the string

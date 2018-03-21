@@ -4,7 +4,9 @@ import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Rectangle;
 import java.nio.ByteBuffer;
+import java.util.Optional;
 import java.util.UUID;
+import java.util.function.Predicate;
 
 import com.knightlore.engine.GameEngine;
 import com.knightlore.engine.GameState;
@@ -13,6 +15,7 @@ import com.knightlore.network.NetworkObject;
 import com.knightlore.network.client.ClientNetworkObjectManager;
 import com.knightlore.network.protocol.NetworkUtils;
 import com.knightlore.utils.Vector2D;
+import com.knightlore.utils.funcptrs.BooleanFunction;
 
 public class TextField extends GUIObject {
     private static final Color upColour = Color.WHITE;
@@ -27,6 +30,9 @@ public class TextField extends GUIObject {
 	private Graphics g;
 	private char sendTo;
 	private boolean select = true; 
+	private Optional<BooleanFunction<Character>> restrictText = Optional.empty();
+	private Optional<BooleanFunction<Integer>> restrictTextLength = Optional.empty();
+	private Optional<Predicate<String>> restrictValue = Optional.empty();
 		
 	public TextField(int x, int y, int width, int height) {
         super(x, y, width, height);
@@ -55,6 +61,18 @@ public class TextField extends GUIObject {
 	public String getText() {
 	    return text;
 	}
+	
+	public void setRestriction(BooleanFunction<Character> restrict){
+		this.restrictText=Optional.of(restrict);
+	}
+	
+	public void setRestrictionLength(BooleanFunction<Integer> restrict){
+	    this.restrictTextLength=Optional.of(restrict);
+	}
+	
+	public void setRestrictionValue(Predicate<String> restrict){
+        this.restrictValue=Optional.of(restrict);
+    }
 	
 	public void displayText(String t){
 		rawChars = t.toCharArray();
@@ -135,14 +153,34 @@ public class TextField extends GUIObject {
 	void onLostFocus() {
 		System.out.println("LOST FOCUS");
 		GUICanvas.activeTextField = null;
+		if(this.restrictValue.isPresent()){
+		    if(!this.restrictValue.get().test(text)){
+		        if(this.text.length()==0){
+		            text = "10";
+		        }else if(Integer.parseInt(this.text)<5)
+		            text = "5";
+		        else
+		            text = "20";
+		            
+		    }
+		}
 		displayText(text);
 	}
 
 	void onInputChar(char c) {
 	    if(text == null) {
-	        System.err.println("tried to insert char into null string");
-	        text = "";
-	        return;
+            System.err.println("tried to insert char into null string");
+            text = "";
+            return;
+        }
+		if(this.restrictText.isPresent()){
+			if(!this.restrictText.get().check(c))
+				return;
+		}
+		
+	    if(this.restrictTextLength.isPresent()){
+	        if(!this.restrictTextLength.get().check(text.length()+1))
+	            return;
 	    }
 
 		if(text.isEmpty()) {

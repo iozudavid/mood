@@ -11,6 +11,7 @@ public class KnightLoreServer {
         GameEngine.HEADLESS = true;
         GameEngine engine = GameEngine.getSingleton();
         engine.initEngine();
+        engine.startGame();
         engine.start();
     }
 
