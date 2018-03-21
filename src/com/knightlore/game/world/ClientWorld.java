@@ -3,7 +3,6 @@ package com.knightlore.game.world;
 import com.knightlore.engine.GameEngine;
 import com.knightlore.engine.audio.BackgroundMusic;
 import com.knightlore.engine.audio.SoundManager;
-import com.knightlore.game.entity.Entity;
 import com.knightlore.gui.GameHUD;
 import com.knightlore.render.Environment;
 
@@ -13,17 +12,10 @@ public class ClientWorld extends GameWorld {
 
     @Override
     public void update() {
+        super.update();
         if(gameHUD != null && gameManager != null) {
             gameHUD.setTimeLeft(gameManager.timeLeftString());
         }
-    }
-
-    public void addEntity(Entity ent) {
-        this.ents.add(ent);
-    }
-
-    public void removeEntity(Entity ent) {
-        this.ents.remove(ent);
     }
 
     public Environment getEnvironment() {

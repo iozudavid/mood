@@ -1,5 +1,6 @@
 package com.knightlore.game.world;
 
+import java.util.Iterator;
 import java.util.List;
 
 import com.knightlore.ai.BotInput;
@@ -39,14 +40,16 @@ public class ServerWorld extends GameWorld {
 
         SpectatorCamera cam = new SpectatorCamera(new Vector2D(10, 20), Vector2D.UP);
         cam.init();
-        ents.add(cam);
+        this.addEntity(cam);
     }
 
     @Override
     public void update() {
         super.update();
         for (Player player : playerManager.getPlayers()) {
-            for (Entity ent : ents) {
+            Iterator<Entity> it = this.getEntityIterator();
+            while (it.hasNext()) {
+                Entity ent = it.next();
                 if (player.getBoundingRectangle().intersects(ent.getBoundingRectangle())) {
                     ent.onCollide(player);
                 }
@@ -94,7 +97,9 @@ public class ServerWorld extends GameWorld {
             }
 
             // now against entities
-            for (Entity ent : ents) {
+            Iterator<Entity> it = this.getEntityIterator();
+            while (it.hasNext()) {
+                Entity ent = it.next();
                 if (ent == ignore) {
                     continue;
                 }
