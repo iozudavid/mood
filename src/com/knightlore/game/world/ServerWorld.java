@@ -29,7 +29,7 @@ public class ServerWorld extends GameWorld {
         //ents.add(zom);
         //TurretShared tboi = new TurretServer(3, map.getRandomSpawnPoint(), Vector2D.UP);
         //tboi.init();
-        for (int i = 0; i < 3; i++) {
+        for (int i = 0; i < 5; i++) {
             Player botPlayer = new Player(map.getRandomSpawnPoint(), Vector2D.UP);
             botPlayer.setInputModule(new BotInput());
             botPlayer.init();

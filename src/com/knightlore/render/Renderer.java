@@ -384,15 +384,17 @@ public class Renderer {
                         final double sc = (drawEndY - drawStartY) / 90D;
                         final double sp = (drawEndY - drawStartY) / 50D;
                         final int sw = pix.stringWidth(Font.DEFAULT_WHITE, m.getName(), sc, sp);
-                        pix.drawString(Font.DEFAULT_WHITE, m.getName(), spriteScreenX - sw / 2, drawStartY + offset, sc,
-                                sp);
+                        if (m.renderName()) {
+                            pix.drawString(Font.DEFAULT_WHITE, m.getName(), spriteScreenX - sw / 2, drawStartY + offset,
+                                    sc, sp);
+                        }
 
                         if (m instanceof Player) {
-                            pix.fillRect(HealthCounter.BASE, drawStartX, drawStartY - 20, drawEndX - spriteScreenX,
+                            pix.fillRect(HealthCounter.BASE, drawStartX, drawStartY - 20, drawEndX - drawStartX,
                                     (int) sc * 3);
                             double r = ((Player) m).getCurrentHealth() / (double) Player.MAX_HEALTH;
                             pix.fillRect(HealthCounter.G1, drawStartX, drawStartY - 20,
-                                    (int) (r * (drawEndX - spriteScreenX)), (int) sc * 3);
+                                    (int) (r * (drawEndX - drawStartX)), (int) sc * 3);
                         }
                     }
                 }

@@ -133,7 +133,7 @@ public class Minimap implements TickListener {
 
     private void drawMinimapObjects(double theta) {
         Iterator<Entity> iter = world.getEntityIterator();
-        while(iter.hasNext()) {
+        while (iter.hasNext()) {
             IMinimapObject obj = iter.next();
             Vector2D pos = obj.getPosition();
             pos = transform((int) (pos.getX() * scale), (int) (pos.getY() * scale), theta);

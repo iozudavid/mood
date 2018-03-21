@@ -266,7 +266,7 @@ public class Player extends Entity {
             inertiaY = 0;
             return;
         }
-        final double p = 0.1D;
+        final double p = 0.07D;
         inertiaX += (int) (p * -inertiaX);
         inertiaY += (int) (p * -inertiaY);
         Vector2D temp = new Vector2D(plane.getX() / plane.magnitude(), plane.getY() / plane.magnitude());
@@ -457,6 +457,11 @@ public class Player extends Entity {
 
     public void setHealth(int h) {
         this.currentHealth = h;
+    }
+    
+    @Override
+    public boolean renderName() {
+        return true;
     }
 
 }

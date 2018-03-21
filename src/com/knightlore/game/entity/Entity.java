@@ -580,4 +580,9 @@ public abstract class Entity extends NetworkObject implements IMinimapObject, Ti
     public void setName(String name) {
         this.name = name;
     }
+    
+    public boolean renderName() {
+        return false;
+    }
+    
 }
