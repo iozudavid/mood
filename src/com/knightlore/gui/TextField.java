@@ -2,7 +2,6 @@ package com.knightlore.gui;
 
 import java.awt.Color;
 import java.awt.Graphics;
-import java.awt.Rectangle;
 import java.nio.ByteBuffer;
 import java.util.Optional;
 import java.util.UUID;
@@ -14,6 +13,8 @@ import com.knightlore.engine.input.InputManager;
 import com.knightlore.network.NetworkObject;
 import com.knightlore.network.client.ClientNetworkObjectManager;
 import com.knightlore.network.protocol.NetworkUtils;
+import com.knightlore.render.PixelBuffer;
+import com.knightlore.render.font.Font;
 import com.knightlore.utils.Vector2D;
 import com.knightlore.utils.funcptrs.BooleanFunction;
 
@@ -21,13 +22,12 @@ public class TextField extends GUIObject {
     private static final Color upColour = Color.WHITE;
     private static final Color downColour = Color.LIGHT_GRAY;
     private static final Color hoverColour = Color.GRAY;
-
+    private PixelBuffer pix;
 	private SelectState state = SelectState.UP;
 	private String text = "";
 	private String insertString = "";
 	private char[] rawChars = new char[0];
 	private int insertPosition = 0;
-	private Graphics g;
 	private char sendTo;
 	private boolean select = true; 
 	private Optional<BooleanFunction<Character>> restrictText = Optional.empty();
@@ -94,27 +94,27 @@ public class TextField extends GUIObject {
 	}
 	
 	@Override
-	void Draw(Graphics g, Rectangle parentRect) {
+	void Draw(PixelBuffer pix, int x, int y) {
 		if((GameEngine.getSingleton().gameState==GameState.InGame) && GUICanvas.activeTextField==null) {
 			return;
 		}
 		// draw a background
-		g.setColor(Color.DARK_GRAY);
-    	g.fillRect(rect.x-2, rect.y-2, rect.width+2, rect.height+2);
-    	g.setColor(Color.BLACK);
-    	g.fillRect(rect.x-1, rect.y-1, rect.width+1, rect.height+1);
-    	g.setColor(activeColor());
-		int hOffset = g.getFontMetrics().getHeight();
-		g.fillRect(rect.x, rect.y, rect.width, rect.height);
+		int color = Color.DARK_GRAY.getRGB();
+    	pix.fillRect(color, rect.x-2, rect.y-2, rect.width+2, rect.height+2);
+    	color = Color.BLACK.getRGB();
+    	pix.fillRect(color, rect.x-1, rect.y-1, rect.width+1, rect.height+1);
+    	color = activeColor().getRGB();
+		int hOffset = Font.DEFAULT_WHITE.getHeight();
+		pix.fillRect(color, rect.x, rect.y, rect.width, rect.height);
 		// draw the characters of the string
-		g.setColor(Color.BLACK);
+		color = Color.BLACK.getRGB();
 		
 		if(text!=null){
-			int width = g.getFontMetrics().charsWidth(rawChars, 0, rawChars.length);
+			int width = pix.stringWidth(Font.DEFAULT_WHITE, rawChars.toString(), 15, 2);
 			if(width<this.rect.width) {
-				g.drawChars(rawChars, 0, rawChars.length, rect.x, rect.y+hOffset);
+				pix.drawString(Font.DEFAULT_WHITE, rawChars.toString(), rect.x, rect.y, 15, 2);
 			} else{
-				width = g.getFontMetrics().charsWidth(rawChars, 0, rawChars.length);
+				width = pix.stringWidth(Font.DEFAULT_WHITE, rawChars.toString(), 15, 2);
 				char[] toDisplay = rawChars;
 				while(width>this.rect.width){
 					toDisplay = new char[toDisplay.length-1];
@@ -124,13 +124,13 @@ public class TextField extends GUIObject {
 						System.out.println(rawChars.length);
 						toDisplay[i] = rawChars[rawChars.length-1-j];
 					}
-					width = g.getFontMetrics().charsWidth(toDisplay, 0, toDisplay.length);
+					width = pix.stringWidth(Font.DEFAULT_WHITE, toDisplay.toString(), 15, 2);
 				}
-				g.drawChars(toDisplay, 0, toDisplay.length, rect.x, rect.y+hOffset);
+				pix.drawString(Font.DEFAULT_WHITE, toDisplay.toString(), rect.x, rect.y+hOffset, 15, 2);
 					
 			}
 		}
-		this.g=g;
+		this.pix = pix;
 	}
 	
 	@Override
@@ -306,7 +306,7 @@ public class TextField extends GUIObject {
 		}else{
 		for(char c : this.text.toCharArray()){
 			chooseLocation++;
-			int width = this.g.getFontMetrics().charWidth(c);
+			int width = pix.stringWidth(Font.DEFAULT_WHITE, c+"", 15, 2);
 			double oldDelta = deltaPos;
 			deltaPos -= width;
 			if(deltaPos<0){

@@ -44,13 +44,13 @@ public class Image extends GUIObject{
 
 
 	@Override
-	void Draw(Graphics g, Rectangle parentRect) {
+	void Draw(PixelBuffer pix, int x, int y) {
 		BufferedImage imageResized = resize(sheet, rect.width,rect.height);
 		if(this.needBackground){
-			g.setColor(GuiUtils.makeTransparent(new Color(0),255));
-			g.fillRect(rect.x, rect.y, rect.width, rect.height);
+			int color = GuiUtils.makeTransparent(new Color(0),255).getRGB();
+			pix.fillRect(color, rect.x, rect.y, rect.width, rect.height);
 		}
-		g.drawImage(imageResized, rect.x, rect.y, null);
+		pix.drawGraphic(graphic, rect.x, rect.y);
 	}
 
 	public static BufferedImage resize(BufferedImage img, int newW, int newH) { 

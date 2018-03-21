@@ -1,10 +1,10 @@
 package com.knightlore.gui;
 
 import java.awt.Color;
-import java.awt.Graphics;
-import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 
+import com.knightlore.render.PixelBuffer;
+import com.knightlore.render.font.Font;
 import com.knightlore.render.graphic.Graphic;
 import com.knightlore.utils.funcptrs.VoidFunction;
 
@@ -78,64 +78,63 @@ public class Button extends GUIObject {
     }
     
     @Override
-    void Draw(Graphics g, Rectangle parentRect) {
+    void Draw(PixelBuffer pix, int x, int y) {
         
-    	g.setColor(Color.BLACK);
+    	int color = Color.BLACK.getRGB();
         if (state!=SelectState.UP_PHASE_1 && state!=SelectState.UP_PHASE_2 && activeGraphic != null && activeGraphic.getImage() != null) {
         	BufferedImage resized = Image.resize(activeGraphic.getImage(), (int)(rect.getHeight()+10), (int)(rect.getHeight()+10));
-        	g.drawImage(resized, (int)(rect.x-rect.getHeight()-20), rect.y, null);
+        	pix.drawGraphic(new Graphic(resized), (int)(rect.x-rect.getHeight()-20), rect.y);
         }
         if (state!=SelectState.UP_PHASE_1 && state!=SelectState.UP_PHASE_2 && activeGraphic2 != null && activeGraphic2.getImage() != null) {
         	BufferedImage resized = Image.resize(activeGraphic2.getImage(), (int)(rect.getHeight()+10), (int)(rect.getHeight()+10));
-        	g.drawImage(resized, (int) (rect.x+rect.getWidth()), rect.y, null);
+        	pix.drawGraphic(new Graphic(resized), (int) (rect.x+rect.getWidth()), rect.y);
         }
-        	g.setColor(Color.DARK_GRAY);
-        	g.fillRect(rect.x-2, rect.y-2, rect.width+2, rect.height+2);
-        	g.setColor(Color.BLACK);
-        	g.fillRect(rect.x-1, rect.y-1, rect.width+1, rect.height+1);
-            g.setColor(activeColor());
+        	color = Color.DARK_GRAY.getRGB();
+        	pix.fillRect(color, rect.x-2, rect.y-2, rect.width+2, rect.height+2);
+        	color = Color.BLACK.getRGB();
+        	pix.fillRect(color, rect.x-1, rect.y-1, rect.width+1, rect.height+1);
+            color = activeColor().getRGB();
             for(int x1=rect.x;x1<rect.width+rect.x;x1++){
             	for(int y1=rect.y;y1<rect.height+rect.y;y1++){
             		if(state==SelectState.HOVER_PHASE_1){
             			if(x1%2==0 || y1%2==0){
-            				g.fillRect(x1, y1, 1, 1);
+            				pix.fillRect(color, x1, y1, 1, 1);
             			}
             		}
             		else if(state==SelectState.HOVER_PHASE_2){
             			if(!(x1%2==0 || y1%2==0)){
-            				g.setColor(hoverColour2);
+            				color = hoverColour2.getRGB();
             			}else{
-            				g.setColor(hoverColour1);
+            				color = hoverColour1.getRGB();
             			}
-            			g.fillRect(x1, y1, 1, 1);
+            			pix.fillRect(color, x1, y1, 1, 1);
             		}
             		else if(state==SelectState.UP_PHASE_1){
             			if(x1%2==0 || y1%2==0){
-            				g.fillRect(x1, y1, 1, 1);
+            				pix.fillRect(color, x1, y1, 1, 1);
             			}
             		}
             		else if(state==SelectState.UP_PHASE_2){
             			if(!(x1%2==0 || y1%2==0)){
-            				g.setColor(upColour2);
+            				color = upColour2.getRGB();
             			}else{
-            				g.setColor(upColour1);
+            				color = upColour1.getRGB();
             			}
-            			g.fillRect(x1, y1, 1, 1);
+            			pix.fillRect(color, x1, y1, 1, 1);
             		}
             		else{
-          				g.fillRect(x1, y1, 1, 1);
+          				pix.fillRect(color, x1, y1, 1, 1);
             		}
             	}
             }
-            g.setColor(Color.BLACK);
-            g.setFont(new java.awt.Font("Bookman Old Style Bold", 10, fontSize));
-            int width = g.getFontMetrics().stringWidth(textArea);
-            int height = g.getFontMetrics().getHeight();
+            color = Color.BLACK.getRGB();
+            int width = pix.stringWidth(Font.DEFAULT_WHITE, textArea, this.fontSize, 2);
+            int height = Font.DEFAULT_WHITE.getHeight();
             width = rect.width-width;
             width /= 2f;
             height = (int) (rect.height/2f);
             height += fontSize/2;
-            g.drawString(textArea, rect.x+width, rect.y+height);
+            pix.drawString(Font.DEFAULT_WHITE, textArea, rect.x+width, rect.y+height, this.fontSize, 2);
             
     }
     

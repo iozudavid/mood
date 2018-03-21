@@ -1,8 +1,9 @@
 package com.knightlore.gui;
 
 import java.awt.Color;
-import java.awt.Graphics;
-import java.awt.Rectangle;
+
+import com.knightlore.render.PixelBuffer;
+import com.knightlore.render.font.Font;
 
 public class Text extends GUIObject {
     protected String text;
@@ -33,11 +34,9 @@ public class Text extends GUIObject {
     }
     
     @Override
-    void Draw(Graphics g, Rectangle parentRect) {
-        g.setColor(currentColor);
-        g.setFont(new java.awt.Font("Bookman Old Style Bold", 10, fontSize));
-        int hOffset = g.getFontMetrics().getHeight();
+    void Draw(PixelBuffer pix, int x, int y) {
+        int hOffset = Font.DEFAULT_WHITE.getHeight();
         // draw the characters of the string
-        g.drawChars(rawChars, 0, rawChars.length, rect.x, rect.y + hOffset);
+        pix.drawString(Font.DEFAULT_WHITE, rawChars.toString(), rect.x, rect.y+hOffset, this.fontSize, 2);
     }
 }
