@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import com.knightlore.engine.GameEngine;
-import com.knightlore.engine.GameState;
 import com.knightlore.network.client.ClientManager;
 import com.knightlore.render.PixelBuffer;
 import com.knightlore.utils.funcptrs.VoidFunction;
@@ -119,7 +118,7 @@ public class GameChat {
             public void call() {
                 ClientManager.disconnect();
                 GameChat.this.gui.destroy();
-                GameEngine.getSingleton().gameState = GameState.StartMenu;
+                GameEngine.getSingleton().guiState = GUIState.StartMenu;
             }
         };
         this.exitButton.clickFunction = new VoidFunction() {

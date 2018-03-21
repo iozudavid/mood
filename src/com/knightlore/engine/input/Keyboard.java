@@ -4,8 +4,8 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 
 import com.knightlore.engine.GameEngine;
-import com.knightlore.engine.GameState;
 import com.knightlore.gui.GUICanvas;
+import com.knightlore.gui.GUIState;
 
 /**
  * The keyboard is the class responsible for detecting which keys are pressed at
@@ -46,7 +46,7 @@ public class Keyboard extends KeyAdapter {
             return;
         }
     
-        if(GameEngine.getSingleton().gameState==GameState.InGame && e.getKeyChar()=='q'){
+        if(GameEngine.getSingleton().guiState==GUIState.InGame && e.getKeyChar()=='q'){
         	GUICanvas.releaseQ();
         } 
         keys[e.getKeyCode()] = false;
@@ -68,15 +68,15 @@ public class Keyboard extends KeyAdapter {
     	//vk_back_space not working here
     	if(eChar=='\b') {
             GUICanvas.deleteChar();
-        } else if(GameEngine.getSingleton().gameState==GameState.InGame && eChar=='t'){
+        } else if(GameEngine.getSingleton().guiState==GUIState.InGame && eChar=='t'){
     		GUICanvas.startMessageTeam(e.getKeyChar());
-    	} else if(GameEngine.getSingleton().gameState==GameState.InGame && eChar=='y'){
+    	} else if(GameEngine.getSingleton().guiState==GUIState.InGame && eChar=='y'){
     		GUICanvas.startMessageAll(e.getKeyChar());
-    	} else if(GameEngine.getSingleton().gameState==GameState.InGame && eChar=='\n'){
+    	} else if(GameEngine.getSingleton().guiState==GUIState.InGame && eChar=='\n'){
     		GUICanvas.sendMessage(e.getKeyChar());
-    	} else if(GameEngine.getSingleton().gameState==GameState.InGame && e.getKeyChar()==KeyEvent.VK_ESCAPE){
+    	} else if(GameEngine.getSingleton().guiState==GUIState.InGame && e.getKeyChar()==KeyEvent.VK_ESCAPE){
     		GUICanvas.escape();
-    	} else if(GameEngine.getSingleton().gameState==GameState.InGame && eChar=='q'){
+    	} else if(GameEngine.getSingleton().guiState==GUIState.InGame && eChar=='q'){
     		GUICanvas.pressQ();
     	} else
     		GUICanvas.inputChar(e.getKeyChar());

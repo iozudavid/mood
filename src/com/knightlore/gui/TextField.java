@@ -7,7 +7,6 @@ import java.util.UUID;
 import java.util.function.Predicate;
 
 import com.knightlore.engine.GameEngine;
-import com.knightlore.engine.GameState;
 import com.knightlore.engine.input.InputManager;
 import com.knightlore.network.NetworkObject;
 import com.knightlore.network.client.ClientNetworkObjectManager;
@@ -95,7 +94,7 @@ public class TextField extends GUIObject {
 
     @Override
     void Draw(PixelBuffer pix, int x, int y) {
-        if ((GameEngine.getSingleton().gameState == GameState.InGame) && GUICanvas.activeTextField == null) {
+        if ((GameEngine.getSingleton().guiState == GUIState.InGame) && GUICanvas.activeTextField == null) {
             return;
         }
         // draw a background

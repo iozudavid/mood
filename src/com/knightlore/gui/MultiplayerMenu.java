@@ -3,7 +3,6 @@ package com.knightlore.gui;
 import java.util.ArrayList;
 
 import com.knightlore.engine.GameEngine;
-import com.knightlore.engine.GameState;
 import com.knightlore.network.ConnectionDetails;
 import com.knightlore.render.PixelBuffer;
 import com.knightlore.utils.funcptrs.BooleanFunction;
@@ -68,7 +67,7 @@ public class MultiplayerMenu {
 		
 		this.cancelButton.clickFunction = () -> {
             MultiplayerMenu.this.gui.destroy();
-            GameEngine.getSingleton().gameState = GameState.StartMenu;
+            GameEngine.getSingleton().guiState = GUIState.StartMenu;
         };
 		
 		this.connectButton.clickFunction = new VoidFunction() {

@@ -4,9 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.knightlore.engine.GameEngine;
-import com.knightlore.engine.GameState;
 import com.knightlore.gui.GUICanvas;
-import com.knightlore.gui.GUIObject;
+import com.knightlore.gui.GUIState;
 import com.knightlore.gui.GameChat;
 import com.knightlore.gui.MultiplayerMenu;
 import com.knightlore.gui.SettingsMenu;
@@ -45,7 +44,7 @@ public class Display implements IRenderable {
     private SettingsMenu settingsMenu;
     private ArrayList<Object> settingsObj;
     private List<GUICanvas> guis;
-    private GameState gs = GameState.StartMenu;
+    private GUIState gs = GUIState.StartMenu;
 
     public Display() {
         this.guis = new ArrayList<>();
@@ -65,7 +64,7 @@ public class Display implements IRenderable {
 
     @Override
     public void render(PixelBuffer pix, int x, int y) {
-        switch (GameEngine.getSingleton().gameState) {
+        switch (GameEngine.getSingleton().guiState) {
         case InGame:
             renderer.render();
             minimap.render();
@@ -89,7 +88,7 @@ public class Display implements IRenderable {
             GameFeed.getInstance().render(pix, x, y);
 
             this.clearDisplay();
-            gs = GameState.InGame;
+            gs = GUIState.InGame;
             break;
 
         case StartMenu:
@@ -97,7 +96,7 @@ public class Display implements IRenderable {
                 this.startMenu = new StartMenu(pix.getHeight(), pix.getWidth());
             this.startMenu.render(pix, x, y);
             this.clearDisplay();
-            gs = GameState.StartMenu;
+            gs = GUIState.StartMenu;
             break;
 
         case MultiplayerMenu:
@@ -105,28 +104,28 @@ public class Display implements IRenderable {
                 this.mpMenu = new MultiplayerMenu(pix.getHeight(), pix.getWidth());
             this.mpMenu.render(pix, x, y);
             this.clearDisplay();
-            gs = GameState.MultiplayerMenu;
+            gs = GUIState.MultiplayerMenu;
             break;
 
         case SettingsMenu:
             if (this.settingsMenu == null)
                 this.settingsMenu = new SettingsMenu(pix.getWidth(), pix.getHeight());
-            if (gs != GameState.SettingsMenu)
+            if (gs != GUIState.SettingsMenu)
                 this.settingsObj = this.settingsMenu.getObj();
             this.settingsMenu.render(pix, x, y);
             this.clearDisplay();
-            gs = GameState.SettingsMenu;
+            gs = GUIState.SettingsMenu;
             break;
 
         case SettingsMenuApply:
             this.clearDisplay();
-            GameEngine.getSingleton().gameState = GameState.StartMenu;
+            GameEngine.getSingleton().guiState = GUIState.StartMenu;
             break;
 
         case SettingsMenuCancel:
             this.settingsMenu.setObj(this.settingsObj);
             this.clearDisplay();
-            GameEngine.getSingleton().gameState = GameState.StartMenu;
+            GameEngine.getSingleton().guiState = GUIState.StartMenu;
             break;
 
         default:
@@ -136,7 +135,7 @@ public class Display implements IRenderable {
     }
 
     public void clearDisplay() {
-        switch (GameEngine.getSingleton().gameState) {
+        switch (GameEngine.getSingleton().guiState) {
         case InGame:
             if (this.mpMenu != null)
                 this.mpMenu = null;

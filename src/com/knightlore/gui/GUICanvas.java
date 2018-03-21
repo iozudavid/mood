@@ -12,7 +12,6 @@ import java.util.Optional;
 
 import com.knightlore.engine.GameEngine;
 import com.knightlore.engine.GameObject;
-import com.knightlore.engine.GameState;
 import com.knightlore.engine.input.InputManager;
 import com.knightlore.render.IRenderable;
 import com.knightlore.render.PixelBuffer;
@@ -158,7 +157,7 @@ public class GUICanvas extends GameObject implements IRenderable {
 	
 	@Override
 	public void render(PixelBuffer pix, int x, int y) {
-		if (GameEngine.getSingleton().gameState == GameState.InGame) {
+		if (GameEngine.getSingleton().guiState == GUIState.InGame) {
 			this.initDraw();
 		}
 		canvasG2D.setColor(BACKGROUND_COLOR);

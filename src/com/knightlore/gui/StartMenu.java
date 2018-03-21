@@ -1,8 +1,6 @@
 package com.knightlore.gui;
 
 import com.knightlore.engine.GameEngine;
-import com.knightlore.engine.GameState;
-import com.knightlore.engine.StartServer;
 import com.knightlore.network.ConnectionDetails;
 import com.knightlore.render.PixelBuffer;
 import com.knightlore.utils.funcptrs.VoidFunction;
@@ -58,7 +56,7 @@ public class StartMenu {
             @Override
             public void call() {
                 StartMenu.this.gui.destroy();
-                GameEngine.getSingleton().gameState = GameState.SettingsMenu;
+                GameEngine.getSingleton().guiState = GUIState.SettingsMenu;
             }
         };
 		
@@ -66,7 +64,7 @@ public class StartMenu {
 			@Override
 			public void call(){
 				StartMenu.this.gui.destroy();
-				GameEngine.getSingleton().gameState = GameState.MultiplayerMenu;
+				GameEngine.getSingleton().guiState = GUIState.MultiplayerMenu;
 			}
 		};
 		

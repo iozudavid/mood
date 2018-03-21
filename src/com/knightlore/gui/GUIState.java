@@ -1,6 +1,6 @@
-package com.knightlore.engine;
+package com.knightlore.gui;
 
-public enum GameState {
+public enum GUIState {
 	StartMenu,
 	MultiplayerMenu,
 	SettingsMenu,

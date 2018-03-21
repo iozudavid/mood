@@ -9,7 +9,7 @@ import com.knightlore.game.entity.pickup.PickupManager;
 import com.knightlore.game.world.ClientWorld;
 import com.knightlore.game.world.GameWorld;
 import com.knightlore.game.world.ServerWorld;
-import com.knightlore.gui.GameChat;
+import com.knightlore.gui.GUIState;
 import com.knightlore.network.NetworkObjectManager;
 import com.knightlore.network.client.ClientManager;
 import com.knightlore.network.client.ClientNetworkObjectManager;
@@ -53,7 +53,7 @@ public class GameEngine implements Runnable {
     private PickupManager pickupManager;
 
     private Camera camera;
-    public GameState gameState = GameState.StartMenu;
+    public GUIState guiState = GUIState.StartMenu;
 
     private float defaultVolume = -1;
     private SoundManager soundManager;
@@ -161,7 +161,7 @@ public class GameEngine implements Runnable {
             this.display.setHud(hud);
             this.display.setMinimap(minimap);
             this.display.setRenderer(renderer);
-            this.gameState = GameState.InGame;
+            this.guiState = GUIState.InGame;
         }
 
         // start the lobby
@@ -230,7 +230,7 @@ public class GameEngine implements Runnable {
             while (delta >= 1) {
                 if (running)
                     gameObjectManager.updateObjects();
-                if (this.gameState == GameState.InGame) {
+                if (this.guiState == GUIState.InGame) {
                     world.update();
                     GameFeed.getInstance().update();
                 }

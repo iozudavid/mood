@@ -4,7 +4,6 @@ import java.util.ArrayList;
 
 import com.knightlore.GameSettings;
 import com.knightlore.engine.GameEngine;
-import com.knightlore.engine.GameState;
 import com.knightlore.render.PixelBuffer;
 import com.knightlore.render.Renderer;
 import com.knightlore.utils.funcptrs.VoidFunction;
@@ -107,7 +106,7 @@ public class SettingsMenu {
                 GameEngine.getSingleton().setVolume(SettingsMenu.this.soundSlider.getValue());
                 Renderer.setBlockiness(Integer.parseInt(SettingsMenu.this.blockinessTextField.getText()));
                 GameSettings.PLAYER_NAME = SettingsMenu.this.nameTextField.getText();
-                GameEngine.getSingleton().gameState = GameState.SettingsMenuApply;
+                GameEngine.getSingleton().guiState = GUIState.SettingsMenuApply;
             }
         };
         
@@ -115,7 +114,7 @@ public class SettingsMenu {
             
             @Override
             public void call() {
-                GameEngine.getSingleton().gameState = GameState.SettingsMenuCancel;                
+                GameEngine.getSingleton().guiState = GUIState.SettingsMenuCancel;                
             }
         };
         
