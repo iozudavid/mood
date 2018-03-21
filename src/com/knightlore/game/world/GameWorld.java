@@ -7,6 +7,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 
 import com.knightlore.ai.AIManager;
 import com.knightlore.game.GameManager;
+import com.knightlore.game.GameType;
 import com.knightlore.game.PlayerManager;
 
 import com.knightlore.game.area.Map;
@@ -43,8 +44,8 @@ public abstract class GameWorld {
         }
     }
     
-    private Map generateMap(int xSize, int ySize, long seed) {
-        return new MapGenerator().createMap(xSize, ySize, seed);
+    private Map generateMap(int xSize, int ySize, GameType gt, long seed) {
+        return new MapGenerator().createMap(xSize, ySize, gt, seed);
     }
     
     public Map getMap() {
@@ -89,7 +90,7 @@ public abstract class GameWorld {
         if (mapSeed == null) {
             mapSeed = TEST_SEED;
         }
-        map = new MapGenerator().createMap(TEST_XSIZE, TEST_YSIZE, mapSeed);
+        map = new MapGenerator().createMap(TEST_XSIZE, TEST_YSIZE, GameType.FFA, mapSeed);
         ents = new LinkedList<>();
         aiManager = new AIManager(map);
         playerManager = new PlayerManager();

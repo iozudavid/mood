@@ -14,6 +14,7 @@ public class PickupTile extends Tile {
     
     public PickupTile(PickupType pickupType) {
         this.pickupType = pickupType;
+        pathable = false;
     }
     
     @Override

@@ -18,7 +18,6 @@ import com.knightlore.utils.Vector2D;
 public class PlayerSpawnTile extends Tile {
     private final Team team;
     private Vector2D pushVector = new Vector2D(0,0);
-    private boolean spawnable = false;
     
     private static TimedAnimation<Graphic> RED_LAVA_ANIM = new TimedAnimation<Graphic>(
             (long) (GameEngine.UPDATES_PER_SECOND / 4));
@@ -42,13 +41,14 @@ public class PlayerSpawnTile extends Tile {
     
     public PlayerSpawnTile(Team team) {
         this.team = team;
-        spawnable = true;
         pushVector = Vector2D.UP;
+        pathable = false;
     }
     
     public PlayerSpawnTile(Team team, Vector2D v) {
         this.team = team;
         pushVector = v;
+        pathable = false;
     }
     
     @Override
@@ -135,10 +135,6 @@ public class PlayerSpawnTile extends Tile {
     public Team getTeam() {
         return team;
     }
-
-    public boolean isSpawnable() {
-        return spawnable;
-    }
     
     @Override
     public Tile copy() {
@@ -147,11 +143,7 @@ public class PlayerSpawnTile extends Tile {
 
     @Override
     public void onEntered(Entity entity) {
-        if(spawnable) {
-            entity.resetBuff(new Immune(entity));
-        }else {
-            entity.resetBuff(new Push(entity, pushVector));
-            entity.resetBuff(new SpawnVision(entity));
-        }
+        entity.resetBuff(new Push(entity, pushVector));
+        entity.resetBuff(new SpawnVision(entity));
     }
 }

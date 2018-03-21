@@ -14,6 +14,9 @@ import com.knightlore.game.tile.UndecidedTile;
 import com.knightlore.utils.Vector2D;
 import com.knightlore.game.tile.PickupTile;
 
+import java.awt.Point;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
 public class RoomGenerator extends ProceduralAreaGenerator {
@@ -24,8 +27,10 @@ public class RoomGenerator extends ProceduralAreaGenerator {
     private static final int SPAWN_ROOM_MIN_CONNECTIONS = 1;
     private static final int SPAWN_ROOM_MAX_CONNECTIONS = 2;
     
-    private static final int MAX_INTERNAL_WALLS = 6;
-    private static final double INTERNAL_WALL_PROBABILITY = 0.5;
+    //private static final int MAX_INTERNAL_WALLS = 6;
+    private static final int MAX_DOMINANT_INTERNAL_WALLS = 4;
+    private static final int MAX_SUBDOMINANT_INTERNAL_WALLS = 1;
+    private static final double INTERNAL_WALL_PROBABILITY = 0.3;
     private static final int MINIMUM_SPLIT_LENGTH = 3;
 
     public Room createRoom(long seed, RoomType rt) {
@@ -53,6 +58,7 @@ public class RoomGenerator extends ProceduralAreaGenerator {
     }
     
     protected void fillGrid(RoomType rt) {
+        fillUndecidedTiles();
         int width = grid.length;
         int height = grid[0].length;
         int midx = width/2;
@@ -69,9 +75,6 @@ public class RoomGenerator extends ProceduralAreaGenerator {
                     grid[i][midy+1] = new PlayerSpawnTile(Team.BLUE, Vector2D.UP);
                 }
                 break; 
-            case health :
-                grid[midx][midy] = new PickupTile(PickupType.health);
-                break;
             case weapon :
                 for(int i=0; i<width; i++) {
                     for(int j=0; j<height; j++) {
@@ -89,9 +92,10 @@ public class RoomGenerator extends ProceduralAreaGenerator {
                 removeRightWall();
                 return;
             case normal :
+                // trying something
                 addInternalWalls(BrickTile.class);
+                addRandomPickup();
         }
-        fillUndecidedTiles();
         addWalls();
     }
 
@@ -99,22 +103,34 @@ public class RoomGenerator extends ProceduralAreaGenerator {
         try {
             int width = grid.length;
             int height = grid[0].length;
-            int numInternalWalls = 0;
+            
+            int numHorizontalInternalWalls = 0;
+            int numVerticalInternalWalls = 0;
+            
+            int maxHorizontalInternalWalls = MAX_SUBDOMINANT_INTERNAL_WALLS;
+            int maxVerticalInternalWalls = MAX_SUBDOMINANT_INTERNAL_WALLS;
+            
             if(width > height) {
-                for(int i=2; i<width-3; i++) {
-                    if(numInternalWalls == MAX_INTERNAL_WALLS) { return; };
-                    if(rand.nextDouble() <= INTERNAL_WALL_PROBABILITY) {
-                        addVerticalInternalWall(i, roomClass);
-                        i++; // skip next iteration
-                    }
-                }
+                maxVerticalInternalWalls = MAX_DOMINANT_INTERNAL_WALLS;
             }else {
-                for(int j=2; j<height-3; j++) {
-                    if(numInternalWalls == MAX_INTERNAL_WALLS) { return; };
-                    if(rand.nextDouble() <= INTERNAL_WALL_PROBABILITY) {
-                        addHorizontalInternalWall(j, roomClass);
-                        j++; // skip next iteration
-                    }
+                maxHorizontalInternalWalls = MAX_DOMINANT_INTERNAL_WALLS;
+            }
+            
+            for(int j=2; j<height-3; j++) {
+                if(numHorizontalInternalWalls == maxHorizontalInternalWalls) { break; };
+                if(rand.nextDouble() <= INTERNAL_WALL_PROBABILITY) {
+                    addHorizontalInternalWall(j, roomClass);
+                    numHorizontalInternalWalls++;
+                    j++; // skip next iteration
+                }
+            }
+            
+            for(int i=2; i<width-3; i++) {
+                if(numVerticalInternalWalls == maxVerticalInternalWalls){ break; };
+                if(rand.nextDouble() <= INTERNAL_WALL_PROBABILITY) {
+                    addVerticalInternalWall(i, roomClass);
+                    numVerticalInternalWalls++;
+                    i++; // skip next iteration
                 }
             }
             
@@ -133,6 +149,7 @@ public class RoomGenerator extends ProceduralAreaGenerator {
         // place straight wall
         for(int i=start; i < end; i++) {
             grid[i][y] = (Tile) roomClass.newInstance();
+            grid[i][y].setPathable(false);
         }
         // now put in gaps
         addHorizontalGaps(y , start, end);
@@ -146,6 +163,7 @@ public class RoomGenerator extends ProceduralAreaGenerator {
         // place straight wall
         for(int j=start; j < end; j++) {
             grid[x][j] = (Tile) roomClass.newInstance();
+            grid[x][j].setPathable(false);
         }
         // now put in gaps
         addVerticalGaps(x, start, end);
@@ -187,6 +205,64 @@ public class RoomGenerator extends ProceduralAreaGenerator {
         }
     }
 
+    private int neighbouringAirTiles(int x, int y) {
+        int numOfAir = 0;
+        int width = grid.length;
+        int height = grid[0].length;
+        if(x <= 2) { return 0; }
+        if(y <= 2) { return 0; }
+        if(x >= width-2) { return 0; }
+        if(y >= height-2) { return 0; }
+        
+        for(int i = x-1; i < x + 2; i++) {
+            for(int j = y-1; j < y + 2; j++) {
+                if( i == x && j == y) {
+                    continue;
+                }
+                if(grid[i][j] instanceof AirTile) {
+                    numOfAir++;
+                }
+            }            
+        }
+        
+        return numOfAir;
+    }
+    
+    private PickupType randomPickupType() {
+        int randInt = rand.nextInt(2);
+        if(randInt == 0) {
+            return PickupType.shotgun;
+        }else {
+            return PickupType.health;
+        }
+    }
+    
+    private List<Point> possiblePickupLocations() {
+        List<Point> candidateLocations = new ArrayList<Point>();
+        int minAirTiles = 8;
+        for(int i=0; i< grid.length - 1; i++) {
+            for(int j=0; j<grid[0].length - 1; j++) {
+                if(neighbouringAirTiles(i,j) >= minAirTiles) {
+                    candidateLocations.add(new Point(i, j));
+                }
+            }
+        }
+        return candidateLocations;
+    }
+    
+    private void addRandomPickup() {
+        List<Point>candidateLocations = possiblePickupLocations(); 
+        if(candidateLocations.size() == 0) {
+            return;
+        }
+        int index = rand.nextInt(candidateLocations.size());
+        Point placeLocation = candidateLocations.get(index);
+        
+        PickupTile pTile = new PickupTile(randomPickupType());
+        
+        grid[placeLocation.x][placeLocation.y] = pTile;
+    }
+    
     @Override
     protected void fillUndecidedTiles() {
         for (int x = 0; x < grid.length; x++) {

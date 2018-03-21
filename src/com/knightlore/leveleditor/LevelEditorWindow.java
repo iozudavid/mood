@@ -15,6 +15,7 @@ import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JSplitPane;
 
+import com.knightlore.game.GameType;
 import com.knightlore.game.area.Map;
 import com.knightlore.game.area.generation.MapGenerator;
 import com.knightlore.game.tile.BrickTile;
@@ -54,7 +55,7 @@ public class LevelEditorWindow extends JFrame {
 
         JSplitPane pane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
 
-        panel = new LevelEditorPanel(new MapGenerator().createMap(32, 32, 20L));
+        panel = new LevelEditorPanel(new MapGenerator().createMap(32, 32, GameType.TDM, 20L));
         pane.setLeftComponent(new TileChooserPanel());
         pane.setRightComponent(panel);
 
@@ -66,7 +67,7 @@ public class LevelEditorWindow extends JFrame {
         Random rand = new Random();
         panel.removeAll();
 
-        Map m = new MapGenerator().createMap(32, 32, rand.nextLong());
+        Map m = new MapGenerator().createMap(32, 32, GameType.TDM, rand.nextLong());
         panel.initialise(m);
         panel.revalidate();
         panel.repaint();

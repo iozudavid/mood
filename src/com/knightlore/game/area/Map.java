@@ -54,9 +54,6 @@ public class Map extends Area {
                 if(currentTile.getTeam() != team) {
                     continue;
                 }
-                if(((PlayerSpawnTile)currentTile).isSpawnable() != true) {
-                    continue;
-                }
                 candidates.add(new Vector2D(i + 0.5, j + 0.5));
             }
         }
