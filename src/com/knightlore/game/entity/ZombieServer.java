@@ -126,7 +126,6 @@ public class ZombieServer extends ZombieShared {
     
     @Override
     public void takeDamage(int damage, Entity inflictor) {
-        System.err.println("ZOMBIE TOOK DAMAGE");
         currentHealth -= damage;
         if(inflictor != null) {
             lastInflictor = inflictor;
