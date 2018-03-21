@@ -69,7 +69,7 @@ public class ClientNetworkObjectManager extends NetworkObjectManager {
     }
 
     /**
-     *  Removes a network object from client's game.
+     * Removes a network object from client's game.
      * 
      * @param obj
      *            - network object to be removed
@@ -86,14 +86,14 @@ public class ClientNetworkObjectManager extends NetworkObjectManager {
     public Player getMyPlayer() {
         return myPlayer;
     }
-    
+
     /**
      * Receives a message via networking and add it to chat GUI to be displayed.
      * 
      * @param b
      *            - ByteBuffer containing message to be displayed
      */
-    private synchronized void displayMessage(ByteBuffer b){
+    private synchronized void displayMessage(ByteBuffer b) {
         // can't put a message if the engine isn't done...
         // silly network
         if (!GameEngine.getSingleton().doneInit()) {
@@ -139,15 +139,6 @@ public class ClientNetworkObjectManager extends NetworkObjectManager {
             // Entities need to exist in the world.
             if (obj instanceof Entity) {
                 clientWorld.addEntity((Entity) obj);
-                GameEngine g = GameEngine.getSingleton();
-                ClientWorld world = (ClientWorld) g.getWorld();
-                GameChat c = world.getGameChat();
-                if (c != null) {
-                    c.getTextArea()
-                            .addText("System: " + obj.getClass().getSimpleName()
-                                    + " " + ((Entity) obj).getName()
-                                    + " has connected.");
-                }
             }
         } catch (NoSuchMethodException | SecurityException
                 | IllegalAccessException | IllegalArgumentException
@@ -252,7 +243,6 @@ public class ClientNetworkObjectManager extends NetworkObjectManager {
         this.finishedSetUp = true;
     }
 
-    
     /**
      * Wait for all information to be received - e.g., map seed, object details,
      * player identity.
@@ -299,7 +289,9 @@ public class ClientNetworkObjectManager extends NetworkObjectManager {
 
     /**
      * Called remotely to add new message to the game chat.
-     * @param message - ByteBuffer containing a message came from server 
+     * 
+     * @param message
+     *            - ByteBuffer containing a message came from server
      */
     public void addToChat(ByteBuffer message) {
         this.teamChat.offer(message);
