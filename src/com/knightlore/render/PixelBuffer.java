@@ -172,6 +172,16 @@ public class PixelBuffer {
         }
     }
 
+    public void drawRect(int color, int x, int y, int w, int h) {
+        if (color == CHROMA_KEY) {
+            return;
+        }
+        drawLine(color, x, y, x + w, y);
+        drawLine(color, x, y + h, x + w, y + h);
+        drawLine(color, x, y, x, y + h);
+        drawLine(color, x + w, y, x + w, y + h);
+    }
+
     /**
      * Fills an oval of the given colour, width and height. Uses a default value
      * for the number of points to draw (approx 314). Should be perfectly fine
@@ -235,6 +245,10 @@ public class PixelBuffer {
      */
     public void drawLine(int color, int x1, int y1, int x2, int y2) {
         double dx = x2 - x1, dy = y2 - y1;
+        if (dx == 0) {
+            fillRect(color, x1, y1, 1, y2 - y1);
+        }
+
         double de = Math.abs(dy / dx);
         double e = 0.0;
 
