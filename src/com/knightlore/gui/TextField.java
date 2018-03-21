@@ -32,6 +32,8 @@ public class TextField extends GUIObject {
     private Optional<BooleanFunction<Character>> restrictText = Optional.empty();
     private Optional<BooleanFunction<Integer>> restrictTextLength = Optional.empty();
     private Optional<Predicate<String>> restrictValue = Optional.empty();
+    public int fontSize = 1;
+    public Font font = Font.DEFAULT_WHITE;
 
     public TextField(int x, int y, int width, int height) {
         super(x, y, width, height);
@@ -102,17 +104,17 @@ public class TextField extends GUIObject {
         color = Color.BLACK.getRGB();
         pix.fillRect(color, rect.x - 1, rect.y - 1, rect.width + 1, rect.height + 1);
         color = activeColor().getRGB();
-        int hOffset = Font.DEFAULT_WHITE.getHeight();
+        int hOffset = font.getHeight();
         pix.fillRect(color, rect.x, rect.y, rect.width, rect.height);
         // draw the characters of the string
         color = Color.BLACK.getRGB();
 
         if (text != null) {
-            int width = pix.stringWidth(Font.DEFAULT_WHITE, rawChars.toString(), 1, 2);
+            int width = pix.stringWidth(font, rawChars.toString(), this.fontSize, 2);
             if (width < this.rect.width) {
-                pix.drawString(Font.DEFAULT_WHITE, new String(rawChars), rect.x, rect.y, 1, 2);
+                pix.drawString(font, new String(rawChars), rect.x, rect.y, this.fontSize, 2);
             } else {
-                width = pix.stringWidth(Font.DEFAULT_WHITE, rawChars.toString(), 15, 2);
+                width = pix.stringWidth(font, rawChars.toString(), this.fontSize, 2);
                 char[] toDisplay = rawChars;
                 while (width > this.rect.width) {
                     toDisplay = new char[toDisplay.length - 1];
@@ -122,9 +124,9 @@ public class TextField extends GUIObject {
                         System.out.println(rawChars.length);
                         toDisplay[i] = rawChars[rawChars.length - 1 - j];
                     }
-                    width = pix.stringWidth(Font.DEFAULT_WHITE, toDisplay.toString(), 15, 2);
+                    width = pix.stringWidth(font, toDisplay.toString(), this.fontSize, 2);
                 }
-                pix.drawString(Font.DEFAULT_WHITE, toDisplay.toString(), rect.x, rect.y + hOffset, 15, 2);
+                pix.drawString(font, toDisplay.toString(), rect.x, rect.y + hOffset, this.fontSize, 2);
 
             }
         }
@@ -304,7 +306,7 @@ public class TextField extends GUIObject {
         } else {
             for (char c : this.text.toCharArray()) {
                 chooseLocation++;
-                int width = pix.stringWidth(Font.DEFAULT_WHITE, c + "", 15, 2);
+                int width = pix.stringWidth(font, c + "", this.fontSize, 2);
                 double oldDelta = deltaPos;
                 deltaPos -= width;
                 if (deltaPos < 0) {
