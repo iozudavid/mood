@@ -19,13 +19,12 @@ import com.knightlore.engine.GameEngine;
 import com.knightlore.game.entity.Entity;
 import com.knightlore.game.entity.weapon.Shotgun;
 import com.knightlore.game.entity.weapon.Weapon;
+import com.knightlore.game.world.ClientWorld;
 import com.knightlore.network.NetworkObject;
 import com.knightlore.network.NetworkObjectManager;
-import com.knightlore.network.client.ClientNetworkObjectManager;
 import com.knightlore.network.protocol.ClientController;
 import com.knightlore.network.protocol.ClientProtocol;
 import com.knightlore.network.protocol.NetworkUtils;
-import com.knightlore.render.GameFeed;
 import com.knightlore.render.PixelBuffer;
 import com.knightlore.render.animation.Animation;
 import com.knightlore.render.animation.PlayerMoveAnimation;
@@ -37,11 +36,14 @@ import com.knightlore.utils.Vector2D;
 
 public class Player extends Entity {
 
-    private PlayerMoveAnimation moveAnim = new PlayerMoveAnimation(PlayerGraphicMatrix.getGraphic(
-            PlayerGraphicMatrix.Color.BLUE, PlayerGraphicMatrix.Weapon.PISTOL, PlayerGraphicMatrix.Stance.MOVE));
+    private PlayerMoveAnimation moveAnim = new PlayerMoveAnimation(
+            PlayerGraphicMatrix.getGraphic(PlayerGraphicMatrix.Color.BLUE,
+                    PlayerGraphicMatrix.Weapon.PISTOL,
+                    PlayerGraphicMatrix.Stance.MOVE));
 
     private PlayerStandAnimation standAnim = new PlayerStandAnimation(
-            PlayerGraphicMatrix.getGraphic(PlayerGraphicMatrix.Color.BLUE, PlayerGraphicMatrix.Weapon.PISTOL,
+            PlayerGraphicMatrix.getGraphic(PlayerGraphicMatrix.Color.BLUE,
+                    PlayerGraphicMatrix.Weapon.PISTOL,
                     PlayerGraphicMatrix.Stance.STAND),
             (long) (GameEngine.UPDATES_PER_SECOND / 10));
 
@@ -51,11 +53,15 @@ public class Player extends Entity {
     private static final double SIZE = 0.25;
     // Maps all inputs that the player could be making to their values.
     private final ImmutableMap<ClientController, Runnable> ACTION_MAPPINGS = ImmutableMap
-            .<ClientController, Runnable>builder().put(ClientController.FORWARD, this::moveForward)
-            .put(ClientController.ROTATE_ANTI_CLOCKWISE, this::rotateAntiClockwise)
+            .<ClientController, Runnable>builder()
+            .put(ClientController.FORWARD, this::moveForward)
+            .put(ClientController.ROTATE_ANTI_CLOCKWISE,
+                    this::rotateAntiClockwise)
             .put(ClientController.BACKWARD, this::moveBackward)
-            .put(ClientController.ROTATE_CLOCKWISE, this::rotateClockwise).put(ClientController.LEFT, this::strafeLeft)
-            .put(ClientController.RIGHT, this::strafeRight).put(ClientController.SHOOT, this::shoot).build();
+            .put(ClientController.ROTATE_CLOCKWISE, this::rotateClockwise)
+            .put(ClientController.LEFT, this::strafeLeft)
+            .put(ClientController.RIGHT, this::strafeRight)
+            .put(ClientController.SHOOT, this::shoot).build();
 
     private final BlockingQueue<ByteBuffer> teamMessagesToSend = new LinkedBlockingQueue<>();
     private final BlockingQueue<ByteBuffer> allMessagesToSend = new LinkedBlockingQueue<>();
@@ -74,7 +80,7 @@ public class Player extends Entity {
     private InputModule inputModule = new RemoteInput();
 
     private Entity lastInflictor;
-    
+
     // DO NOT REMOVE, THESE ARE USED FOR CLIENT PREDICTION!!!!!
     private double timeToSend = 0;
     private boolean respawn = false;
@@ -101,24 +107,25 @@ public class Player extends Entity {
         // add tick listener to game engine
         // as some buffs will affect the player periodically
         GameEngine.ticker.addTickListener(this);
-        
+
         // Player.this.finished = true;
     }
 
     public Player(Vector2D pos, Vector2D dir) {
         this(UUID.randomUUID(), pos, dir);
     }
-    
-    public void sendStatsToScoreBoard(){
-    	if(GameSettings.isServer())
-    		return;
-        //add to scoreboard
+
+    public void sendStatsToScoreBoard() {
+        if (GameSettings.isServer())
+            return;
+        // add to scoreboard
         CopyOnWriteArrayList<String> stats = new CopyOnWriteArrayList<>();
         stats.add(this.getObjectId().toString());
         stats.add(this.getName());
         stats.add(this.team.toString());
-        stats.add(this.score+"");
-        GameEngine.getSingleton().getDisplay().getChat().addToTable(stats);
+        stats.add(this.score + "");
+        ClientWorld world = (ClientWorld) GameEngine.getSingleton().getWorld();
+        world.getGameChat().addToTable(stats);
     }
 
     @Override
@@ -126,7 +133,8 @@ public class Player extends Entity {
         super.render(pix, x, y, distanceTraveled);
 
         if (currentWeapon != null) {
-            currentWeapon.render(pix, x, y, inertiaX, inertiaY, distanceTraveled, hasShot);
+            currentWeapon.render(pix, x, y, inertiaX, inertiaY,
+                    distanceTraveled, hasShot);
         }
     }
 
@@ -141,7 +149,8 @@ public class Player extends Entity {
         synchronized (inputState) {
             while (buf.hasRemaining()) {
                 try {
-                    ClientController control = ClientProtocol.getByIndex(buf.getInt());
+                    ClientController control = ClientProtocol
+                            .getByIndex(buf.getInt());
                     Byte value = buf.get();
                     inputState.put(control, value);
                 } catch (IOException e) {
@@ -172,9 +181,11 @@ public class Player extends Entity {
 
     private void messageToTeam(ByteBuffer buf) {
         String message = NetworkUtils.getStringFromBuf(buf);
-        message = "[" + this.team + "] " + this.name + ": " + message;
-        ByteBuffer bf = ByteBuffer.allocate(NetworkObject.BYTE_BUFFER_DEFAULT_SIZE);
-        NetworkUtils.putStringIntoBuf(bf, NetworkObjectManager.MANAGER_UUID.toString());
+        message = "[" + this.team + "] " + this.getName() + ": " + message;
+        ByteBuffer bf = ByteBuffer
+                .allocate(NetworkObject.BYTE_BUFFER_DEFAULT_SIZE);
+        NetworkUtils.putStringIntoBuf(bf,
+                NetworkObjectManager.MANAGER_UUID.toString());
         NetworkUtils.putStringIntoBuf(bf, "displayMessage");
         NetworkUtils.putStringIntoBuf(bf, message);
         this.teamMessagesToSend.offer(bf);
@@ -196,9 +207,11 @@ public class Player extends Entity {
 
     private void messageToAll(ByteBuffer buf) {
         String message = NetworkUtils.getStringFromBuf(buf);
-        message = "[all] " + this.name + ": " + message;
-        ByteBuffer bf = ByteBuffer.allocate(NetworkObject.BYTE_BUFFER_DEFAULT_SIZE);
-        NetworkUtils.putStringIntoBuf(bf, NetworkObjectManager.MANAGER_UUID.toString());
+        message = "[all] " + this.getName() + ": " + message;
+        ByteBuffer bf = ByteBuffer
+                .allocate(NetworkObject.BYTE_BUFFER_DEFAULT_SIZE);
+        NetworkUtils.putStringIntoBuf(bf,
+                NetworkObjectManager.MANAGER_UUID.toString());
         NetworkUtils.putStringIntoBuf(bf, "displayMessage");
         NetworkUtils.putStringIntoBuf(bf, message);
         this.allMessagesToSend.offer(bf);
@@ -221,7 +234,8 @@ public class Player extends Entity {
     @Override
     public Graphic getGraphic(Vector2D playerPos) {
         if (currentHealth <= 0) {
-            return DirectionalSprite.GRAVESTONE_DIRECTIONAL_SPRITE.getCurrentGraphic(position, direction, playerPos);
+            return DirectionalSprite.GRAVESTONE_DIRECTIONAL_SPRITE
+                    .getCurrentGraphic(position, direction, playerPos);
         }
         DirectionalSprite frame = currentAnim.getFrame();
         return frame.getCurrentGraphic(position, direction, playerPos);
@@ -285,11 +299,13 @@ public class Player extends Entity {
         final double p = 0.07D;
         inertiaX += (int) (p * -inertiaX);
         inertiaY += (int) (p * -inertiaY);
-        Vector2D temp = new Vector2D(plane.getX() / plane.magnitude(), plane.getY() / plane.magnitude());
+        Vector2D temp = new Vector2D(plane.getX() / plane.magnitude(),
+                plane.getY() / plane.magnitude());
         double orthProjection = displacement.dot(temp);
         inertiaX -= orthProjection * currentWeapon.getInertiaCoeffX();
 
-        temp = new Vector2D(direction.getX() / direction.magnitude(), direction.getY() / direction.magnitude());
+        temp = new Vector2D(direction.getX() / direction.magnitude(),
+                direction.getY() / direction.magnitude());
         orthProjection = displacement.dot(temp);
         inertiaY += orthProjection * currentWeapon.getInertiaCoeffY();
 
@@ -344,7 +360,7 @@ public class Player extends Entity {
 
         setScore(buf.getInt());
     }
-    
+
     @Override
     public int getMinimapColor() {
         return 0xFFFFFF;
@@ -363,38 +379,39 @@ public class Player extends Entity {
 
     @Override
     public void takeDamage(int damage, Entity inflictor) {
-        if(GameSettings.isClient()) {        
+        if (GameSettings.isClient()) {
             return;
         }
         damage = (int) (damage * damageTakenModifier);
         int newHealth = currentHealth - damage;
         currentHealth = Math.max(0, Math.min(MAX_HEALTH, newHealth));
-        if(inflictor != null) {
+        if (inflictor != null) {
             lastInflictor = inflictor;
         }
     }
 
     private void checkDeath() {
-        if(GameSettings.isClient()) {
+        if (GameSettings.isClient()) {
             return;
         }
         if (currentHealth <= 0) {
-            if(lastInflictor == null) {
-                System.out.println(name + " was killed by natural causes");
-            }else {
-                System.out.println(name + " was killed by " + lastInflictor.getName());
+            if (lastInflictor == null) {
+                System.out.println(
+                        this.getName() + " was killed by natural causes");
+            } else {
+                System.out.println(this.getName() + " was killed by "
+                        + lastInflictor.getName());
                 lastInflictor.killConfirmed(this);
-            }            
+            }
             removeAllBuffs();
-            this.sendSystemMessage(name, lastInflictor);
-            System.out.println("CALLING ON PLAYER DEATH");
-            GameEngine.getSingleton().getWorld().getGameManager().onPlayerDeath(this);
-            System.out.println("CALLED IT!");
+            this.sendSystemMessage(this.getName(), lastInflictor);
+            GameEngine.getSingleton().getWorld().getGameManager()
+                    .onPlayerDeath(this);
         }
     }
-    
+
     public void applyHeal(int heal) {
-        takeDamage(-heal,null);
+        takeDamage(-heal, null);
     }
 
     public void increaseScore(int value) {
@@ -424,7 +441,7 @@ public class Player extends Entity {
         currentHealth = MAX_HEALTH;
         inputModule.onRespawn(this);
         // this.respawn = true;
-        System.out.println(name + " respawned.");
+        System.out.println(this.getName() + " respawned.");
     }
 
     public void setInputModule(InputModule inp) {
@@ -464,9 +481,9 @@ public class Player extends Entity {
     }
 
     @Override
-    public void killConfirmed(Player victim) {
+    public void killConfirmed(Entity victim) {
         score += 1;
-        System.out.println(name + " score " + score);
+        System.out.println(this.getName() + " score " + score);
     }
 
     public void setRespawn(boolean b) {
@@ -476,7 +493,7 @@ public class Player extends Entity {
     public void setHealth(int h) {
         this.currentHealth = h;
     }
-    
+
     @Override
     public boolean renderName() {
         return true;

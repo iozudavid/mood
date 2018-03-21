@@ -8,6 +8,10 @@ import com.knightlore.render.Environment;
 
 public class ClientWorld extends GameWorld {
 
+    public GameChat getGameChat() {
+        return gameChat;
+    }
+
     private GameChat gameChat;
     private int screenWidth;
     private int screenHeight;
@@ -32,8 +36,9 @@ public class ClientWorld extends GameWorld {
 
     public void buildGUI() {
         gameChat = new GameChat(screenWidth, screenHeight);
+        gameChat.init();
        // gameHUD = new GameHUD(150,150);
-        GameEngine.getSingleton().getDisplay().setGameChat(gameChat);;
+        GameEngine.getSingleton().getDisplay().addGUICanvas(gameChat);
     }
 
     private void startBgMusic() {

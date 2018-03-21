@@ -1,5 +1,6 @@
 package com.knightlore.game.entity;
 
+import com.knightlore.GameSettings;
 import com.knightlore.ai.AIManager;
 import com.knightlore.engine.GameEngine;
 import com.knightlore.game.Player;
@@ -22,6 +23,7 @@ public class ZombieServer extends ZombieShared {
     private long lastThinkingTime = 0;
     private List<Point> currentPath = new LinkedList<>();
     private int currentHealth = MAX_HEALTH;
+    private Entity lastInflictor;
     
     public ZombieServer(Vector2D position) {
         super(position);
@@ -37,11 +39,29 @@ public class ZombieServer extends ZombieShared {
     
     @Override
     public void onUpdate() {
+        checkDeath();
+        
         if (System.currentTimeMillis() - lastThinkingTime > THINKING_FREQUENCY) {
             think();
         }
-        
         move();
+    }
+    
+    private void checkDeath() {
+        if(GameSettings.isClient()) {
+            return;
+        }
+        if (currentHealth <= 0) {
+            if(lastInflictor == null) {
+                System.out.println(this.getName() + " was killed by natural causes");
+            }else {
+                System.out.println(this.getName() + " was killed by " + lastInflictor.getName());
+                lastInflictor.killConfirmed(this);
+            }            
+            removeAllBuffs();
+            this.sendSystemMessage(this.getName(), lastInflictor);
+            this.destroy();
+        }
     }
     
     private void think() {
@@ -106,10 +126,10 @@ public class ZombieServer extends ZombieShared {
     
     @Override
     public void takeDamage(int damage, Entity inflictor) {
+        System.err.println("ZOMBIE TOOK DAMAGE");
         currentHealth -= damage;
-        if (currentHealth <= 0) {
-            this.destroy();
-            this.sendSystemMessage(this.getName(), inflictor);
+        if(inflictor != null) {
+            lastInflictor = inflictor;
         }
     }
 

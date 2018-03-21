@@ -21,7 +21,6 @@ import com.knightlore.network.NetworkObject;
 import com.knightlore.network.NetworkObjectManager;
 import com.knightlore.network.protocol.NetworkUtils;
 import com.knightlore.render.Camera;
-import com.knightlore.render.Display;
 
 public class ClientNetworkObjectManager extends NetworkObjectManager {
     private final Map<UUID, NetworkObject> networkObjects = new HashMap<>();
@@ -44,7 +43,8 @@ public class ClientNetworkObjectManager extends NetworkObjectManager {
     }
 
     private void setNetworkConsumers() {
-        networkConsumers.put("registerPlayerIdentity", this::registerPlayerIdentity);
+        networkConsumers.put("registerPlayerIdentity",
+                this::registerPlayerIdentity);
         networkConsumers.put("newObjCreated", this::newObjCreated);
         networkConsumers.put("objDestroyed", this::objDestroyed);
         networkConsumers.put("receiveMapSeed", this::receiveMapSeed);
@@ -66,22 +66,22 @@ public class ClientNetworkObjectManager extends NetworkObjectManager {
     public Player getMyPlayer() {
         return myPlayer;
     }
-    
-    private synchronized void displayMessage(ByteBuffer b){
+
+    private synchronized void displayMessage(ByteBuffer b) {
         // can't put a message if the engine isn't done...
         // silly network
-        if(!GameEngine.getSingleton().doneInit()) {
+        if (!GameEngine.getSingleton().doneInit()) {
             return;
         }
-    	String message = NetworkUtils.getStringFromBuf(b);
-    	assert(message != null);
-    	GameEngine g = GameEngine.getSingleton();
-    	Display d = g.getDisplay();
-    	GameChat c = d.getChat();
-    	if(c==null)
-    	    return;
-    	TextArea t = c.getTextArea();
-    	t.addText(message);
+        String message = NetworkUtils.getStringFromBuf(b);
+        assert (message != null);
+        GameEngine g = GameEngine.getSingleton();
+        ClientWorld world = (ClientWorld) g.getWorld();
+        GameChat c = world.getGameChat();
+        if (c == null)
+            return;
+        TextArea t = c.getTextArea();
+        t.addText(message);
 
     }
 
@@ -93,7 +93,7 @@ public class ClientNetworkObjectManager extends NetworkObjectManager {
         String className = NetworkUtils.getStringFromBuf(buf);
         UUID objID = UUID.fromString(NetworkUtils.getStringFromBuf(buf));
         if (networkObjects.containsKey(objID))
-            // We already know about this object.
+        // We already know about this object.
         {
             return;
         }
@@ -109,9 +109,15 @@ public class ClientNetworkObjectManager extends NetworkObjectManager {
             // Entities need to exist in the world.
             if (obj instanceof Entity) {
                 clientWorld.addEntity((Entity) obj);
-                if(GameEngine.getSingleton().getDisplay().getChat()!=null)
-                    GameEngine.getSingleton().getDisplay().getChat().getTextArea().addText("System: " + 
-                            obj.getClass().getSimpleName() + " " + ((Entity)obj).getName() + " has connected.");
+                GameEngine g = GameEngine.getSingleton();
+                ClientWorld world = (ClientWorld) g.getWorld();
+                GameChat c = world.getGameChat();
+                if (c != null) {
+                    c.getTextArea()
+                            .addText("System: " + obj.getClass().getSimpleName()
+                                    + " " + ((Entity) obj).getName()
+                                    + " has connected.");
+                }
             }
         } catch (NoSuchMethodException | SecurityException
                 | IllegalAccessException | IllegalArgumentException
@@ -131,13 +137,21 @@ public class ClientNetworkObjectManager extends NetworkObjectManager {
     private synchronized void objDestroyed(ByteBuffer buf) {
         System.out.println("Receiving object deletion message from server");
         UUID objID = UUID.fromString(NetworkUtils.getStringFromBuf(buf));
-        GameEngine.getSingleton().getDisplay().getChat().removeFromTable(objID.toString());
         NetworkObject toBeDestroyedObject = this.getNetworkObject(objID);
         toBeDestroyedObject.destroy();
         if (toBeDestroyedObject instanceof Entity) {
             clientWorld.removeEntity((Entity) toBeDestroyedObject);
-            GameEngine.getSingleton().getDisplay().getChat().getTextArea().addText("System: " + 
-            		toBeDestroyedObject.getClass().getSimpleName() + " " + ((Entity)toBeDestroyedObject).getName() + " has disconnected.");
+            GameEngine g = GameEngine.getSingleton();
+            ClientWorld world = (ClientWorld) g.getWorld();
+            GameChat c = world.getGameChat();
+            if (c != null) {
+                c.removeFromTable(objID.toString());
+                c.getTextArea()
+                        .addText("System: "
+                                + toBeDestroyedObject.getClass().getSimpleName()
+                                + " " + ((Entity) toBeDestroyedObject).getName()
+                                + " has disconnected.");
+            }
         }
     }
 
@@ -241,7 +255,8 @@ public class ClientNetworkObjectManager extends NetworkObjectManager {
 
     public ArrayList<ByteBuffer> getPlayerStateOnServer() {
         synchronized (this.myPlayerStateOnServer) {
-            ArrayList<ByteBuffer> copyStates = new ArrayList<>(this.myPlayerStateOnServer);
+            ArrayList<ByteBuffer> copyStates = new ArrayList<>(
+                    this.myPlayerStateOnServer);
             this.myPlayerStateOnServer.clear();
             return copyStates;
         }
