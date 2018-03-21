@@ -30,9 +30,13 @@ public class GameChat extends GUICanvas {
 
     public GameChat(int screenWidth, int screenHeight) {
         super(screenWidth, screenHeight);
-        
         this.screenWidth = screenWidth;
         this.screenHeight = screenHeight;
+    }
+
+    @Override
+    public void init() {
+        super.init();
         this.pix = new PixelBuffer((int) (screenWidth), (int) (screenHeight));
         this.pix.flood(-16711936);
         this.textArea = new TextArea(0, 0, (int) (screenWidth * 0.3),
@@ -102,7 +106,6 @@ public class GameChat extends GUICanvas {
                 GameChat.this.setScoreMenuVisible();
             }
         });
-
     }
 
     public void initPauseHidden() {
@@ -161,7 +164,6 @@ public class GameChat extends GUICanvas {
             this.textArea.setInteractive(this.interactive);
         }
         super.render(pix, x, y);
-        System.out.println("Chat rendered");
     }
 
     public PixelBuffer getPixelBuffer() {
