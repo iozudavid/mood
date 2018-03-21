@@ -11,7 +11,7 @@ public abstract class Buff {
                           // the counter will trigger the
                           // periodic effect
     private int maxSteps;
-    private int counter;
+    protected int counter;
     
     protected Buff(Entity ent, double frequency, double length) {
         this.ent = ent;
@@ -33,7 +33,7 @@ public abstract class Buff {
      *  Manages all the mechanisms of each buff.
      */
     public void loop() {
-        if(counter >= maxSteps) {
+        if(finished()) {
             done = true;
             return;
         }
@@ -42,6 +42,10 @@ public abstract class Buff {
             periodicEffect();
         }
         counter++;
+    }
+    
+    protected boolean finished() {
+        return counter >= maxSteps;
     }
     
     /** Put a buff back to the beginning of its 
