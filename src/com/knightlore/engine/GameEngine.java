@@ -5,8 +5,6 @@ import com.knightlore.MainWindow;
 import com.knightlore.engine.audio.SoundManager;
 import com.knightlore.engine.input.InputManager;
 import com.knightlore.engine.input.Mouse;
-import com.knightlore.game.GameManager;
-import com.knightlore.game.GameState;
 import com.knightlore.game.entity.pickup.PickupManager;
 import com.knightlore.game.world.ClientWorld;
 import com.knightlore.game.world.GameWorld;
@@ -233,7 +231,7 @@ public class GameEngine implements Runnable {
             while (delta >= 1) {
                 if (running)
                     gameObjectManager.updateObjects();
-                if (GameManager.getGameState() == GameState.PLAYING) {
+                if (this.guiState == GUIState.InGame) {
                     world.update();
                     GameFeed.getInstance().update();
                 }

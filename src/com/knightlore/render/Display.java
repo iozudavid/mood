@@ -105,8 +105,7 @@ public class Display implements IRenderable {
 
         case SettingsMenu:
             if (this.settingsMenu == null)
-                this.settingsMenu = new SettingsMenu(pix.getWidth(),
-                        pix.getHeight());
+                this.settingsMenu = new SettingsMenu(pix.getWidth(), pix.getHeight());
             if (gs != GUIState.SettingsMenu)
                 this.settingsObj = this.settingsMenu.getObj();
             this.settingsMenu.render(pix, x, y);
