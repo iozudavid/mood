@@ -144,8 +144,6 @@ public class GameChat extends GUICanvas {
 
     @Override
     public void render(PixelBuffer pix, int x, int y) {
-        super.render(pix, x, y);
-        System.out.println("Chat rendered");
         if (GUICanvas.activeTextField != null) {
             this.interactive = true;
             count = 0;
@@ -162,6 +160,8 @@ public class GameChat extends GUICanvas {
         } else {
             this.textArea.setInteractive(this.interactive);
         }
+        super.render(pix, x, y);
+        System.out.println("Chat rendered");
     }
 
     public PixelBuffer getPixelBuffer() {
