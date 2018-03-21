@@ -41,6 +41,13 @@ public class RoomGenerator extends ProceduralAreaGenerator {
         determineRoomSize();
         resetGrid();
         fillGrid();
+        if (rt == RoomType.BIG_LAVA_ROOM) {
+            return new Room(grid,1 , 2);
+        }
+        
+        if (rt == RoomType.LAVA_PLATFORM) {
+            return new Room(grid, 1 , 2);
+        }
         if (rt == RoomType.SPAWN) {
             return new Room(grid, SPAWN_ROOM_MIN_CONNECTIONS , SPAWN_ROOM_MAX_CONNECTIONS);
         }
@@ -60,7 +67,7 @@ public class RoomGenerator extends ProceduralAreaGenerator {
             height = getGaussianNum(MAX_SIZE -3 , MAX_SIZE);
             break;
         case LAVA_PLATFORM :
-            width = 2 ; //3 + rand.nextInt(3); //MAKE CONSTANT
+            width = 3 ; //3 + rand.nextInt(3); //MAKE CONSTANT
             height = width;
             break;
         default:
@@ -114,22 +121,21 @@ public class RoomGenerator extends ProceduralAreaGenerator {
                 Map subMap = mg.createMap(width, height, MapType.LAVA_SUBMAP);
                 for(int i=0; i<width; i++) {
                     for(int j=0; j<height; j++) {
-                        // HAVE I GOT TO USE .copy()
                         grid[i][j] = subMap.getTile(i, j);
                     }
                 }
                 fillUndecidedTiles() ;
                 break;
             case LAVA_PLATFORM:
-                if(rand.nextDouble() > 0.2) {
+                if(rand.nextDouble() < 0.33) {
                     grid[midx][midy] = new PickupTile(randomPickupType());
                 }
                 fillUndecidedTiles();
                 return; // does not use addWalls
             case NORMAL:
                 addInternalWalls(BrickTile.class);
-                addRandomPickup();
                 fillUndecidedTiles();
+                addRandomPickup();
         }
         addWalls();
     }

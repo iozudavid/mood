@@ -21,10 +21,6 @@ public class MapGenerator extends ProceduralAreaGenerator {
     private static final int ROOM_RANGE_MAX = 8;
     // ---
     
-    // TODO: LAVA MOAT!!
-    // Make a room that has lava on it's four sides
-    // And undecided tiles in the middle
-    
     private int maxRooms;
     
     private boolean symmetrical = true;
@@ -32,7 +28,7 @@ public class MapGenerator extends ProceduralAreaGenerator {
     
     private List<RoomType> roomsToBuild = new LinkedList<>();
     private static final int ROOM_COST_MODIFIER = 5;
-    private static final int DOUBLE_PATH_COST_MODIFIER = 3;
+    private static final double DOUBLE_PATH_COST_MODIFIER = 1.5;
     
     private final List<Room> rooms = new LinkedList<>();
     private double[][] costGrid;
@@ -54,8 +50,7 @@ public class MapGenerator extends ProceduralAreaGenerator {
             width = width / 2;
         }
         grid = new Tile[width][height];
-        // TODO: maybe make this correspond to map size
-        maxRooms = ROOM_RANGE_MIN + rand.nextInt(ROOM_RANGE_MAX - ROOM_RANGE_MIN);
+        determineRoomNum();
         PerlinNoiseGenerator perlinGenerator = new PerlinNoiseGenerator(width, height, seed);
         // Initialize costGrid with perlin noise to make generated paths less optimal
         costGrid = perlinGenerator.createPerlinNoise();
@@ -75,6 +70,26 @@ public class MapGenerator extends ProceduralAreaGenerator {
             symmetrical = false;
             break;
         }
+    }
+    
+    private int getGaussianNum(int min, int max) {
+        int mean = (max + min) / 2;
+        int std_dev = (mean - min) / 2;
+        double gaussSize = min - 1;
+        while (gaussSize < min || gaussSize > max) {
+            gaussSize = (rand.nextGaussian() * std_dev) + mean;
+        }
+
+        return (int) Math.round(gaussSize);
+    }
+    
+    public void determineRoomNum() {
+        int width = grid.length;
+        int height = grid[0].length;
+        int area = width * height;
+        int minRoomRange = area / 40;
+        int maxRoomRange = area / 20;
+        maxRooms = getGaussianNum(minRoomRange, maxRoomRange); 
     }
     
     @Override
@@ -102,8 +117,7 @@ public class MapGenerator extends ProceduralAreaGenerator {
             roomsToBuild.add(RoomType.MIDDLE);
         }
         
-        if(grid.length > 25 && grid[0].length > 25) {
-            System.out.println("ADDING BIG_LAVA_ROOM");
+        if(grid.length > 20 && grid[0].length > 20) {
             roomsToBuild.add(RoomType.BIG_LAVA_ROOM);
         }
         
@@ -113,7 +127,7 @@ public class MapGenerator extends ProceduralAreaGenerator {
             roomsToBuild.add(RoomType.SPAWN);
         }
         
-        for(int i=1; i < maxRooms; i++) {
+        while(roomsToBuild.size() <= maxRooms) {
             double randInt = rand.nextDouble();
             if(randInt >= 0.66) {
                 roomsToBuild.add(RoomType.WEAPON);
@@ -346,7 +360,7 @@ public class MapGenerator extends ProceduralAreaGenerator {
     public static void main(String args[]) {
         Random r = new Random();
         MapGenerator mg = new MapGenerator();
-        Map map = mg.createMap(70, 70, MapType.TDM, r.nextInt(1000));
+        Map map = mg.createMap(40, 40, MapType.TDM, r.nextInt(1000));
         System.out.println(map.toDebugString());
     }
     
