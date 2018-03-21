@@ -8,6 +8,7 @@ import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import com.knightlore.engine.GameEngine;
 import com.knightlore.engine.GameObject;
@@ -16,8 +17,9 @@ import com.knightlore.engine.input.InputManager;
 import com.knightlore.render.IRenderable;
 import com.knightlore.render.PixelBuffer;
 import com.knightlore.render.graphic.Graphic;
-import com.knightlore.utils.physics.Physics;
 import com.knightlore.utils.Vector2D;
+import com.knightlore.utils.funcptrs.VoidFunction;
+import com.knightlore.utils.physics.Physics;
 
 public class GUICanvas extends GameObject implements IRenderable {
 
@@ -27,7 +29,7 @@ public class GUICanvas extends GameObject implements IRenderable {
 
 	static TextField activeTextField;
 	static TextField gameTextField;
-
+	
 	private final List<GUIObject> guis;
 	private Graphic canvasGraphic;
 	private final BufferedImage canvasImage;
@@ -41,6 +43,9 @@ public class GUICanvas extends GameObject implements IRenderable {
 	private boolean lastHeld;
 	
 	private Rectangle rect;
+	private static Optional<VoidFunction> onPressEscape=Optional.empty();
+	private static Optional<VoidFunction> onPressQ=Optional.empty();
+	private static Optional<VoidFunction> onReleaseQ=Optional.empty();
     public boolean isVisible;
 	
 	public GUICanvas(int screenWidth, int screenHeight){
@@ -107,9 +112,26 @@ public class GUICanvas extends GameObject implements IRenderable {
 	}
 	
 	public static void escape(){
-		activeTextField = null;
-		gameTextField.escape();
+		if (activeTextField != null) {
+			activeTextField = null;
+			gameTextField.escape();
+		} else if(onPressEscape.isPresent()){
+			onPressEscape.get().call();
+		}
 	}
+	
+	public static void pressQ(){
+		if(onPressQ.isPresent()){
+			onPressQ.get().call();
+		}
+	}
+	
+	public static void releaseQ(){
+		if(onReleaseQ.isPresent()){
+			onReleaseQ.get().call();
+		}
+	}
+	
 	
 	public static void inputLeftArrow(){
 		if (activeTextField != null) {
@@ -140,7 +162,9 @@ public class GUICanvas extends GameObject implements IRenderable {
 			this.initDraw();
 		}
 		canvasG2D.setColor(BACKGROUND_COLOR);
-		for (GUIObject gui : guis) {
+		ArrayList<GUIObject> copyGuis = new ArrayList<>();
+		copyGuis.addAll(guis);
+		for (GUIObject gui : copyGuis) {
 			gui.Draw(canvasG2D, rect);
 		}
 		canvasImage.getRGB(0, 0, WIDTH, HEIGHT, drawPixels, 0, WIDTH);
@@ -181,7 +205,6 @@ public class GUICanvas extends GameObject implements IRenderable {
 		
 		// notify new gui of mouse enter
 		if (selected != null) {
-			System.out.println(selected);
 			// send mouse entered event
 			if (selected != lastSelected) {
 				selected.onMouseEnter();
@@ -253,6 +276,18 @@ public class GUICanvas extends GameObject implements IRenderable {
 
 	public static void setActiveTextField(TextField activeTextField) {
 		GUICanvas.activeTextField = activeTextField;
+	}
+	
+	public static void setOnEscFunction(VoidFunction func){
+		onPressEscape=Optional.of(func);
+	}
+	
+	public static void setOnQFunction(VoidFunction func){
+		onPressQ=Optional.of(func);
+	}
+	
+	public static void setOnQReleaseFunction(VoidFunction func){
+		onReleaseQ=Optional.of(func);
 	}
 	
 }

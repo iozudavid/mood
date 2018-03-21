@@ -80,22 +80,22 @@ public class MapGenerator extends ProceduralAreaGenerator {
 
     private void determineRoomsToBuild() {
         if(symmetrical) {
-            roomsToBuild.add(RoomType.middle);
-            roomsToBuild.add(RoomType.middle);
+            roomsToBuild.add(RoomType.MIDDLE);
+            roomsToBuild.add(RoomType.MIDDLE);
         }
         
         if(gameType == GameType.FFA) {
-            roomsToBuild.add(RoomType.normal);
+            roomsToBuild.add(RoomType.NORMAL);
         }else {
-            roomsToBuild.add(RoomType.spawn);
+            roomsToBuild.add(RoomType.SPAWN);
         }
         
         for(int i=1; i < maxRooms; i++) {
             double randInt = rand.nextDouble();
             if(randInt >= 0.66) {
-                roomsToBuild.add(RoomType.weapon);
+                roomsToBuild.add(RoomType.WEAPON);
             }else {
-                roomsToBuild.add(RoomType.normal);
+                roomsToBuild.add(RoomType.NORMAL);
             }
         }
         
@@ -118,20 +118,20 @@ public class MapGenerator extends ProceduralAreaGenerator {
         int width = grid.length;
         int height = grid[0].length;
         switch(rt){
-            case spawn :
+            case SPAWN :
                 int maxX = Math.max(width/4, room.getWidth()+1);
                 return setRoomPosition(room,0,0, maxX, height);
-            case weapon :
+            case WEAPON :
                 return setRoomPosition(room, width/4, height/4, width*3/4 , height*3/4);
-            case middle :
+            case MIDDLE :
                 return setRoomPosition(room, width-(room.getWidth()), 0, width+1, height);
-            default : return setRoomPosition(room, 0,0, width, height);
+            default:
+                return setRoomPosition(room, 0,0, width, height);
         }
     }
 
-    private boolean setRoomPosition(Room room, int minX, int minY ,
-                                    int maxX, int maxY) {
-        List<Point> candidates = new ArrayList<Point>();
+    private boolean setRoomPosition(Room room, int minX, int minY, int maxX, int maxY) {
+        List<Point> candidates = new ArrayList<>();
         for (int x = minX; x < maxX - room.getWidth(); x++) {
             for (int y = minY; y < maxY - room.getHeight(); y++) {
                 room.setRoomPosition(new Point(x, y));
@@ -247,6 +247,7 @@ public class MapGenerator extends ProceduralAreaGenerator {
                 grid[p.x][p.y] = AirTile.getInstance();
                 costGrid[p.x][p.y] = costGrid[p.x][p.y] * DOUBLE_PATH_COST_MODIFIER;
             }
+
         }
     }
 

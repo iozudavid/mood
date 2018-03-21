@@ -33,6 +33,8 @@ public class GameObjectManager {
      * they're destroyed.
      */
     private List<GameObject> notifyToDestroy;
+    
+    private boolean stillRuning=true;
 
     public GameObjectManager() {
         this.objects = new ArrayList<>();
@@ -51,6 +53,11 @@ public class GameObjectManager {
         synchronized (notifyToCreate) {
             notifyToCreate.add(g);
         }
+    }
+    
+    public void stop(){
+    	//hard to stop
+    	System.exit(0);
     }
 
     /**
@@ -74,7 +81,6 @@ public class GameObjectManager {
     protected void updateObjects() {
         // perform internal list management before updating.
         // as modifying a list whilst iterating over it is a very bad idea.
-
         synchronized (notifyToCreate) {
             for (GameObject obj : notifyToCreate) {
                 // add the object to the update list
@@ -96,7 +102,7 @@ public class GameObjectManager {
         }
         // update all objects
         for (GameObject obj : objects) {
-            obj.onUpdate();
+        	obj.onUpdate();
         }
     }
 

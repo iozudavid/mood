@@ -1,5 +1,7 @@
 package com.knightlore.render;
 
+import java.util.HashMap;
+
 import com.knightlore.render.font.Font;
 import com.knightlore.render.graphic.Graphic;
 
@@ -37,15 +39,15 @@ public class PixelBuffer {
      *            the colour to fill the pixel buffer with.
      */
     public void flood(int color) {
-    	 for (int yy = 0; yy < 0 + getHeight(); yy++) {
-             for (int xx = 0; xx < 0 + getWidth(); xx++) {
-                 if (!inBounds(xx, yy)) {
-                     continue;
-                 }
-                 pixels[xx + yy * WIDTH] = color;
-             }
-         }
-      //  fillRect(color, 0, 0, getWidth(), getHeight());
+        for (int yy = 0; yy < 0 + getHeight(); yy++) {
+            for (int xx = 0; xx < 0 + getWidth(); xx++) {
+                if (!inBounds(xx, yy)) {
+                    continue;
+                }
+                pixels[xx + yy * WIDTH] = color;
+            }
+        }
+        // fillRect(color, 0, 0, getWidth(), getHeight());
     }
 
     /**
@@ -248,7 +250,26 @@ public class PixelBuffer {
         }
     }
 
+    /**
+     * Draws a string on the pixel buffer.
+     * 
+     * @param font
+     *            the font to use.
+     * @param str
+     *            the string to render.
+     * @param x
+     *            the x-position of the top-left of the string.
+     * @param y
+     *            the y-position of the top-left of the string.
+     * @param scaling
+     *            the scale of the string.
+     * @param spacing
+     *            the spacing between letters.
+     */
     public void drawString(Font font, String str, int x, int y, double scaling, double spacing) {
+        if (!inBounds(x, y))
+            return;
+
         for (char c : str.toCharArray()) {
             Graphic g = font.getGraphic(c);
             this.drawGraphic(g, x, y, (int) (g.getWidth() * scaling), (int) (g.getHeight() * scaling));
@@ -256,7 +277,30 @@ public class PixelBuffer {
         }
     }
 
+    private HashMap<TextWidthCache, Integer> twCache = new HashMap<TextWidthCache, Integer>();
+
+    /**
+     * Computes the width of a string if it were to be rendered on the pixel
+     * buffer.
+     * 
+     * This is cached.
+     * 
+     * @param font
+     *            the font to use.
+     * @param str
+     *            the relevant string.
+     * @param scaling
+     *            the scale of the render.
+     * @param spacing
+     *            the spacing between letters.
+     * @return the width of the string on the pixel buffer.
+     */
     public int stringWidth(Font font, String str, double scaling, double spacing) {
+        TextWidthCache cached = new TextWidthCache(font, str, scaling, spacing);
+        if (twCache.containsKey(cached)) {
+            return twCache.get(cached);
+        }
+
         int width = 0;
         for (char c : str.toCharArray()) {
             Graphic g = font.getGraphic(c);
@@ -315,6 +359,20 @@ public class PixelBuffer {
 
     public int getHeight() {
         return HEIGHT;
+    }
+
+    private class TextWidthCache {
+        Font font;
+        String string;
+        double scaling;
+        double spacing;
+
+        public TextWidthCache(Font font, String string, double scaling, double spacing) {
+            this.font = font;
+            this.string = string;
+            this.scaling = scaling;
+            this.spacing = spacing;
+        }
     }
 
 }

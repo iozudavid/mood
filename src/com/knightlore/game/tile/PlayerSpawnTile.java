@@ -19,7 +19,7 @@ public class PlayerSpawnTile extends Tile {
     private final Team team;
     private Vector2D pushVector = new Vector2D(0,0);
     
-    private static TimedAnimation<Graphic> RED_LAVA_ANIM = new TimedAnimation<Graphic>(
+    private static final TimedAnimation<Graphic> RED_LAVA_ANIM = new TimedAnimation<Graphic>(
             (long) (GameEngine.UPDATES_PER_SECOND / 4));
     static {
         RED_LAVA_ANIM.addFrame(Texture.RED_LAVA_F1);
@@ -29,7 +29,7 @@ public class PlayerSpawnTile extends Tile {
         GameEngine.ticker.addTickListener(RED_LAVA_ANIM);
     }
     
-    private static TimedAnimation<Graphic> BLUE_LAVA_ANIM = new TimedAnimation<Graphic>(
+    private static final TimedAnimation<Graphic> BLUE_LAVA_ANIM = new TimedAnimation<Graphic>(
             (long) (GameEngine.UPDATES_PER_SECOND / 4));
     static {
         BLUE_LAVA_ANIM.addFrame(Texture.BLUE_LAVA_F1);
@@ -72,10 +72,14 @@ public class PlayerSpawnTile extends Tile {
         }
         return Texture.BUSH;
     }
+
+    @Override
+    public double getCost() {
+        return 100 / (1D - getSolidity());
+    }
     
     @Override
     public double getOpacity() {
-        //return 0.5 + (Math.sin(GameEngine.ticker.getTime() * 0.05)) / 4;
         return 0.2 + (Math.sin(GameEngine.ticker.getTime() * 0.05)) / 4;
     }
 

@@ -1,18 +1,17 @@
 package com.knightlore.game.world;
 
+import java.util.Iterator;
 import java.util.List;
 
 import com.knightlore.ai.BotInput;
-import com.knightlore.ai.TurretServer;
-import com.knightlore.ai.TurretShared;
 import com.knightlore.game.FFAGame;
 import com.knightlore.game.Player;
 import com.knightlore.game.entity.Entity;
 import com.knightlore.game.entity.SpectatorCamera;
-import com.knightlore.game.entity.pickup.ShotgunPickup;
+import com.knightlore.game.entity.ZombieServer;
+import com.knightlore.utils.Vector2D;
 import com.knightlore.utils.physics.RaycastHit;
 import com.knightlore.utils.physics.RaycastHitType;
-import com.knightlore.utils.Vector2D;
 
 public class ServerWorld extends GameWorld {
 
@@ -24,12 +23,12 @@ public class ServerWorld extends GameWorld {
         buildEntities();
     }
 
-    public void buildEntities() {
-        
-        // add the mobs
-        //ZombieServer zom = new ZombieServer(map.getRandomSpawnPoint());
-        //zom.init();
-        //ents.add(zom);
+    private void buildEntities() {
+        for (int i = 0; i < 10; i++) {
+            ZombieServer zom = new ZombieServer(map.getRandomSpawnPoint());
+            zom.init();
+        }
+
         //TurretShared tboi = new TurretServer(3, map.getRandomSpawnPoint(), Vector2D.UP);
         //tboi.init();
         for (int i = 0; i < 5; i++) {
@@ -42,14 +41,16 @@ public class ServerWorld extends GameWorld {
 
         SpectatorCamera cam = new SpectatorCamera(new Vector2D(10, 20), Vector2D.UP);
         cam.init();
-        ents.add(cam);
+        this.addEntity(cam);
     }
 
     @Override
     public void update() {
         super.update();
         for (Player player : playerManager.getPlayers()) {
-            for (Entity ent : ents) {
+            Iterator<Entity> it = this.getEntityIterator();
+            while (it.hasNext()) {
+                Entity ent = it.next();
                 if (player.getBoundingRectangle().intersects(ent.getBoundingRectangle())) {
                     ent.onCollide(player);
                 }
@@ -58,14 +59,9 @@ public class ServerWorld extends GameWorld {
     }
 
     @Override
-    /**
-     * Casts a ray against all world, entities and players. Returns a structure
-     * holding information about what was hit
-     */
     public RaycastHit raycast(Vector2D pos, Vector2D direction, int segments, double maxDist, Entity ignore) {
         if (segments <= 0) {
-            System.err.println("can't raycast with <= 0 segments");
-            return null;
+            throw new IllegalStateException("can't raycast with <= 0 segments");
         }
 
         Vector2D step = Vector2D.mul(direction.normalised(), maxDist / segments);
@@ -97,7 +93,9 @@ public class ServerWorld extends GameWorld {
             }
 
             // now against entities
-            for (Entity ent : ents) {
+            Iterator<Entity> it = this.getEntityIterator();
+            while (it.hasNext()) {
+                Entity ent = it.next();
                 if (ent == ignore) {
                     continue;
                 }

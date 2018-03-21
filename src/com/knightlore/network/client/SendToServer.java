@@ -15,6 +15,7 @@ import com.knightlore.network.NetworkObject;
 import com.knightlore.network.protocol.ClientController;
 import com.knightlore.network.protocol.ClientProtocol;
 import com.knightlore.network.protocol.NetworkUtils;
+import com.knightlore.render.GameFeed;
 
 public class SendToServer implements Runnable {
     // How many times PER SECOND to check for new state, and send it if
@@ -164,8 +165,15 @@ public class SendToServer implements Runnable {
         this.currentState = getCurrentControlState(this.packetNumber);
         this.packetNumber++;
         this.lastState = this.currentState;
+        int lastHealth = player.getCurrentHealth();
 
         while (!conn.terminated) {
+        	int currentHealth = player.getCurrentHealth();
+        	if(currentHealth<lastHealth){
+        		GameFeed.getInstance().printlnDamage("-"+(lastHealth-currentHealth));
+        		lastHealth = currentHealth;
+        	}else
+        		lastHealth = currentHealth;
             synchronized (this.currentState) {
                 this.currentState = getCurrentControlState(this.packetNumber);
                 this.packetNumber++;
@@ -173,6 +181,7 @@ public class SendToServer implements Runnable {
             this.tick();
 
         }
+        this.manager.getMyPlayer().destroy();
     }
 
     /**

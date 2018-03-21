@@ -8,24 +8,24 @@ import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.LinkedBlockingQueue;
 
-import com.knightlore.engine.GameEngine;
-import com.knightlore.engine.TickListener;
-import com.knightlore.game.buff.Buff;
-import com.knightlore.game.buff.Immune;
 import com.google.common.collect.ImmutableMap;
 import com.knightlore.GameSettings;
 import com.knightlore.ai.InputModule;
 import com.knightlore.ai.RemoteInput;
+import com.knightlore.engine.GameEngine;
 import com.knightlore.game.entity.Entity;
 import com.knightlore.game.entity.weapon.Shotgun;
 import com.knightlore.game.entity.weapon.Weapon;
 import com.knightlore.network.NetworkObject;
 import com.knightlore.network.NetworkObjectManager;
+import com.knightlore.network.client.ClientNetworkObjectManager;
 import com.knightlore.network.protocol.ClientController;
 import com.knightlore.network.protocol.ClientProtocol;
 import com.knightlore.network.protocol.NetworkUtils;
+import com.knightlore.render.GameFeed;
 import com.knightlore.render.PixelBuffer;
 import com.knightlore.render.animation.Animation;
 import com.knightlore.render.animation.PlayerMoveAnimation;
@@ -107,6 +107,18 @@ public class Player extends Entity {
 
     public Player(Vector2D pos, Vector2D dir) {
         this(UUID.randomUUID(), pos, dir);
+    }
+    
+    public void sendStatsToScoreBoard(){
+    	if(GameSettings.isServer())
+    		return;
+        //add to scoreboard
+        CopyOnWriteArrayList<String> stats = new CopyOnWriteArrayList<>();
+        stats.add(this.getObjectId().toString());
+        stats.add(this.getName());
+        stats.add(this.team.toString());
+        stats.add(this.score+"");
+        GameEngine.getSingleton().getDisplay().getChat().addToTable(stats);
     }
 
     @Override
@@ -218,6 +230,7 @@ public class Player extends Entity {
     @Override
     public void onUpdate() {
         super.onUpdate();
+        this.sendStatsToScoreBoard();
 
         hasShot = false;
         if (shootOnNextUpdate) {
@@ -269,7 +282,7 @@ public class Player extends Entity {
             inertiaY = 0;
             return;
         }
-        final double p = 0.1D;
+        final double p = 0.07D;
         inertiaX += (int) (p * -inertiaX);
         inertiaY += (int) (p * -inertiaY);
         Vector2D temp = new Vector2D(plane.getX() / plane.magnitude(), plane.getY() / plane.magnitude());
@@ -350,7 +363,7 @@ public class Player extends Entity {
 
     @Override
     public void takeDamage(int damage, Entity inflictor) {
-        if(GameSettings.isClient()) {
+        if(GameSettings.isClient()) {        
             return;
         }
         damage = (int) (damage * damageTakenModifier);
@@ -390,6 +403,7 @@ public class Player extends Entity {
         }
 
         score += value;
+        this.sendStatsToScoreBoard();
     }
 
     public void decreaseScore(int value) {
@@ -398,6 +412,7 @@ public class Player extends Entity {
         }
 
         score -= value;
+        this.sendStatsToScoreBoard();
     }
 
     public int getScore() {
@@ -460,6 +475,11 @@ public class Player extends Entity {
 
     public void setHealth(int h) {
         this.currentHealth = h;
+    }
+    
+    @Override
+    public boolean renderName() {
+        return true;
     }
 
 }

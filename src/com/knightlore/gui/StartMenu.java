@@ -2,6 +2,7 @@ package com.knightlore.gui;
 
 import com.knightlore.engine.GameEngine;
 import com.knightlore.engine.GameState;
+import com.knightlore.engine.StartServer;
 import com.knightlore.network.ConnectionDetails;
 import com.knightlore.render.PixelBuffer;
 import com.knightlore.utils.funcptrs.VoidFunction;
@@ -38,19 +39,44 @@ public class StartMenu {
 		this.quitButton.setGraphic(new Image(0,0,0,0,"res/graphics/quit_to_right.png").graphic);
 		this.quitButton.setGraphic2(new Image(0,0,0,0,"res/graphics/quit_to_left.png").graphic);
 		
-		this.singlePlayerButton.clickFunction = () -> {
-            //start new session
-            //on the local machine
-            ConnectionDetails.SERVER_HOSTNAME = "localhost";
-            //remove this gui
-            StartMenu.this.gui.destroy();
-            GameEngine.getSingleton().gameState = GameState.InGame;
+		this.singlePlayerButton.clickFunction = new VoidFunction() {
+			
+			@Override
+			public void call() {
+				//start new session
+				//on the local machine
+				ConnectionDetails.SERVER_HOSTNAME = "localhost";
+				ConnectionDetails.PORT=5000;
+				//remove this gui
+				StartMenu.this.gui.destroy();
+				GameEngine.getSingleton().startGame();
+			}
+		};
+		
+		this.settingsButton.clickFunction = new VoidFunction() {
+            
+            @Override
+            public void call() {
+                StartMenu.this.gui.destroy();
+                GameEngine.getSingleton().gameState = GameState.SettingsMenu;
+            }
         };
 		
-		this.multiPlayerButton.clickFunction = () -> {
-            StartMenu.this.gui.destroy();
-            GameEngine.getSingleton().gameState = GameState.MultiplayerMenu;
-        };
+		this.multiPlayerButton.clickFunction = new VoidFunction(){
+			@Override
+			public void call(){
+				StartMenu.this.gui.destroy();
+				GameEngine.getSingleton().gameState = GameState.MultiplayerMenu;
+			}
+		};
+		
+		this.quitButton.clickFunction = new VoidFunction() {
+			
+			@Override
+			public void call() {
+				GameEngine.getSingleton().stop();
+			}
+		};
 		
 		gui.addGUIObject(coverImage);
 		gui.addGUIObject(name);

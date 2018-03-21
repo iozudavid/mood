@@ -33,6 +33,11 @@ public class TurretTile extends Tile {
     }
 
     @Override
+    public double getCost() {
+        return 10D / (1D - getSolidity());
+    }
+
+    @Override
     public void onEntered(Entity entity) {
     }
 

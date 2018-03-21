@@ -78,7 +78,7 @@ public abstract class Entity extends NetworkObject implements IMinimapObject, Ti
 
     // cannot have invalid values
     // anyone can set a team and get a team
-    public Team team;
+    public Team team=Team.NONE;
 
     /**
      * Used for rendering exclusively. A higher zOffset means that the entities
@@ -546,7 +546,14 @@ public abstract class Entity extends NetworkObject implements IMinimapObject, Ti
         return (long) GameEngine.UPDATES_PER_SECOND / 16;
     }
     
-    public void sendSystemMessage(String name, Entity inflictor){
+    public void sendSystemMessage(String message){
+    	ByteBuffer bf = ByteBuffer.allocate(NetworkObject.BYTE_BUFFER_DEFAULT_SIZE);
+    	NetworkUtils.putStringIntoBuf(bf, NetworkObjectManager.MANAGER_UUID.toString());
+    	NetworkUtils.putStringIntoBuf(bf, "displayMessage");
+    	NetworkUtils.putStringIntoBuf(bf, message);
+    }
+
+    protected void sendSystemMessage(String name, Entity inflictor){
         String message;
         if(inflictor == null) {
             message = "System: " + name + " was killed by natural causes";
@@ -559,6 +566,7 @@ public abstract class Entity extends NetworkObject implements IMinimapObject, Ti
     	NetworkUtils.putStringIntoBuf(bf, message);
     	this.systemMessages.offer(bf);
     }
+    
     
     public Optional<ByteBuffer> getSystemMessages(){
     	if(this.systemMessages.isEmpty()) {
@@ -580,4 +588,9 @@ public abstract class Entity extends NetworkObject implements IMinimapObject, Ti
     public void setName(String name) {
         this.name = name;
     }
+    
+    public boolean renderName() {
+        return false;
+    }
+    
 }

@@ -1,12 +1,9 @@
 package com.knightlore.game.tile;
 
-import com.knightlore.game.Player;
 import com.knightlore.render.graphic.Graphic;
 import com.knightlore.render.graphic.texture.Texture;
 import com.knightlore.game.entity.Entity;
-import com.knightlore.game.entity.pickup.PickupItem;
 import com.knightlore.game.entity.pickup.PickupType;
-import com.knightlore.game.entity.weapon.*;
 
 public class PickupTile extends Tile {
 

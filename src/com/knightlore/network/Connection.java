@@ -42,26 +42,23 @@ public abstract class Connection implements Runnable, Prunable {
     public void run() {
         // Receive packets and put them into the blocking queue, ready to be
         // taken.
-        while (true) {
+        while (!this.terminated) {
             ByteBuffer packet = Connection.this.receiveBlocking();
-            if (packet == null) {
-                this.terminated = true;
-                System.err.println("Connection terminated.");
-                break;
-            }
+            if (packet == null)
+                continue;
             try {
                 packets.put(packet);
             } catch (InterruptedException e) {
                 this.terminated = true;
-                System.err.println("Thread interrupted while receiving packet: ");
-                break;
+                System.err
+                        .println("Thread interrupted while receiving packet: ");
             }
         }
     }
-    
+
     @Override
     public boolean exists() {
         return terminated;
     }
-    
+
 }

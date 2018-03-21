@@ -11,7 +11,6 @@ import com.knightlore.game.tile.Tile;
 import com.knightlore.utils.Vector2D;
 
 public class Map extends Area {
-    // TODO: read in maps from file
     private final long seed;
 
     public Map(Tile[][] grid, long seed) {
@@ -54,11 +53,12 @@ public class Map extends Area {
                 if(currentTile.getTeam() != team) {
                     continue;
                 }
+
                 candidates.add(new Vector2D(i + 0.5, j + 0.5));
             }
         }
         
-        if(candidates.size() == 0) {
+        if(candidates.isEmpty()) {
             return getRandomSpawnPoint();
         }
         Random rand = new Random();

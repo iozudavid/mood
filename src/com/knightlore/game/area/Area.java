@@ -33,15 +33,7 @@ public abstract class Area implements Serializable {
         for (int i = 0; i < width; i++) {
             for (int j = 0; j < height; j++) {
                 Tile tile = grid[i][j];
-                if (tile.getSolidity() >= 1) {
-                    costGrid[i][j] = Double.POSITIVE_INFINITY;
-                } else if(tile instanceof PlayerSpawnTile) {
-                    costGrid[i][j] = Double.POSITIVE_INFINITY;
-                }else if(tile instanceof LavaTile){
-                    costGrid[i][j] = LAVA_TILE_COST;
-                } else {
-                    costGrid[i][j] = 1 / (1 - tile.getSolidity());
-                }
+                costGrid[i][j] = tile.getCost();
             }
         }
         return costGrid;

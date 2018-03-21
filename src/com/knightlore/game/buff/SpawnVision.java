@@ -1,14 +1,13 @@
 package com.knightlore.game.buff;
 
 import com.knightlore.GameSettings;
-import com.knightlore.engine.GameEngine;
 import com.knightlore.game.entity.Entity;
 
 public class SpawnVision extends Buff {
 
-    private static final double SPAWN_VISION_FREQUENCY = 1/32d;
-    private static final double SPAWN_VISION_LENGTH = 1;
-    
+    private static final double SPAWN_VISION_FREQUENCY = 1 / 32d;
+    private static final double SPAWN_VISION_LENGTH = 8;
+
     public SpawnVision(Entity ent) {
         super(ent, SPAWN_VISION_FREQUENCY, SPAWN_VISION_LENGTH);
     }
@@ -22,10 +21,10 @@ public class SpawnVision extends Buff {
     @Override
     protected void periodicEffect() {
         double delta;
-        delta = GameSettings.desiredBlockiness - GameSettings.actualBlockiness; 
-        
-        final double pp = 0.01;
-        GameSettings.actualBlockiness += pp*delta;
+        delta = GameSettings.desiredBlockiness - GameSettings.actualBlockiness;
+
+        final double pp = 0.02;
+        GameSettings.actualBlockiness += pp * delta;
     }
 
     @Override
@@ -44,6 +43,11 @@ public class SpawnVision extends Buff {
     public String toString() {
         // TODO Auto-generated method stub
         return "BLOCKINESS";
+    }
+    
+    @Override
+    protected boolean finished() {
+        return GameSettings.actualBlockiness == GameSettings.desiredBlockiness;
     }
 
 }

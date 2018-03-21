@@ -20,7 +20,7 @@ public abstract class Tile implements Serializable {
      * We calculate the minimap colour of any tile by simply averaging the
      * colours in the corresponding texture. This can be overridden.
      */
-    private int minimapColor = ColorUtils.averageColor(getWallTexture().getPixels());
+    private final int minimapColor = ColorUtils.averageColor(getWallTexture().getPixels());
 
     /**
      * Gets the wall texture of this tile.
@@ -73,6 +73,23 @@ public abstract class Tile implements Serializable {
      */
     public double getSolidity() {
         return 1D;
+    }
+
+    /**
+     * Gets the cost of moving throught the tile. E.g. moving through walls is
+     * impossible hence infinite cost and moving through lava tile is much more
+     * costly then moving through empty air tile
+     *
+     * Completely solid (1D) by default.
+     *
+     * @return the solidity of the tile
+     */
+    public double getCost() {
+        if (getSolidity() >= 1D) {
+            return Double.POSITIVE_INFINITY;
+        }
+
+        return 1D / (1D - getSolidity());
     }
 
     /**

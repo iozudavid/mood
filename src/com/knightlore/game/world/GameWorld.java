@@ -9,37 +9,34 @@ import com.knightlore.ai.AIManager;
 import com.knightlore.game.GameManager;
 import com.knightlore.game.GameType;
 import com.knightlore.game.PlayerManager;
-
 import com.knightlore.game.area.Map;
 import com.knightlore.game.area.generation.MapGenerator;
 import com.knightlore.game.entity.Entity;
-
-import com.knightlore.game.entity.pickup.PickupManager;
+import com.knightlore.utils.Vector2D;
 import com.knightlore.utils.physics.Physics;
 import com.knightlore.utils.physics.RaycastHit;
 import com.knightlore.utils.physics.RaycastHitType;
-import com.knightlore.utils.Vector2D;
 
 public abstract class GameWorld {
 
-    protected static final int TEST_XSIZE = 40;  //16;
-    protected static final int TEST_YSIZE = 60;  //32;
-    protected static final long TEST_SEED = 47L; //25L;
+    private static final int TEST_XSIZE = 40;  //16;
+    private static final int TEST_YSIZE = 60;  //32;
+    private static final long TEST_SEED = 47L; //25L;
     
     protected Map map;
     protected PlayerManager playerManager;
     protected GameManager gameManager = null;
-    protected AIManager aiManager;
-    protected List<Entity> ents;
+    private AIManager aiManager;
+    private List<Entity> ents;
     
-    private ConcurrentLinkedQueue<Entity> entsToAdd = new ConcurrentLinkedQueue<Entity>();
-    private ConcurrentLinkedQueue<Entity> entsToRemove = new ConcurrentLinkedQueue<Entity>();
+    private final ConcurrentLinkedQueue<Entity> entsToAdd = new ConcurrentLinkedQueue<Entity>();
+    private final ConcurrentLinkedQueue<Entity> entsToRemove = new ConcurrentLinkedQueue<Entity>();
 
     public void update() {
-        while(entsToAdd.peek() != null) {
+        while (entsToAdd.peek() != null) {
             ents.add(entsToAdd.poll());
         }
-        while(entsToRemove.peek() != null) {
+        while (entsToRemove.peek() != null) {
             ents.remove(entsToRemove.poll());
         }
     }
@@ -47,39 +44,39 @@ public abstract class GameWorld {
     private Map generateMap(int xSize, int ySize, GameType gt, long seed) {
         return new MapGenerator().createMap(xSize, ySize, gt, seed);
     }
-    
+
     public Map getMap() {
         return map;
     }
-    
+
     public PlayerManager getPlayerManager() {
         return playerManager;
     }
-    
+
     public AIManager getAiManager() {
         return aiManager;
     }
-    
-    public Iterator<Entity> getEntityIterator(){
+
+    public Iterator<Entity> getEntityIterator() {
         return ents.iterator();
     }
-    
+
     /**
      * 
      * @returns a copy of the entities stored as an array
      */
-    public Entity[] getEntityArray () {
+    public Entity[] getEntityArray() {
         return ents.toArray(new Entity[0]);
     }
-    
+
     public void addEntity(Entity ent) {
         entsToAdd.offer(ent);
     }
-    
+
     public void removeEntity(Entity ent) {
         entsToRemove.offer(ent);
     }
-    
+
     /**
      * Populate the world with things initially.
      * 
@@ -95,19 +92,19 @@ public abstract class GameWorld {
         aiManager = new AIManager(map);
         playerManager = new PlayerManager();
     }
-    
+
     public RaycastHit raycast(Vector2D pos, Vector2D direction, int segments, double maxDist, Entity ignore) {
         if (segments <= 0) {
             System.err.println("can't raycast with <= 0 segments");
             return null;
         }
         direction = direction.normalised();
-        
+
         Vector2D step = Vector2D.mul(direction.normalised(), maxDist / segments);
-        
+
         Vector2D p = pos;
         int x, y;
-        
+
         for (int i = 0; i < segments; i++) {
             x = (int) p.getX();
             y = (int) p.getY();
@@ -125,7 +122,7 @@ public abstract class GameWorld {
             }
             p = p.add(step);
         }
-        
+
         return new RaycastHit(RaycastHitType.NOTHING, Vector2D.ZERO, null);
     }
 
@@ -138,5 +135,5 @@ public abstract class GameWorld {
     }
 
     public abstract void onPostEngineInit();
-    
+
 }

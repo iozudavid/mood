@@ -72,5 +72,5 @@ public class MainWindow extends JFrame {
         GraphicsDevice device = gd.getDefaultScreenDevice();
         device.setFullScreenWindow(this);
     }
-
+    
 }
