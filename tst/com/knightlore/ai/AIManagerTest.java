@@ -16,7 +16,7 @@ import static org.mockito.Mockito.when;
 public class AIManagerTest {
 
     @Test
-    public void findPath() {
+    public void findRawPath() {
         // Given
         Map map = mock(Map.class);
         when(map.getCostGrid()).thenReturn(new double[][]{
@@ -36,9 +36,15 @@ public class AIManagerTest {
                 new Point(0, 2), new Point(0, 3), new Point(0, 4), new Point(1, 4),
                 new Point(1, 5), new Point(2, 5), new Point(2,6)
         );
-        List<Point> path = manager.findPath(start, end);
+        List<Point> path = manager.findRawPath(start, end);
 
         // Then
         assertThat(path, is(expectedPath));
+    }
+
+    @Test
+    public void pruneUnnecessaryNodes() {
+        // TODO power mock
+
     }
 }

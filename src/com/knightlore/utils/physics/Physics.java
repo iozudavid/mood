@@ -124,9 +124,8 @@ public class Physics {
      * @return TRUE if there is something in the way
      */
     public static boolean linecastQuick(Vector2D start, Vector2D end, int segments) {
-        
         if(segments < 1) {
-            return false;
+            throw new IllegalStateException("can't linecast with <= 0 segments");
         }
         
         Map m = GameEngine.getSingleton().getWorld().getMap();
