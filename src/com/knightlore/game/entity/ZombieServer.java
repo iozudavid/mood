@@ -1,5 +1,6 @@
 package com.knightlore.game.entity;
 
+import com.knightlore.ai.AIManager;
 import com.knightlore.engine.GameEngine;
 import com.knightlore.game.Player;
 import com.knightlore.game.world.GameWorld;
@@ -13,9 +14,9 @@ import java.util.stream.Collectors;
 public class ZombieServer extends ZombieShared {
     private static final double DIRECTION_DIFFERENCE_TO_TURN = 0.1d;
     private static final long THINKING_FREQUENCY = 1000; // ms
-    private static final int MAX_HEALTH = 10;
-    private static final int DAMAGE = 100;
-    private static final int ATTACK_RANGE = 1;
+    private static final int MAX_HEALTH = 100;
+    private static final int DAMAGE = 20;
+    private static final double ATTACK_RANGE = 1D;
     
     private final GameWorld world = GameEngine.getSingleton().getWorld();
     private long lastThinkingTime = 0;
@@ -44,9 +45,10 @@ public class ZombieServer extends ZombieShared {
     }
     
     private void think() {
+        AIManager aiManager = world.getAiManager();
         List<Player> players = world.getPlayerManager().getPlayers();
         List<List<Point>> pathsToPlayers = players.stream()
-                .map(player -> world.getAiManager().findPath(this.position, player.getPosition()))
+                .map(player -> aiManager.findRawPath(this.position, player.getPosition()))
                 .collect(Collectors.toList());
         
         if (pathsToPlayers.isEmpty()) {
@@ -63,11 +65,11 @@ public class ZombieServer extends ZombieShared {
             }
         }
         
-        currentPath = shortestPath;
-        System.out.println("current path size" + currentPath.size());
-        if (currentPath.size() <= ATTACK_RANGE) {
+        currentPath = aiManager.pruneUnnecessaryNodes(shortestPath);
+        double distance = closestPlayer.getPosition().distance(this.position);
+        if (distance <= ATTACK_RANGE) {
             closestPlayer.takeDamage(DAMAGE, this);
-            System.out.println("Zombie attacked");
+            System.out.println("Zombie attacked " + closestPlayer.getName());
         }
         
         lastThinkingTime = System.currentTimeMillis();
