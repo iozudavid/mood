@@ -24,7 +24,6 @@ public class GUICanvas extends GameObject implements IRenderable {
 	static TextField gameTextField;
 	
 	private final List<GUIObject> guis;
-	private Graphics2D canvasG2D;
 	// the object that was selected when the mouse was pressed down
 	private GUIObject downSelected;
 	private GUIObject focussed;
@@ -130,7 +129,6 @@ public class GUICanvas extends GameObject implements IRenderable {
 	
 	@Override
 	public void render(PixelBuffer pix, int x, int y) {
-		canvasG2D.setColor(BACKGROUND_COLOR);
 		for (GUIObject gui : guis) {
 			gui.Draw(pix,x,y);
 		}
@@ -212,7 +210,6 @@ public class GUICanvas extends GameObject implements IRenderable {
 	@Override
 	public void onDestroy() {
 		guis.clear();
-		canvasG2D.dispose();
 	}
 	
 	private void sort() {
