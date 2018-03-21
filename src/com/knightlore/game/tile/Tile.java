@@ -30,6 +30,12 @@ public abstract class Tile implements Serializable {
     public abstract Graphic getWallTexture();
 
     /**
+     * Indicates whether this is overridden in procedural
+     * generation when a path is placed
+     */
+    protected boolean pathable = true;
+    
+    /**
      * Gets the floor texture of this tile. By default, this just returns the
      * wall texture.
      * 
@@ -133,8 +139,17 @@ public abstract class Tile implements Serializable {
 
     public abstract Tile copy();
 
+    public void setPathable(boolean b) {
+        pathable = b;
+    }
+    
+    public boolean overiddenByPath() {
+        return pathable;
+    }
+    
     @Override
     public boolean equals(Object o) {
         return (this == o || o.getClass().equals(this.getClass()));
     }
+    
 }
