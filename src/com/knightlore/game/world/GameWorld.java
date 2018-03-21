@@ -40,10 +40,6 @@ public abstract class GameWorld {
         }
     }
     
-    private Map generateMap(int xSize, int ySize, long seed) {
-        return new MapGenerator().createMap(xSize, ySize, seed);
-    }
-    
     public Map getMap() {
         return map;
     }
