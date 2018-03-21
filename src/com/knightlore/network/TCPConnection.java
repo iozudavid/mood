@@ -5,7 +5,6 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
 import java.nio.ByteBuffer;
-import java.util.Arrays;
 
 /*
  * Basic network connection
@@ -17,7 +16,7 @@ public class TCPConnection extends Connection {
     private DataInputStream infoReceive;
     private DataOutputStream infoSend;
     private Socket socket;
-
+    
     public TCPConnection(Socket socket) {
         this.socket = socket;
         try {
@@ -56,10 +55,8 @@ public class TCPConnection extends Connection {
                 }
                 // Copy buffer contents to avoid rewinding buffer (which has
                 // side-effects and changes the pointer of the buffer).
-                byte[] tmp = Arrays.copyOfRange(data.array(), 0, dataLength);
-
                 infoSend.writeInt(dataLength);
-                infoSend.write(tmp);
+                infoSend.write(data.array(), 0, dataLength);
             } catch (IOException e) {
                 System.err.println("Communication broke...");
                 this.terminated = true;
@@ -79,8 +76,9 @@ public class TCPConnection extends Connection {
                     return null;
                 }
                 byte[] tmp = new byte[size];
-                infoReceive.readFully(tmp);
-                return ByteBuffer.wrap(tmp);
+                // Reuse the same byte arrays to avoid heap thrashing.
+                infoReceive.read(tmp, 0, size);
+                return ByteBuffer.wrap(tmp, 0, size);
             } catch (IOException e) {
                 System.err.println("Communication broke...");
                 this.terminated = true;
