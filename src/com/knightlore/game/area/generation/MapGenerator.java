@@ -12,7 +12,6 @@ import com.knightlore.game.area.Map;
 import com.knightlore.game.area.Room;
 import com.knightlore.game.area.RoomType;
 import com.knightlore.game.tile.AirTile;
-import com.knightlore.game.tile.BreakibleTile;
 import com.knightlore.game.tile.BrickTile;
 import com.knightlore.game.tile.MossBrickTile;
 import com.knightlore.game.tile.PathTile;
@@ -102,7 +101,7 @@ public class MapGenerator extends ProceduralAreaGenerator {
         // TODO: modify this for different rooms types
         int width = grid.length;
         int height = grid[0].length;
-        switch(rt){
+        switch(rt) {
             case SPAWN:
                 return setRoomPosition(room,0,0, width/4, height);
             case WEAPON:
@@ -111,13 +110,13 @@ public class MapGenerator extends ProceduralAreaGenerator {
                 return setRoomPosition(room, width/4, height/4, width, height);
             case MIDDLE:
                 return setRoomPosition(room, width-(room.getWidth()), 0, width+1, height);
-            default : return setRoomPosition(room, 0,0, width, height);
+            default:
+                return setRoomPosition(room, 0,0, width, height);
         }
     }
 
-    private boolean setRoomPosition(Room room, int minX, int minY ,
-                                    int maxX, int maxY) {
-        List<Point> candidates = new ArrayList<Point>();
+    private boolean setRoomPosition(Room room, int minX, int minY, int maxX, int maxY) {
+        List<Point> candidates = new ArrayList<>();
         for (int x = minX; x < maxX - room.getWidth(); x++) {
             for (int y = minY; y < maxY - room.getHeight(); y++) {
                 room.setRoomPosition(new Point(x, y));
@@ -238,10 +237,6 @@ public class MapGenerator extends ProceduralAreaGenerator {
             }
             
             if(currentTile instanceof PickupTile) {
-                continue;
-            }
-            
-            if(currentTile == BreakibleTile.getInstance()) {
                 continue;
             }
             
