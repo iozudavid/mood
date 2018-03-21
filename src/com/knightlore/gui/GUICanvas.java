@@ -124,7 +124,6 @@ public class GUICanvas extends GameObject implements IRenderable {
 	
 	public static void releaseQ(){
 		if(onReleaseQ.isPresent()){
-			System.out.println("HEREEEE");
 			onReleaseQ.get().call();
 		}
 	}
@@ -173,6 +172,7 @@ public class GUICanvas extends GameObject implements IRenderable {
 	@Override
 	public void onUpdate() {
 		Vector2D mousePos = InputManager.getMousePos();
+		System.out.println(mousePos);
 		GUIObject selected = null;
 		// linear reverse search
 		for (int i = guis.size() - 1; i >= 0; i--) {

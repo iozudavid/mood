@@ -14,7 +14,7 @@ public class Slider extends GUIObject {
     public Color downColour = Color.BLACK;
 
     private Rectangle sliderPos;
-    private final float defaultValue = 0.2f;
+    private final float defaultValue = 0.8f;
     private float actualValue = defaultValue;
     private SelectState state = SelectState.UP;
     private boolean isClicked=false;
@@ -112,6 +112,10 @@ public class Slider extends GUIObject {
             float procent = (float) (distanceFromStart/allDistance);
             this.actualValue = procent;
         }
+    }
+    
+    public float getValue(){
+        return this.actualValue;
     }
     
 }

@@ -2,8 +2,11 @@ package com.knightlore.gui;
 
 import java.util.ArrayList;
 
+import com.knightlore.GameSettings;
+import com.knightlore.engine.GameEngine;
 import com.knightlore.render.PixelBuffer;
 import com.knightlore.render.Renderer;
+import com.knightlore.utils.funcptrs.VoidFunction;
 
 public class SettingsMenu {
 
@@ -20,6 +23,9 @@ public class SettingsMenu {
     private Group soundGroup;
     private Text soundText;
     private Slider soundSlider;
+    private Group bobGroup;
+    private Text bobText;
+    private CheckBox bobCheckBox;
     private Button applyButton;
     private Button cancelButton;
 
@@ -70,14 +76,39 @@ public class SettingsMenu {
         this.gui.addGUIObject(soundText);
         this.gui.addGUIObject(soundSlider);
         
-        this.cancelButton = new Button(GuiUtils.middleWidth(this.screenWidth/2, 300), GuiUtils.calculateHeight(this.screenHeight, 80), 300, 40, "Cancel",20);
-        this.applyButton = new Button((int)(GuiUtils.middleWidth(this.screenWidth/2, 300)+this.screenWidth/2), GuiUtils.calculateHeight(this.screenHeight, 80), 300, 40, "Apply",20);
+        this.bobText = new Text((int)(this.blockinessGroup.getRectangle().getX())+50,
+                GuiUtils.calculateHeight(this.screenHeight, 74.5f), 100, 20, "Motion bob: ", 20);
+        this.bobCheckBox = new CheckBox((int)(this.bobText.getRectangle().getX()+(int)(this.bobText.getRectangle().getWidth())+90+this.soundSlider.getRectangle().getWidth()/2D),
+                (int)(this.bobText.getRectangle().getHeight()/2D)+(int)(this.bobText.getRectangle().getY())-5, 20, 20, 0, true);
+        ArrayList<GUIObject> bobBlock = new ArrayList<>();
+        bobBlock.add(bobText);
+        bobBlock.add(bobCheckBox);
+        double bobDiff = this.soundSlider.getRectangle().getWidth()*133.5;
+        this.bobGroup = new Group(GuiUtils.minX(bobBlock), GuiUtils.minY(bobBlock), bobBlock, 0, bobDiff * 0.01, screenHeight);
+        this.gui.addGUIObject(bobGroup);
+        this.gui.addGUIObject(bobText);
+        this.gui.addGUIObject(bobCheckBox);
+        
+        this.cancelButton = new Button(GuiUtils.middleWidth(this.screenWidth/2, 300), GuiUtils.calculateHeight(this.screenHeight, 85), 300, 40, "Cancel",20);
+        this.applyButton = new Button((int)(GuiUtils.middleWidth(this.screenWidth/2, 300)+this.screenWidth/2), GuiUtils.calculateHeight(this.screenHeight, 85), 300, 40, "Apply",20);
         this.gui.addGUIObject(applyButton);
         this.gui.addGUIObject(cancelButton);
+        
+        this.applyButton.clickFunction = new VoidFunction() {
+            
+            @Override
+            public void call() {
+                GameSettings.MOTION_BOB = SettingsMenu.this.bobCheckBox.getBobingMode();
+                GameEngine.getSingleton().setVolume(SettingsMenu.this.soundSlider.getValue());
+                
+            }
+        };
+        
     }
 
     public void render(PixelBuffer pix, int x, int y) {
         this.gui.render(pix, x, y);
     }
+    
 
 }

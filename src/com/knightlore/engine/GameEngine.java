@@ -53,6 +53,7 @@ public class GameEngine implements Runnable {
     private Camera camera;
     public GameState gameState = GameState.StartMenu;
 
+    private float defaultVolume = -1;
     private SoundManager soundManager;
 
     private GameEngine() {
@@ -63,7 +64,6 @@ public class GameEngine implements Runnable {
         }
 
         this.gameObjectManager = new GameObjectManager();
-        this.soundManager = new SoundManager();
     }
 
     public SoundManager getSoundManager() {
@@ -126,7 +126,11 @@ public class GameEngine implements Runnable {
             clientThread.start();
         }
         
-
+        if(defaultVolume!=-1)
+            this.soundManager = new SoundManager(defaultVolume);
+        else
+            this.soundManager = new SoundManager();
+        
         System.out.println("Initialising NetworkObjectManager...");
         networkObjectManager.init();
 
@@ -257,6 +261,10 @@ public class GameEngine implements Runnable {
     
     public Display getDisplay(){
     	return this.display;
+    }
+    
+    public void setVolume(float newVolume){
+        this.defaultVolume = newVolume;
     }
 
 }

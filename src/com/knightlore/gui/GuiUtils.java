@@ -18,7 +18,7 @@ public class GuiUtils {
         return toRight;
     }
 	
-	public static int calculateHeight(int screenHeight, int procent){
+	public static int calculateHeight(int screenHeight, float procent){
 		double decimal = (double)procent/(double)100;
 		return (int)(decimal*screenHeight);
 	}
