@@ -70,7 +70,7 @@ public class Display implements IRenderable {
 			renderer.render();
 			minimap.render();
 			hud.render();
-			chat.render();
+			//chat.render();
 
 			final int w = pix.getWidth(), h = pix.getHeight();
 			pix.composite(renderer.getPixelBuffer(), x, y);
@@ -83,8 +83,8 @@ public class Display implements IRenderable {
 
 			GameFeed.getInstance().getFeed(this.chat);
 
-			PixelBuffer chatBuffer = chat.getPixelBuffer();
-			pix.composite(chatBuffer, x, y);
+			//PixelBuffer chatBuffer = chat.getPixelBuffer();
+			//pix.composite(chatBuffer, x, y);
 			
 			GameFeed.getInstance().render(pix, x, y);
 
