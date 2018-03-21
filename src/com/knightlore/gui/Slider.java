@@ -46,6 +46,10 @@ public class Slider extends GUIObject {
         }
 
     }
+    
+    public void setValue(float v){
+        this.actualValue = v;
+    }
 
     @Override
     boolean isSelectable() {

@@ -41,6 +41,10 @@ public class CheckBox extends GUIObject{
         return true;
     }
     
+    public void setBobingMode(boolean b){
+        this.switcher = b;
+    }
+    
     @Override
     void OnClick() {
         this.switcher = !this.switcher;

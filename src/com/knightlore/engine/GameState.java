@@ -4,6 +4,8 @@ public enum GameState {
 	StartMenu,
 	MultiplayerMenu,
 	SettingsMenu,
+	SettingsMenuApply,
+	SettingsMenuCancel,
 	InGame,
 	Pause
 }

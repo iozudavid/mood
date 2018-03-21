@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import com.knightlore.GameSettings;
 import com.knightlore.engine.GameEngine;
+import com.knightlore.engine.GameState;
 import com.knightlore.render.PixelBuffer;
 import com.knightlore.render.Renderer;
 import com.knightlore.utils.funcptrs.VoidFunction;
@@ -39,7 +40,8 @@ public class SettingsMenu {
         this.nameText = new Text(GuiUtils.middleWidth(this.screenWidth, 100),
                 GuiUtils.calculateHeight(this.screenHeight, 25), 100, 30, "Username: ", 20);
         this.nameTextField = new TextField(GuiUtils.middleWidth(this.screenWidth, 300),
-                GuiUtils.calculateHeight(this.screenHeight, 32), 300, 30, "player");
+                GuiUtils.calculateHeight(this.screenHeight, 32), 300, 30, "Client Player");
+        this.nameTextField.setRestrictionLength((Integer i) -> i<=20);
         this.gui.addGUIObject(this.coverImage);
         ArrayList<GUIObject> objs = new ArrayList<>();
         objs.add(nameText);
@@ -50,10 +52,13 @@ public class SettingsMenu {
         this.gui.addGUIObject(this.nameText);
         this.gui.addGUIObject(this.nameTextField);
         
-        this.blockinessText = new Text(GuiUtils.middleWidth(this.screenWidth, 100),
-                GuiUtils.calculateHeight(this.screenHeight, 45), 100, 30, "Blockiness: ", 20);
+        this.blockinessText = new Text(GuiUtils.middleWidth(this.screenWidth, 150),
+                GuiUtils.calculateHeight(this.screenHeight, 45), 150, 30, "Blockiness(5-20): ", 20);
         this.blockinessTextField = new TextField(GuiUtils.middleWidth(this.screenWidth, 300),
                 GuiUtils.calculateHeight(this.screenHeight, 52), 300, 30, Renderer.getBlockiness()+"");
+        this.blockinessTextField.setRestriction((Character c) -> Character.isDigit(c));
+        this.blockinessTextField.setRestrictionLength((Integer i) -> i<=2);
+        this.blockinessTextField.setRestrictionValue((String s) -> Integer.parseInt(s)>=5 && Integer.parseInt(s)<=20);
         ArrayList<GUIObject> objsBlock = new ArrayList<>();
         objsBlock.add(blockinessText);
         objsBlock.add(blockinessTextField);
@@ -100,12 +105,38 @@ public class SettingsMenu {
             public void call() {
                 GameSettings.MOTION_BOB = SettingsMenu.this.bobCheckBox.getBobingMode();
                 GameEngine.getSingleton().setVolume(SettingsMenu.this.soundSlider.getValue());
-                
+                Renderer.setBlockiness(Integer.parseInt(SettingsMenu.this.blockinessTextField.getText()));
+                GameSettings.PLAYER_NAME = SettingsMenu.this.nameTextField.getText();
+                GameEngine.getSingleton().gameState = GameState.SettingsMenuApply;
+            }
+        };
+        
+        this.cancelButton.clickFunction = new VoidFunction() {
+            
+            @Override
+            public void call() {
+                GameEngine.getSingleton().gameState = GameState.SettingsMenuCancel;                
             }
         };
         
     }
+    
+    public ArrayList<Object> getObj(){
+        ArrayList<Object> obj = new ArrayList<>();
+        obj.add(this.nameTextField.getText());
+        obj.add(this.blockinessTextField.getText());
+        obj.add(this.soundSlider.getValue());
+        obj.add(this.bobCheckBox.getBobingMode());
+        return obj;
+    }
 
+    public void setObj(ArrayList<Object> o){
+        this.nameTextField.setText((String)o.get(0));
+        this.blockinessTextField.setText((String)o.get(1));
+        this.soundSlider.setValue((float)o.get(2));
+        this.bobCheckBox.setBobingMode((boolean)o.get(3));
+    }
+    
     public void render(PixelBuffer pix, int x, int y) {
         this.gui.render(pix, x, y);
     }

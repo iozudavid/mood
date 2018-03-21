@@ -34,7 +34,7 @@ public class Button extends GUIObject {
     private Graphic activeGraphic = null;
     private Graphic activeGraphic2 = null;
     
-    private SelectState state = SelectState.UP_PHASE_1;
+    public SelectState state = SelectState.UP_PHASE_1;
     
     // no harm in changing these externally
     public Color upColour1 = new Color(177,177,177);
@@ -145,6 +145,7 @@ public class Button extends GUIObject {
             return;
         }
         clickFunction.call();
+        
     }
     
     @Override
@@ -175,7 +176,7 @@ public class Button extends GUIObject {
     
     @Override
     void onMouseDown() {
-        state = SelectState.DOWN;
+        state = SelectState.UP_PHASE_2;
     }
     
     @Override
