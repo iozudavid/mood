@@ -1,21 +1,15 @@
 package com.knightlore.gui;
 
-import java.awt.AlphaComposite;
 import java.awt.Color;
-import java.awt.Font;
 import java.awt.Graphics2D;
-import java.awt.Rectangle;
-import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import com.knightlore.engine.GameEngine;
 import com.knightlore.engine.GameObject;
 import com.knightlore.engine.input.InputManager;
 import com.knightlore.render.IRenderable;
 import com.knightlore.render.PixelBuffer;
-import com.knightlore.render.graphic.Graphic;
 import com.knightlore.utils.Vector2D;
 import com.knightlore.utils.funcptrs.VoidFunction;
 import com.knightlore.utils.physics.Physics;
@@ -30,18 +24,13 @@ public class GUICanvas extends GameObject implements IRenderable {
 	static TextField gameTextField;
 	
 	private final List<GUIObject> guis;
-	private Graphic canvasGraphic;
-	private final BufferedImage canvasImage;
 	private Graphics2D canvasG2D;
-	private int[] drawPixels;
-	
 	// the object that was selected when the mouse was pressed down
 	private GUIObject downSelected;
 	private GUIObject focussed;
 	private GUIObject lastSelected;
 	private boolean lastHeld;
 	
-	private Rectangle rect;
 	private static Optional<VoidFunction> onPressEscape=Optional.empty();
 	private static Optional<VoidFunction> onPressQ=Optional.empty();
 	private static Optional<VoidFunction> onReleaseQ=Optional.empty();
@@ -52,23 +41,7 @@ public class GUICanvas extends GameObject implements IRenderable {
 		WIDTH = screenWidth;
 		HEIGHT = screenHeight;
 		guis = new ArrayList<>();
-		canvasImage = new BufferedImage(WIDTH,HEIGHT, BufferedImage.TYPE_INT_ARGB);
-		initDraw();
 		isVisible = true;
-	}
-	
-	private void initDraw(){
-		for(int i=0; i<canvasImage.getWidth();i++){
-			for(int j=0; j<canvasImage.getHeight(); j++){
-				canvasImage.setRGB(i, j, PixelBuffer.CHROMA_KEY);				
-			}
-		}
-		canvasG2D = canvasImage.createGraphics();
-		canvasG2D.setComposite(AlphaComposite.SrcOver);
-		canvasGraphic = new Graphic(canvasImage);
-		// store pixel array
-		drawPixels = canvasGraphic.getPixels();
-		canvasG2D.setFont(Font.getFont(Font.SERIF));
 	}
 	
 	/** Called from the keyboard when a textual character is typed
@@ -157,17 +130,10 @@ public class GUICanvas extends GameObject implements IRenderable {
 	
 	@Override
 	public void render(PixelBuffer pix, int x, int y) {
-		if (GameEngine.getSingleton().guiState == GUIState.InGame) {
-			this.initDraw();
-		}
 		canvasG2D.setColor(BACKGROUND_COLOR);
-		ArrayList<GUIObject> copyGuis = new ArrayList<>();
-		copyGuis.addAll(guis);
-		for (GUIObject gui : copyGuis) {
+		for (GUIObject gui : guis) {
 			gui.Draw(pix,x,y);
 		}
-		canvasImage.getRGB(0, 0, WIDTH, HEIGHT, drawPixels, 0, WIDTH);
-		pix.drawGraphic(canvasGraphic, x, y, WIDTH, HEIGHT);
 	}
 
 	@Override
