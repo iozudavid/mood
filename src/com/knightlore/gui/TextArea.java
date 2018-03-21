@@ -1,8 +1,6 @@
 package com.knightlore.gui;
 
 import java.awt.Color;
-import java.awt.Graphics;
-import java.awt.Rectangle;
 import java.util.Iterator;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -56,10 +54,9 @@ public class TextArea extends GUIObject{
 					this.getRectangle().height);
 		}
 		this.positionXToRender = (int)this.getRectangle().getX() + 1;
-		this.positionYToRender = (int)this.getRectangle().getY()+Font.DEFAULT_WHITE.getHeight();
+		this.positionYToRender = (int)this.getRectangle().getY()+Font.DEFAULT_WHITE.getHeight()+5;
 		char[] space = new char[1];
 		space[0] = ' ';
-		int color = Color.white.getRGB();
 		synchronized (this.text) {
 			it = this.text.iterator();
 			it2 = null;
@@ -73,25 +70,24 @@ public class TextArea extends GUIObject{
 					// draw words
 					this.fitText(word, pix, x, y);
 					// draw space
-					pix.drawString(Font.DEFAULT_WHITE, space.toString(), positionXToRender, positionYToRender, 15, 2);
-					positionXToRender += pix.stringWidth(Font.DEFAULT_WHITE, " ", 15, 2);
+					pix.drawString(Font.DEFAULT_WHITE, new String(space), positionXToRender, positionYToRender, 1, 2);
+					positionXToRender += pix.stringWidth(Font.DEFAULT_WHITE, " ", 1, 2);
 				}
 				// new line
 				this.positionXToRender = (int) this.getRectangle().getX();
-				this.positionYToRender += Font.DEFAULT_WHITE.getHeight();
+				this.positionYToRender += Font.DEFAULT_WHITE.getHeight()+5;
 			}
 		}
 	}
 	
 	private void fitText(String word, PixelBuffer pix, int x, int y){
-		final int hOffset = Font.DEFAULT_WHITE.getHeight();
-		final int wOffset = pix.stringWidth(Font.DEFAULT_WHITE, word, 15, 2);
-		char[] wordAsArray = word.toCharArray();
+		final int hOffset = Font.DEFAULT_WHITE.getHeight()+5;
+		final int wOffset = pix.stringWidth(Font.DEFAULT_WHITE, word, 1, 2);
 		if(wOffset + this.positionXToRender < this.getRectangle().getWidth() &&
 				this.positionYToRender < this.getRectangle().getHeight()){
 			// everything fits well
 			// so just draw it
-			pix.drawString(Font.DEFAULT_WHITE, word, this.positionXToRender, this.positionYToRender, 15, 2);
+			pix.drawString(Font.DEFAULT_WHITE, word, this.positionXToRender, this.positionYToRender, 1, 2);
 			this.positionXToRender += wOffset;
 		} else if(hOffset + this.positionYToRender < this.getRectangle().getHeight()){
 			// width will exceed
@@ -105,7 +101,7 @@ public class TextArea extends GUIObject{
 			} else {
 				//everything good
 				//draw it on the next line
-				pix.drawString(Font.DEFAULT_WHITE, word, this.positionXToRender, this.positionYToRender, 15, 2);
+				pix.drawString(Font.DEFAULT_WHITE, word, this.positionXToRender, this.positionYToRender, 1, 2);
 				this.positionXToRender += wOffset;
 			}
 		} else{
@@ -123,22 +119,22 @@ public class TextArea extends GUIObject{
 	private void fitBigText(String word, PixelBuffer pix, int x, int y){
 		char[] wordAsArray = word.toCharArray();
 		for(char c : wordAsArray){
-			final int hOffset = Font.DEFAULT_WHITE.getHeight();
-			final int wOffset = pix.stringWidth(Font.DEFAULT_WHITE, c+"", 15, 2);
+			final int hOffset = Font.DEFAULT_WHITE.getHeight()+5;
+			final int wOffset = pix.stringWidth(Font.DEFAULT_WHITE, c+"", 1, 2);
 			char[] charAsArray = new char[1];
 			charAsArray[0] = c;
 			if(wOffset + this.positionXToRender < this.getRectangle().getWidth() &&
 					this.positionYToRender < this.getRectangle().getHeight()){
 				// everything fits well
 				// so just draw it
-				pix.drawString(Font.DEFAULT_WHITE, charAsArray.toString(), this.positionXToRender, this.positionYToRender, 15, 2);
+				pix.drawString(Font.DEFAULT_WHITE, new String(charAsArray), this.positionXToRender, this.positionYToRender, 1, 2);
 				this.positionXToRender += wOffset;
 			} else if(hOffset + this.positionYToRender < this.getRectangle().getHeight()){
 				// width will exceed
 				// so newline
 				this.positionXToRender = (int)this.getRectangle().getX();
 				this.positionYToRender += hOffset;
-				pix.drawString(Font.DEFAULT_WHITE, charAsArray.toString(), this.positionXToRender, this.positionYToRender, 15, 2);
+				pix.drawString(Font.DEFAULT_WHITE, new String(charAsArray), this.positionXToRender, this.positionYToRender, 1, 2);
 				this.positionXToRender += wOffset;
 			} else{
 				//textarea full

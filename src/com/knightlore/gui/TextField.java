@@ -112,7 +112,7 @@ public class TextField extends GUIObject {
             if (width < this.rect.width) {
                 pix.drawString(Font.DEFAULT_WHITE, new String(rawChars), rect.x, rect.y, 1, 2);
             } else {
-                width = pix.stringWidth(Font.DEFAULT_WHITE, rawChars.toString(), 15, 2);
+                width = pix.stringWidth(Font.DEFAULT_WHITE, rawChars.toString(), 1, 2);
                 char[] toDisplay = rawChars;
                 while (width > this.rect.width) {
                     toDisplay = new char[toDisplay.length - 1];
@@ -122,9 +122,9 @@ public class TextField extends GUIObject {
                         System.out.println(rawChars.length);
                         toDisplay[i] = rawChars[rawChars.length - 1 - j];
                     }
-                    width = pix.stringWidth(Font.DEFAULT_WHITE, toDisplay.toString(), 15, 2);
+                    width = pix.stringWidth(Font.DEFAULT_WHITE, toDisplay.toString(), 1, 2);
                 }
-                pix.drawString(Font.DEFAULT_WHITE, toDisplay.toString(), rect.x, rect.y + hOffset, 15, 2);
+                pix.drawString(Font.DEFAULT_WHITE, toDisplay.toString(), rect.x, rect.y + hOffset, 1, 2);
 
             }
         }
@@ -304,7 +304,7 @@ public class TextField extends GUIObject {
         } else {
             for (char c : this.text.toCharArray()) {
                 chooseLocation++;
-                int width = pix.stringWidth(Font.DEFAULT_WHITE, c + "", 15, 2);
+                int width = pix.stringWidth(Font.DEFAULT_WHITE, c + "", 1, 2);
                 double oldDelta = deltaPos;
                 deltaPos -= width;
                 if (deltaPos < 0) {
