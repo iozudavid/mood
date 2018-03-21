@@ -38,6 +38,9 @@ public class ClientManager implements Runnable {
         return sender;
     }
 
+    /**
+     * Start receive and send threads and wait for them to finish.
+     */
     @Override
     public void run() {
 
@@ -60,6 +63,9 @@ public class ClientManager implements Runnable {
 
     }
     
+    /**
+     * Disconnect the client by closing this end of socket.
+     */
     public static void disconnect(){
     	try {
 			server.close();
