@@ -11,6 +11,7 @@ import com.knightlore.game.Player;
 import com.knightlore.game.PlayerManager;
 import com.knightlore.game.area.Map;
 import com.knightlore.game.area.generation.MapGenerator;
+import com.knightlore.game.area.generation.MapType;
 import com.knightlore.game.entity.Entity;
 import com.knightlore.utils.Vector2D;
 import com.knightlore.utils.physics.RaycastHit;
@@ -38,6 +39,10 @@ public abstract class GameWorld {
         while (entsToRemove.peek() != null) {
             ents.remove(entsToRemove.poll());
         }
+    }
+    
+    private Map generateMap(int xSize, int ySize, MapType mt, long seed) {
+        return new MapGenerator().createMap(xSize, ySize, mt, seed);
     }
 
     public Map getMap() {
@@ -82,7 +87,7 @@ public abstract class GameWorld {
         if (mapSeed == null) {
             mapSeed = TEST_SEED;
         }
-        map = new MapGenerator().createMap(TEST_XSIZE, TEST_YSIZE, mapSeed);
+        map = new MapGenerator().createMap(TEST_XSIZE, TEST_YSIZE, MapType.FFA, mapSeed);
         ents = new LinkedList<>();
         aiManager = new AIManager(map);
         playerManager = new PlayerManager();

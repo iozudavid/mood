@@ -164,7 +164,7 @@ public class GUICanvas extends GameObject implements IRenderable {
 		ArrayList<GUIObject> copyGuis = new ArrayList<>();
 		copyGuis.addAll(guis);
 		for (GUIObject gui : copyGuis) {
-			gui.Draw(canvasG2D, rect);
+			gui.Draw(pix,x,y);
 		}
 		canvasImage.getRGB(0, 0, WIDTH, HEIGHT, drawPixels, 0, WIDTH);
 		pix.drawGraphic(canvasGraphic, x, y, WIDTH, HEIGHT);

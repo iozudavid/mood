@@ -9,6 +9,7 @@ public class TurretTile extends Tile {
 
     public TurretTile(Team team) {
         this.team = team;
+        pathable = false;
     }
 
     @Override

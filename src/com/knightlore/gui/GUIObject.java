@@ -1,7 +1,8 @@
 package com.knightlore.gui;
 
-import java.awt.Graphics;
 import java.awt.Rectangle;
+
+import com.knightlore.render.PixelBuffer;
 
 public abstract class GUIObject {	
     // these should be change-able at runtime by other classes
@@ -21,7 +22,7 @@ public abstract class GUIObject {
         rect = new Rectangle(x,y,width,height);
     }
 	
-	abstract void Draw(Graphics g, Rectangle parentRect);
+	abstract void Draw(PixelBuffer pix, int x, int y);
 	
 	public Rectangle getRectangle(){
 		return this.rect;
