@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.knightlore.engine.GameEngine;
+import com.knightlore.game.world.ClientWorld;
 import com.knightlore.gui.GUICanvas;
 import com.knightlore.gui.GUIState;
 import com.knightlore.gui.GameChat;
@@ -38,7 +39,6 @@ public class Display implements IRenderable {
      * The HUD -- renders player health, etc.
      */
     private HUD hud;
-    private GameChat chat;
     private StartMenu startMenu;
     private MultiplayerMenu mpMenu;
     private SettingsMenu settingsMenu;
@@ -51,17 +51,6 @@ public class Display implements IRenderable {
         this.settingsObj = new ArrayList<>();
     }
 
-    public Display(Renderer renderer, Minimap minimap, HUD hud, GameChat chat, StartMenu startMenu,
-            MultiplayerMenu mpMenu) {
-        this();
-        this.renderer = renderer;
-        this.minimap = minimap;
-        this.hud = hud;
-        this.chat = chat;
-        this.startMenu = startMenu;
-        this.mpMenu = mpMenu;
-    }
-
     @Override
     public void render(PixelBuffer pix, int x, int y) {
         switch (GameEngine.getSingleton().guiState) {
@@ -69,7 +58,8 @@ public class Display implements IRenderable {
             renderer.render();
             minimap.render();
             hud.render();
-            chat.render();
+
+            
 
             final int w = pix.getWidth(), h = pix.getHeight();
             pix.composite(renderer.getPixelBuffer(), x, y);
@@ -78,13 +68,17 @@ public class Display implements IRenderable {
             pix.composite(minimapBuffer, x + w - minimapBuffer.getWidth(), y);
 
             PixelBuffer hudBuffer = hud.getPixelBuffer();
-            pix.composite(hudBuffer, x, y + renderer.getPixelBuffer().getHeight());
+            pix.composite(hudBuffer, x,
+                    y + renderer.getPixelBuffer().getHeight());
 
-            GameFeed.getInstance().getFeed(this.chat);
+            ClientWorld world = (ClientWorld) GameEngine.getSingleton().getWorld();
+            GameChat chat = world.getGameChat();
+            GameFeed.getInstance().getFeed(chat);
 
-            PixelBuffer chatBuffer = chat.getPixelBuffer();
-            pix.composite(chatBuffer, x, y);
-
+            for (GUICanvas g : guis) {
+                g.render(pix, x, y);
+            }
+            
             GameFeed.getInstance().render(pix, x, y);
 
             this.clearDisplay();
@@ -101,7 +95,8 @@ public class Display implements IRenderable {
 
         case MultiplayerMenu:
             if (this.mpMenu == null)
-                this.mpMenu = new MultiplayerMenu(pix.getHeight(), pix.getWidth());
+                this.mpMenu = new MultiplayerMenu(pix.getHeight(),
+                        pix.getWidth());
             this.mpMenu.render(pix, x, y);
             this.clearDisplay();
             gs = GUIState.MultiplayerMenu;
@@ -172,10 +167,6 @@ public class Display implements IRenderable {
         this.hud = hud;
     }
 
-    public void setGameChat(GameChat gc) {
-        this.chat = gc;
-    }
-
     public void setStartMenu(StartMenu sm) {
         this.startMenu = sm;
     }
@@ -195,10 +186,6 @@ public class Display implements IRenderable {
 
     public HUD getHud() {
         return hud;
-    }
-
-    public GameChat getChat() {
-        return this.chat;
     }
 
     public void addGUICanvas(GUICanvas g) {

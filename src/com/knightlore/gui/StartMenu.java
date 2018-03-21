@@ -69,6 +69,7 @@ public class StartMenu {
             @Override
             public void call() {
                 StartMenu.this.gui.destroy();
+
                 GameEngine.getSingleton().guiState = GUIState.MultiplayerMenu;
             }
         };

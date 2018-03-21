@@ -88,7 +88,7 @@ public abstract class Entity extends NetworkObject implements IMinimapObject, Ti
     private boolean creationCall;
     private boolean settingCall;
 
-    protected String name = "entity";
+    private String name = "entity";
 
     protected BlockingQueue<ByteBuffer> systemMessages;
 
@@ -161,7 +161,7 @@ public abstract class Entity extends NetworkObject implements IMinimapObject, Ti
      */
     public abstract void onCollide(Player player);
 
-    public void killConfirmed(Player victim) {
+    public void killConfirmed(Entity victim) {
         // do nothing
     }
 

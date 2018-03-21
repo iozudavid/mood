@@ -30,7 +30,7 @@ public class Graphic {
         this.pixels = new int[width * height];
 
         this.img = img;
-        img.getRGB(0, 0, width, height, pixels, 0, width);
+        this.pixels = img.getRGB(0, 0, width, height, pixels, 0, width);
 
         if (filter != null) {
             filter.apply(pixels, PixelBuffer.CHROMA_KEY);

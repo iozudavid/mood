@@ -5,6 +5,8 @@ import com.knightlore.MainWindow;
 import com.knightlore.engine.audio.SoundManager;
 import com.knightlore.engine.input.InputManager;
 import com.knightlore.engine.input.Mouse;
+import com.knightlore.game.GameManager;
+import com.knightlore.game.GameState;
 import com.knightlore.game.entity.pickup.PickupManager;
 import com.knightlore.game.world.ClientWorld;
 import com.knightlore.game.world.GameWorld;
@@ -49,7 +51,7 @@ public class GameEngine implements Runnable {
     private GameWorld world;
     private GameObjectManager gameObjectManager;
     private NetworkObjectManager networkObjectManager;
-    
+
     private PickupManager pickupManager;
 
     private Camera camera;
@@ -61,9 +63,9 @@ public class GameEngine implements Runnable {
     private boolean _doneInit = false;
 
     public boolean doneInit() {
-        return _doneInit ;
+        return _doneInit;
     }
-    
+
     private GameEngine() {
         if (HEADLESS) {
             window = null;
@@ -73,7 +75,7 @@ public class GameEngine implements Runnable {
 
         this.gameObjectManager = new GameObjectManager();
     }
-    
+
     public SoundManager getSoundManager() {
         return soundManager;
     }
@@ -105,9 +107,6 @@ public class GameEngine implements Runnable {
         }
 
         System.out.println("Engine Initialised Successfully.");
-        // TODO maybe refactor this into a make world method
-        // ALSO TODO, UNHOOK TEST WORLD
-        System.out.println("Initialising World...");
 
         if (GameSettings.isClient()) {
             this.display = new Display();
@@ -115,6 +114,7 @@ public class GameEngine implements Runnable {
     }
 
     public void startGame() {
+        System.out.println("Starting game...");
         // The NetworkObjectManager will call setUpWorld() on the world when
         // it's ready to do so.
         if (defaultVolume != -1)
@@ -124,17 +124,20 @@ public class GameEngine implements Runnable {
 
         if (GameSettings.isServer()) {
             world = new ServerWorld();
-            networkObjectManager = new ServerNetworkObjectManager((ServerWorld) world);
+            networkObjectManager = new ServerNetworkObjectManager(
+                    (ServerWorld) world);
             ServerManager networkManager = new ServerManager();
             new Thread(networkManager).start();
             ((ServerNetworkObjectManager) networkObjectManager).init();
         }
         if (GameSettings.isClient()) {
             world = new ClientWorld();
-            networkObjectManager = new ClientNetworkObjectManager((ClientWorld) world);
+            networkObjectManager = new ClientNetworkObjectManager(
+                    (ClientWorld) world);
             ClientManager networkManager = new ClientManager();
             new Thread(networkManager).start();
-            ((ClientNetworkObjectManager) networkObjectManager).init(networkManager.getServerSender());
+            ((ClientNetworkObjectManager) networkObjectManager)
+                    .init(networkManager.getServerSender());
         }
 
         System.out.println("Initialising NetworkObjectManager...");
@@ -145,7 +148,7 @@ public class GameEngine implements Runnable {
             // map must be initialised before handing it the pickup manager
             pickupManager = new PickupManager(world.getMap());
         }
-        
+
         if (GameSettings.isClient()) {
             ClientNetworkObjectManager cn = (ClientNetworkObjectManager) networkObjectManager;
             while (!cn.hasFinishedSetup()) {
@@ -171,7 +174,7 @@ public class GameEngine implements Runnable {
         // think gui
         world.onPostEngineInit();
         _doneInit = true;
-       
+
     }
 
     /**
@@ -230,7 +233,7 @@ public class GameEngine implements Runnable {
             while (delta >= 1) {
                 if (running)
                     gameObjectManager.updateObjects();
-                if (this.guiState == GUIState.InGame) {
+                if (GameManager.getGameState() == GameState.PLAYING) {
                     world.update();
                     GameFeed.getInstance().update();
                 }

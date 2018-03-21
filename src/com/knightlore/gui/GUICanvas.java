@@ -1,7 +1,6 @@
 package com.knightlore.gui;
 
 import java.awt.Color;
-import java.awt.Graphics2D;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -16,8 +15,8 @@ import com.knightlore.utils.physics.Physics;
 
 public class GUICanvas extends GameObject implements IRenderable {
 
-	private static int WIDTH;
-	private static int HEIGHT;
+	private int screenWidth;
+	private int screenHeight;
 	private static final Color BACKGROUND_COLOR = new Color(0xFF00FF00,true);
 
 	static TextField activeTextField;
@@ -37,8 +36,8 @@ public class GUICanvas extends GameObject implements IRenderable {
 	
 	public GUICanvas(int screenWidth, int screenHeight){
 		super();
-		WIDTH = screenWidth;
-		HEIGHT = screenHeight;
+		this.screenWidth = screenWidth;
+		this.screenHeight = screenHeight;
 		guis = new ArrayList<>();
 		isVisible = true;
 	}

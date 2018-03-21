@@ -13,7 +13,8 @@ import com.knightlore.network.protocol.NetworkUtils;
 
 public abstract class NetworkObjectManager implements INetworkable, Runnable {
     // This is a special UUID that refers to the NetworkObjectManager itself.
-    public static final UUID MANAGER_UUID = UUID.fromString("00000000-0000-0000-0000-000000000000");
+    public static final UUID MANAGER_UUID = UUID
+            .fromString("00000000-0000-0000-0000-000000000000");
     protected Map<String, Consumer<ByteBuffer>> networkConsumers = new HashMap<>();
 
     private BlockingQueue<ByteBuffer> messages = new LinkedBlockingQueue<>();
@@ -68,7 +69,14 @@ public abstract class NetworkObjectManager implements INetworkable, Runnable {
                 return;
             }
             buf.position(0);
-            UUID objID = UUID.fromString(NetworkUtils.getStringFromBuf(buf));
+            UUID objID;
+            try {
+                // HACK
+                objID = UUID.fromString(NetworkUtils.getStringFromBuf(buf));
+            } catch (IllegalArgumentException e) {
+                // An illegal UUID probably indicates a malformed packet, so ignore it.
+                continue;
+            }
             String methodName = NetworkUtils.getStringFromBuf(buf);
             Consumer<ByteBuffer> cons;
             if (objID.equals(MANAGER_UUID)) {
