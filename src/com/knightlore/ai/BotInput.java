@@ -105,7 +105,7 @@ public final class BotInput extends InputModule {
     private void getPath(Entity myPlayer) {
         Vector2D goal = GameEngine.getSingleton().getWorld().getMap().getRandomSpawnPoint();
         AIManager aiManager = GameEngine.getSingleton().getWorld().getAiManager();
-        path = aiManager.findPath(myPlayer.getPosition(), goal);
+        path = aiManager.findRawPath(myPlayer.getPosition(), goal);
         goalPos = myPlayer.getPosition();
     }
     

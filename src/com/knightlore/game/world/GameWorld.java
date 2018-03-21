@@ -18,19 +18,18 @@ import com.knightlore.utils.physics.RaycastHitType;
 
 public abstract class GameWorld {
 
-    protected static final int TEST_XSIZE = 40; // 16;
-    protected static final int TEST_YSIZE = 60; // 32;
-    protected static final long TEST_SEED = 47L; // 25L;
-
+    private static final int TEST_XSIZE = 40;  //16;
+    private static final int TEST_YSIZE = 60;  //32;
+    private static final long TEST_SEED = 47L; //25L;
+    
     protected Map map;
     protected PlayerManager playerManager;
     protected GameManager gameManager = null;
-    protected AIManager aiManager;
-    
+    private AIManager aiManager;
     private List<Entity> ents;
     
-    private ConcurrentLinkedQueue<Entity> entsToAdd = new ConcurrentLinkedQueue<Entity>();
-    private ConcurrentLinkedQueue<Entity> entsToRemove = new ConcurrentLinkedQueue<Entity>();
+    private final ConcurrentLinkedQueue<Entity> entsToAdd = new ConcurrentLinkedQueue<Entity>();
+    private final ConcurrentLinkedQueue<Entity> entsToRemove = new ConcurrentLinkedQueue<Entity>();
 
     public void update() {
         while (entsToAdd.peek() != null) {

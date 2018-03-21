@@ -14,6 +14,7 @@ public class ClientWorld extends GameWorld {
 
     @Override
     public void update() {
+        super.update();
         if(gameChat != null && gameManager != null) {
             gameChat.setTimeLeft(gameManager.timeLeftString());
         }
