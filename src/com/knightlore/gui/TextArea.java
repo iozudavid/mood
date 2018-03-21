@@ -3,12 +3,9 @@ package com.knightlore.gui;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Rectangle;
-import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
-
-import com.knightlore.render.PixelBuffer;
 
 public class TextArea extends GUIObject{
 
@@ -47,8 +44,9 @@ public class TextArea extends GUIObject{
 	
 	@Override
 	void Draw(Graphics g, Rectangle parentRect) {
-		if(!this.interactive)
+		if(!this.interactive) {
 			return;
+		}
 		if (this.active) {
 			g.setColor(new Color(0x1F1F1F));
 			g.fillRect(this.getRectangle().x, this.getRectangle().y, this.getRectangle().width,
@@ -101,8 +99,7 @@ public class TextArea extends GUIObject{
 			if(wOffset + this.positionXToRender > this.getRectangle().getWidth()){
 				//word is too big
 				this.fitBigText(word, g, parentRect);
-				return;
-			}else{
+			} else {
 				//everything good
 				//draw it on the next line
 				g.drawChars(wordAsArray, 0, wordAsArray.length, this.positionXToRender, this.positionYToRender);
@@ -114,7 +111,6 @@ public class TextArea extends GUIObject{
 			//in order to free some space
 			it2.remove();
 			this.Draw(g, parentRect);
-			return;
 		}
 	}
 	

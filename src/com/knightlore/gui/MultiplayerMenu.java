@@ -64,15 +64,10 @@ public class MultiplayerMenu {
 		this.gui.addGUIObject(connectButton);
 		this.gui.addGUIObject(cancelButton);
 		
-		this.cancelButton.clickFunction = new VoidFunction(){
-
-			@Override
-			public void call() {
-				MultiplayerMenu.this.gui.destroy();
-				GameEngine.getSingleton().gameState = GameState.StartMenu;
-			}
-			
-		};
+		this.cancelButton.clickFunction = () -> {
+            MultiplayerMenu.this.gui.destroy();
+            GameEngine.getSingleton().gameState = GameState.StartMenu;
+        };
 		
 		this.connectButton.clickFunction = new VoidFunction() {
 			

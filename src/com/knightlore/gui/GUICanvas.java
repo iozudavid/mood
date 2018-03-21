@@ -46,14 +46,16 @@ public class GUICanvas extends GameObject implements IRenderable {
 	private static Optional<VoidFunction> onPressEscape=Optional.empty();
 	private static Optional<VoidFunction> onPressQ=Optional.empty();
 	private static Optional<VoidFunction> onReleaseQ=Optional.empty();
+    public boolean isVisible;
 	
 	public GUICanvas(int screenWidth, int screenHeight){
 		super();
 		WIDTH = screenWidth;
 		HEIGHT = screenHeight;
-		guis = new ArrayList<GUIObject>();
+		guis = new ArrayList<>();
 		canvasImage = new BufferedImage(WIDTH,HEIGHT, BufferedImage.TYPE_INT_ARGB);
 		initDraw();
+		isVisible = true;
 	}
 	
 	private void initDraw(){
@@ -84,8 +86,9 @@ public class GUICanvas extends GameObject implements IRenderable {
 				activeTextField = gameTextField;
 				gameTextField.onMessage(c);
 			}
-		}else
+		}else {
 			inputChar(c);
+		}
 		
 	}
 	
@@ -95,8 +98,9 @@ public class GUICanvas extends GameObject implements IRenderable {
 				activeTextField = gameTextField;
 				gameTextField.onMessage(c);
 			}
-		}else
+		}else {
 			inputChar(c);
+		}
 		
 	}
 	
@@ -158,8 +162,8 @@ public class GUICanvas extends GameObject implements IRenderable {
 			this.initDraw();
 		}
 		canvasG2D.setColor(BACKGROUND_COLOR);
-		for(int i=0;i<guis.size();i++){
-			guis.get(i).Draw(canvasG2D,rect);
+		for (GUIObject gui : guis) {
+			gui.Draw(canvasG2D, rect);
 		}
 		canvasImage.getRGB(0, 0, WIDTH, HEIGHT, drawPixels, 0, WIDTH);
 		pix.drawGraphic(canvasGraphic, x, y, WIDTH, HEIGHT);
@@ -258,8 +262,9 @@ public class GUICanvas extends GameObject implements IRenderable {
 	}
 
 	public void addGUIObject(GUIObject gui) {
-		if(gui instanceof TextField)
+		if(gui instanceof TextField) {
 			gameTextField = (TextField) gui;
+		}
 		guis.add(gui);
 		sort();
 	}

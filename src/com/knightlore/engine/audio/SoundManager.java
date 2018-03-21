@@ -29,8 +29,9 @@ public class SoundManager implements LineListener {
      *            The volume to play it at.
      */
     public void playIfNotAlreadyPlaying(SoundResource res, float volume) {
-        if (!res.isPlaying())
+        if (!res.isPlaying()) {
             play(res, volume, 0);
+        }
     }
 
     /**
@@ -70,6 +71,11 @@ public class SoundManager implements LineListener {
      */
     private void play(SoundResource res, float volume, int numLoops) {
         Clip clip = res.getNewClip();
+        // FIXME
+        if (clip == null) {
+            return;
+        }
+
         final FloatControl control = (FloatControl) clip.getControl(FloatControl.Type.MASTER_GAIN);
         float range = control.getMaximum() - control.getMinimum();
         float gain = range * volume + control.getMinimum();
@@ -85,7 +91,8 @@ public class SoundManager implements LineListener {
     public void update(LineEvent event) {
         // Lines are ephemeral in this game, so ensure they are closed as soon
         // as they finish playback, to avoid resource leaks.
-        if (event.getType() == Type.STOP)
+        if (event.getType() == Type.STOP) {
             event.getLine().close();
+        }
     }
 }

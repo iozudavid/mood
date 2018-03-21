@@ -20,8 +20,6 @@ public class TDMGame extends GameManager {
     
     @Override
     public void startLobby() {
-        // TODO Auto-generated method stub
-        
     }
     
     @Override
@@ -33,14 +31,10 @@ public class TDMGame extends GameManager {
     
     @Override
     public void gameOver() {
-        // TODO Auto-generated method stub
-        
     }
     
     @Override
     public void onPlayerDeath(Player p) {
-        // TODO Auto-generated method stub
-        
     }
     
     @Override
@@ -52,8 +46,6 @@ public class TDMGame extends GameManager {
     
     @Override
     public void onCreate() {
-        // TODO Auto-generated method stub
-        
     }
     
     @Override
@@ -83,8 +75,6 @@ public class TDMGame extends GameManager {
     
     @Override
     public void onDestroy() {
-        // TODO Auto-generated method stub
-        
     }
     
     @Override
@@ -97,14 +87,11 @@ public class TDMGame extends GameManager {
 
     @Override
     public ByteBuffer serialize() {
-        // TODO Auto-generated method stub
         return null;
     }
 
     @Override
     public void deserialize(ByteBuffer buffer) {
-        // TODO Auto-generated method stub
-        
     }
 
     @Override

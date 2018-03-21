@@ -149,25 +149,28 @@ public class Button extends GUIObject {
     
     @Override
     void onMouseEnter() {
-    	if(state==SelectState.HOVER_PHASE_1)
-    		state = SelectState.HOVER_PHASE_2;
-    	else
-    		state = SelectState.HOVER_PHASE_1;
+    	if(state==SelectState.HOVER_PHASE_1) {
+            state = SelectState.HOVER_PHASE_2;
+        } else {
+            state = SelectState.HOVER_PHASE_1;
+        }
     }
     
     void onMouseOver() {
-    	if(state == SelectState.HOVER_PHASE_1)
-    		state = SelectState.HOVER_PHASE_2;
-    	else
-    		state = SelectState.HOVER_PHASE_1;
+    	if(state == SelectState.HOVER_PHASE_1) {
+            state = SelectState.HOVER_PHASE_2;
+        } else {
+            state = SelectState.HOVER_PHASE_1;
+        }
     }
     
     @Override
     void OnMouseExit() {
-    	if(state == SelectState.UP_PHASE_1)
-    		state = SelectState.UP_PHASE_2;
-    	else
-    		state = SelectState.UP_PHASE_1;
+    	if(state == SelectState.UP_PHASE_1) {
+            state = SelectState.UP_PHASE_2;
+        } else {
+            state = SelectState.UP_PHASE_1;
+        }
     }
     
     @Override
@@ -177,10 +180,11 @@ public class Button extends GUIObject {
     
     @Override
     void onMouseUp() {
-    	if(state == SelectState.UP_PHASE_1)
-    		state = SelectState.UP_PHASE_2;
-    	else
-    		state = SelectState.UP_PHASE_1;
+    	if(state == SelectState.UP_PHASE_1) {
+            state = SelectState.UP_PHASE_2;
+        } else {
+            state = SelectState.UP_PHASE_1;
+        }
     }
     
     @Override

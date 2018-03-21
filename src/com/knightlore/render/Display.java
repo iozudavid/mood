@@ -1,6 +1,10 @@
 package com.knightlore.render;
 
 import com.knightlore.engine.GameEngine;
+import java.util.ArrayList;
+import java.util.List;
+
+import com.knightlore.gui.GUICanvas;
 import com.knightlore.gui.GameChat;
 import com.knightlore.gui.MultiplayerMenu;
 import com.knightlore.gui.SettingsMenu;
@@ -37,6 +41,7 @@ public class Display implements IRenderable {
     private StartMenu startMenu;
     private MultiplayerMenu mpMenu;
     private SettingsMenu settingsMenu;
+    private List<GUICanvas> guis;
 
     public Display(){}
     
@@ -152,6 +157,8 @@ public class Display implements IRenderable {
     
     public void setMultiplayerMenu(MultiplayerMenu mp){
     	this.mpMenu = mp;
+
+
     }
 
     public Renderer getRenderer() {
@@ -168,6 +175,14 @@ public class Display implements IRenderable {
     
     public GameChat getChat(){
     	return this.chat;
+    }
+    
+    public void addGUICanvas(GUICanvas g) {
+        guis.add(g);
+    }
+    
+    public void removeGUICanvas(GUICanvas g) {
+        guis.remove(g);
     }
 
 }

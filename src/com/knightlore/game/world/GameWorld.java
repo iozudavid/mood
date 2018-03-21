@@ -4,8 +4,6 @@ import java.util.LinkedList;
 import java.util.List;
 
 import com.knightlore.ai.AIManager;
-import com.knightlore.game.ClientFFAGame;
-import com.knightlore.game.FFAGame;
 import com.knightlore.game.GameManager;
 import com.knightlore.game.PlayerManager;
 
@@ -16,7 +14,6 @@ import com.knightlore.utils.physics.Physics;
 import com.knightlore.utils.physics.RaycastHit;
 import com.knightlore.utils.physics.RaycastHitType;
 import com.knightlore.utils.Vector2D;
-import com.knightlore.utils.pruner.Pruner;
 
 public abstract class GameWorld {
 
@@ -29,9 +26,8 @@ public abstract class GameWorld {
     protected GameManager gameManager = null;
     protected AIManager aiManager;
     protected List<Entity> ents;
-    
+
     public void update() {
-        Pruner.prune(ents);
     }
     
     private Map generateMap(int xSize, int ySize, long seed) {
@@ -61,8 +57,9 @@ public abstract class GameWorld {
      * seed.
      */
     public void setUpWorld(Long mapSeed) {
-        if (mapSeed == null)
+        if (mapSeed == null) {
             mapSeed = TEST_SEED;
+        }
         map = new MapGenerator().createMap(TEST_XSIZE, TEST_YSIZE, mapSeed);
         ents = new LinkedList<>();
         aiManager = new AIManager(map);
@@ -87,12 +84,12 @@ public abstract class GameWorld {
             if (map.getTile(x, y).blockLOS()) {
                 return new RaycastHit(RaycastHitType.WALL, p, null);
             } else {
-                for (int n = 0; n < ents.size(); n++) {
-                    if(ents.get(n) == ignore) {
+                for (Entity ent : ents) {
+                    if (ent == ignore) {
                         continue;
                     }
-                    if (Physics.pointInRectangleDoubleTest(p, ents.get(n).getBoundingRectangle())) {
-                        return new RaycastHit(RaycastHitType.ENTITY, p, ents.get(n));
+                    if (Physics.pointInRectangleDoubleTest(p, ent.getBoundingRectangle())) {
+                        return new RaycastHit(RaycastHitType.ENTITY, p, ent);
                     }
                 }
             }
@@ -109,5 +106,7 @@ public abstract class GameWorld {
     public void changeGameManager(GameManager game) {
         gameManager = game;
     }
+
+    public abstract void onPostEngineInit();
     
 }

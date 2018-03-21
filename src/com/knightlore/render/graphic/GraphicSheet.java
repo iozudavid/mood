@@ -35,7 +35,7 @@ public class GraphicSheet {
      * them.
      */
     public final static GraphicSheet PLAYER_SPRITES = new GraphicSheet("res/models/player_sprites.png", 128);
-    
+
     /**
      * A graphicsheet for the shotgun directional sprite.
      */
@@ -50,6 +50,12 @@ public class GraphicSheet {
      * A graphicsheet for the spectator camera directional sprite.
      */
     public final static GraphicSheet CAMERA_SPRITES = new GraphicSheet("res/models/camera_sprites.png", 128);
+
+    /**
+     * A graphicsheet for the gravestone directional sprite that appears when a
+     * player dies.
+     */
+    public final static GraphicSheet GRAVESTONE_SPRITES = new GraphicSheet("res/models/gravestone_sprites.png", 128);
 
     private final int cellSize;
     private BufferedImage sheet;

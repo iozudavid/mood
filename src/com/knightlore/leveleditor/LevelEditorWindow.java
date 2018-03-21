@@ -75,8 +75,9 @@ public class LevelEditorWindow extends JFrame {
     private void saveMapToFile() {
         JFileChooser fc = new JFileChooser();
         int response = fc.showSaveDialog(this);
-        if (response != JFileChooser.APPROVE_OPTION)
+        if (response != JFileChooser.APPROVE_OPTION) {
             return;
+        }
 
         try (FileOutputStream fos = new FileOutputStream(fc.getSelectedFile());
                 ObjectOutputStream objectOut = new ObjectOutputStream(fos)) {
@@ -90,8 +91,9 @@ public class LevelEditorWindow extends JFrame {
     private void openMapFromFile() {
         JFileChooser fc = new JFileChooser();
         int response = fc.showOpenDialog(this);
-        if (response != JFileChooser.APPROVE_OPTION)
+        if (response != JFileChooser.APPROVE_OPTION) {
             return;
+        }
 
         try (FileInputStream fis = new FileInputStream(fc.getSelectedFile());
                 ObjectInputStream objectIn = new ObjectInputStream(fis)) {

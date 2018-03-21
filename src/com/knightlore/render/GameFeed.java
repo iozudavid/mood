@@ -49,7 +49,7 @@ public class GameFeed implements IRenderable {
 		}
     }
 
-    public void update() {
+		public void update() {
     	synchronized(messages){
     		messages.removeIf((GameFeedMessage msg) -> msg.timeWhenGone <= GameEngine.ticker.getTime());
     	}
@@ -78,7 +78,7 @@ public class GameFeed implements IRenderable {
         private String message;
         private long timeWhenGone;
 
-        public GameFeedMessage(String message, long timeWhenGone) {
+        GameFeedMessage(String message, long timeWhenGone) {
             this.message = message;
             this.timeWhenGone = timeWhenGone;
         }

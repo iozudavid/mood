@@ -17,7 +17,7 @@ import com.knightlore.network.TCPConnection;
  * @author Will
  */
 public class ServerManager implements Runnable {
-    private ConcurrentHashMap<UUID, Connection> connections = new ConcurrentHashMap<UUID, Connection>();
+    private ConcurrentHashMap<UUID, Connection> connections = new ConcurrentHashMap<>();
     private ServerSocket serverSocket = null;
 
     @Override

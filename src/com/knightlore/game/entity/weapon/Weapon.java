@@ -14,7 +14,7 @@ public abstract class Weapon {
     // How far away an entity should be from us before we don't play the shoot
     // sound. Sound effects for shots fired closer than this will have their
     // volume scaled linearly.
-    private float SHOOT_SFX_CUTOFF_DISTANCE = 10;
+    private static final float SHOOT_SFX_CUTOFF_DISTANCE = 10;
 
     protected Graphic graphic;
     protected boolean automatic;
@@ -22,7 +22,7 @@ public abstract class Weapon {
 
     private SoundResource shootSFX;
 
-    public Weapon(Graphic graphic, boolean automatic, int fireRate, SoundResource shootSFX) {
+    Weapon(Graphic graphic, boolean automatic, int fireRate, SoundResource shootSFX) {
         this.graphic = graphic;
         this.automatic = automatic;
         this.fireRate = fireRate;
@@ -34,8 +34,9 @@ public abstract class Weapon {
     public void fire(Entity shooter) {
         this.timer = 0;
 
-        if (GameSettings.isClient())
+        if (GameSettings.isClient()) {
             playShotSFX(shooter);
+        }
     }
 
     private void playShotSFX(Entity shooter) {
@@ -48,8 +49,9 @@ public abstract class Weapon {
         SoundManager soundManager = GameEngine.getSingleton().getSoundManager();
         // Scale against the default volume of sound effects.
         float volume = scale * soundManager.defaultVolume;
-        if (volume > 0)
+        if (volume > 0) {
             soundManager.playConcurrently(shootSFX, volume);
+        }
     }
 
     private int weaponBobX = GameSettings.MOTION_BOB ? 20 : 0, weaponBobY = GameSettings.MOTION_BOB ? 30 : 0;

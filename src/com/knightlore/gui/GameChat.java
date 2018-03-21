@@ -127,13 +127,15 @@ public class GameChat {
 			this.interactive = false;
 			count=0;
 		} 
-		if(this.interactive==true)
-			count++;
+		if(this.interactive) {
+            count++;
+        }
 		this.textArea.setActive(GUICanvas.activeTextField!=null);
-		if(GUICanvas.activeTextField!=null)
-			this.textArea.setInteractive(true);
-		else
-			this.textArea.setInteractive(this.interactive);
+		if(GUICanvas.activeTextField!=null) {
+            this.textArea.setInteractive(true);
+        } else {
+            this.textArea.setInteractive(this.interactive);
+        }
 		this.gui.render(pix,0,0);
 	}
 	

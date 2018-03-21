@@ -82,4 +82,5 @@ public final class TurretServer extends TurretShared {
     protected boolean hasTarget() {
         return target != null;
     }
+
 }

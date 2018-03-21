@@ -7,15 +7,13 @@ import java.util.UUID;
 import com.knightlore.engine.GameEngine;
 import com.knightlore.game.entity.Entity;
 import com.knightlore.game.entity.pickup.ShotgunPickup;
-import com.knightlore.game.entity.weapon.Shotgun;
 import com.knightlore.game.entity.weapon.WeaponType;
-import com.knightlore.network.NetworkObject;
 import com.knightlore.utils.Vector2D;
 
 public class FFAGame extends GameManager {
     
     private static final int WIN_SCORE = 10;
-    private static final double ROUND_TIME_SECS = 10;
+    private static final double ROUND_TIME_SECS = 300;
     private Entity winner;
     
     public FFAGame(UUID uuid) {
@@ -69,14 +67,12 @@ public class FFAGame extends GameManager {
     
     @Override
     public void onCreate() {
-        // TODO Auto-generated method stub
-        
     }
     
     @Override
     public void onUpdate() {
         // update ticks left
-        if (gameState != gameState.FINISHED) {
+        if (gameState != GameState.FINISHED) {
             ticksLeft = gameOverTick - GameEngine.ticker.getTime();
         }
         
@@ -108,8 +104,6 @@ public class FFAGame extends GameManager {
     
     @Override
     public void onDestroy() {
-        // TODO Auto-generated method stub
-        
     }
     
     @Override
@@ -119,7 +113,7 @@ public class FFAGame extends GameManager {
     
     @Override
     public void startLobby() {
-        gameState = GameState.LOBBY;   
+        gameState = GameState.LOBBY;
     }
     
     @Override

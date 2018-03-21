@@ -66,9 +66,9 @@ public class Keyboard extends KeyAdapter {
     public void keyTyped(KeyEvent e) {
     	char eChar = e.getKeyChar();
     	//vk_back_space not working here
-    	if(eChar=='\b')
-    		GUICanvas.deleteChar();
-    	else if(GameEngine.getSingleton().gameState==GameState.InGame && eChar=='t'){
+    	if(eChar=='\b') {
+            GUICanvas.deleteChar();
+        } else if(GameEngine.getSingleton().gameState==GameState.InGame && eChar=='t'){
     		GUICanvas.startMessageTeam(e.getKeyChar());
     	} else if(GameEngine.getSingleton().gameState==GameState.InGame && eChar=='y'){
     		GUICanvas.startMessageAll(e.getKeyChar());

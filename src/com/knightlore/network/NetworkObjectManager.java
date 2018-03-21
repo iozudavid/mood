@@ -8,6 +8,7 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.function.Consumer;
 
+import com.knightlore.network.client.ClientNetworkObjectManager;
 import com.knightlore.network.protocol.NetworkUtils;
 
 public abstract class NetworkObjectManager implements INetworkable, Runnable {
@@ -15,7 +16,7 @@ public abstract class NetworkObjectManager implements INetworkable, Runnable {
     public static final UUID MANAGER_UUID = UUID.fromString("00000000-0000-0000-0000-000000000000");
     protected Map<String, Consumer<ByteBuffer>> networkConsumers = new HashMap<>();
 
-    protected BlockingQueue<ByteBuffer> messages = new LinkedBlockingQueue<>();
+    private BlockingQueue<ByteBuffer> messages = new LinkedBlockingQueue<>();
 
     public void processMessage(ByteBuffer buffer) {
         this.messages.add(buffer);
@@ -48,7 +49,7 @@ public abstract class NetworkObjectManager implements INetworkable, Runnable {
         return MANAGER_UUID;
     }
 
-    public void init() {
+    protected void init() {
         System.out.println("init called");
         new Thread(this).start();
         System.out.println("Object manager started");
@@ -56,8 +57,9 @@ public abstract class NetworkObjectManager implements INetworkable, Runnable {
 
     @Override
     public void run() {
+    	int i=0;
         while (true) {
-            ByteBuffer buf = null;
+            ByteBuffer buf;
             try {
                 buf = this.messages.take();
             } catch (InterruptedException e) {
@@ -65,19 +67,42 @@ public abstract class NetworkObjectManager implements INetworkable, Runnable {
                 e.printStackTrace();
                 return;
             }
+            buf.position(0);
             UUID objID = UUID.fromString(NetworkUtils.getStringFromBuf(buf));
             String methodName = NetworkUtils.getStringFromBuf(buf);
             Consumer<ByteBuffer> cons;
-            if (objID.equals(MANAGER_UUID))
+            if (objID.equals(MANAGER_UUID)) {
                 // This message is directed at the NetworkManager, i.e. ourself.
                 cons = this.getNetworkConsumers().get(methodName);
-            else {
+            } else {
                 NetworkObject obj = this.getNetworkObject(objID);
+                if(obj == null) {
+                    System.err.println("Received data for unknown id "+objID);
+                    System.err.println("ignoring this packet ^ ");
+                    continue;
+                }
                 cons = obj.getNetworkConsumers().get(methodName);
+                if (this instanceof ClientNetworkObjectManager) {
+                    ClientNetworkObjectManager netManager = (ClientNetworkObjectManager)this;
+                    assert(netManager.getMyPlayer() != null);
+                	if (((ClientNetworkObjectManager)this).getMyPlayer()!= null &&
+                			((ClientNetworkObjectManager)this).getMyPlayer().getObjectId().equals(objID) &&
+                				methodName.equals("deserialize")) {
+                		if(((ClientNetworkObjectManager)this).hasFinishedSetup() ){
+                			if(i==1) {
+                			buf.rewind();
+                			((ClientNetworkObjectManager)this).addToPlayerStateOnServer(buf);
+                			continue;
+                			} else {
+                                i++;
+                            }
+                		}
+                	}
+                }
             }
             // Execute the specified method on the specified object, with the
             // rest of the ByteBuffer as input.
-            cons.accept(buf);
+          	cons.accept(buf);
         }
     }
 

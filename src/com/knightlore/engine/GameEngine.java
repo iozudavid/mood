@@ -114,16 +114,20 @@ public class GameEngine implements Runnable {
         // it's ready to do so.
         if (GameSettings.isServer()) {
             world = new ServerWorld();
-            networkObjectManager = new ServerNetworkObjectManager((ServerWorld) world);
+            networkObjectManager = new ServerNetworkObjectManager(
+                    (ServerWorld) world);
             ServerManager networkManager = new ServerManager();
             new Thread(networkManager).start();
+            ((ServerNetworkObjectManager) networkObjectManager).init();
         }
         if (GameSettings.isClient()) {
             world = new ClientWorld();
-            networkObjectManager = new ClientNetworkObjectManager((ClientWorld) world);
+            networkObjectManager = new ClientNetworkObjectManager(
+                    (ClientWorld) world);
             ClientManager networkManager = new ClientManager();
-            clientThread = new Thread(networkManager);
-            clientThread.start();
+            new Thread(networkManager).start();
+            ((ClientNetworkObjectManager) networkObjectManager)
+                    .init(networkManager.getServerSender());
         }
         
         if(defaultVolume!=-1)
@@ -132,7 +136,6 @@ public class GameEngine implements Runnable {
             this.soundManager = new SoundManager();
         
         System.out.println("Initialising NetworkObjectManager...");
-        networkObjectManager.init();
 
         System.out.println("World Initialised Successfully.");
 
@@ -155,6 +158,10 @@ public class GameEngine implements Runnable {
         // start the lobby
         world.getGameManager().startLobby();
         world.getGameManager().beginGame();
+        // build anything that requires the renderer
+        // think gui
+        world.onPostEngineInit();
+       
     }
 
     /**
@@ -258,9 +265,9 @@ public class GameEngine implements Runnable {
     public GameWorld getWorld() {
         return world;
     }
-    
-    public Display getDisplay(){
-    	return this.display;
+
+    public Display getDisplay() {
+        return this.display;
     }
     
     public void setVolume(float newVolume){
