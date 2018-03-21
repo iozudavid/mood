@@ -1,7 +1,6 @@
 package com.knightlore.game.area.generation;
 
 import java.awt.Point;
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -9,7 +8,6 @@ import java.util.PriorityQueue;
 import java.util.Queue;
 import java.util.Random;
 
-import com.knightlore.game.Team;
 import com.knightlore.game.area.Map;
 import com.knightlore.game.area.Room;
 import com.knightlore.game.area.RoomType;
@@ -19,7 +17,6 @@ import com.knightlore.game.tile.BrickTile;
 import com.knightlore.game.tile.MossBrickTile;
 import com.knightlore.game.tile.PathTile;
 import com.knightlore.game.tile.PlayerSpawnTile;
-import com.knightlore.game.tile.LavaTile;
 import com.knightlore.game.tile.Tile;
 import com.knightlore.game.tile.TurretTile;
 import com.knightlore.game.tile.UndecidedTile;
@@ -74,17 +71,17 @@ public class MapGenerator extends ProceduralAreaGenerator {
         
         // TODO: Expand this if we need other types of
         // of room
-        roomsToBuild.add(RoomType.spawn);
-        roomsToBuild.add(RoomType.weapon);
-        roomsToBuild.add(RoomType.middle);
-        roomsToBuild.add(RoomType.middle);
+        roomsToBuild.add(RoomType.SPAWN);
+        roomsToBuild.add(RoomType.WEAPON);
+        roomsToBuild.add(RoomType.MIDDLE);
+        roomsToBuild.add(RoomType.MIDDLE);
         
         for(int i=1; i < maxRooms; i++) {
             double randInt = rand.nextDouble();
             if(randInt >= 0.66) {
-                roomsToBuild.add(RoomType.health);
+                roomsToBuild.add(RoomType.HEALTH);
             }else {
-                roomsToBuild.add(RoomType.normal);
+                roomsToBuild.add(RoomType.NORMAL);
             }
         }
     }
@@ -106,13 +103,13 @@ public class MapGenerator extends ProceduralAreaGenerator {
         int width = grid.length;
         int height = grid[0].length;
         switch(rt){
-            case spawn :
+            case SPAWN:
                 return setRoomPosition(room,0,0, width/4, height);
-            case weapon :
+            case WEAPON:
                 return setRoomPosition(room, width/4, height/4, width*3/4 , height*3/4);
-            case health:
+            case HEALTH:
                 return setRoomPosition(room, width/4, height/4, width, height);
-            case middle :
+            case MIDDLE:
                 return setRoomPosition(room, width-(room.getWidth()), 0, width+1, height);
             default : return setRoomPosition(room, 0,0, width, height);
         }

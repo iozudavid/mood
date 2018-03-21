@@ -27,8 +27,8 @@ public final class BotInput extends InputModule {
     private static final double ACC = 0.1;
     private static final double SQR_DIST_TO_NODE = 0.6;
     private static final double MOVE_ACC = 0.2;
-    private final byte ONE = 1;
-    private final byte ZERO = 0;
+    private static final byte ONE = 1;
+    private static final byte ZERO = 0;
     private long nextThinkTime = 0;
     private long fov = 60;
     private Entity target = null;
@@ -114,8 +114,7 @@ public final class BotInput extends InputModule {
         // Find our target
         PlayerManager playerManager = GameEngine.getSingleton().getWorld().getPlayerManager();
         List<Player> players = playerManager.getPlayers();
-        for (Player player1 : players) {
-            Entity player = player1;
+        for (Player player : players) {
             Vector2D displacement = player.getPosition().subtract(myPlayer.getPosition());
             Vector2D dir = displacement.normalised();
 
@@ -152,7 +151,6 @@ public final class BotInput extends InputModule {
         if (walkInput > 0) {
             inputState.put(ClientController.FORWARD, ONE);
             inputState.put(ClientController.BACKWARD, ZERO);
-            
         } else if (walkInput < 0) {
             inputState.put(ClientController.FORWARD, ZERO);
             inputState.put(ClientController.BACKWARD, ONE);

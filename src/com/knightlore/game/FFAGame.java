@@ -43,11 +43,11 @@ public class FFAGame extends GameManager {
     public void onPlayerDeath(Player p) {
         // reduce their score for dying
         p.addScore(-1);
-        // drop the weapon in their current position
+        // drop the WEAPON in their current position
         
         spawnPickup(p.getPosition(), p.getCurrentWeapon().getWeaponType());
         
-        // generate random spawn point
+        // generate random SPAWN point
         Vector2D spawnPos = GameEngine.getSingleton().getWorld().getMap().getRandomSpawnPoint();
         p.respawn(spawnPos);
     }
