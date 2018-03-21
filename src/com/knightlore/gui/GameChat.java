@@ -32,6 +32,8 @@ public class GameChat extends GUICanvas {
         super(screenWidth, screenHeight);
         this.screenWidth = screenWidth;
         this.screenHeight = screenHeight;
+        // shouldn't be in constructor... but damn race conditions
+        init();
     }
 
     @Override

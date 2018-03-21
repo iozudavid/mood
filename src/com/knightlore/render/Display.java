@@ -59,9 +59,7 @@ public class Display implements IRenderable {
             minimap.render();
             hud.render();
 
-            for (GUICanvas g : guis) {
-                g.render(pix, x, y);
-            }
+            
 
             final int w = pix.getWidth(), h = pix.getHeight();
             pix.composite(renderer.getPixelBuffer(), x, y);
@@ -77,9 +75,10 @@ public class Display implements IRenderable {
             GameChat chat = world.getGameChat();
             GameFeed.getInstance().getFeed(chat);
 
-            PixelBuffer chatBuffer = chat.getPixelBuffer();
-            pix.composite(chatBuffer, x, y);
-
+            for (GUICanvas g : guis) {
+                g.render(pix, x, y);
+            }
+            
             GameFeed.getInstance().render(pix, x, y);
 
             this.clearDisplay();

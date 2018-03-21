@@ -36,7 +36,6 @@ public class ClientWorld extends GameWorld {
 
     public void buildGUI() {
         gameChat = new GameChat(screenWidth, screenHeight);
-        gameChat.init();
        // gameHUD = new GameHUD(150,150);
         GameEngine.getSingleton().getDisplay().addGUICanvas(gameChat);
     }
