@@ -29,6 +29,7 @@ public class Graphic {
         this.height = img.getHeight();
         this.pixels = new int[width * height];
 
+        this.img = img;
         img.getRGB(0, 0, width, height, pixels, 0, width);
 
         if (filter != null) {

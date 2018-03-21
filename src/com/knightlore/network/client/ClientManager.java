@@ -9,12 +9,13 @@ import com.knightlore.network.TCPConnection;
 import com.knightlore.network.server.Receive;
 
 public class ClientManager implements Runnable {
+	
+	private static Socket server;
     private SendToServer sender;
     private Receive receive;
     private TCPConnection conn;
 
     public ClientManager() {
-        Socket server = null;
         try {
             server = new Socket(ConnectionDetails.SERVER_HOSTNAME,
                     ConnectionDetails.PORT);
@@ -57,6 +58,15 @@ public class ClientManager implements Runnable {
         }
         System.out.println("End");
 
+    }
+    
+    public static void disconnect(){
+    	try {
+			server.close();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
     }
 
 }

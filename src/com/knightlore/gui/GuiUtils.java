@@ -13,7 +13,12 @@ public class GuiUtils {
 		return middle/2;
 	}
 	
-	public static int calculateHeight(int screenHeight, int procent){
+    public static int formatToRight(int screenWidth, int objWidth) {
+        int toRight = screenWidth - objWidth;
+        return toRight;
+    }
+	
+	public static int calculateHeight(int screenHeight, float procent){
 		double decimal = (double)procent/(double)100;
 		return (int)(decimal*screenHeight);
 	}

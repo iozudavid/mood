@@ -34,7 +34,7 @@ public class Button extends GUIObject {
     private Graphic activeGraphic = null;
     private Graphic activeGraphic2 = null;
     
-    private SelectState state = SelectState.UP_PHASE_1;
+    public SelectState state = SelectState.UP_PHASE_1;
     
     // no harm in changing these externally
     public Color upColour1 = new Color(177,177,177);
@@ -46,7 +46,6 @@ public class Button extends GUIObject {
     
     public VoidFunction clickFunction;
     
-    @SuppressWarnings("incomplete-switch")
 	public Color activeColor() {
         switch (state) {
         case UP_PHASE_1:
@@ -64,8 +63,9 @@ public class Button extends GUIObject {
         case DOWN:
         	return downColour;
         	
+        default:  
+        	return upColour2;        	
         }
-        return upColour2;
       
     }
     
@@ -81,11 +81,11 @@ public class Button extends GUIObject {
     void Draw(Graphics g, Rectangle parentRect) {
         
     	g.setColor(Color.BLACK);
-        if (state!=SelectState.UP_PHASE_1 && state!=SelectState.UP_PHASE_2 && activeGraphic != null) {
+        if (state!=SelectState.UP_PHASE_1 && state!=SelectState.UP_PHASE_2 && activeGraphic != null && activeGraphic.getImage() != null) {
         	BufferedImage resized = Image.resize(activeGraphic.getImage(), (int)(rect.getHeight()+10), (int)(rect.getHeight()+10));
         	g.drawImage(resized, (int)(rect.x-rect.getHeight()-20), rect.y, null);
         }
-        if (state!=SelectState.UP_PHASE_1 && state!=SelectState.UP_PHASE_2 && activeGraphic2 != null) {
+        if (state!=SelectState.UP_PHASE_1 && state!=SelectState.UP_PHASE_2 && activeGraphic2 != null && activeGraphic2.getImage() != null) {
         	BufferedImage resized = Image.resize(activeGraphic2.getImage(), (int)(rect.getHeight()+10), (int)(rect.getHeight()+10));
         	g.drawImage(resized, (int) (rect.x+rect.getWidth()), rect.y, null);
         }
@@ -94,7 +94,6 @@ public class Button extends GUIObject {
         	g.setColor(Color.BLACK);
         	g.fillRect(rect.x-1, rect.y-1, rect.width+1, rect.height+1);
             g.setColor(activeColor());
-            System.out.println(activeColor());
             for(int x1=rect.x;x1<rect.width+rect.x;x1++){
             	for(int y1=rect.y;y1<rect.height+rect.y;y1++){
             		if(state==SelectState.HOVER_PHASE_1){
@@ -146,6 +145,7 @@ public class Button extends GUIObject {
             return;
         }
         clickFunction.call();
+        
     }
     
     @Override
@@ -176,7 +176,7 @@ public class Button extends GUIObject {
     
     @Override
     void onMouseDown() {
-        state = SelectState.DOWN;
+        state = SelectState.UP_PHASE_2;
     }
     
     @Override

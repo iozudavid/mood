@@ -57,24 +57,26 @@ public class TextArea extends GUIObject{
 		char[] space = new char[1];
 		space[0] = ' ';
 		g.setColor(Color.white);
-		it = this.text.iterator();
-		it2 = null;
-		while(it.hasNext()){
-			if(it2==null){
-				it2 = this.text.iterator();
-				it2.next();
+		synchronized (this.text) {
+			it = this.text.iterator();
+			it2 = null;
+			while (it.hasNext()) {
+				if (it2 == null) {
+					it2 = this.text.iterator();
+					it2.next();
+				}
+				String currentText = it.next();
+				for (String word : currentText.split(" ")) {
+					// draw words
+					this.fitText(word, g, parentRect);
+					// draw space
+					g.drawChars(space, 0, 1, positionXToRender, positionYToRender);
+					positionXToRender += g.getFontMetrics().charWidth(' ');
+				}
+				// new line
+				this.positionXToRender = (int) this.getRectangle().getX();
+				this.positionYToRender += g.getFontMetrics().getHeight();
 			}
-			String currentText = it.next();
-			for(String word : currentText.split(" ")){
-				//draw words
-				this.fitText(word, g, parentRect);
-				//draw space
-				g.drawChars(space, 0, 1, positionXToRender, positionYToRender);
-				positionXToRender += g.getFontMetrics().charWidth(' ');
-			}
-			//new line
-			this.positionXToRender = (int)this.getRectangle().getX();
-			this.positionYToRender += g.getFontMetrics().getHeight();
 		}
 	}
 	
@@ -147,7 +149,9 @@ public class TextArea extends GUIObject{
 	}
 	
 	public void addText(String newText){
-		this.text.add(newText);
+		synchronized(this.text){
+			this.text.add(newText);
+		}
 	}
 	
 }

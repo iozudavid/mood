@@ -3,18 +3,19 @@ package com.knightlore.game.world;
 import com.knightlore.engine.GameEngine;
 import com.knightlore.engine.audio.BackgroundMusic;
 import com.knightlore.engine.audio.SoundManager;
-import com.knightlore.gui.GameHUD;
+import com.knightlore.gui.GameChat;
 import com.knightlore.render.Environment;
 
 public class ClientWorld extends GameWorld {
 
-    private GameHUD gameHUD;
+    private GameChat gameChat;
+    private int screenWidth;
+    private int screenHeight;
 
     @Override
     public void update() {
-        super.update();
-        if(gameHUD != null && gameManager != null) {
-            gameHUD.setTimeLeft(gameManager.timeLeftString());
+        if(gameChat != null && gameManager != null) {
+            gameChat.setTimeLeft(gameManager.timeLeftString());
         }
     }
 
@@ -29,8 +30,9 @@ public class ClientWorld extends GameWorld {
     }
 
     public void buildGUI() {
-        gameHUD = new GameHUD(150,150);
-        GameEngine.getSingleton().getDisplay().addGUICanvas(gameHUD);
+        gameChat = new GameChat(screenWidth, screenHeight);
+       // gameHUD = new GameHUD(150,150);
+        GameEngine.getSingleton().getDisplay().setGameChat(gameChat);;
     }
 
     private void startBgMusic() {
@@ -42,5 +44,13 @@ public class ClientWorld extends GameWorld {
     @Override
     public void onPostEngineInit() {
         buildGUI();
+    }
+    
+    public void setScreenWidth(int w){
+        this.screenWidth=w;
+    }
+    
+    public void setScreenHeight(int h){
+        this.screenHeight=h;
     }
 }

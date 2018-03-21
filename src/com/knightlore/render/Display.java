@@ -3,8 +3,14 @@ package com.knightlore.render;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.knightlore.engine.GameEngine;
+import com.knightlore.engine.GameState;
 import com.knightlore.gui.GUICanvas;
+import com.knightlore.gui.GUIObject;
 import com.knightlore.gui.GameChat;
+import com.knightlore.gui.MultiplayerMenu;
+import com.knightlore.gui.SettingsMenu;
+import com.knightlore.gui.StartMenu;
 import com.knightlore.render.hud.HUD;
 import com.knightlore.render.minimap.Minimap;
 
@@ -34,45 +40,151 @@ public class Display implements IRenderable {
      */
     private HUD hud;
     private GameChat chat;
+    private StartMenu startMenu;
+    private MultiplayerMenu mpMenu;
+    private SettingsMenu settingsMenu;
+    private ArrayList<Object> settingsObj;
     private List<GUICanvas> guis;
-    
-    public Display(Renderer renderer, Minimap minimap, HUD hud, GameChat chat) {
-        this.renderer = renderer;
-        this.minimap = minimap;
-        this.hud = hud;
-        this.chat = chat;
-        this.guis = new ArrayList<GUICanvas>();
+    private GameState gs = GameState.StartMenu;
+
+    public Display(){
+        this.guis = new ArrayList<>();
+        this.settingsObj = new ArrayList<>();
     }
+    
+	public Display(Renderer renderer, Minimap minimap, HUD hud, GameChat chat, StartMenu startMenu,
+			MultiplayerMenu mpMenu) {
+	    this();
+		this.renderer = renderer;
+		this.minimap = minimap;
+		this.hud = hud;
+		this.chat = chat;
+		this.startMenu = startMenu;
+		this.mpMenu = mpMenu;
+	}
 
     @Override
     public void render(PixelBuffer pix, int x, int y) {
-    	
-        renderer.render();
-        minimap.render();
-        hud.render();
-        chat.render();
-        for(GUICanvas canvas : guis) {
-            if(!canvas.isVisible) {
-                continue;
-            }
-            canvas.render(pix, x, y);
-        }
+		switch (GameEngine.getSingleton().gameState) {
+		case InGame:
+			renderer.render();
+			minimap.render();
+			hud.render();
+			chat.render();
 
-        final int w = pix.getWidth(), h = pix.getHeight();
-        pix.composite(renderer.getPixelBuffer(), x, y);
+			final int w = pix.getWidth(), h = pix.getHeight();
+			pix.composite(renderer.getPixelBuffer(), x, y);
+
+			PixelBuffer minimapBuffer = minimap.getPixelBuffer();
+			pix.composite(minimapBuffer, x + w - minimapBuffer.getWidth(), y);
+
+			PixelBuffer hudBuffer = hud.getPixelBuffer();
+			pix.composite(hudBuffer, x, y + renderer.getPixelBuffer().getHeight());
+
+			GameFeed.getInstance().getFeed(this.chat);
+
+			PixelBuffer chatBuffer = chat.getPixelBuffer();
+			pix.composite(chatBuffer, x, y);
+			
+			GameFeed.getInstance().render(pix, x, y);
+
+			this.clearDisplay();
+			gs=GameState.InGame;
+			break;
+			
+		case StartMenu:
+			if(this.startMenu==null)
+				this.startMenu=new StartMenu(pix.getHeight(), pix.getWidth());
+			this.startMenu.render(pix, x, y);
+			this.clearDisplay();
+			gs=GameState.StartMenu;
+			break;
+			
+		case MultiplayerMenu:
+			if(this.mpMenu==null)
+				this.mpMenu=new MultiplayerMenu(pix.getHeight(), pix.getWidth());
+			this.mpMenu.render(pix, x, y);
+			this.clearDisplay();
+			gs=GameState.MultiplayerMenu;
+			break;
+			
+		case SettingsMenu:
+		    if(this.settingsMenu==null)
+		        this.settingsMenu=new SettingsMenu(pix.getWidth(), pix.getHeight());
+		    if(gs!=GameState.SettingsMenu)
+		        this.settingsObj = this.settingsMenu.getObj();
+		    this.settingsMenu.render(pix, x, y);
+		    this.clearDisplay();
+		    gs=GameState.SettingsMenu;
+		    break;
+		    
+		case SettingsMenuApply:
+		    this.clearDisplay();
+		    GameEngine.getSingleton().gameState = GameState.StartMenu;
+		    break;
+		
+		case SettingsMenuCancel:
+		    this.settingsMenu.setObj(this.settingsObj);
+		    this.clearDisplay();
+            GameEngine.getSingleton().gameState = GameState.StartMenu;
+            break;
+            
+		default:
+			this.clearDisplay();
+			break;
+		}
+    }
+    
+    public void clearDisplay(){
+    	switch (GameEngine.getSingleton().gameState) {
+		case InGame:
+			if(this.mpMenu!=null)
+				this.mpMenu=null;
+			if(this.startMenu!=null)
+				this.startMenu=null;
+			return;
+		case StartMenu:
+			if(this.mpMenu!=null)
+				this.mpMenu=null;
+			return;
+		case MultiplayerMenu:
+			if(this.startMenu!=null)
+				this.startMenu=null;
+			return;
+		case SettingsMenu:
+		    if(this.mpMenu!=null)
+                this.mpMenu=null;
+            if(this.startMenu!=null)
+                this.startMenu=null;
+		default:
+			return;
+    	}
+    }
+    
+    public void setMinimap(Minimap m){
+    	this.minimap=m;
+    }
+    
+    public void setRenderer(Renderer r){
+    	this.renderer = r;
+    }
+    
+    public void setHud(HUD hud){
+    	this.hud=hud;
+    }
+    
+    public void setGameChat(GameChat gc){
+    	this.chat = gc;
+    }
+    
+    public void setStartMenu(StartMenu sm){
+    	this.startMenu = sm;
+    }
+    
+    public void setMultiplayerMenu(MultiplayerMenu mp){
+    	this.mpMenu = mp;
 
 
-        PixelBuffer minimapBuffer = minimap.getPixelBuffer();
-        pix.composite(minimapBuffer, x + w - minimapBuffer.getWidth(), y);
-
-        PixelBuffer hudBuffer = hud.getPixelBuffer();
-        pix.composite(hudBuffer, x, y + renderer.getPixelBuffer().getHeight());
-
-        GameFeed.getInstance().getFeed(this.chat);
-        
-        PixelBuffer chatBuffer = chat.getPixelBuffer();
-        pix.composite(chatBuffer, x, y);
-        
     }
 
     public Renderer getRenderer() {
