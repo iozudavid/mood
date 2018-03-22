@@ -14,20 +14,26 @@ public class Slider extends GUIObject {
     public Color downColour = Color.BLACK;
 
     private Rectangle sliderPos;
-    private final float defaultValue = 0.8f;
+    private float defaultValue = 0.8f;
     private float actualValue = defaultValue;
     private SelectState state = SelectState.UP;
     private boolean isClicked=false;
 
     public Slider(int x, int y, int width, int height, int depth) {
         super(x, y, width, height, depth);
-        System.out.println(((double) defaultValue * (double) (x + width)));
         this.sliderPos = new Rectangle((int) (x + ((double) defaultValue * (double) (width))),
                 (int) (y - (double) (height) / 2D), 5, height * 2);
     }
 
     public Slider(int x, int y, int width, int height) {
         this(x, y, width, height, 0);
+    }
+    public Slider(int x, int y, int width, int height, int depth, float val) {
+        super(x, y, width, height, depth);
+        this.defaultValue=val;
+        this.actualValue=this.defaultValue;
+        this.sliderPos = new Rectangle((int) (x + ((double) defaultValue * (double) (width))),
+                (int) (y - (double) (height) / 2D), 5, height * 2);
     }
 
     public Color activeColor() {
