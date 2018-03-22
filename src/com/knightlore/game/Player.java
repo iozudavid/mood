@@ -18,6 +18,8 @@ import com.knightlore.GameSettings;
 import com.knightlore.ai.InputModule;
 import com.knightlore.ai.RemoteInput;
 import com.knightlore.engine.GameEngine;
+import com.knightlore.game.buff.Immune;
+import com.knightlore.game.buff.SpawnVision;
 import com.knightlore.game.entity.Entity;
 import com.knightlore.game.entity.weapon.Shotgun;
 import com.knightlore.game.entity.weapon.Weapon;
@@ -381,6 +383,7 @@ public class Player extends Entity {
             return;
         }
         if (currentHealth <= 0) {
+            respawn = true;
             if (lastInflictor == null) {
                 System.out.println(this.getName() + " was killed by natural causes");
             } else {
@@ -388,6 +391,7 @@ public class Player extends Entity {
                 lastInflictor.killConfirmed(this);
             }
             removeAllBuffs();
+            this.resetBuff(new Immune(this));
             this.sendSystemMessage(this.getName(), lastInflictor);
             GameEngine.getSingleton().getWorld().getGameManager().onPlayerDeath(this);
         }
@@ -480,6 +484,10 @@ public class Player extends Entity {
     @Override
     public boolean renderName() {
         return true;
+    }
+
+    public void onClientRespawn() {
+        this.resetBuff(new SpawnVision(this));
     }
 
 }

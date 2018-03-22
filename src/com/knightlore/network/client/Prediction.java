@@ -94,6 +94,7 @@ public class Prediction {
 				player.setyPos(nextPrediction.getPosition().getY());
 				player.setxDir(nextPrediction.getDirection().getX());
 				player.setyDir(nextPrediction.getDirection().getY());
+				player.onClientRespawn();
 			}
 		}
 
