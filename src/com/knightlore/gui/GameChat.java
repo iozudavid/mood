@@ -41,13 +41,11 @@ public class GameChat extends GUICanvas {
         super.init();
         this.pix = new PixelBuffer((int) (screenWidth), (int) (screenHeight));
         this.pix.flood(-16711936);
-        this.textArea = new TextArea(0, 0, (int) (screenWidth * 0.3),
-                (int) (screenHeight * 0.3));
+        this.textArea = new TextArea(0, 0, (int) (screenWidth * 0.3), (int) (screenHeight * 0.3));
         this.textField = new TextField(0,
-                (int) (this.textArea.getRectangle().getY()
-                        + this.textArea.getRectangle().getHeight()),
+                (int) (this.textArea.getRectangle().getY() + this.textArea.getRectangle().getHeight()),
                 (int) (screenWidth * 0.3), (int) (screenHeight * 0.05));
-        this.textField.fontSize=2;
+        this.textField.fontSize = 2;
         this.textField.setSelect(false);
         this.addGUIObject(this.textArea);
         this.addGUIObject(this.textField);
@@ -55,27 +53,21 @@ public class GameChat extends GUICanvas {
         this.textArea.addText("System: access all chat by pressing y");
         this.textArea.addText("System: exit chat by pressing esc");
         this.textArea.addText("System: acces pause menu by pressing esc");
-        this.textArea.addText(
-                "System: acces scoreboard menu by pressing and holding q");
-        this.pauseImage = new Image(GuiUtils.middleWidth(screenWidth, 150),
-                GuiUtils.calculateHeight(screenHeight, 15), 150, 50,
-                "res/graphics/Pause.png");
-        pauseImage.needBackground = true;
+        this.textArea.addText("System: acces scoreboard menu by pressing and holding q");
+        this.pauseImage = new Image(GuiUtils.middleWidth(screenWidth, 150), GuiUtils.calculateHeight(screenHeight, 15),
+                150, 50, "res/graphics/Pause.png");
+        pauseImage.needBackground = false;
         this.scoreBoardImage = new Image(GuiUtils.middleWidth(screenWidth, 150),
-                GuiUtils.calculateHeight(screenHeight, 10), 150, 50,
-                "res/graphics/ScoreBoard.png");
-        scoreBoardImage.needBackground = true;
-        this.scoreBoard = new Table(
-                GuiUtils.middleWidth(screenWidth, (int) (screenWidth * 0.66)),
-                GuiUtils.calculateHeight(screenHeight, 20),
-                (int) (screenWidth * 0.66), 20, 0);
+                GuiUtils.calculateHeight(screenHeight, 10), 150, 50, "res/graphics/ScoreBoard.png");
+        scoreBoardImage.needBackground = false;
+        this.scoreBoard = new Table(GuiUtils.middleWidth(screenWidth, (int) (screenWidth * 0.66)),
+                GuiUtils.calculateHeight(screenHeight, 20), (int) (screenWidth * 0.66), 20, 0);
         ArrayList<String> header = new ArrayList<>();
         header.add("Player Name");
         header.add("Team");
         header.add("Score");
         this.scoreBoard.setTableHeader(header);
-        timeLeftText = new Text(GuiUtils.middleWidth(screenWidth, 128), 0, 128,
-                30, null, 30);
+        timeLeftText = new Text(GuiUtils.middleWidth(screenWidth, 128), 0, 128, 30, null, 30);
         timeLeftText.currentColor = Color.WHITE;
         this.addGUIObject(timeLeftText);
         timeLeftText.SetText("00:00");
@@ -83,8 +75,7 @@ public class GameChat extends GUICanvas {
 
             @Override
             public void call() {
-                GameChat.this
-                        .setPauseMenuVisible(!GameChat.this.lastPauseVisible);
+                GameChat.this.setPauseMenuVisible(!GameChat.this.lastPauseVisible);
             }
         });
 
@@ -113,14 +104,11 @@ public class GameChat extends GUICanvas {
 
     public void initPauseHidden() {
         this.resumeButton = new Button(GuiUtils.middleWidth(screenWidth, 300),
-                GuiUtils.calculateHeight(screenHeight, 30), 300, 40, "Resume",
-                20);
+                GuiUtils.calculateHeight(screenHeight, 30), 300, 40, "Resume", 20);
         this.mainMenuButton = new Button(GuiUtils.middleWidth(screenWidth, 300),
-                GuiUtils.calculateHeight(screenHeight, 40), 300, 40,
-                "Main Menu", 20);
-        this.exitButton = new Button(GuiUtils.middleWidth(screenWidth, 300),
-                GuiUtils.calculateHeight(screenHeight, 50), 300, 40, "Exit",
-                20);
+                GuiUtils.calculateHeight(screenHeight, 40), 300, 40, "Main Menu", 20);
+        this.exitButton = new Button(GuiUtils.middleWidth(screenWidth, 300), GuiUtils.calculateHeight(screenHeight, 50),
+                300, 40, "Exit", 20);
         this.resumeButton.clickFunction = new VoidFunction() {
 
             @Override

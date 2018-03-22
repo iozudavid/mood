@@ -24,7 +24,7 @@ public class StartMenu {
         this.screenWidth = screenWidth;
         this.coverImage = new Image(0, 0, screenWidth, screenHeight, "res/graphics/knightlorecoverblur.png");
         this.name = new Image(GuiUtils.middleWidth(this.screenWidth, 500),
-                GuiUtils.calculateHeight(this.screenHeight, 10), 500, 100, "res/graphics/logo.png");
+                GuiUtils.calculateHeight(this.screenHeight, 10) - 40, 500, 200, "res/graphics/logo.png");
         this.singlePlayerButton = new Button(GuiUtils.middleWidth(this.screenWidth, 300),
                 GuiUtils.calculateHeight(this.screenHeight, 40), 300, 40, "Single Player", 21);
         this.singlePlayerButton.setGraphic(new Image(0, 0, 0, 0, "res/graphics/shotgun_to_right.png").graphic);

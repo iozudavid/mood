@@ -34,7 +34,7 @@ public class SettingsMenu {
         this.gui.init();
         this.screenWidth = screenWidth;
         this.screenHeight = screenHeight;
-        this.coverImage = new Image(0, 0, this.screenWidth, this.screenHeight, "res/graphics/settings_modified.jpg");
+        this.coverImage = new Image(0, 0, this.screenWidth, this.screenHeight, "res/graphics/mppadjusted.png");
         this.gui.addGUIObject(this.coverImage);
         this.nameText = new Text(GuiUtils.middleWidth(this.screenWidth, 100),
                 GuiUtils.calculateHeight(this.screenHeight, 25), 100, 30, "Username: ", 25);
