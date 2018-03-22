@@ -35,6 +35,8 @@ public class PickupManager implements TickListener{
                                    break;
                     case health  : item = new HealthPickup(vector , this);
                                    break;
+                    case pistol  : item = new PistolPickup(vector, this);
+                                   break;
                     default      : item = new HealthPickup(vector, this);
                 }
                 pickupQueue.add(new PickupPlacement(0 , item));                

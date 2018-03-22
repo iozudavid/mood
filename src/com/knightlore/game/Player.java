@@ -17,8 +17,8 @@ import com.knightlore.ai.InputModule;
 import com.knightlore.ai.RemoteInput;
 import com.knightlore.engine.GameEngine;
 import com.knightlore.game.entity.Entity;
-import com.knightlore.game.entity.weapon.Shotgun;
 import com.knightlore.game.entity.weapon.Weapon;
+import com.knightlore.game.entity.weapon.WeaponType;
 import com.knightlore.game.world.ClientWorld;
 import com.knightlore.network.NetworkObject;
 import com.knightlore.network.NetworkObjectManager;
@@ -69,7 +69,8 @@ public class Player extends Entity {
 
     private int score = 0;
     private int currentHealth = MAX_HEALTH;
-    private Weapon currentWeapon = new Shotgun();
+    private Weapon currentWeapon;
+    private WeaponType currentWeaponType;
     private boolean shootOnNextUpdate;
 
     private boolean hasShot;
@@ -107,6 +108,8 @@ public class Player extends Entity {
         // add tick listener to game engine
         // as some buffs will affect the player periodically
         GameEngine.ticker.addTickListener(this);
+
+        this.setCurrentWeaponType(WeaponType.SHOTGUN);
 
         // Player.this.finished = true;
     }
@@ -258,7 +261,6 @@ public class Player extends Entity {
             inputState = inputModule.updateInput(inputState, this);
             // Check whether each input is triggered - if it is, execute the
             // respective method.
-            // DEBUG
             for (Entry<ClientController, Byte> entry : inputState.entrySet()) {
                 // For boolean inputs (i.e. all current inputs), 0 represents
                 // false.
@@ -345,6 +347,7 @@ public class Player extends Entity {
         this.respawn = false;
         bb.putInt(currentHealth);
         bb.putInt(score);
+        bb.putInt(this.currentWeaponType.ordinal());
         return bb;
     }
 
@@ -357,8 +360,12 @@ public class Player extends Entity {
         this.timeToSend = buf.getDouble();
         this.respawn = buf.getInt() == 1;
         currentHealth = buf.getInt();
-
         setScore(buf.getInt());
+
+        WeaponType newWeaponType = WeaponType.VALUES[buf.getInt()];
+        if (newWeaponType != currentWeaponType) {
+            this.setCurrentWeaponType(newWeaponType);
+        }
     }
 
     @Override
@@ -456,8 +463,18 @@ public class Player extends Entity {
         return currentWeapon;
     }
 
-    public void setCurrentWeapon(Weapon currentWeapon) {
-        this.currentWeapon = currentWeapon;
+    /**
+     * Make the player hold a weapon of the given type. Instantiates a new
+     * weapon of this type.
+     * 
+     * @param wt
+     *            The type of weapon for the player to be holding.
+     */
+    public synchronized void setCurrentWeaponType(WeaponType wt) {
+        this.currentWeaponType = wt;
+        this.currentWeapon = wt.getNewWeapon();
+        System.out.println(
+                "Player " + this.getName() + " is now holding a " + wt + ".");
     }
 
     public int getCurrentHealth() {
