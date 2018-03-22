@@ -1,5 +1,6 @@
 package com.knightlore.render.font;
 
+import java.awt.Color;
 import java.awt.image.BufferedImage;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -19,6 +20,7 @@ public class Font {
     private static final String FONT_STRING = "ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890 ?!-+|:().[]";
     public static final Font DEFAULT_WHITE = new Font("res/font/font.png", FONT_STRING, 0xFFFFFF);
     public static final Font DEFAULT_BLACK = new Font("res/font/font.png", FONT_STRING, 0x000000);
+    public static final Font DEFAULT_RED = new Font("res/font/font.png", FONT_STRING, Color.red.getRGB());
 
     private static final int BOUNDS_COLOR = -65536; // pure red.
 

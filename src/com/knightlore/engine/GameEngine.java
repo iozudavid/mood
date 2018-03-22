@@ -135,14 +135,19 @@ public class GameEngine implements Runnable {
             new Thread(networkManager).start();
             ((ServerNetworkObjectManager) networkObjectManager).init();
         }
+
         if (GameSettings.isClient()) {
             world = new ClientWorld();
             networkObjectManager = new ClientNetworkObjectManager(
                     (ClientWorld) world);
-            ClientManager networkManager = new ClientManager();
+            ClientManager networkManager = null;
+            try {
+                networkManager = new ClientManager();
+            } catch (Exception e) {
+                throw new RuntimeException();
+            }
             new Thread(networkManager).start();
-            ((ClientNetworkObjectManager) networkObjectManager)
-                    .init(networkManager.getServerSender());
+            ((ClientNetworkObjectManager) networkObjectManager).init(networkManager.getServerSender());
         }
 
         System.out.println("Initialising NetworkObjectManager...");
@@ -181,7 +186,8 @@ public class GameEngine implements Runnable {
         _doneInit = true;
 
     }
-
+    
+    
     /**
      * Creates the window for the game.
      */
@@ -202,6 +208,12 @@ public class GameEngine implements Runnable {
         thread.start();
         if (!HEADLESS) {
             window.setVisible(true);
+        }
+    }
+    
+    public void stopGame(){
+        synchronized(this.gameObjectManager){
+            this.gameObjectManager = new GameObjectManager();
         }
     }
 
@@ -236,9 +248,10 @@ public class GameEngine implements Runnable {
             delta += (now - lastTime) / ns;
             lastTime = now;
             while (delta >= 1) {
-                if (running)
+                synchronized(this.gameObjectManager){
                     gameObjectManager.updateObjects();
-                if (GameManager.getGameState() == GameState.PLAYING) {
+                }
+                if (world!=null && GameManager.getGameState() == GameState.PLAYING) {
                     world.update();
                     GameFeed.getInstance().update();
                 }

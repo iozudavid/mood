@@ -26,7 +26,7 @@ public class TCPConnection extends Connection {
         } catch (IOException e) {
             System.err.println("The connection doesn't seem to work...");
             System.exit(1);
-        }
+        } 
     }
 
     /**

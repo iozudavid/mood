@@ -1,5 +1,6 @@
 package com.knightlore.gui;
 
+import java.awt.Color;
 import java.util.ArrayList;
 
 import com.knightlore.engine.GameEngine;
@@ -22,6 +23,7 @@ public class MultiplayerMenu {
     private Group groupPort;
     private Button connectButton;
     private Button cancelButton;
+    private Text noConnection;
     
 	public MultiplayerMenu(int screenHeight, int screenWidth){
 		this.gui = new GUICanvas(screenWidth, screenHeight);	
@@ -76,10 +78,19 @@ public class MultiplayerMenu {
             public void call() {
                 ConnectionDetails.PORT = Integer.parseInt(MultiplayerMenu.this.portTextField.getText());
                 ConnectionDetails.SERVER_HOSTNAME = MultiplayerMenu.this.ipTextField.getText();
-                MultiplayerMenu.this.gui.destroy();
+                try{
                 GameEngine.getSingleton().startGame();
+                }catch(Exception e){
+                    MultiplayerMenu.this.gui.addGUIObject(MultiplayerMenu.this.noConnection);
+                    return;
+                }
+                MultiplayerMenu.this.gui.destroy();
             }
         };
+        
+        this.noConnection = new Text(GuiUtils.middleWidth(this.screenWidth, 120),
+                GuiUtils.calculateHeight(this.screenHeight, 75), 120, 40, "No connection!", 21);
+        noConnection.currentColor=Color.RED;
 
     }
 

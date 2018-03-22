@@ -36,6 +36,12 @@ public class Text extends GUIObject {
     void Draw(PixelBuffer pix, int x, int y) {
         int hOffset = Font.DEFAULT_WHITE.getHeight();
         // draw the characters of the string
-        pix.drawString(Font.DEFAULT_WHITE, new String(rawChars), rect.x, rect.y + hOffset, this.fontSize, 2);
+        if (this.currentColor == Color.RED)
+            pix.drawString(Font.DEFAULT_RED, new String(rawChars), rect.x, rect.y + hOffset, this.fontSize, 2);
+        else if (this.currentColor == Color.BLACK)
+            pix.drawString(Font.DEFAULT_BLACK, new String(rawChars), rect.x, rect.y + hOffset, this.fontSize, 2);
+        else
+            pix.drawString(Font.DEFAULT_WHITE, new String(rawChars), rect.x, rect.y + hOffset, this.fontSize, 2);
+
     }
 }
