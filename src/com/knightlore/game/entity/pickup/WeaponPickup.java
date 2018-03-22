@@ -14,13 +14,11 @@ import com.knightlore.utils.Vector2D;
  *
  */
 public abstract class WeaponPickup extends PickupItem {
-    public WeaponPickup(Vector2D position, DirectionalSprite dSprite,
-            PickupManager pickupManager) {
+    public WeaponPickup(Vector2D position, DirectionalSprite dSprite, PickupManager pickupManager) {
         this(UUID.randomUUID(), position, dSprite, pickupManager);
     }
 
-    public WeaponPickup(UUID uuid, Vector2D position, DirectionalSprite dSprite,
-            PickupManager pickupManager) {
+    public WeaponPickup(UUID uuid, Vector2D position, DirectionalSprite dSprite, PickupManager pickupManager) {
         super(uuid, position, dSprite, pickupManager);
         spawnDelay = 10;
     }
@@ -47,8 +45,7 @@ public abstract class WeaponPickup extends PickupItem {
     @Override
     public void onCollide(Player player) {
         if (exists) {
-            System.out.println("Player " + player.getName() + " collided with "
-                    + this.getClass().getSimpleName());
+            System.out.println("Player " + player.getName() + " collided with " + this.getClass().getSimpleName());
             // update pickup manager
             addToPickupManager();
             // Set the player's new weapon

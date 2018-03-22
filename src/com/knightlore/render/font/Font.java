@@ -22,7 +22,7 @@ public class Font {
     public static final Font DEFAULT_BLACK = new Font("res/font/font.png", FONT_STRING, 0x000000);
     public static final Font DEFAULT_RED = new Font("res/font/font.png", FONT_STRING, Color.red.getRGB());
 
-    private static final int BOUNDS_COLOR = -65536; // pure red.
+    private static final int BOUNDS_COLOR = 0xFFFF0000; // pure red.
 
     private BufferedImage sheet;
     private Map<Character, Graphic> symbols;
