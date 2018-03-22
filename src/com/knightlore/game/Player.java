@@ -102,7 +102,7 @@ public class Player extends Entity {
         // as some buffs will affect the player periodically
         GameEngine.ticker.addTickListener(this);
 
-        this.setCurrentWeaponType(WeaponType.SHOTGUN);
+        this.setCurrentWeaponType(WeaponType.PISTOL);
 
         // Player.this.finished = true;
     }
