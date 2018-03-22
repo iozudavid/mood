@@ -16,11 +16,9 @@ import com.knightlore.utils.pathfinding.PathFinder;
 
 public class MapGenerator extends ProceduralAreaGenerator {
 
-    // TODO: Have these correspond to map size instead
-    private static final int ROOM_RANGE_MIN = 4;
-    private static final int ROOM_RANGE_MAX = 8;
     private static final int ROOM_COST_MODIFIER = 5;
     private static final int DOUBLE_PATH_COST_MODIFIER = 3;
+    private static final int MIN_AREA_PER_ROOM = 100;
     // ---
     
     // TODO: LAVA MOAT!!
@@ -53,7 +51,8 @@ public class MapGenerator extends ProceduralAreaGenerator {
         }
         grid = new Tile[width][height];
         // TODO: maybe make this correspond to map size
-        maxRooms = ROOM_RANGE_MIN + rand.nextInt(ROOM_RANGE_MAX - ROOM_RANGE_MIN);
+        int mapArea = width * height;
+        maxRooms = mapArea / MIN_AREA_PER_ROOM;
         PerlinNoiseGenerator perlinGenerator = new PerlinNoiseGenerator(width, height, seed);
         // Initialize costGrid with perlin noise to make generated paths less optimal
         costGrid = perlinGenerator.createPerlinNoise();
