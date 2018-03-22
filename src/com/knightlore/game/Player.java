@@ -3,11 +3,9 @@ package com.knightlore.game;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
-import java.util.Random;
 import java.util.UUID;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -262,20 +260,21 @@ public class Player extends Entity {
         }
 
         if (prevPosServer != null && prevDirServer != null) {
-            Vector2D displacement = position.subtract(prevPosServer);
+            Vector2D displacement = position.subtract(prevPos);
             double dis = displacement.magnitude();
-            if (dis != 0) {
-                currentAnim = moveAnim;
-                moveAnim.update(dis);
-            } else {
-                currentAnim = standAnim;
-            }
+            moveAnim.update(dis);
         }
+
+        currentAnim = moveAnim.expired() ? standAnim : moveAnim;
+        System.out.println("ANIMATION " + currentAnim);
 
         currentWeapon.update();
         prevPos = position;
         prevDir = direction;
         checkDeath();
+
+        prevPosServer = position;
+        prevDirServer = direction;
     }
 
     private void updateInertia(Vector2D displacement) {
@@ -336,8 +335,6 @@ public class Player extends Entity {
 
     @Override
     public synchronized void deserialize(ByteBuffer buf) {
-        prevPosServer = position;
-        prevDirServer = direction;
         super.deserialize(buf);
         shootOnNextUpdate = buf.getInt() == 1;
         this.timeToSend = buf.getDouble();
