@@ -1,5 +1,7 @@
 package com.knightlore.gui;
 
+import java.awt.Color;
+
 import com.knightlore.engine.GameEngine;
 import com.knightlore.network.ConnectionDetails;
 import com.knightlore.render.PixelBuffer;
@@ -16,6 +18,7 @@ public class StartMenu {
     private Button multiPlayerButton;
     private Button settingsButton;
     private Button quitButton;
+    private Text noConnection;
 
     public StartMenu(int screenHeight, int screenWidth) {
         this.gui = new GUICanvas(screenWidth, screenHeight);
@@ -24,7 +27,7 @@ public class StartMenu {
         this.screenWidth = screenWidth;
         this.coverImage = new Image(0, 0, screenWidth, screenHeight, "res/graphics/knightlorecoverblur.png");
         this.name = new Image(GuiUtils.middleWidth(this.screenWidth, 500),
-                GuiUtils.calculateHeight(this.screenHeight, 10), 500, 100, "res/graphics/logo.png");
+                GuiUtils.calculateHeight(this.screenHeight, 10) - 40, 500, 200, "res/graphics/logo.png");
         this.singlePlayerButton = new Button(GuiUtils.middleWidth(this.screenWidth, 300),
                 GuiUtils.calculateHeight(this.screenHeight, 40), 300, 40, "Single Player", 21);
         this.singlePlayerButton.setGraphic(new Image(0, 0, 0, 0, "res/graphics/shotgun_to_right.png").graphic);
@@ -42,6 +45,10 @@ public class StartMenu {
         this.quitButton.setGraphic(new Image(0, 0, 0, 0, "res/graphics/quit_to_right.png").graphic);
         this.quitButton.setGraphic2(new Image(0, 0, 0, 0, "res/graphics/quit_to_left.png").graphic);
 
+        this.noConnection = new Text(GuiUtils.middleWidth(this.screenWidth, 120),
+                GuiUtils.calculateHeight(this.screenHeight, 35), 120, 40, "No connection!", 21);
+        noConnection.currentColor = Color.RED;
+
         this.singlePlayerButton.clickFunction = new VoidFunction() {
 
             @Override
@@ -51,8 +58,13 @@ public class StartMenu {
                 ConnectionDetails.SERVER_HOSTNAME = "localhost";
                 ConnectionDetails.PORT = 5000;
                 // remove this gui
+                try {
+                    GameEngine.getSingleton().startGame();
+                } catch (Exception e) {
+                    StartMenu.this.gui.addGUIObject(StartMenu.this.noConnection);
+                    return;
+                }
                 StartMenu.this.gui.destroy();
-                GameEngine.getSingleton().startGame();
             }
         };
 

@@ -5,6 +5,8 @@ import com.knightlore.render.graphic.texture.Texture;
 import com.knightlore.game.entity.Entity;
 import com.knightlore.game.entity.pickup.PickupType;
 
+import java.awt.*;
+
 public class PickupTile extends Tile {
 
     private PickupType pickupType;
@@ -28,6 +30,15 @@ public class PickupTile extends Tile {
     @Override
     public void onShot() {
     }
+
+    @Override
+    public int getMinimapColor() {
+        if (pickupType == PickupType.HEALTH) {
+            return Color.PINK.getRGB();
+        }
+
+        return Color.darkGray.getRGB();
+    }
     
     public PickupType getPickupType() {
         return pickupType;
@@ -41,6 +52,11 @@ public class PickupTile extends Tile {
     @Override
     public double getOpacity() {
         return 0.0;
+    }
+
+    @Override
+    public String toString() {
+        return pickupType.toString() + " pickup";
     }
     
     @Override

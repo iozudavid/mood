@@ -96,7 +96,7 @@ public class RoomGenerator extends ProceduralAreaGenerator {
                         grid[i][j] = new LavaTile();
                     }
                 }
-                grid[midx][midy] = new PickupTile(PickupType.shotgun);
+                grid[midx][midy] = new PickupTile(PickupType.SHOTGUN);
                 fillUndecidedTiles();
                 break;
             case MIDDLE:
@@ -249,9 +249,9 @@ public class RoomGenerator extends ProceduralAreaGenerator {
     private PickupType randomPickupType() {
         int randInt = rand.nextInt(2);
         if (randInt == 0) {
-            return PickupType.shotgun;
+            return PickupType.SHOTGUN;
         } else {
-            return PickupType.health;
+            return PickupType.HEALTH;
         }
     }
 

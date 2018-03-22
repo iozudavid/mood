@@ -90,13 +90,19 @@ public class PlayerSpawnTile extends Tile {
 
     @Override
     public int getMinimapColor() {
-        return 0x00FF00;
+        return team.getColor();
     }
 
     @Override
     public void onShot() {
     }
 
+    @Override
+    public String toString() {
+        return team.toString() + " spawn";
+    }
+
+    @Override
     public char toChar() {
         if (team == Team.NONE) {
             return '0';

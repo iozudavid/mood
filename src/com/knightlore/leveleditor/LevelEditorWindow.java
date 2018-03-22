@@ -27,6 +27,8 @@ public class LevelEditorWindow extends JFrame {
     public static final String TITLE = "KnightLore Level Editor";
     public static final int WIDTH = 1000;
     public static final int HEIGHT = 1000;
+    private static final int MAP_WIDTH = 64;
+    private static final int MAP_HEIGHT = 64;
 
     private final LevelEditorPanel panel;
 
@@ -55,7 +57,7 @@ public class LevelEditorWindow extends JFrame {
 
         JSplitPane pane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
 
-        panel = new LevelEditorPanel(new MapGenerator().createMap(32, 32, MapType.TDM, 20L));
+        panel = new LevelEditorPanel(new MapGenerator().createMap(MAP_WIDTH, MAP_HEIGHT, MapType.TDM, 20L));
         pane.setLeftComponent(new TileChooserPanel());
         pane.setRightComponent(panel);
 
@@ -67,7 +69,7 @@ public class LevelEditorWindow extends JFrame {
         Random rand = new Random();
         panel.removeAll();
 
-        Map m = new MapGenerator().createMap(32, 32, MapType.TDM, rand.nextLong());
+        Map m = new MapGenerator().createMap(MAP_WIDTH, MAP_HEIGHT, MapType.TDM, rand.nextLong());
         panel.initialise(m);
         panel.revalidate();
         panel.repaint();
