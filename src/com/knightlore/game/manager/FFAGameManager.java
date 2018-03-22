@@ -4,9 +4,10 @@ import java.nio.ByteBuffer;
 import java.util.List;
 import java.util.UUID;
 
+import com.knightlore.GameSettings;
 import com.knightlore.engine.GameEngine;
-import com.knightlore.game.entity.Player;
 import com.knightlore.game.entity.Entity;
+import com.knightlore.game.entity.Player;
 import com.knightlore.game.entity.pickup.PistolPickup;
 import com.knightlore.game.entity.pickup.ShotgunPickup;
 import com.knightlore.game.entity.pickup.WeaponPickup;
@@ -15,7 +16,7 @@ import com.knightlore.utils.Vector2D;
 
 public class FFAGameManager extends GameManager {
 
-    private static final int WIN_SCORE = 10;
+    private static final int WIN_SCORE = 1;
     private static final double ROUND_TIME_SECS = 300;
     private Entity winner;
 
@@ -33,13 +34,12 @@ public class FFAGameManager extends GameManager {
         PlayerManager playerManager = GameEngine.getSingleton().getWorld().getPlayerManager();
         List<Player> players = playerManager.getPlayers();
 
-        for (Player p: players) {
+        for (Player p : players) {
             Vector2D spawnPos = GameEngine.getSingleton().getWorld().getMap().getRandomSpawnPoint();
             p.respawn(spawnPos);
         }
 
-        gameOverTick = GameEngine.ticker.getTime()
-                + (long) (GameEngine.UPDATES_PER_SECOND * ROUND_TIME_SECS);
+        gameOverTick = GameEngine.ticker.getTime() + (long) (GameEngine.UPDATES_PER_SECOND * ROUND_TIME_SECS);
 
     }
 
@@ -52,22 +52,21 @@ public class FFAGameManager extends GameManager {
         spawnPickup(p.getPosition(), p.getCurrentWeapon().getWeaponType());
 
         // generate random SPAWN point
-        Vector2D spawnPos = GameEngine.getSingleton().getWorld().getMap()
-                .getRandomSpawnPoint();
+        Vector2D spawnPos = GameEngine.getSingleton().getWorld().getMap().getRandomSpawnPoint();
         p.respawn(spawnPos);
     }
 
     private void spawnPickup(Vector2D pos, WeaponType type) {
         WeaponPickup pickup;
         switch (type) {
-            case PISTOL:
-                pickup = new PistolPickup(pos, null);
-                break;
-            // If in doubt, spawn a shotgun.
-            case SHOTGUN:
-            default:
-                pickup = new ShotgunPickup(pos, null);
-                break;
+        case PISTOL:
+            pickup = new PistolPickup(pos, null);
+            break;
+        // If in doubt, spawn a shotgun.
+        case SHOTGUN:
+        default:
+            pickup = new ShotgunPickup(pos, null);
+            break;
         }
         pickup.init();
         // nice adding :)
@@ -81,18 +80,17 @@ public class FFAGameManager extends GameManager {
 
     @Override
     public void onUpdate() {
+        
         // update ticks left
         if (gameState != GameState.FINISHED) {
             ticksLeft = gameOverTick - GameEngine.ticker.getTime();
         }
 
         // check for winners
-        PlayerManager playerManager = GameEngine.getSingleton().getWorld()
-                .getPlayerManager();
+        PlayerManager playerManager = GameEngine.getSingleton().getWorld().getPlayerManager();
         List<Player> players = playerManager.getPlayers();
 
-        if (GameEngine.ticker.getTime() > gameOverTick
-                && gameState != GameState.FINISHED) {
+        if (GameEngine.ticker.getTime() > gameOverTick && gameState != GameState.FINISHED) {
             gameState = GameState.FINISHED;
             int highScore = Integer.MIN_VALUE;
             for (Player p : players) {
@@ -137,13 +135,14 @@ public class FFAGameManager extends GameManager {
 
     @Override
     public ByteBuffer serialize() {
-        ByteBuffer buf = newByteBuffer("deserialize");
+        ByteBuffer buf = super.serialize();
         buf.putLong(ticksLeft);
         return buf;
     }
 
     @Override
     public void deserialize(ByteBuffer buffer) {
+        gameState = GameState.values()[buffer.getInt()];
         ticksLeft = buffer.getLong();
     }
 
