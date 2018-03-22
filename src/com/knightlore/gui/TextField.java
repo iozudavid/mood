@@ -112,9 +112,9 @@ public class TextField extends GUIObject {
         Font font = state == SelectState.UP ? Font.DEFAULT_BLACK : Font.DEFAULT_WHITE;
 
         if (text != null) {
-            int width = pix.stringWidth(font, rawChars.toString(), this.fontSize / 1.5, 2);
+            int width = pix.stringWidth(font, rawChars.toString(), this.fontSize, 2);
             if (width < this.rect.width) {
-                pix.drawString(font, new String(rawChars), rect.x, rect.y, this.fontSize / 1.5, 2);
+                pix.drawString(font, new String(rawChars), rect.x, rect.y, this.fontSize, 2);
             } else {
                 width = pix.stringWidth(font, rawChars.toString(), this.fontSize, 2);
                 char[] toDisplay = rawChars;
