@@ -66,7 +66,6 @@ public class MapGenerator extends ProceduralAreaGenerator {
             width = width / 2;
         }
         grid = new Tile[width][height];
-        // TODO: maybe make this correspond to map size
         int mapArea = width * height;
         maxRooms = mapArea / MIN_AREA_PER_ROOM;
         PerlinNoiseGenerator perlinGenerator = new PerlinNoiseGenerator(width, height, seed);
@@ -103,6 +102,7 @@ public class MapGenerator extends ProceduralAreaGenerator {
     }
 
     private void determineRoomsToBuild() {
+        
         if(mapType == MapType.LAVA_SUBMAP) {
             roomsToBuild.add(RoomType.LAVA_PLATFORM);
             roomsToBuild.add(RoomType.LAVA_PLATFORM);
@@ -114,6 +114,10 @@ public class MapGenerator extends ProceduralAreaGenerator {
             roomsToBuild.add(RoomType.NORMAL);
         }else {
             roomsToBuild.add(RoomType.SPAWN);
+        }
+        
+        if(mapType == MapType.TRAILER) {
+            return;
         }
         
         // TODO: A switch statement 
@@ -143,7 +147,6 @@ public class MapGenerator extends ProceduralAreaGenerator {
 
         for(RoomType rt : roomsToBuild) {
             Room room = roomGenerator.createRoom(rand.nextLong(), rt);
-            // TODO: potentially have different setRoomPositions
             if(setRoomPosition(room, rt)) {
                 rooms.add(room);
             }
@@ -151,7 +154,6 @@ public class MapGenerator extends ProceduralAreaGenerator {
     }
 
     private boolean setRoomPosition(Room room, RoomType rt) {
-        // TODO: modify this for different rooms types
         int width = grid.length;
         int height = grid[0].length;
         switch(rt){
@@ -225,9 +227,6 @@ public class MapGenerator extends ProceduralAreaGenerator {
         // place paths
         PathFinder pathFinder = new PathFinder(costGrid);
         pathFinder.setIsForMap(true);
-        // TODO: give a room a way to give us potential starting points for a path
-        // (allowing us to populate rooms with interesting features)
-        
         for (Room source : rooms) {
             for (Room target : source.getConnections()) {
                 List<Point> path = pathFinder.findPath(source.getCentre(), target.getCentre());
@@ -353,6 +352,13 @@ public class MapGenerator extends ProceduralAreaGenerator {
         }
 
         grid = symMap;
+    }
+    
+    public static void main(String[] arg) {
+        MapGenerator mg = new MapGenerator();
+        Map map = mg.createMap(1000, 40, MapType.TRAILER, 40L);
+        //System.out.println("AAH");
+        System.out.println(map.toDebugString());
     }
     
 }

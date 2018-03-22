@@ -1,5 +1,6 @@
 package com.knightlore.game.entity;
 
+import java.awt.Point;
 import java.awt.geom.Rectangle2D;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
@@ -88,7 +89,7 @@ public abstract class Entity extends NetworkObject implements IMinimapObject, Ti
 
     // cannot have invalid values
     // anyone can set a team and get a team
-    public Team team=Team.NONE;
+    public Team team = Team.NONE;
 
     /**
      * Used for rendering exclusively. A higher zOffset means that the entities
@@ -171,10 +172,6 @@ public abstract class Entity extends NetworkObject implements IMinimapObject, Ti
      */
     public abstract void onCollide(Player player);
 
-    public void killConfirmed(Entity victim) {
-        // do nothing
-    }
-
     /**
      * Periodically calls the onEntered method of the tile corresponding to the
      * player's current location.
@@ -246,26 +243,12 @@ public abstract class Entity extends NetworkObject implements IMinimapObject, Ti
         return plane;
     }
 
-    public double getxPlane() {
-        return getPlane().getX();
-    }
-
-    public double getyPlane() {
-        return getPlane().getY();
-    }
-
-    public void setxPlane(double xPlane) {
-        plane = new Vector2D(xPlane, plane.getY());
-        direction = plane.perpendicular();
-    }
-
-    public void setyPlane(double yPlane) {
-        plane = new Vector2D(plane.getX(), yPlane);
-        direction = plane.perpendicular();
-    }
-
     public int getzOffset() {
         return zOffset;
+    }
+    
+    public void respawn(Vector2D spawnPos) {
+        this.position = spawnPos;
     }
 
     /**

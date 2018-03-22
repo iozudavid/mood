@@ -56,7 +56,7 @@ public class StartMenu {
                 // start new session
                 // on the local machine
                 ConnectionDetails.SERVER_HOSTNAME = "localhost";
-                ConnectionDetails.PORT = 5000;
+                ConnectionDetails.PORT = ConnectionDetails.DEFAULT_PORT;
                 // remove this gui
                 try {
                     GameEngine.getSingleton().startGame();

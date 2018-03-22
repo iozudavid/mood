@@ -3,6 +3,7 @@ package com.knightlore.game.entity;
 import com.knightlore.GameSettings;
 import com.knightlore.game.manager.AIManager;
 import com.knightlore.engine.GameEngine;
+import com.knightlore.game.manager.GameManager;
 import com.knightlore.game.world.GameWorld;
 import com.knightlore.utils.Vector2D;
 
@@ -26,14 +27,7 @@ public class ZombieServer extends ZombieShared {
     
     public ZombieServer(Vector2D position) {
         super(position);
-    }
-    
-    protected ZombieServer(Vector2D position, Vector2D direction) {
-        super(position, direction);
-    }
-    
-    protected ZombieServer(UUID uuid, double size, Vector2D position, Vector2D direction) {
-        super(uuid, size, position, direction);
+        this.rotationSpeed = 0.1D;
     }
     
     @Override
@@ -50,16 +44,22 @@ public class ZombieServer extends ZombieShared {
         if(GameSettings.isClient()) {
             return;
         }
+    
+        GameManager gameManager = GameEngine.getSingleton().getWorld().getGameManager();
         if (currentHealth <= 0) {
             if(lastInflictor == null) {
                 System.out.println(this.getName() + " was killed by natural causes");
-            }else {
+                gameManager.onEntityDeath(this);
+            } else {
                 System.out.println(this.getName() + " was killed by " + lastInflictor.getName());
-                lastInflictor.killConfirmed(this);
+                if (lastInflictor instanceof Player) {
+                    gameManager.onEntityDeath(this, (Player)lastInflictor);
+                } else {
+                    gameManager.onEntityDeath(this);
+                }
             }            
             removeAllBuffs();
             this.sendSystemMessage(this.getName(), lastInflictor);
-            this.destroy();
         }
     }
     
@@ -92,6 +92,12 @@ public class ZombieServer extends ZombieShared {
         }
         
         lastThinkingTime = System.currentTimeMillis();
+    }
+    
+    @Override
+    public void respawn(Vector2D spawnPos) {
+        this.position = spawnPos;
+        this.currentHealth = MAX_HEALTH;
     }
     
     private void move() {
