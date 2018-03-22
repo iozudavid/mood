@@ -17,7 +17,7 @@ public class SettingsMenu {
     private TextField nameTextField;
     private Group nameGroup;
     private Text blockinessText;
-    private TextField blockinessTextField;
+    private Slider blockinessSlider;
     private Group blockinessGroup;
     private Group soundGroup;
     private Text soundText;
@@ -36,47 +36,42 @@ public class SettingsMenu {
         this.coverImage = new Image(0, 0, this.screenWidth, this.screenHeight, "res/graphics/mppadjusted.png");
         this.gui.addGUIObject(this.coverImage);
         this.nameText = new Text(GuiUtils.middleWidth(this.screenWidth, 100),
-                GuiUtils.calculateHeight(this.screenHeight, 25), 100, 30, "Username: ", 25);
+                GuiUtils.calculateHeight(this.screenHeight, 15), 100, 30, "Username: ", 25);
         this.nameTextField = new TextField(GuiUtils.middleWidth(this.screenWidth, 300),
-                GuiUtils.calculateHeight(this.screenHeight, 32), 300, 30, "Client Player");
+                GuiUtils.calculateHeight(this.screenHeight, 22), 300, 30, "Client Player");
         this.nameTextField.fontSize = 3;
         this.nameTextField.setRestrictionLength((Integer i) -> i <= 20);
         this.gui.addGUIObject(this.coverImage);
         ArrayList<GUIObject> objs = new ArrayList<>();
         objs.add(nameText);
         objs.add(nameTextField);
-        double nameDiff = 32 - 25;
+        double nameDiff = 22 - 15;
         this.nameGroup = new Group(GuiUtils.minX(objs), GuiUtils.minY(objs), objs, nameDiff * 0.01, screenHeight);
         this.gui.addGUIObject(nameGroup);
         this.gui.addGUIObject(this.nameText);
         this.gui.addGUIObject(this.nameTextField);
 
-        this.blockinessText = new Text(GuiUtils.middleWidth(this.screenWidth, 150),
-                GuiUtils.calculateHeight(this.screenHeight, 45), 150, 30, "Blockiness(5-20): ", 25);
-        this.blockinessTextField = new TextField(GuiUtils.middleWidth(this.screenWidth, 300),
-                GuiUtils.calculateHeight(this.screenHeight, 52), 300, 30, GameSettings.desiredBlockiness + "");
-        this.blockinessTextField.fontSize = 3;
-        this.blockinessTextField.setRestriction((Character c) -> Character.isDigit(c));
-        this.blockinessTextField.setRestrictionLength((Integer i) -> i <= 2);
-
-        this.blockinessTextField
-                .setRestrictionValue((String s) -> Integer.parseInt(s) >= 5 && Integer.parseInt(s) <= 20);
-
+        this.blockinessText = new Text((int) (this.nameGroup.getRectangle().getX()) + 50,
+                GuiUtils.calculateHeight(this.screenHeight, 40), 100, 30, "Blockiness: ", 25);
+        this.blockinessSlider = new Slider(
+                (int) (this.blockinessText.getRectangle().getX() + (int) (this.blockinessText.getRectangle().getWidth()) + 90),
+                (int) (this.blockinessText.getRectangle().getHeight() / 2D) + (int) (this.blockinessText.getRectangle().getY())-5,
+                150, 10, 0, (float)(GameSettings.DEFAULT_BLOCKINESS-5)/20F);
         ArrayList<GUIObject> objsBlock = new ArrayList<>();
         objsBlock.add(blockinessText);
-        objsBlock.add(blockinessTextField);
-        double blockDiff = 52 - 45;
-        this.blockinessGroup = new Group(GuiUtils.minX(objsBlock), GuiUtils.minY(objsBlock), objsBlock,
+        objsBlock.add(blockinessSlider);
+        double blockDiff = this.blockinessSlider.getRectangle().getWidth() * 100;
+        this.blockinessGroup = new Group(GuiUtils.minX(objsBlock), GuiUtils.minY(objsBlock), objsBlock, 0,
                 blockDiff * 0.01, screenHeight);
         this.gui.addGUIObject(blockinessGroup);
         this.gui.addGUIObject(this.blockinessText);
-        this.gui.addGUIObject(this.blockinessTextField);
+        this.gui.addGUIObject(this.blockinessSlider);
 
-        this.soundText = new Text((int) (this.blockinessGroup.getRectangle().getX()) + 50,
-                GuiUtils.calculateHeight(this.screenHeight, 65), 100, 30, "Sound Volume: ", 25);
+        this.soundText = new Text((int) (this.nameGroup.getRectangle().getX()) + 50,
+                GuiUtils.calculateHeight(this.screenHeight, 55), 100, 30, "Sound Volume: ", 25);
         this.soundSlider = new Slider(
                 (int) (this.soundText.getRectangle().getX() + (int) (this.soundText.getRectangle().getWidth()) + 90),
-                (int) (this.soundText.getRectangle().getHeight() / 2D) + (int) (this.soundText.getRectangle().getY()),
+                (int) (this.soundText.getRectangle().getHeight() / 2D) + (int) (this.soundText.getRectangle().getY())-5,
                 150, 10);
         ArrayList<GUIObject> soundBlock = new ArrayList<>();
         soundBlock.add(soundText);
@@ -88,8 +83,8 @@ public class SettingsMenu {
         this.gui.addGUIObject(soundText);
         this.gui.addGUIObject(soundSlider);
 
-        this.bobText = new Text((int) (this.blockinessGroup.getRectangle().getX()) + 50,
-                GuiUtils.calculateHeight(this.screenHeight, 74.5f), 100, 20, "Motion bob: ", 25);
+        this.bobText = new Text((int) (this.nameGroup.getRectangle().getX()) + 50,
+                GuiUtils.calculateHeight(this.screenHeight, 70f), 100, 20, "Motion bob: ", 25);
         this.bobCheckBox = new CheckBox(
                 (int) (this.bobText.getRectangle().getX() + (int) (this.bobText.getRectangle().getWidth()) + 90
                         + this.soundSlider.getRectangle().getWidth() / 2D),
@@ -118,13 +113,7 @@ public class SettingsMenu {
             public void call() {
                 GameSettings.MOTION_BOB = SettingsMenu.this.bobCheckBox.getBobingMode();
                 GameEngine.getSingleton().setVolume(SettingsMenu.this.soundSlider.getValue());
-                try {
-                    GameSettings.desiredBlockiness = (Integer
-                            .parseInt(SettingsMenu.this.blockinessTextField.getText()));
-                } catch (NumberFormatException e) {
-                    GameSettings.desiredBlockiness = GameSettings.DEFAULT_BLOCKINESS;
-                    blockinessTextField.setText("" + GameSettings.DEFAULT_BLOCKINESS);
-                }
+                GameSettings.desiredBlockiness = (int)(SettingsMenu.this.blockinessSlider.getValue()*20F);
                 GameSettings.PLAYER_NAME = SettingsMenu.this.nameTextField.getText();
                 GameEngine.getSingleton().guiState = GUIState.SettingsMenuApply;
             }
@@ -143,7 +132,7 @@ public class SettingsMenu {
     public ArrayList<Object> getObj() {
         ArrayList<Object> obj = new ArrayList<>();
         obj.add(this.nameTextField.getText());
-        obj.add(this.blockinessTextField.getText());
+        obj.add(this.blockinessSlider.getValue());
         obj.add(this.soundSlider.getValue());
         obj.add(this.bobCheckBox.getBobingMode());
         return obj;
@@ -151,7 +140,7 @@ public class SettingsMenu {
 
     public void setObj(ArrayList<Object> o) {
         this.nameTextField.setText((String) o.get(0));
-        this.blockinessTextField.setText((String) o.get(1));
+        this.blockinessSlider.setValue((float) o.get(1));
         this.soundSlider.setValue((float) o.get(2));
         this.bobCheckBox.setBobingMode((boolean) o.get(3));
     }
