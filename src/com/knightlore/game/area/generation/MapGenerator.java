@@ -360,7 +360,7 @@ public class MapGenerator extends ProceduralAreaGenerator {
     public static void main(String args[]) {
         Random r = new Random();
         MapGenerator mg = new MapGenerator();
-        Map map = mg.createMap(40, 40, MapType.TDM, r.nextInt(1000));
+        Map map = mg.createMap(50, 50, MapType.TDM, r.nextInt(1000));
         System.out.println(map.toDebugString());
     }
     

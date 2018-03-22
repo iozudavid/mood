@@ -184,11 +184,11 @@ public class RoomGenerator extends ProceduralAreaGenerator {
     
     private void addHorizontalInternalWall(int y, Class roomClass) throws InstantiationException, IllegalAccessException {
         int width = grid.length;
-        int distanceIntoRoom = 2 + rand.nextInt(width/4);
+        int distanceIntoRoom = 2; //+ rand.nextInt(width/4);
         int start = distanceIntoRoom;
         int end = (width - 1) - distanceIntoRoom;
         // place straight wall
-        for(int i=start; i < end; i++) {
+        for(int i=start; i <= end; i++) {
             grid[i][y] = (Tile) roomClass.newInstance();
             grid[i][y].setPathable(false);
         }
@@ -198,11 +198,11 @@ public class RoomGenerator extends ProceduralAreaGenerator {
     
     private void addVerticalInternalWall(int x, Class roomClass) throws InstantiationException, IllegalAccessException {
         int height = grid[0].length;
-        int distanceIntoRoom = 2 + rand.nextInt(height/4);
+        int distanceIntoRoom = 2; //+ rand.nextInt(height/4);
         int start = distanceIntoRoom;
         int end = (height - 1) - distanceIntoRoom;
         // place straight wall
-        for(int j=start; j < end; j++) {
+        for(int j=start; j <= end; j++) {
             grid[x][j] = (Tile) roomClass.newInstance();
             grid[x][j].setPathable(false);
         }
@@ -246,17 +246,17 @@ public class RoomGenerator extends ProceduralAreaGenerator {
         }
     }
 
-    private int neighbouringAirTiles(int x, int y) {
+    private int neighbouringAirTiles(int x, int y, int radius) {
         int numOfAir = 0;
         int width = grid.length;
         int height = grid[0].length;
-        if(x <= 2) { return 0; }
-        if(y <= 2) { return 0; }
-        if(x >= width-2) { return 0; }
-        if(y >= height-2) { return 0; }
+        if(x <= radius+1) { return 0; }
+        if(y <= radius+1) { return 0; }
+        if(x >= width-1-radius) { return 0; }
+        if(y >= height-1-radius) { return 0; }
         
-        for(int i = x-1; i < x + 2; i++) {
-            for(int j = y-1; j < y + 2; j++) {
+        for(int i = x-radius; i <= x+radius; i++) {
+            for(int j = y-radius; j <= y+radius; j++) {
                 if( i == x && j == y) {
                     continue;
                 }
@@ -280,10 +280,10 @@ public class RoomGenerator extends ProceduralAreaGenerator {
     
     private List<Point> possiblePickupLocations() {
         List<Point> candidateLocations = new ArrayList<Point>();
-        int minAirTiles = 8;
+        int minAirTiles = 24;
         for(int i=0; i< grid.length - 1; i++) {
             for(int j=0; j<grid[0].length - 1; j++) {
-                if(neighbouringAirTiles(i,j) >= minAirTiles) {
+                if(neighbouringAirTiles(i,j,2) >= minAirTiles) {
                     candidateLocations.add(new Point(i, j));
                 }
             }
