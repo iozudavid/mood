@@ -259,10 +259,7 @@ public class Player extends Entity {
             // The difference between our previous and new positions.
             Vector2D displacement = position.subtract(prevPos);
             updateInertia(displacement);
-        }
 
-        if (prevPosServer != null && prevDirServer != null) {
-            Vector2D displacement = position.subtract(prevPos);
             double dis = displacement.magnitude();
             moveAnim.update(dis);
         }
@@ -452,8 +449,7 @@ public class Player extends Entity {
     public synchronized void setCurrentWeaponType(WeaponType wt) {
         this.currentWeaponType = wt;
         this.currentWeapon = wt.getNewWeapon();
-        System.out.println(
-                "Player " + this.getName() + " is now holding a " + wt + ".");
+        System.out.println("Player " + this.getName() + " is now holding a " + wt + ".");
     }
 
     public int getCurrentHealth() {
