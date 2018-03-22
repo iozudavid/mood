@@ -9,6 +9,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import com.knightlore.game.Player;
+import com.knightlore.game.entity.weapon.WeaponType;
 import com.knightlore.network.NetworkObject;
 import com.knightlore.network.protocol.ClientController;
 import com.knightlore.network.protocol.ClientProtocol;
@@ -66,6 +67,10 @@ public class Prediction {
         player.setHealth(currentHealth);
         int score = received.getInt();
         player.setScore(score);
+        
+        WeaponType newWeaponType = WeaponType.VALUES[received.getInt()];
+        player.setCurrentWeaponType(newWeaponType);
+        
         // remove data inserted before this packet was sent
         if (!Arrays.equals(this.lastReceivedFromServer.array(), received.array())) {
 			if(this.nextPrediction==null){
@@ -94,6 +99,7 @@ public class Prediction {
 				player.setyPos(nextPrediction.getPosition().getY());
 				player.setxDir(nextPrediction.getDirection().getX());
 				player.setyDir(nextPrediction.getDirection().getY());
+				player.onClientRespawn();
 			}
 		}
 

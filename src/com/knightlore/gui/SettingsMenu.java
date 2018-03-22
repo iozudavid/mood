@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import com.knightlore.GameSettings;
 import com.knightlore.engine.GameEngine;
 import com.knightlore.render.PixelBuffer;
-import com.knightlore.render.Renderer;
 import com.knightlore.utils.funcptrs.VoidFunction;
 
 public class SettingsMenu {

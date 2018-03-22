@@ -32,9 +32,11 @@ public class RoomGenerator extends ProceduralAreaGenerator {
     private static final int MAX_SUBDOMINANT_INTERNAL_WALLS = 1;
     private static final double INTERNAL_WALL_PROBABILITY = 0.3;
 
+    private long seed;
     private RoomType roomType = RoomType.NORMAL;
-
+    
     public Room createRoom(long seed, RoomType rt) {
+        this.seed = seed;
         roomType = rt;
         rand = new Random(seed);
         determineRoomSize();
@@ -110,7 +112,7 @@ public class RoomGenerator extends ProceduralAreaGenerator {
                 return; // does not use addWalls
             case BIG_LAVA_ROOM:
                 MapGenerator mg = new MapGenerator();
-                Map subMap = mg.createMap(width, height, MapType.LAVA_SUBMAP);
+                Map subMap = mg.createMap(width, height, MapType.LAVA_SUBMAP, seed);
                 for (int i = 0; i < width; i++) {
                     for (int j = 0; j < height; j++) {
                         // HAVE I GOT TO USE .copy()

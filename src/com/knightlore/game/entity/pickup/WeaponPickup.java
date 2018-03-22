@@ -47,6 +47,8 @@ public abstract class WeaponPickup extends PickupItem {
     @Override
     public void onCollide(Player player) {
         if (exists) {
+            System.out.println("Player " + player.getName() + " collided with "
+                    + this.getClass().getSimpleName());
             // update pickup manager
             addToPickupManager();
             // Set the player's new weapon
