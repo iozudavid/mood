@@ -8,8 +8,11 @@ import com.knightlore.game.tile.*;
 import javax.swing.Box;
 import javax.swing.JButton;
 import javax.swing.JPanel;
+import java.awt.*;
 
 public class TileChooserPanel extends JPanel {
+    private static final int BUTTONS_WIDTH = 150;
+    private static final int BUTTONS_HEIGHT = 32;
     private static final ImmutableList<Tile> OPTIONS = ImmutableList.of(
             AirTile.getInstance(),
             new BrickTile(),
@@ -30,6 +33,8 @@ public class TileChooserPanel extends JPanel {
         Box box = Box.createVerticalBox();
         for (Tile o : OPTIONS) {
             JButton button = new JButton(o.toString());
+            button.setPreferredSize(new Dimension(BUTTONS_WIDTH, BUTTONS_HEIGHT));
+            button.setMinimumSize(new Dimension(BUTTONS_WIDTH, BUTTONS_HEIGHT));
             button.addActionListener(e -> LevelEditorWindow.pen.stroke = o);
             box.add(button);
         }
