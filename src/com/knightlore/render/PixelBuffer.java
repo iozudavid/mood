@@ -21,7 +21,7 @@ public class PixelBuffer {
     /**
      * Pure green chroma key. Pixels rendered with this colour will be ignored.
      */
-    public static final int CHROMA_KEY = -16711936;
+    public static final int CHROMA_KEY = 0xFF00FF00;
 
     private final int WIDTH, HEIGHT;
     private int[] pixels;
@@ -320,7 +320,10 @@ public class PixelBuffer {
             Graphic g = font.getGraphic(c);
             width += g.getWidth() * scaling + spacing;
         }
-        return (int) (width - spacing);
+
+        int retval = (int) (width - spacing);
+        twCache.put(cached, retval);
+        return retval;
     }
 
     /**
@@ -387,6 +390,24 @@ public class PixelBuffer {
             this.scaling = scaling;
             this.spacing = spacing;
         }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (obj == null)
+                return false;
+            if (!(obj instanceof TextWidthCache))
+                return false;
+
+            TextWidthCache cache = (TextWidthCache) obj;
+            return cache.font == font && cache.string.equals(string) && cache.scaling == scaling
+                    && cache.spacing == spacing;
+        }
+
+        @Override
+        public int hashCode() {
+            return (int) (scaling * spacing * string.length());
+        }
+
     }
 
 }

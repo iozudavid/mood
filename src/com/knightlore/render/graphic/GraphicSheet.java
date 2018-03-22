@@ -129,7 +129,6 @@ public class GraphicSheet {
     public Graphic graphicAt(int x, int y, int xx, int yy) {
         GraphicCacheItem item = new GraphicCacheItem(x, y, xx, yy);
         if (cache.containsKey(item)) {
-            System.out.println("ok, using cache :D ");
             return cache.get(item);
         }
 
