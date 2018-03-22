@@ -517,6 +517,7 @@ public class Player extends Entity {
 
     public void onClientRespawn() {
         this.resetBuff(new SpawnVision(this));
+        this.resetBuff(new Immune(this)); // just for health bar cosmetic
     }
 
 }
