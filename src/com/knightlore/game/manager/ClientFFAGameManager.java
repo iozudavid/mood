@@ -5,7 +5,6 @@ import java.util.UUID;
 
 import com.knightlore.GameSettings;
 import com.knightlore.engine.GameEngine;
-import com.knightlore.game.entity.Player;
 import com.knightlore.network.NetworkObject;
 
 public class ClientFFAGameManager extends FFAGameManager {
@@ -41,11 +40,6 @@ public class ClientFFAGameManager extends FFAGameManager {
             onGameOver();
             gameOver = true;
         }
-    }
-
-    @Override
-    public void onPlayerDeath(Player p) {
-        // do nothing
     }
 
     private void onGameOver() {

@@ -4,10 +4,10 @@ import java.nio.ByteBuffer;
 import java.util.List;
 import java.util.UUID;
 
-import com.knightlore.GameSettings;
 import com.knightlore.engine.GameEngine;
 import com.knightlore.game.entity.Entity;
 import com.knightlore.game.entity.Player;
+import com.knightlore.game.entity.ZombieShared;
 import com.knightlore.game.entity.pickup.PistolPickup;
 import com.knightlore.game.entity.pickup.ShotgunPickup;
 import com.knightlore.game.entity.pickup.WeaponPickup;
@@ -44,16 +44,30 @@ public class FFAGameManager extends GameManager {
     }
 
     @Override
-    public void onPlayerDeath(Player p) {
-        // reduce their score for dying
-        p.addScore(-1);
-        // drop the WEAPON in their current position
+    public void onEntityDeath(ZombieShared victim, Player inflictor) {
+        onEntityDeath(victim);
+    }
 
-        spawnPickup(p.getPosition(), p.getCurrentWeapon().getWeaponType());
-
-        // generate random SPAWN point
+    @Override
+    public void onEntityDeath(ZombieShared victim) {
         Vector2D spawnPos = GameEngine.getSingleton().getWorld().getMap().getRandomSpawnPoint();
-        p.respawn(spawnPos);
+        victim.respawn(spawnPos);
+    }
+
+    @Override
+    public void onEntityDeath(Player victim, Player inflictor) {
+        inflictor.addScore(1);
+        onEntityDeath(victim);
+    }
+
+    @Override
+    public void onEntityDeath(Player victim) {
+        victim.addScore(-1);
+        // drop the WEAPON in their current position
+        spawnPickup(victim.getPosition(), victim.getCurrentWeapon().getWeaponType());
+
+        Vector2D spawnPos = GameEngine.getSingleton().getWorld().getMap().getRandomSpawnPoint();
+        victim.respawn(spawnPos);
     }
 
     private void spawnPickup(Vector2D pos, WeaponType type) {
@@ -80,7 +94,7 @@ public class FFAGameManager extends GameManager {
 
     @Override
     public void onUpdate() {
-        
+
         // update ticks left
         if (gameState != GameState.FINISHED) {
             ticksLeft = gameOverTick - GameEngine.ticker.getTime();
@@ -100,25 +114,11 @@ public class FFAGameManager extends GameManager {
                 }
             }
             gameOver();
-            return;
-        }
-
-        for (Player p : players) {
-            if (p.getScore() >= WIN_SCORE) {
-                winner = p;
-                gameOver();
-                return;
-            }
         }
     }
 
     @Override
     public void onDestroy() {
-    }
-
-    @Override
-    public void awardScore(Player p, int score) {
-        p.addScore(score);
     }
 
     @Override

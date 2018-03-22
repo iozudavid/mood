@@ -20,6 +20,7 @@ import com.knightlore.game.buff.Immune;
 import com.knightlore.game.buff.SpawnVision;
 import com.knightlore.game.entity.weapon.Weapon;
 import com.knightlore.game.entity.weapon.WeaponType;
+import com.knightlore.game.manager.GameManager;
 import com.knightlore.game.world.ClientWorld;
 import com.knightlore.network.NetworkObject;
 import com.knightlore.network.NetworkObjectManager;
@@ -379,18 +380,24 @@ public class Player extends Entity {
         if (GameSettings.isClient()) {
             return;
         }
+    
+        GameManager gameManager = GameEngine.getSingleton().getWorld().getGameManager();
         if (currentHealth <= 0) {
-            respawn = true;
             if (lastInflictor == null) {
                 System.out.println(this.getName() + " was killed by natural causes");
+                gameManager.onEntityDeath(this);
             } else {
                 System.out.println(this.getName() + " was killed by " + lastInflictor.getName());
-                lastInflictor.killConfirmed(this);
+                if (lastInflictor instanceof Player) {
+                    gameManager.onEntityDeath(this, (Player)lastInflictor);
+                } else {
+                    gameManager.onEntityDeath(this);
+                }
             }
+            
             removeAllBuffs();
             this.resetBuff(new Immune(this));
             this.sendSystemMessage(this.getName(), lastInflictor);
-            GameEngine.getSingleton().getWorld().getGameManager().onPlayerDeath(this);
         }
     }
 
@@ -398,33 +405,15 @@ public class Player extends Entity {
         takeDamage(-heal, null);
     }
 
-    public void increaseScore(int value) {
-        if (value < 0) {
-            throw new IllegalArgumentException("Value cannot be negative");
-        }
-
-        score += value;
-        this.sendStatsToScoreBoard();
-    }
-
-    public void decreaseScore(int value) {
-        if (value < 0) {
-            throw new IllegalArgumentException("Value cannot be negative");
-        }
-
-        score -= value;
-        this.sendStatsToScoreBoard();
-    }
-
     public int getScore() {
         return score;
     }
 
+    @Override
     public void respawn(Vector2D spawnPos) {
         this.position = spawnPos;
         currentHealth = MAX_HEALTH;
         inputModule.onRespawn(this);
-        // this.respawn = true;
         System.out.println(this.getName() + " respawned.");
     }
 
@@ -462,10 +451,6 @@ public class Player extends Entity {
         return currentHealth;
     }
 
-    public int getMaxHealth() {
-        return MAX_HEALTH;
-    }
-
     public void setScore(int score) {
         if (score < 0) {
             this.score = 0;
@@ -476,12 +461,6 @@ public class Player extends Entity {
 
     public void addScore(int amount) {
         setScore(score + amount);
-    }
-
-    @Override
-    public void killConfirmed(Entity victim) {
-        score += 1;
-        System.out.println(this.getName() + " score " + score);
     }
 
     public void setRespawn(boolean b) {
