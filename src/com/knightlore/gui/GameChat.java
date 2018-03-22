@@ -47,6 +47,7 @@ public class GameChat extends GUICanvas {
                 (int) (this.textArea.getRectangle().getY()
                         + this.textArea.getRectangle().getHeight()),
                 (int) (screenWidth * 0.3), (int) (screenHeight * 0.05));
+        this.textField.fontSize=2;
         this.textField.setSelect(false);
         this.addGUIObject(this.textArea);
         this.addGUIObject(this.textField);

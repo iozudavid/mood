@@ -128,9 +128,11 @@ public class GUICanvas extends GameObject implements IRenderable {
 	
 	@Override
 	public void render(PixelBuffer pix, int x, int y) {
-		for (GUIObject gui : guis) {
-			gui.Draw(pix,x,y);
-		}
+        synchronized (guis) {
+            for (GUIObject gui : guis) {
+                gui.Draw(pix, x, y);
+            }
+        }
 	}
 
 	@Override
@@ -142,97 +144,107 @@ public class GUICanvas extends GameObject implements IRenderable {
 		Vector2D mousePos = InputManager.getMousePos();
 		GUIObject selected = null;
 		// linear reverse search
-		for (int i = guis.size() - 1; i >= 0; i--) {
-			GUIObject gui = guis.get(i);
-			// skip those that aren't selectable
-			if (!gui.isSelectable()) {
-				continue;
-			}
-			
-			if (Physics.pointInAWTRectangleTest(mousePos, gui.rect)) {
-				selected = gui;
-				break;
-			}
-		}
-		
-		// notify previous gui of mouse exit
-		if (lastSelected != selected) {
-			if (lastSelected != null) {
-				if (downSelected == lastSelected) {
-					lastSelected.onMouseUp();
-				}
-				lastSelected.OnMouseExit();
-			}
-		}
-		
-		// notify new gui of mouse enter
-		if (selected != null) {
-			// send mouse entered event
-			if (selected != lastSelected) {
-				selected.onMouseEnter();
-			}
-			
-			selected.onMouseOver();
-			
-			// mouse held and we 
-			if (InputManager.getMouse().isLeftHeld() && !lastHeld) {
-				// send mouse down event
-				selected.onMouseDown();
-				downSelected = selected;
-			} else if (!InputManager.getMouse().isLeftHeld() && lastHeld) {
-				// did we click down over the same object
-				if (downSelected == selected) {
-					selected.OnClick();
-					if (focussed != selected && focussed != null) {
-						focussed.onLostFocus();
-					}
+        synchronized (guis) {
+            for (int i = guis.size() - 1; i >= 0; i--) {
+                GUIObject gui = guis.get(i);
+                // skip those that aren't selectable
+                if (!gui.isSelectable()) {
+                    continue;
+                }
 
-					focussed = selected;
-					selected.onGainedFocus();
-				}
-				// send mouse up event
-				selected.onMouseUp();
-			}
-		} else {
-			if (!InputManager.getMouse().isLeftHeld() && lastHeld) {
-				// we have nothing selected... did we click?
-				if (focussed != null) {
-					focussed.onLostFocus();
-					focussed = null;
-				}
-			}
-		}
-		lastHeld = InputManager.getMouse().isLeftHeld();
-		lastSelected = selected;		
+                if (Physics.pointInAWTRectangleTest(mousePos, gui.rect)) {
+                    selected = gui;
+                    break;
+                }
+            }
+
+            // notify previous gui of mouse exit
+            if (lastSelected != selected) {
+                if (lastSelected != null) {
+                    if (downSelected == lastSelected) {
+                        lastSelected.onMouseUp();
+                    }
+                    lastSelected.OnMouseExit();
+                }
+            }
+
+            // notify new gui of mouse enter
+            if (selected != null) {
+                // send mouse entered event
+                if (selected != lastSelected) {
+                    selected.onMouseEnter();
+                }
+
+                selected.onMouseOver();
+
+                // mouse held and we
+                if (InputManager.getMouse().isLeftHeld() && !lastHeld) {
+                    // send mouse down event
+                    selected.onMouseDown();
+                    downSelected = selected;
+                } else if (!InputManager.getMouse().isLeftHeld() && lastHeld) {
+                    // did we click down over the same object
+                    if (downSelected == selected) {
+                        selected.OnClick();
+                        if (focussed != selected && focussed != null) {
+                            focussed.onLostFocus();
+                        }
+
+                        focussed = selected;
+                        selected.onGainedFocus();
+                    }
+                    // send mouse up event
+                    selected.onMouseUp();
+                }
+            } else {
+                if (!InputManager.getMouse().isLeftHeld() && lastHeld) {
+                    // we have nothing selected... did we click?
+                    if (focussed != null) {
+                        focussed.onLostFocus();
+                        focussed = null;
+                    }
+                }
+            }
+            lastHeld = InputManager.getMouse().isLeftHeld();
+            lastSelected = selected;
+        }
 	}
 
 	@Override
 	public void onDestroy() {
-		guis.clear();
+        synchronized (guis) {
+            guis.clear();
+        }
 	}
 	
 	private void sort() {
-		for (int i = 1; i < guis.size(); i++) {
-			GUIObject left = guis.get(i);
-			GUIObject right = guis.get(i-1);
-			// swap
-			if (left.depth < right.depth) {
-				guis.set(i, right);
-				guis.set(i-1, left);
-			}
-		}
+        synchronized (guis) {
+            for (int i = 1; i < guis.size(); i++) {
+                GUIObject left = guis.get(i);
+                GUIObject right = guis.get(i - 1);
+                // swap
+                if (left.depth < right.depth) {
+                    guis.set(i, right);
+                    guis.set(i - 1, left);
+                }
+            }
+        }
 	}
 
 	public void addGUIObject(GUIObject gui) {
-		if(gui instanceof TextField) {
-			gameTextField = (TextField) gui;
-		}
-		guis.add(gui);
-		sort();
+        synchronized (guis) {
+            if (gui instanceof TextField) {
+                gameTextField = (TextField) gui;
+            }
+            guis.add(gui);
+            sort();
+        }
 	}
 	
 	public void removeGUIObject(GUIObject gui) {
-		guis.remove(gui);
+	    synchronized(guis){
+	        guis.remove(gui);
+	    }
 	}
 
 	public static void setActiveTextField(TextField activeTextField) {

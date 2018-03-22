@@ -12,7 +12,7 @@ import com.knightlore.utils.pathfinding.PathFinder;
 import com.knightlore.utils.physics.Physics;
 
 public class AIManager {
-    private static final int PATH_SMOOTH_ACCURACY = 100;
+    static final int PATH_SMOOTH_ACCURACY = 100;
 
     private final Map map;
     private final PathFinder pathFinder;

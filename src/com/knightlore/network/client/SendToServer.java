@@ -110,6 +110,9 @@ public class SendToServer implements Runnable {
         // a regular update is due.
 
         synchronized (this.currentState) {
+            ByteBuffer nextMessage = this.manager.takeNextMessageToSend();
+            if(nextMessage!=null)
+                this.send(nextMessage);
             ArrayList<ByteBuffer> lastStates = this.manager
                     .getPlayerStateOnServer();
             if (!lastStates.isEmpty()) {

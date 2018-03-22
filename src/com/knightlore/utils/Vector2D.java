@@ -39,16 +39,7 @@ public final class Vector2D {
         x = _x;
         y = _y;
     }
-    
-    // EQUALITY
-    public boolean isEqualTo(Vector2D v) {
-        return v != null && x == v.x && y == v.y;
-    }
-    
-    public boolean isEqualTo(Vector2D v, double epsilon) {
-        return v != null && Math.abs(x - v.x) <= epsilon && Math.abs(y - v.y) <= epsilon;
-    }
-    
+
     // allocates a new vector, does not modify the original
     public Vector2D add(Vector2D v) {
         return new Vector2D(x + v.x, y + v.y);
@@ -138,5 +129,22 @@ public final class Vector2D {
     public static Vector2D fromPoint(Point point) {
         return new Vector2D(point.x,point.y);
     }
-    
+
+    @Override
+    public boolean equals(Object v) {
+        if (v == null) {
+            return false;
+        }
+
+        if (!(v instanceof Vector2D)) {
+            return false;
+        }
+
+        Vector2D vector = (Vector2D)v;
+        return equals(vector, 0);
+    }
+
+    public boolean equals(Vector2D v, double epsilon) {
+        return v != null && Math.abs(x - v.x) <= epsilon && Math.abs(y - v.y) <= epsilon;
+    }
 }

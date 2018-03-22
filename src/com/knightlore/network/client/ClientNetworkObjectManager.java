@@ -173,14 +173,6 @@ public class ClientNetworkObjectManager extends NetworkObjectManager {
             GameEngine g = GameEngine.getSingleton();
             ClientWorld world = (ClientWorld) g.getWorld();
             GameChat c = world.getGameChat();
-            if (c != null) {
-                c.removeFromTable(objID.toString());
-                c.getTextArea()
-                        .addText("System: "
-                                + toBeDestroyedObject.getClass().getSimpleName()
-                                + " " + ((Entity) toBeDestroyedObject).getName()
-                                + " has disconnected.");
-            }
         }
     }
 

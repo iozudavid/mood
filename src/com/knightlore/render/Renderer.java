@@ -51,16 +51,21 @@ public class Renderer {
             return;
         }
 
-        if (camera.getSubject().getDirection().isEqualTo(Vector2D.ZERO, 0.01)) {
+        if (camera.getSubject().getDirection().equals(Vector2D.ZERO, 0.01)) {
             return;
         }
 
         // draw the perspective and the crosshairs
         int offset = camera.getMotionBobOffset();
-        drawPerspective(pix, offset);
 
-        camera.render(pix, 0, 0);
-        drawCrosshair(pix);
+        try {
+            drawPerspective(pix, offset);
+
+            camera.render(pix, 0, 0);
+            drawCrosshair(pix);
+        } catch (Exception e) {
+            // might miss a frame, but beats crashing :)
+        }
     }
 
     private void drawPerspective(PixelBuffer pix, int offset) {
@@ -193,7 +198,6 @@ public class Renderer {
         }
 
         drawSprites(pix, zbuffer, offset);
-        pix.drawRect(0xFF00FF, 10, 20, 30, 30);
     }
 
     private void floorCast(PixelBuffer pix, int offset, int xx, double rayX, double rayY, int mapX, int mapY,
@@ -418,13 +422,13 @@ public class Renderer {
     public PixelBuffer getPixelBuffer() {
         return pix;
     }
-    
-    public static void setBlockiness(int b){
+
+    public static void setBlockiness(int b) {
         BLOCKINESS = b;
     }
-    
-    public static int getBlockiness(){
+
+    public static int getBlockiness() {
         return BLOCKINESS;
     }
-    
+
 }

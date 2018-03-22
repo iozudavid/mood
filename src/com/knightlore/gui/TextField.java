@@ -75,7 +75,9 @@ public class TextField extends GUIObject {
     }
 
     public void displayText(String t) {
-        rawChars = t.toCharArray();
+        synchronized(this.rawChars){
+            rawChars = t.toCharArray();
+        }
     }
 
     public Color activeColor() {
@@ -98,41 +100,43 @@ public class TextField extends GUIObject {
         if ((GameEngine.getSingleton().guiState == GUIState.InGame) && GUICanvas.activeTextField == null) {
             return;
         }
-        // draw a background
-        int color = Color.DARK_GRAY.getRGB();
-        pix.fillRect(color, rect.x - 2, rect.y - 2, rect.width + 2, rect.height + 2);
-        color = Color.BLACK.getRGB();
-        pix.fillRect(color, rect.x - 1, rect.y - 1, rect.width + 1, rect.height + 1);
-        color = activeColor().getRGB();
-        int hOffset = font.getHeight();
-        pix.fillRect(color, rect.x, rect.y, rect.width, rect.height);
-        // draw the characters of the string
-        color = Color.BLACK.getRGB();
+        synchronized (this.rawChars) {
+            // draw a background
+            int color = Color.DARK_GRAY.getRGB();
+            pix.fillRect(color, rect.x - 2, rect.y - 2, rect.width + 2, rect.height + 2);
+            color = Color.BLACK.getRGB();
+            pix.fillRect(color, rect.x - 1, rect.y - 1, rect.width + 1, rect.height + 1);
+            color = activeColor().getRGB();
+            int hOffset = font.getHeight();
+            pix.fillRect(color, rect.x, rect.y, rect.width, rect.height);
+            // draw the characters of the string
+            color = Color.BLACK.getRGB();
 
-        Font font = state == SelectState.UP ? Font.DEFAULT_BLACK : Font.DEFAULT_WHITE;
+            Font font = state == SelectState.UP ? Font.DEFAULT_BLACK : Font.DEFAULT_WHITE;
 
-        if (text != null) {
-            int width = pix.stringWidth(font, rawChars.toString(), this.fontSize / 1.5, 2);
-            if (width < this.rect.width) {
-                pix.drawString(font, new String(rawChars), rect.x, rect.y, this.fontSize / 1.5, 2);
-            } else {
-                width = pix.stringWidth(font, rawChars.toString(), this.fontSize, 2);
-                char[] toDisplay = rawChars;
-                while (width > this.rect.width) {
-                    toDisplay = new char[toDisplay.length - 1];
-                    for (int i = toDisplay.length - 1; i >= 0; i--) {
-                        int j = (toDisplay.length - 1) - i;
-                        System.out.println(toDisplay.length);
-                        System.out.println(rawChars.length);
-                        toDisplay[i] = rawChars[rawChars.length - 1 - j];
+            if (text != null) {
+                int width = pix.stringWidth(font, new String(rawChars), this.fontSize / 1.5, 2);
+                if (width < this.rect.width) {
+                    pix.drawString(font, new String(rawChars), rect.x + 2, rect.y + hOffset, this.fontSize / 1.5, 2);
+                } else {
+                    width = pix.stringWidth(font, new String(rawChars), this.fontSize / 1.5, 2);
+                    char[] toDisplay = rawChars;
+                    while (width > this.rect.width) {
+                        toDisplay = new char[toDisplay.length - 1];
+                        for (int i = toDisplay.length - 1; i >= 0; i--) {
+                            int j = (toDisplay.length - 1) - i;
+                            System.out.println(toDisplay.length);
+                            System.out.println(rawChars.length);
+                            toDisplay[i] = rawChars[rawChars.length - 1 - j];
+                        }
+                        width = pix.stringWidth(font, new String(toDisplay), this.fontSize / 1.5, 2);
                     }
-                    width = pix.stringWidth(font, toDisplay.toString(), this.fontSize, 2);
-                }
-                pix.drawString(font, toDisplay.toString(), rect.x, rect.y + hOffset, this.fontSize, 2);
+                    pix.drawString(font, new String(toDisplay), rect.x + 2, rect.y + hOffset, this.fontSize / 1.5, 2);
 
+                }
             }
+            this.pix = pix;
         }
-        this.pix = pix;
     }
 
     @Override

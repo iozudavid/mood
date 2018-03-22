@@ -8,18 +8,18 @@ import com.knightlore.render.font.Font;
 public class Text extends GUIObject {
     protected String text;
     protected char[] rawChars;
-    private int fontSize;
+    private double fontSize;
     public Color currentColor = Color.BLACK;
 
-    public Text(int x, int y, int width, int height, String text, int fontSize) {
+    public Text(int x, int y, int width, int height, String text, double fontSize) {
         super(x, y, width, height, 0);
-        this.fontSize = fontSize / 15;
+        this.fontSize = (double)(fontSize / 15D);
         SetText(text);
     }
 
-    public Text(int x, int y, int width, int height, int depth, String text, int fontSize) {
+    public Text(int x, int y, int width, int height, int depth, String text, double fontSize) {
         super(x, y, width, height, depth);
-        this.fontSize = fontSize / 15;
+        this.fontSize = (double)(fontSize / 15D);
         SetText(text);
     }
 
