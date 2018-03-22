@@ -1,14 +1,16 @@
-package com.knightlore.game;
+package com.knightlore.game.manager;
 
 import java.nio.ByteBuffer;
 import java.util.UUID;
 
 import com.knightlore.engine.GameEngine;
+import com.knightlore.game.Team;
+import com.knightlore.game.entity.Player;
 import com.knightlore.utils.Vector2D;
 
-public class TDMGame extends GameManager {
+public class TDMGameManager extends GameManager {
     
-    public TDMGame(UUID uuid) {
+    public TDMGameManager(UUID uuid) {
         super(uuid);
     }
 
@@ -96,7 +98,7 @@ public class TDMGame extends GameManager {
 
     @Override
     public String getClientClassName() {
-        return TDMGameClient.class.getName();
+        return TDMGameManagerClient.class.getName();
     }
     
 }

@@ -13,7 +13,7 @@ import java.util.function.Predicate;
 
 import com.knightlore.engine.GameEngine;
 import com.knightlore.engine.TickListener;
-import com.knightlore.game.Player;
+import com.knightlore.game.entity.Player;
 import com.knightlore.game.entity.Entity;
 import com.knightlore.game.world.ServerWorld;
 import com.knightlore.network.NetworkObject;

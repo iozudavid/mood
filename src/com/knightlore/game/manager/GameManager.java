@@ -1,7 +1,8 @@
-package com.knightlore.game;
+package com.knightlore.game.manager;
 
 import java.util.UUID;
 
+import com.knightlore.game.entity.Player;
 import com.knightlore.network.NetworkObject;
 
 public abstract class GameManager extends NetworkObject {

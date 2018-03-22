@@ -5,10 +5,10 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
-import com.knightlore.ai.AIManager;
-import com.knightlore.game.GameManager;
-import com.knightlore.game.Player;
-import com.knightlore.game.PlayerManager;
+import com.knightlore.game.manager.AIManager;
+import com.knightlore.game.manager.GameManager;
+import com.knightlore.game.entity.Player;
+import com.knightlore.game.manager.PlayerManager;
 import com.knightlore.game.area.Map;
 import com.knightlore.game.area.generation.MapGenerator;
 import com.knightlore.game.area.generation.MapType;

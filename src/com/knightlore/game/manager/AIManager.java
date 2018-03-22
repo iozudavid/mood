@@ -1,4 +1,4 @@
-package com.knightlore.ai;
+package com.knightlore.game.manager;
 
 import java.awt.Point;
 import java.util.Iterator;

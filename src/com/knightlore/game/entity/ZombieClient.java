@@ -4,7 +4,6 @@ import java.nio.ByteBuffer;
 import java.util.UUID;
 
 import com.knightlore.engine.GameEngine;
-import com.knightlore.game.Player;
 import com.knightlore.network.NetworkObject;
 import com.knightlore.render.animation.Animation;
 import com.knightlore.render.animation.PlayerMoveAnimation;
@@ -16,10 +15,10 @@ import com.knightlore.utils.Vector2D;
 
 public class ZombieClient extends ZombieShared {
 
-    private PlayerMoveAnimation moveAnim = new PlayerMoveAnimation(
+    private final PlayerMoveAnimation moveAnim = new PlayerMoveAnimation(
             ZombieGraphicMatrix.getGraphic(ZombieGraphicMatrix.Stance.MOVE));
 
-    private PlayerStandAnimation standAnim = new PlayerStandAnimation(
+    private final PlayerStandAnimation standAnim = new PlayerStandAnimation(
             ZombieGraphicMatrix.getGraphic(ZombieGraphicMatrix.Stance.STAND),
             (long) (GameEngine.UPDATES_PER_SECOND / 10));
 

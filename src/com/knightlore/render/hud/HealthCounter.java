@@ -2,7 +2,7 @@ package com.knightlore.render.hud;
 
 import com.knightlore.engine.GameEngine;
 import com.knightlore.engine.TickListener;
-import com.knightlore.game.Player;
+import com.knightlore.game.entity.Player;
 import com.knightlore.render.ColorUtils;
 import com.knightlore.render.PixelBuffer;
 
