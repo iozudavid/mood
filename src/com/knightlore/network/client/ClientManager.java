@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.net.Socket;
 import java.net.UnknownHostException;
 
+import com.knightlore.engine.GameEngine;
+import com.knightlore.gui.GUIState;
 import com.knightlore.network.ConnectionDetails;
 import com.knightlore.network.TCPConnection;
 import com.knightlore.network.server.Receive;
@@ -25,6 +27,10 @@ public class ClientManager implements Runnable {
         } catch (IOException e) {
             System.err.println(
                     "The server doesn't seem to be running " + e.getMessage());
+            throw new RuntimeException();
+        }
+        if(server==null){
+            throw new RuntimeException();
         }
         System.out.println(
                 "Connected to server " + ConnectionDetails.SERVER_HOSTNAME);
@@ -69,6 +75,7 @@ public class ClientManager implements Runnable {
     public static void disconnect(){
     	try {
 			server.close();
+			server=null;
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

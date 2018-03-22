@@ -120,6 +120,7 @@ public class GameChat extends GUICanvas {
 
             @Override
             public void call() {
+                GameEngine.getSingleton().stopGame();
                 ClientManager.disconnect();
                 GameChat.this.destroy();
                 GameEngine.getSingleton().guiState = GUIState.StartMenu;
