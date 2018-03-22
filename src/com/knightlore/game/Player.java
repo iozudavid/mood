@@ -266,7 +266,6 @@ public class Player extends Entity {
         }
 
         currentAnim = moveAnim.expired() ? standAnim : moveAnim;
-        System.out.println("ANIMATION " + currentAnim);
 
         currentWeapon.update();
         prevPos = position;
