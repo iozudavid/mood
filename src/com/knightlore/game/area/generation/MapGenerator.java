@@ -19,11 +19,6 @@ public class MapGenerator extends ProceduralAreaGenerator {
     private static final int ROOM_COST_MODIFIER = 5;
     private static final int DOUBLE_PATH_COST_MODIFIER = 3;
     private static final int MIN_AREA_PER_ROOM = 100;
-    // ---
-    
-    // TODO: LAVA MOAT!!
-    // Make a room that has lava on it's four sides
-    // And undecided tiles in the middle
 
     private final List<RoomType> roomsToBuild = new LinkedList<>();
     private final List<Room> rooms = new LinkedList<>();
@@ -36,11 +31,32 @@ public class MapGenerator extends ProceduralAreaGenerator {
     public MapGenerator() {
     }
 
+    /**
+     * Returns a procedurally-generated map with the specified
+     * width, height and map type
+     * @param width
+     * @param height
+     * @param mt
+     * @author Thomas, Kacper
+     * @return map
+     */
     public Map createMap(int width, int height, MapType mt) {
         Random rand = new Random();
         return createMap(width, height, mt, rand.nextLong());
     }
 
+    /**
+     * Returns a procedurally-generated map with the specified
+     * width, height and map type. The seed is used to ensure
+     * this process is deterministic and that the map will be
+     * identical on server and clients alike
+     * @param width
+     * @param height
+     * @param mt
+     * @param seed
+     * @return
+     * @author Thomas, Kacper
+     */
     public Map createMap(int width, int height, MapType mt, long seed) {
         System.out.println("Creating map with seed: " + seed);
         mapType = mt;
@@ -337,13 +353,6 @@ public class MapGenerator extends ProceduralAreaGenerator {
         }
 
         grid = symMap;
-    }
-
-    public static void main(String args[]) {
-        Random r = new Random();
-        MapGenerator mg = new MapGenerator();
-        Map map = mg.createMap(70, 70, MapType.TDM, r.nextInt(1000));
-        System.out.println(map.toDebugString());
     }
     
 }

@@ -35,6 +35,14 @@ public class RoomGenerator extends ProceduralAreaGenerator {
     private long seed;
     private RoomType roomType = RoomType.NORMAL;
     
+    /**
+     * Creates a room using the given seed, and according
+     * to the provided room type.
+     * @param seed
+     * @param rt
+     * @return a room
+     * @author Thomas, Kacper
+     */
     public Room createRoom(long seed, RoomType rt) {
         this.seed = seed;
         roomType = rt;
