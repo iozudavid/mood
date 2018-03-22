@@ -26,19 +26,19 @@ public class StartMenu {
         this.name = new Image(GuiUtils.middleWidth(this.screenWidth, 500),
                 GuiUtils.calculateHeight(this.screenHeight, 10), 500, 100, "res/graphics/logo.png");
         this.singlePlayerButton = new Button(GuiUtils.middleWidth(this.screenWidth, 300),
-                GuiUtils.calculateHeight(this.screenHeight, 40), 300, 40, "Single Player", 20);
+                GuiUtils.calculateHeight(this.screenHeight, 40), 300, 40, "Single Player", 21);
         this.singlePlayerButton.setGraphic(new Image(0, 0, 0, 0, "res/graphics/shotgun_to_right.png").graphic);
         this.singlePlayerButton.setGraphic2(new Image(0, 0, 0, 0, "res/graphics/shotgun_to_left.png").graphic);
         this.multiPlayerButton = new Button(GuiUtils.middleWidth(this.screenWidth, 300),
-                GuiUtils.calculateHeight(this.screenHeight, 50), 300, 40, "Multiplayer", 20);
+                GuiUtils.calculateHeight(this.screenHeight, 50), 300, 40, "Multiplayer", 21);
         this.multiPlayerButton.setGraphic(new Image(0, 0, 0, 0, "res/graphics/multiplayer_to_right.png").graphic);
         this.multiPlayerButton.setGraphic2(new Image(0, 0, 0, 0, "res/graphics/multiplayer_to_left.png").graphic);
         this.settingsButton = new Button(GuiUtils.middleWidth(this.screenWidth, 300),
-                GuiUtils.calculateHeight(this.screenHeight, 60), 300, 40, "Settings", 20);
+                GuiUtils.calculateHeight(this.screenHeight, 60), 300, 40, "Settings", 21);
         this.settingsButton.setGraphic(new Image(0, 0, 0, 0, "res/graphics/settings_to_right.png").graphic);
         this.settingsButton.setGraphic2(new Image(0, 0, 0, 0, "res/graphics/settings_to_left.png").graphic);
         this.quitButton = new Button(GuiUtils.middleWidth(this.screenWidth, 300),
-                GuiUtils.calculateHeight(this.screenHeight, 70), 300, 40, "Quit", 20);
+                GuiUtils.calculateHeight(this.screenHeight, 70), 300, 40, "Quit", 21);
         this.quitButton.setGraphic(new Image(0, 0, 0, 0, "res/graphics/quit_to_right.png").graphic);
         this.quitButton.setGraphic2(new Image(0, 0, 0, 0, "res/graphics/quit_to_left.png").graphic);
 

@@ -193,7 +193,6 @@ public class Renderer {
         }
 
         drawSprites(pix, zbuffer, offset);
-        pix.drawRect(0xFF00FF, 10, 20, 30, 30);
     }
 
     private void floorCast(PixelBuffer pix, int offset, int xx, double rayX, double rayY, int mapX, int mapY,
