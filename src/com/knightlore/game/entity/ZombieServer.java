@@ -101,7 +101,7 @@ public class ZombieServer extends ZombieShared {
         }
         
         Vector2D nextPointDirection = Vector2D.sub(new Vector2D(currentPath.get(0)), this.position);
-        if (Vector2D.ZERO.subtract(this.direction).isEqualTo(nextPointDirection)) {
+        if (Vector2D.ZERO.subtract(this.direction).equals(nextPointDirection)) {
             rotateClockwise();
             return;
         }

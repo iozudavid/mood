@@ -51,7 +51,7 @@ public class Renderer {
             return;
         }
 
-        if (camera.getSubject().getDirection().isEqualTo(Vector2D.ZERO, 0.01)) {
+        if (camera.getSubject().getDirection().equals(Vector2D.ZERO, 0.01)) {
             return;
         }
 
