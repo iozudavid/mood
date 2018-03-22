@@ -16,7 +16,7 @@ import com.knightlore.render.graphic.filter.ColorFilter;
 
 public class Font {
 
-    private static final String FONT_STRING = "ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890 ?!-+|:().[]";
+    private static final String FONT_STRING = "ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890 ?!-+|:().[]_";
     public static final Font DEFAULT_WHITE = new Font("res/font/font.png", FONT_STRING, 0xFFFFFF);
     public static final Font DEFAULT_BLACK = new Font("res/font/font.png", FONT_STRING, 0x000000);
 
