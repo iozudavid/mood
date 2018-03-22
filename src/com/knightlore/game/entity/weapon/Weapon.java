@@ -74,7 +74,7 @@ public abstract class Weapon {
         int yy = pix.getHeight() - height + 28 * SCALE;
 
         int xOffset = (int) (Math.cos(distanceTraveled * weaponBobSpeed) * weaponBobX);
-        int yOffset = (int) (Math.abs(Math.sin(distanceTraveled * weaponBobSpeed) * weaponBobY));
+        int yOffset = (int) (Math.abs(Math.sin(distanceTraveled * weaponBobSpeed) * weaponBobY)) - 85;
 
         if (muzzleFlash) {
             pix.fillOval(0xFCC07F, xx + xOffset + inertiaX + width / 4, yy + yOffset + inertiaY + height / 4, width / 2,
