@@ -49,7 +49,7 @@ public class MultiplayerMenu {
         this.portText = new Text(GuiUtils.middleWidth(this.screenWidth, 50),
                 GuiUtils.calculateHeight(this.screenHeight, 50), 50, 40, "Port", 25);
         this.portTextField = new TextField(GuiUtils.middleWidth(this.screenWidth, 300),
-                GuiUtils.calculateHeight(this.screenHeight, 57), 300, 40, "" + ConnectionDetails.PORT);
+                GuiUtils.calculateHeight(this.screenHeight, 57), 300, 40, "" + ConnectionDetails.DEFAULT_PORT);
         this.portTextField.fontSize = 3;
         this.portTextField.setRestriction(new BooleanFunction<Character>() {
 
