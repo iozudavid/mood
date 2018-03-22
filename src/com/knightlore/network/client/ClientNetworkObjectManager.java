@@ -12,7 +12,7 @@ import java.util.concurrent.LinkedBlockingQueue;
 
 import com.knightlore.GameSettings;
 import com.knightlore.engine.GameEngine;
-import com.knightlore.game.Player;
+import com.knightlore.game.entity.Player;
 import com.knightlore.game.entity.Entity;
 import com.knightlore.game.world.ClientWorld;
 import com.knightlore.gui.GameChat;

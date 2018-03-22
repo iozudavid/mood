@@ -3,7 +3,7 @@ package com.knightlore.game.entity.pickup;
 import java.nio.ByteBuffer;
 import java.util.UUID;
 
-import com.knightlore.game.Player;
+import com.knightlore.game.entity.Player;
 import com.knightlore.game.buff.BuffType;
 import com.knightlore.network.NetworkObject;
 import com.knightlore.render.graphic.sprite.DirectionalSprite;

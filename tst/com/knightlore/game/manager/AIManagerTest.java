@@ -1,6 +1,7 @@
-package com.knightlore.ai;
+package com.knightlore.game.manager;
 
 import com.knightlore.game.area.Map;
+import com.knightlore.game.manager.AIManager;
 import com.knightlore.utils.Vector2D;
 import com.knightlore.utils.physics.Physics;
 import org.junit.Test;

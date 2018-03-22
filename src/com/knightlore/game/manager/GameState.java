@@ -1,4 +1,4 @@
-package com.knightlore.game;
+package com.knightlore.game.manager;
 
 public enum GameState {
     LOBBY,

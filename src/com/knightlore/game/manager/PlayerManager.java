@@ -1,4 +1,6 @@
-package com.knightlore.game;
+package com.knightlore.game.manager;
+
+import com.knightlore.game.entity.Player;
 
 import java.util.LinkedList;
 import java.util.List;

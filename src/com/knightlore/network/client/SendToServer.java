@@ -9,7 +9,7 @@ import java.util.UUID;
 
 import com.knightlore.engine.GameEngine;
 import com.knightlore.engine.input.InputManager;
-import com.knightlore.game.Player;
+import com.knightlore.game.entity.Player;
 import com.knightlore.network.Connection;
 import com.knightlore.network.NetworkObject;
 import com.knightlore.network.protocol.ClientController;

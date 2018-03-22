@@ -2,7 +2,7 @@ package com.knightlore.game.entity.pickup;
 
 import java.util.UUID;
 
-import com.knightlore.game.Player;
+import com.knightlore.game.entity.Player;
 import com.knightlore.game.entity.weapon.WeaponType;
 import com.knightlore.render.graphic.sprite.DirectionalSprite;
 import com.knightlore.utils.Vector2D;

@@ -1,9 +1,8 @@
 package com.knightlore.game.entity;
 
 import com.knightlore.GameSettings;
-import com.knightlore.ai.AIManager;
+import com.knightlore.game.manager.AIManager;
 import com.knightlore.engine.GameEngine;
-import com.knightlore.game.Player;
 import com.knightlore.game.world.GameWorld;
 import com.knightlore.utils.Vector2D;
 

@@ -75,7 +75,7 @@ public abstract class PickupItem extends Entity {
     }
     
     public void addToPickupManager() {
-        // Clients will have a null Pickup Manager
+        // Clients will have a null Pickup manager
         if(pickupManager != null) {
             pickupManager.addToQueue(this);
         }

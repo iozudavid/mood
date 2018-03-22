@@ -64,6 +64,7 @@ public class TCPConnection extends Connection {
                 infoSend.write(data.array(), 0, dataLength);
             } catch (IOException e) {
                 System.err.println("Communication broke...");
+                e.printStackTrace();
                 this.terminated = true;
             }
         }
@@ -106,6 +107,7 @@ public class TCPConnection extends Connection {
                 return ByteBuffer.wrap(tmp);
             } catch (IOException e) {
                 System.err.println("Communication broke...");
+                e.printStackTrace();
                 this.terminated = true;
                 return null;
             }

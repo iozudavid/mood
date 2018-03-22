@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Stack;
 
 import com.knightlore.GameSettings;
-import com.knightlore.game.Player;
+import com.knightlore.game.entity.Player;
 import com.knightlore.game.area.Map;
 import com.knightlore.game.entity.Entity;
 import com.knightlore.game.tile.AirTile;
