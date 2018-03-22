@@ -17,17 +17,20 @@ import javax.swing.JSplitPane;
 
 import com.knightlore.game.area.Map;
 import com.knightlore.game.area.generation.MapGenerator;
+import com.knightlore.game.area.generation.MapType;
 import com.knightlore.game.tile.BrickTile;
 
 public class LevelEditorWindow extends JFrame {
 
-    public static Pen pen = new Pen(new BrickTile());
+    public static final Pen pen = new Pen(new BrickTile());
 
     public static final String TITLE = "KnightLore Level Editor";
     public static final int WIDTH = 1000;
-    public static final int HEIGHT = WIDTH;
+    public static final int HEIGHT = 1000;
+    private static final int MAP_WIDTH = 64;
+    private static final int MAP_HEIGHT = 64;
 
-    private LevelEditorPanel panel;
+    private final LevelEditorPanel panel;
 
     public LevelEditorWindow(String title, int width, int height) {
         super(title);
@@ -54,7 +57,7 @@ public class LevelEditorWindow extends JFrame {
 
         JSplitPane pane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
 
-        panel = new LevelEditorPanel(new MapGenerator().createMap(32, 32, 20L));
+        panel = new LevelEditorPanel(new MapGenerator().createMap(MAP_WIDTH, MAP_HEIGHT, MapType.TDM, 20L));
         pane.setLeftComponent(new TileChooserPanel());
         pane.setRightComponent(panel);
 
@@ -66,7 +69,7 @@ public class LevelEditorWindow extends JFrame {
         Random rand = new Random();
         panel.removeAll();
 
-        Map m = new MapGenerator().createMap(32, 32, rand.nextLong());
+        Map m = new MapGenerator().createMap(MAP_WIDTH, MAP_HEIGHT, MapType.TDM, rand.nextLong());
         panel.initialise(m);
         panel.revalidate();
         panel.repaint();
@@ -75,8 +78,9 @@ public class LevelEditorWindow extends JFrame {
     private void saveMapToFile() {
         JFileChooser fc = new JFileChooser();
         int response = fc.showSaveDialog(this);
-        if (response != JFileChooser.APPROVE_OPTION)
+        if (response != JFileChooser.APPROVE_OPTION) {
             return;
+        }
 
         try (FileOutputStream fos = new FileOutputStream(fc.getSelectedFile());
                 ObjectOutputStream objectOut = new ObjectOutputStream(fos)) {
@@ -90,8 +94,9 @@ public class LevelEditorWindow extends JFrame {
     private void openMapFromFile() {
         JFileChooser fc = new JFileChooser();
         int response = fc.showOpenDialog(this);
-        if (response != JFileChooser.APPROVE_OPTION)
+        if (response != JFileChooser.APPROVE_OPTION) {
             return;
+        }
 
         try (FileInputStream fis = new FileInputStream(fc.getSelectedFile());
                 ObjectInputStream objectIn = new ObjectInputStream(fis)) {

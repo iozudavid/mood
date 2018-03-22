@@ -9,4 +9,5 @@ public class Tuple<X, Y> {
         this.x = x;
         this.y = y;
     }
+
 }

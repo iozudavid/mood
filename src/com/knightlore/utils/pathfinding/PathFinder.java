@@ -7,9 +7,14 @@ import java.util.*;
 
 public class PathFinder {
     private double[][] costGrid;
-
+    private boolean isForMap = false;
+    
     public PathFinder(double[][] costGrid) {
         this.costGrid = costGrid;
+    }
+    
+    public void setIsForMap(boolean b) {
+        isForMap = b;
     }
 
     public List<Point> findPath(Vector2D start, Vector2D goal) {
@@ -80,7 +85,12 @@ public class PathFinder {
     }
 
     private boolean isInBounds(Point p, double[][] grid) {
-        return p.x >= 0 && p.x < grid.length && p.y >= 0 && p.y < grid[0].length;
+        if(!isForMap) {
+            return p.x >= 0 && p.x < grid.length && p.y >= 0 && p.y < grid[0].length;
+        }else {
+            return p.x >= 1 && p.x < grid.length-1 && p.y >= 1 && p.y <grid[0].length -1;
+        }
+
     }
 
     public void setCostGrid(double[][] costGrid) {

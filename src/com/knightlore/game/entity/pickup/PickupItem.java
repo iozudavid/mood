@@ -23,9 +23,21 @@ public abstract class PickupItem extends Entity {
     private static final int FLOOR_OFFSET = 100;
     protected final DirectionalSprite sprite;
 
+    protected double spawnDelay;
+
+    private PickupManager pickupManager;
+
+    /*
     PickupItem(UUID uuid, Vector2D position, DirectionalSprite sprite) {
         super(uuid, PICKUP_SIZE, position, Vector2D.UP);
         this.sprite = sprite;
+    }
+    */
+    
+    public PickupItem(UUID uuid, Vector2D position, DirectionalSprite sprite, PickupManager pickupManager) {
+        super(uuid, PICKUP_SIZE , position, Vector2D.UP);
+        this.sprite = sprite;
+        this.pickupManager = pickupManager;
     }
 
     @Override
@@ -51,6 +63,22 @@ public abstract class PickupItem extends Entity {
     @Override
     public DirectionalSprite getDirectionalSprite() {
         return sprite;
+    }
+    
+    public double getSpawnDelay() {
+        return spawnDelay;
+    }
+    
+    @Override
+    public String getName() {
+        return "NAME THIS";
+    }
+    
+    public void addToPickupManager() {
+        // Clients will have a null Pickup Manager
+        if(pickupManager != null) {
+            pickupManager.addToQueue(this);
+        }
     }
 
 }

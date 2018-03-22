@@ -33,6 +33,8 @@ public class GameObjectManager {
      * they're destroyed.
      */
     private List<GameObject> notifyToDestroy;
+    
+    private boolean stillRuning=true;
 
     public GameObjectManager() {
         this.objects = new ArrayList<>();
@@ -51,6 +53,11 @@ public class GameObjectManager {
         synchronized (notifyToCreate) {
             notifyToCreate.add(g);
         }
+    }
+    
+    public void stop(){
+    	//hard to stop
+    	System.exit(0);
     }
 
     /**
@@ -74,11 +81,8 @@ public class GameObjectManager {
     protected void updateObjects() {
         // perform internal list management before updating.
         // as modifying a list whilst iterating over it is a very bad idea.
-
         synchronized (notifyToCreate) {
-            Iterator<GameObject> it = notifyToCreate.iterator();
-            while (it.hasNext()) {
-                GameObject obj = it.next();
+            for (GameObject obj : notifyToCreate) {
                 // add the object to the update list
                 objects.add(obj);
                 // notify the object it has been created
@@ -88,9 +92,7 @@ public class GameObjectManager {
         }
         synchronized (notifyToDestroy) {
             // remove any objects that need deleting
-            Iterator<GameObject> it = notifyToDestroy.iterator();
-            while (it.hasNext()) {
-                GameObject obj = it.next();
+            for (GameObject obj : notifyToDestroy) {
                 // remove the object from the update list
                 objects.remove(obj);
                 // notify the object it has been effectively destroyed
@@ -100,7 +102,7 @@ public class GameObjectManager {
         }
         // update all objects
         for (GameObject obj : objects) {
-            obj.onUpdate();
+        	obj.onUpdate();
         }
     }
 
@@ -113,19 +115,17 @@ public class GameObjectManager {
      * @return a list of objects of type c.
      */
     public <T> ArrayList<T> findObjectsOfType(Class<T> c) {
-        ArrayList<T> results = new ArrayList<T>();
+        ArrayList<T> results = new ArrayList<>();
         // FIXME find a nicer way of doing this
         try {
-            for (int i = 0; i < objects.size(); i++) {
-                if (c.isInstance(objects.get(i))) {
-                    results.add((T) objects.get(i));
+            for (GameObject object : objects) {
+                if (c.isInstance(object)) {
+                    results.add((T) object);
                 }
             }
         } catch (ClassCastException e) {
             System.out.println("OCrap, object is instance of class, but not of same type");
             e.printStackTrace();
-        } finally {
-
         }
         return results;
     }

@@ -27,13 +27,13 @@ public final class BotInput extends InputModule {
     private static final double ACC = 0.1;
     private static final double SQR_DIST_TO_NODE = 0.6;
     private static final double MOVE_ACC = 0.2;
-    private final byte ONE = 1;
-    private final byte ZERO = 0;
+    private static final byte ONE = 1;
+    private static final byte ZERO = 0;
     private long nextThinkTime = 0;
     private long fov = 60;
     private Entity target = null;
     private Vector2D goalPos = Vector2D.ZERO;
-    private List<Point> path = new ArrayList<Point>();
+    private List<Point> path = new ArrayList<>();
     private Vector2D lookPos = Vector2D.ZERO;
     
     @Override
@@ -62,14 +62,14 @@ public final class BotInput extends InputModule {
         strafeInput = dblToAxis(dotRight, MOVE_ACC);
         walkInput = dblToAxis(dotForward, MOVE_ACC);
         //System.out.println(myPlayer.getName() + "->" + sqrDist);
-        if (path.size() == 0) {
+        if (path.isEmpty()) {
             getPath(myPlayer);
             strafeInput = 0;
             walkInput = 0;
         } else if (sqrDist < SQR_DIST_TO_NODE) {
             // remove last node
             path.remove(0);
-            if (path.size() > 0) {
+            if (!path.isEmpty()) {
                 // move to next node
                 goalPos = Vector2D.fromTilePoint(path.get(0));
             }
@@ -105,7 +105,7 @@ public final class BotInput extends InputModule {
     private void getPath(Entity myPlayer) {
         Vector2D goal = GameEngine.getSingleton().getWorld().getMap().getRandomSpawnPoint();
         AIManager aiManager = GameEngine.getSingleton().getWorld().getAiManager();
-        path = aiManager.findPath(myPlayer.getPosition(), goal);
+        path = aiManager.findRawPath(myPlayer.getPosition(), goal);
         goalPos = myPlayer.getPosition();
     }
     
@@ -114,24 +114,23 @@ public final class BotInput extends InputModule {
         // Find our target
         PlayerManager playerManager = GameEngine.getSingleton().getWorld().getPlayerManager();
         List<Player> players = playerManager.getPlayers();
-        for (int i = 0; i < players.size(); i++) {
-            Entity player = players.get(i);
+        for (Player player : players) {
             Vector2D displacement = player.getPosition().subtract(myPlayer.getPosition());
             Vector2D dir = displacement.normalised();
-            
+
             double sqrDist = displacement.sqrMagnitude();
             // check if out of our sight distance
             if (sqrDist > SQR_SIGHT_DIST) {
                 continue;
             }
-            
+
             double dot = dir.dot(myPlayer.getDirection().normalised());
             double cosFOV = Math.cos(Math.toRadians(fov));
             // check out of field of view
             if (dot > cosFOV) {
                 continue;
             }
-            
+
             // check actual Line of sight
             RaycastHit hit = GameEngine.getSingleton().getWorld().raycast(myPlayer.getPosition(), dir, 100, SIGHT_DIST,
                     myPlayer);
@@ -152,7 +151,6 @@ public final class BotInput extends InputModule {
         if (walkInput > 0) {
             inputState.put(ClientController.FORWARD, ONE);
             inputState.put(ClientController.BACKWARD, ZERO);
-            
         } else if (walkInput < 0) {
             inputState.put(ClientController.FORWARD, ZERO);
             inputState.put(ClientController.BACKWARD, ONE);

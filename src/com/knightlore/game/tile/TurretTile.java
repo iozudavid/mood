@@ -9,6 +9,7 @@ public class TurretTile extends Tile {
 
     public TurretTile(Team team) {
         this.team = team;
+        pathable = false;
     }
 
     @Override
@@ -20,6 +21,11 @@ public class TurretTile extends Tile {
     public double getSolidity() {
         return 0.1D;
     }
+    
+    @Override
+    public double getOpacity() {
+        return 0.0D;
+    }
 
     @Override
     public void onShot() {
@@ -27,7 +33,22 @@ public class TurretTile extends Tile {
     }
 
     @Override
+    public double getCost() {
+        return 10D / (1D - getSolidity());
+    }
+
+    @Override
     public void onEntered(Entity entity) {
+    }
+
+    @Override
+    public int getMinimapColor() {
+        return team.getColor();
+    }
+
+    @Override
+    public String toString() {
+        return team.toString() + " turret";
     }
 
     @Override
@@ -43,11 +64,6 @@ public class TurretTile extends Tile {
     @Override
     public Tile copy() {
         return new TurretTile(team);
-    }
-    
-    @Override
-    public double getOpacity() {
-        return 1D;
     }
     
 }

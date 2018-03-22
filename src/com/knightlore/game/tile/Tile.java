@@ -20,7 +20,7 @@ public abstract class Tile implements Serializable {
      * We calculate the minimap colour of any tile by simply averaging the
      * colours in the corresponding texture. This can be overridden.
      */
-    private int minimapColor = ColorUtils.averageColor(getWallTexture().getPixels());
+    private final int minimapColor = ColorUtils.averageColor(getWallTexture().getPixels());
 
     /**
      * Gets the wall texture of this tile.
@@ -29,6 +29,12 @@ public abstract class Tile implements Serializable {
      */
     public abstract Graphic getWallTexture();
 
+    /**
+     * Indicates whether this is overridden in procedural
+     * generation when a path is placed
+     */
+    protected boolean pathable = true;
+    
     /**
      * Gets the floor texture of this tile. By default, this just returns the
      * wall texture.
@@ -70,6 +76,23 @@ public abstract class Tile implements Serializable {
     }
 
     /**
+     * Gets the cost of moving throught the tile. E.g. moving through walls is
+     * impossible hence infinite cost and moving through lava tile is much more
+     * costly then moving through empty air tile
+     *
+     * Completely solid (1D) by default.
+     *
+     * @return the solidity of the tile
+     */
+    public double getCost() {
+        if (getSolidity() >= 1D) {
+            return Double.POSITIVE_INFINITY;
+        }
+
+        return 1D / (1D - getSolidity());
+    }
+
+    /**
      * Every tile appears as a coloured block on the minimap. This method gets
      * the colour that the block should appear on the minimap.
      * 
@@ -95,7 +118,7 @@ public abstract class Tile implements Serializable {
     public abstract void onEntered(Entity entity);
 
     public char toChar() {
-        return ' ';
+        return '?';
     }
 
     public Tile reflectTileX() {
@@ -116,8 +139,17 @@ public abstract class Tile implements Serializable {
 
     public abstract Tile copy();
 
+    public void setPathable(boolean b) {
+        pathable = b;
+    }
+    
+    public boolean overiddenByPath() {
+        return pathable;
+    }
+    
     @Override
     public boolean equals(Object o) {
         return (this == o || o.getClass().equals(this.getClass()));
     }
+    
 }

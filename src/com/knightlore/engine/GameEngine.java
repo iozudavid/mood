@@ -1,14 +1,20 @@
 package com.knightlore.engine;
 
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
+
 import com.knightlore.GameSettings;
 import com.knightlore.MainWindow;
 import com.knightlore.engine.audio.SoundManager;
 import com.knightlore.engine.input.InputManager;
 import com.knightlore.engine.input.Mouse;
+import com.knightlore.game.GameManager;
+import com.knightlore.game.GameState;
+import com.knightlore.game.entity.pickup.PickupManager;
 import com.knightlore.game.world.ClientWorld;
 import com.knightlore.game.world.GameWorld;
 import com.knightlore.game.world.ServerWorld;
-import com.knightlore.gui.GameChat;
+import com.knightlore.gui.GUIState;
 import com.knightlore.network.NetworkObjectManager;
 import com.knightlore.network.client.ClientManager;
 import com.knightlore.network.client.ClientNetworkObjectManager;
@@ -49,10 +55,21 @@ public class GameEngine implements Runnable {
     private GameObjectManager gameObjectManager;
     private NetworkObjectManager networkObjectManager;
 
-    private Camera camera;
-    public GameState gameState = GameState.InGame;
+    private PickupManager pickupManager;
 
+    private Camera camera;
+    public GUIState guiState = GUIState.StartMenu;
+
+    private float defaultVolume = -1;
     private SoundManager soundManager;
+
+    private boolean _doneInit = false;
+
+    public static final Charset CHARSET = StandardCharsets.UTF_8;
+
+    public boolean doneInit() {
+        return _doneInit;
+    }
 
     private GameEngine() {
         if (HEADLESS) {
@@ -62,7 +79,6 @@ public class GameEngine implements Runnable {
         }
 
         this.gameObjectManager = new GameObjectManager();
-        this.soundManager = new SoundManager();
     }
 
     public SoundManager getSoundManager() {
@@ -96,12 +112,21 @@ public class GameEngine implements Runnable {
         }
 
         System.out.println("Engine Initialised Successfully.");
-        // TODO maybe refactor this into a make world method
-        // ALSO TODO, UNHOOK TEST WORLD
-        System.out.println("Initialising World...");
 
+        if (GameSettings.isClient()) {
+            this.display = new Display();
+        }
+    }
+
+    public void startGame() {
+        System.out.println("Starting game...");
         // The NetworkObjectManager will call setUpWorld() on the world when
         // it's ready to do so.
+        if (defaultVolume != -1)
+            this.soundManager = new SoundManager(defaultVolume);
+        else
+            this.soundManager = new SoundManager();
+
         if (GameSettings.isServer()) {
             world = new ServerWorld();
             networkObjectManager = new ServerNetworkObjectManager(
@@ -110,39 +135,59 @@ public class GameEngine implements Runnable {
             new Thread(networkManager).start();
             ((ServerNetworkObjectManager) networkObjectManager).init();
         }
+
         if (GameSettings.isClient()) {
             world = new ClientWorld();
             networkObjectManager = new ClientNetworkObjectManager(
                     (ClientWorld) world);
-            ClientManager networkManager = new ClientManager();
+            ClientManager networkManager = null;
+            try {
+                networkManager = new ClientManager();
+            } catch (Exception e) {
+                throw new RuntimeException();
+            }
             new Thread(networkManager).start();
-            ((ClientNetworkObjectManager) networkObjectManager)
-                    .init(networkManager.getServerSender());
+            ((ClientNetworkObjectManager) networkObjectManager).init(networkManager.getServerSender());
         }
-        
 
         System.out.println("Initialising NetworkObjectManager...");
 
         System.out.println("World Initialised Successfully.");
+
+        if (GameSettings.isServer()) {
+            // map must be initialised before handing it the pickup manager
+            pickupManager = new PickupManager(world.getMap());
+        }
 
         if (GameSettings.isClient()) {
             ClientNetworkObjectManager cn = (ClientNetworkObjectManager) networkObjectManager;
             while (!cn.hasFinishedSetup()) {
                 // wait...
             }
-            ClientWorld cworld = (ClientWorld) world;
-
             final int w = screen.getWidth(), h = screen.getHeight();
+            ClientWorld cworld = (ClientWorld) world;
+            cworld.setScreenHeight(h);
+            cworld.setScreenWidth(w);
             Renderer renderer = new Renderer(w, 8 * h / 9, camera, cworld);
             Minimap minimap = new Minimap(camera, cworld, 128);
             HUD hud = new HUD(cn.getMyPlayer(), w, h / 9);
-            GameChat chat = new GameChat(w, h);
-            this.display = new Display(renderer, minimap, hud, chat);
+            this.display.setHud(hud);
+            this.display.setMinimap(minimap);
+            this.display.setRenderer(renderer);
+            this.guiState = GUIState.InGame;
         }
-        
-       
-    }
 
+        // start the lobby
+        world.getGameManager().startLobby();
+        world.getGameManager().beginGame();
+        // build anything that requires the renderer
+        // think gui
+        world.onPostEngineInit();
+        _doneInit = true;
+
+    }
+    
+    
     /**
      * Creates the window for the game.
      */
@@ -165,8 +210,15 @@ public class GameEngine implements Runnable {
             window.setVisible(true);
         }
     }
+    
+    public void stopGame(){
+        synchronized(this.gameObjectManager){
+            this.gameObjectManager = new GameObjectManager();
+        }
+    }
 
     public void stop() {
+        this.gameObjectManager.stop();
         running = false;
         try {
             thread.join();
@@ -174,13 +226,16 @@ public class GameEngine implements Runnable {
             // should't happen as the thread shouldn't be interrupted
             e.printStackTrace();
         }
+        if (GameSettings.isClient()) {
+            window.dispose();
+        }
     }
 
     @Override
     public void run() {
         // start the lobby
         // finally... begin!
-        world.getGameManager().beginGame();
+
         /*
          * This piece of code limits the number of game updates per second to
          * whatever it is set to in the variable updatesPerSecond.
@@ -193,13 +248,16 @@ public class GameEngine implements Runnable {
             delta += (now - lastTime) / ns;
             lastTime = now;
             while (delta >= 1) {
-                gameObjectManager.updateObjects();
-                world.update();
-                GameFeed.getInstance().update();
+                synchronized(this.gameObjectManager){
+                    gameObjectManager.updateObjects();
+                }
+                if (world!=null && GameManager.getGameState() == GameState.PLAYING) {
+                    world.update();
+                    GameFeed.getInstance().update();
+                }
                 delta -= 1;
                 ticker.tick();
             }
-
             if (!HEADLESS) {
                 screen.render(0, 0, display);
                 InputManager.clearMouse();
@@ -241,6 +299,10 @@ public class GameEngine implements Runnable {
 
     public Display getDisplay() {
         return this.display;
+    }
+
+    public void setVolume(float newVolume) {
+        this.defaultVolume = newVolume;
     }
 
 }

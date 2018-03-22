@@ -8,6 +8,7 @@ import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.LinkedBlockingQueue;
 
 import com.google.common.collect.ImmutableMap;
@@ -16,8 +17,9 @@ import com.knightlore.ai.InputModule;
 import com.knightlore.ai.RemoteInput;
 import com.knightlore.engine.GameEngine;
 import com.knightlore.game.entity.Entity;
-import com.knightlore.game.entity.weapon.Shotgun;
 import com.knightlore.game.entity.weapon.Weapon;
+import com.knightlore.game.entity.weapon.WeaponType;
+import com.knightlore.game.world.ClientWorld;
 import com.knightlore.network.NetworkObject;
 import com.knightlore.network.NetworkObjectManager;
 import com.knightlore.network.protocol.ClientController;
@@ -60,18 +62,23 @@ public class Player extends Entity {
 
     private int score = 0;
     private int currentHealth = MAX_HEALTH;
-    private Weapon currentWeapon = new Shotgun();
+    private Weapon currentWeapon;
+    private WeaponType currentWeaponType;
     private boolean shootOnNextUpdate;
 
     private boolean hasShot;
     private Vector2D prevPos, prevDir;
     private Vector2D prevPosServer, prevDirServer;
-    
+
     private int inertiaX = 0, inertiaY = 0;
     private InputModule inputModule = new RemoteInput();
 
+    private Entity lastInflictor;
+
+    // DO NOT REMOVE, THESE ARE USED FOR CLIENT PREDICTION!!!!!
     private double timeToSend = 0;
     private boolean respawn = false;
+    // END DO NOT REMOVE
 
     // Returns a new instance. See NetworkObject for details.
     public static NetworkObject build(UUID uuid, ByteBuffer state) {
@@ -90,10 +97,31 @@ public class Player extends Entity {
         moveSpeed = 0.060;
         strafeSpeed = moveSpeed / 2;
         rotationSpeed = 0.06;
+
+        // add tick listener to game engine
+        // as some buffs will affect the player periodically
+        GameEngine.ticker.addTickListener(this);
+
+        this.setCurrentWeaponType(WeaponType.PISTOL);
+
+        // Player.this.finished = true;
     }
 
     public Player(Vector2D pos, Vector2D dir) {
         this(UUID.randomUUID(), pos, dir);
+    }
+
+    public void sendStatsToScoreBoard() {
+        if (GameSettings.isServer())
+            return;
+        // add to scoreboard
+        CopyOnWriteArrayList<String> stats = new CopyOnWriteArrayList<>();
+        stats.add(this.getObjectId().toString());
+        stats.add(this.getName());
+        stats.add(this.team.toString());
+        stats.add(this.score + "");
+        ClientWorld world = (ClientWorld) GameEngine.getSingleton().getWorld();
+        world.getGameChat().addToTable(stats);
     }
 
     @Override
@@ -147,7 +175,7 @@ public class Player extends Entity {
 
     private void messageToTeam(ByteBuffer buf) {
         String message = NetworkUtils.getStringFromBuf(buf);
-        message = "[" + this.team + "] " + this.name + ": " + message;
+        message = "[" + this.team + "] " + this.getName() + ": " + message;
         ByteBuffer bf = ByteBuffer.allocate(NetworkObject.BYTE_BUFFER_DEFAULT_SIZE);
         NetworkUtils.putStringIntoBuf(bf, NetworkObjectManager.MANAGER_UUID.toString());
         NetworkUtils.putStringIntoBuf(bf, "displayMessage");
@@ -163,7 +191,6 @@ public class Player extends Entity {
         try {
             return Optional.of(this.teamMessagesToSend.take());
         } catch (InterruptedException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
 
@@ -172,7 +199,7 @@ public class Player extends Entity {
 
     private void messageToAll(ByteBuffer buf) {
         String message = NetworkUtils.getStringFromBuf(buf);
-        message = "[all] " + this.name + ": " + message;
+        message = "[all] " + this.getName() + ": " + message;
         ByteBuffer bf = ByteBuffer.allocate(NetworkObject.BYTE_BUFFER_DEFAULT_SIZE);
         NetworkUtils.putStringIntoBuf(bf, NetworkObjectManager.MANAGER_UUID.toString());
         NetworkUtils.putStringIntoBuf(bf, "displayMessage");
@@ -188,7 +215,6 @@ public class Player extends Entity {
         try {
             return Optional.of(this.allMessagesToSend.take());
         } catch (InterruptedException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
 
@@ -197,6 +223,9 @@ public class Player extends Entity {
 
     @Override
     public Graphic getGraphic(Vector2D playerPos) {
+        if (currentHealth <= 0) {
+            return DirectionalSprite.GRAVESTONE_DIRECTIONAL_SPRITE.getCurrentGraphic(position, direction, playerPos);
+        }
         DirectionalSprite frame = currentAnim.getFrame();
         return frame.getCurrentGraphic(position, direction, playerPos);
     }
@@ -204,6 +233,7 @@ public class Player extends Entity {
     @Override
     public void onUpdate() {
         super.onUpdate();
+        this.sendStatsToScoreBoard();
 
         hasShot = false;
         if (shootOnNextUpdate) {
@@ -217,7 +247,6 @@ public class Player extends Entity {
             inputState = inputModule.updateInput(inputState, this);
             // Check whether each input is triggered - if it is, execute the
             // respective method.
-            // DEBUG
             for (Entry<ClientController, Byte> entry : inputState.entrySet()) {
                 // For boolean inputs (i.e. all current inputs), 0 represents
                 // false.
@@ -231,21 +260,22 @@ public class Player extends Entity {
             Vector2D displacement = position.subtract(prevPos);
             updateInertia(displacement);
         }
-        
-        if(prevPosServer != null && prevDirServer != null) {
-            Vector2D displacement = position.subtract(prevPosServer);
+
+        if (prevPosServer != null && prevDirServer != null) {
+            Vector2D displacement = position.subtract(prevPos);
             double dis = displacement.magnitude();
-            if (dis != 0) {
-                currentAnim = moveAnim;
-                moveAnim.update(dis);
-            } else {
-                currentAnim = standAnim;
-            }
+            moveAnim.update(dis);
         }
+
+        currentAnim = moveAnim.expired() ? standAnim : moveAnim;
 
         currentWeapon.update();
         prevPos = position;
         prevDir = direction;
+        checkDeath();
+
+        prevPosServer = position;
+        prevDirServer = direction;
     }
 
     private void updateInertia(Vector2D displacement) {
@@ -254,7 +284,7 @@ public class Player extends Entity {
             inertiaY = 0;
             return;
         }
-        final double p = 0.1D;
+        final double p = 0.07D;
         inertiaX += (int) (p * -inertiaX);
         inertiaY += (int) (p * -inertiaY);
         Vector2D temp = new Vector2D(plane.getX() / plane.magnitude(), plane.getY() / plane.magnitude());
@@ -278,8 +308,9 @@ public class Player extends Entity {
     }
 
     private void shoot() {
-        if (currentWeapon == null)
+        if (currentWeapon == null) {
             return;
+        }
 
         if (currentWeapon.canFire()) {
             shootOnNextUpdate = true;
@@ -299,32 +330,24 @@ public class Player extends Entity {
         bb.putInt(this.respawn ? 1 : 0);
         this.respawn = false;
         bb.putInt(currentHealth);
-        bb.putInt(getScore());
+        bb.putInt(score);
+        bb.putInt(this.currentWeaponType.ordinal());
         return bb;
     }
 
     @Override
     public synchronized void deserialize(ByteBuffer buf) {
-        prevPosServer = position;
-        prevDirServer = direction;
         super.deserialize(buf);
         shootOnNextUpdate = buf.getInt() == 1;
         this.timeToSend = buf.getDouble();
-        this.respawn = buf.getInt() == 1 ? true : false;
+        this.respawn = buf.getInt() == 1;
         currentHealth = buf.getInt();
         setScore(buf.getInt());
-    }
 
-    @Override
-    public void onCreate() {
-        // TODO Auto-generated method stub
-
-    }
-
-    @Override
-    public void onDestroy() {
-        // TODO Auto-generated method stub
-
+        WeaponType newWeaponType = WeaponType.VALUES[buf.getInt()];
+        if (newWeaponType != currentWeaponType) {
+            this.setCurrentWeaponType(newWeaponType);
+        }
     }
 
     @Override
@@ -345,13 +368,36 @@ public class Player extends Entity {
 
     @Override
     public void takeDamage(int damage, Entity inflictor) {
-        currentHealth -= damage;
+        if (GameSettings.isClient()) {
+            return;
+        }
+        damage = (int) (damage * damageTakenModifier);
+        int newHealth = currentHealth - damage;
+        currentHealth = Math.max(0, Math.min(MAX_HEALTH, newHealth));
+        if (inflictor != null) {
+            lastInflictor = inflictor;
+        }
+    }
+
+    private void checkDeath() {
+        if (GameSettings.isClient()) {
+            return;
+        }
         if (currentHealth <= 0) {
-            System.out.println(name + " was killed by " + inflictor.getName());
-            inflictor.killConfirmed(this);
-            this.sendSystemMessage(name, inflictor);
+            if (lastInflictor == null) {
+                System.out.println(this.getName() + " was killed by natural causes");
+            } else {
+                System.out.println(this.getName() + " was killed by " + lastInflictor.getName());
+                lastInflictor.killConfirmed(this);
+            }
+            removeAllBuffs();
+            this.sendSystemMessage(this.getName(), lastInflictor);
             GameEngine.getSingleton().getWorld().getGameManager().onPlayerDeath(this);
         }
+    }
+
+    public void applyHeal(int heal) {
+        takeDamage(-heal, null);
     }
 
     public void increaseScore(int value) {
@@ -360,6 +406,7 @@ public class Player extends Entity {
         }
 
         score += value;
+        this.sendStatsToScoreBoard();
     }
 
     public void decreaseScore(int value) {
@@ -368,6 +415,7 @@ public class Player extends Entity {
         }
 
         score -= value;
+        this.sendStatsToScoreBoard();
     }
 
     public int getScore() {
@@ -378,8 +426,8 @@ public class Player extends Entity {
         this.position = spawnPos;
         currentHealth = MAX_HEALTH;
         inputModule.onRespawn(this);
-        this.respawn = true;
-        System.out.println(name + " respawned.");
+        // this.respawn = true;
+        System.out.println(this.getName() + " respawned.");
     }
 
     public void setInputModule(InputModule inp) {
@@ -394,8 +442,18 @@ public class Player extends Entity {
         return currentWeapon;
     }
 
-    public void setCurrentWeapon(Weapon currentWeapon) {
-        this.currentWeapon = currentWeapon;
+    /**
+     * Make the player hold a weapon of the given type. Instantiates a new
+     * weapon of this type.
+     * 
+     * @param wt
+     *            The type of weapon for the player to be holding.
+     */
+    public synchronized void setCurrentWeaponType(WeaponType wt) {
+        this.currentWeaponType = wt;
+        this.currentWeapon = wt.getNewWeapon();
+        System.out.println(
+                "Player " + this.getName() + " is now holding a " + wt + ".");
     }
 
     public int getCurrentHealth() {
@@ -419,16 +477,22 @@ public class Player extends Entity {
     }
 
     @Override
-    public void killConfirmed(Player victim) {
+    public void killConfirmed(Entity victim) {
         score += 1;
+        System.out.println(this.getName() + " score " + score);
     }
-    
-    public void setRespawn(boolean b){
+
+    public void setRespawn(boolean b) {
         this.respawn = b;
     }
-    
-    public void setHealth(int h){
+
+    public void setHealth(int h) {
         this.currentHealth = h;
+    }
+
+    @Override
+    public boolean renderName() {
+        return true;
     }
 
 }

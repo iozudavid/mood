@@ -1,10 +1,12 @@
 package com.knightlore.render.minimap;
 
+import java.util.Iterator;
 import java.util.function.DoubleUnaryOperator;
 
 import com.knightlore.engine.GameEngine;
 import com.knightlore.engine.TickListener;
 import com.knightlore.game.area.Map;
+import com.knightlore.game.entity.Entity;
 import com.knightlore.game.tile.Tile;
 import com.knightlore.game.world.ClientWorld;
 import com.knightlore.render.Camera;
@@ -83,8 +85,9 @@ public class Minimap implements TickListener {
      * minimap.
      */
     public void render() {
-        if (camera == null || !camera.isSubjectSet())
+        if (camera == null || !camera.isSubjectSet()) {
             return;
+        }
 
         Vector2D dir = camera.getDirection();
         double theta = -Math.atan2(dir.getX(), dir.getY());
@@ -129,7 +132,9 @@ public class Minimap implements TickListener {
     }
 
     private void drawMinimapObjects(double theta) {
-        for (IMinimapObject obj : world.getEntities()) {
+        Iterator<Entity> iter = world.getEntityIterator();
+        while (iter.hasNext()) {
+            IMinimapObject obj = iter.next();
             Vector2D pos = obj.getPosition();
             pos = transform((int) (pos.getX() * scale), (int) (pos.getY() * scale), theta);
 
@@ -224,8 +229,7 @@ public class Minimap implements TickListener {
     @Override
     public long interval() {
         // 3 seconds, no matter what the value of UPDATES_PER_SECOND is.
-        final long UPDATE_DELAY = (long) (3 * GameEngine.UPDATES_PER_SECOND);
-        return UPDATE_DELAY;
+        return (long) (3 * GameEngine.UPDATES_PER_SECOND);
     }
 
 }

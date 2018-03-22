@@ -4,17 +4,20 @@ import java.io.IOException;
 import java.net.Socket;
 import java.net.UnknownHostException;
 
+import com.knightlore.engine.GameEngine;
+import com.knightlore.gui.GUIState;
 import com.knightlore.network.ConnectionDetails;
 import com.knightlore.network.TCPConnection;
 import com.knightlore.network.server.Receive;
 
 public class ClientManager implements Runnable {
+	
+	private static Socket server;
     private SendToServer sender;
     private Receive receive;
     private TCPConnection conn;
 
     public ClientManager() {
-        Socket server = null;
         try {
             server = new Socket(ConnectionDetails.SERVER_HOSTNAME,
                     ConnectionDetails.PORT);
@@ -24,6 +27,10 @@ public class ClientManager implements Runnable {
         } catch (IOException e) {
             System.err.println(
                     "The server doesn't seem to be running " + e.getMessage());
+            throw new RuntimeException();
+        }
+        if(server==null){
+            throw new RuntimeException();
         }
         System.out.println(
                 "Connected to server " + ConnectionDetails.SERVER_HOSTNAME);
@@ -37,6 +44,9 @@ public class ClientManager implements Runnable {
         return sender;
     }
 
+    /**
+     * Start receive and send threads and wait for them to finish.
+     */
     @Override
     public void run() {
 
@@ -57,6 +67,19 @@ public class ClientManager implements Runnable {
         }
         System.out.println("End");
 
+    }
+    
+    /**
+     * Disconnect the client by closing this end of socket.
+     */
+    public static void disconnect(){
+    	try {
+			server.close();
+			server=null;
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
     }
 
 }

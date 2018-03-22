@@ -3,62 +3,39 @@ package com.knightlore.game.entity.pickup;
 import java.nio.ByteBuffer;
 import java.util.UUID;
 
-import com.knightlore.engine.GameEngine;
-import com.knightlore.game.Player;
+import com.knightlore.game.entity.weapon.WeaponType;
 import com.knightlore.network.NetworkObject;
 import com.knightlore.render.graphic.sprite.DirectionalSprite;
 import com.knightlore.utils.Vector2D;
 
-/**
- * A shotgun pickup item.
- * 
- * @author Joe Ellis
- *
- */
-public class ShotgunPickup extends PickupItem {
-    
-    private static final long PICKUP_SPAWN_PROTECT_TIME = 10;
-    private long spawnProtectTime = 0;
+public class ShotgunPickup extends WeaponPickup {
+    private static final DirectionalSprite DSPRITE = DirectionalSprite.SHOTGUN_DIRECTIONAL_SPRITE;
     
     // Returns a new instance. See NetworkObject for details.
     public static NetworkObject build(UUID uuid, ByteBuffer state) {
-        NetworkObject obj = new ShotgunPickup(uuid, Vector2D.ONE);
+        NetworkObject obj = new ShotgunPickup(uuid, Vector2D.ONE, null);
         obj.init();
         obj.deserialize(state);
         return obj;
     }
-    
-    public ShotgunPickup(Vector2D position) {
-        this(UUID.randomUUID(), position);
+
+    public ShotgunPickup(Vector2D position, PickupManager pickupManager) {
+        super(position, DSPRITE, pickupManager);
     }
-    
-    private ShotgunPickup(UUID uuid, Vector2D position) {
-        super(uuid, position, DirectionalSprite.SHOTGUN_DIRECTIONAL_SPRITE);
-        spawnProtectTime = GameEngine.ticker.getTime() + PICKUP_SPAWN_PROTECT_TIME;
+
+    public ShotgunPickup(UUID uuid, Vector2D position,
+            PickupManager pickupManager) {
+        super(uuid, position, DSPRITE, pickupManager);
     }
-    
+
     @Override
-    public int getMinimapColor() {
-        return 0xFF00FF;
+    WeaponType getWeaponType() {
+        return WeaponType.SHOTGUN;
     }
-    
+
     @Override
-    public String getClientClassName() {
-        // One class for both client and server.
-        return this.getClass().getName();
+    public String getName() {
+        return "SHOTGUN";
     }
-    
-    @Override
-    public void onCollide(Player player) {
-        if (exists) {
-            this.destroy();
-        }
-    }
-    
-    public void onDestroy() {
-        System.out.println("shotgun pickup collected");
-        super.onDestroy();
-        
-    }
-    
+
 }

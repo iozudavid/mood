@@ -228,8 +228,9 @@ public class ServerNetworkObjectManager extends NetworkObjectManager {
     }
 
     public synchronized NetworkObject getNetworkObject(UUID uuid) {
-        if (networkObjects.containsKey(uuid))
+        if (networkObjects.containsKey(uuid)) {
             return networkObjects.get(uuid).x;
+        }
         System.err.println("No network object with UUID " + uuid
                 + " could be found on this client.");
         return null;

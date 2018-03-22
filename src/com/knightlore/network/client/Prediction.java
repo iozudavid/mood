@@ -30,8 +30,14 @@ public class Prediction {
 		this.lastReceivedFromServer = ByteBuffer.allocate(NetworkObject.BYTE_BUFFER_DEFAULT_SIZE);
 	}
 
-	// this will be called when a packet
-	// is received from the server
+	/**
+	 *  Called when a packet is receiving from the server
+	 *  containing informations about current player.
+	 *  Using this as a start point, apply all player's inputs which were performed
+	 *  after this packet was sent. This will generate the next prediction.
+	 * @param player - current player
+	 * @param received - ByteBuffer received from server
+	 */
 	public void onServerFrame(Player player, ByteBuffer received) {
 		// remove the old history
 		// inputs before this packet was sent
@@ -52,9 +58,9 @@ public class Prediction {
 		String name = NetworkUtils.getStringFromBuf(received);
 		player.setName(name);
 		int shootOnNext = received.getInt();
-		player.setOnNextShot(shootOnNext == 1 ? true : false);
+		player.setOnNextShot(shootOnNext == 1);
 		double timeSent = received.getDouble();
-        boolean respawn = (received.getInt() == 1 ? true : false);
+        boolean respawn = received.getInt() == 1;
         player.setRespawn(respawn);
         int currentHealth = received.getInt();
         player.setHealth(currentHealth);
@@ -65,13 +71,7 @@ public class Prediction {
 			if(this.nextPrediction==null){
 				this.nextPrediction = new Player(new Vector2D(xPos,yPos), new Vector2D(xDir, yDir));
 			}
-			Iterator<Map.Entry<Double, byte[]>> it = this.clientInputHistory.entrySet().iterator();
-			while (it.hasNext()) {
-				Entry<Double, byte[]> next = it.next();
-				if (next.getKey() <= timeSent) {
-					it.remove();
-				}
-			}
+            this.clientInputHistory.entrySet().removeIf(next -> next.getKey() <= timeSent);
 			// create a new player
 			// which will predict the next steps
 
@@ -79,7 +79,7 @@ public class Prediction {
 			this.nextPrediction.setyPos(yPos);
 			this.nextPrediction.setxDir(xDir);
 			this.nextPrediction.setyDir(yDir);
-			this.nextPrediction.setOnNextShot(shootOnNext == 1 ? true : false);
+			this.nextPrediction.setOnNextShot(shootOnNext == 1);
 
 			synchronized (this.clientInputHistory) {
 				for (byte[] nextInput : this.clientInputHistory.values()) {
@@ -99,7 +99,15 @@ public class Prediction {
 
 	}
 	
-	// called every client frame
+	/**
+	 * Called when the client input commands from keyboard.
+	 * Takes the last prediction and use it to do server reconciliation
+	 * then generate new state by applying inputs to reconciliated state
+	 * @param player - current player
+	 * @param input - all keyboard inputs
+	 * @param packetNumber - number of packet sent
+	 * @return new player state
+	 */
 	public Player update(Player player, byte[] input, double packetNumber) {
 		//use last prediction based on server stats
 		//to construct the new position
@@ -111,13 +119,15 @@ public class Prediction {
 				if (this.isMoveActivated(ClientController.FORWARD, input)
 						|| this.isMoveActivated(ClientController.BACKWARD, input)
 						|| this.isMoveActivated(ClientController.LEFT, input)
-						|| this.isMoveActivated(ClientController.RIGHT, input))
+						|| this.isMoveActivated(ClientController.RIGHT, input)) {
 					player.setxPos(nextPrediction.getPosition().getX());
+				}
 				if (this.isMoveActivated(ClientController.FORWARD, input)
 						|| this.isMoveActivated(ClientController.BACKWARD, input)
 						|| this.isMoveActivated(ClientController.LEFT, input)
-						|| this.isMoveActivated(ClientController.RIGHT, input))
+						|| this.isMoveActivated(ClientController.RIGHT, input)) {
 					player.setyPos(nextPrediction.getPosition().getY());
+				}
 				if (this.isMoveActivated(ClientController.ROTATE_ANTI_CLOCKWISE, input)
 						|| this.isMoveActivated(ClientController.ROTATE_CLOCKWISE, input)
 						|| this.isMoveActivated(ClientController.FORWARD, input)
@@ -129,13 +139,15 @@ public class Prediction {
 				if (this.isMoveActivated(ClientController.FORWARD, input)
 						|| this.isMoveActivated(ClientController.BACKWARD, input)
 						|| this.isMoveActivated(ClientController.LEFT, input)
-						|| this.isMoveActivated(ClientController.RIGHT, input))
+						|| this.isMoveActivated(ClientController.RIGHT, input)) {
 					player.setxPos(smooth(player.getxPos(), this.nextPrediction.getPosition().getX()));
+				}
 				if (this.isMoveActivated(ClientController.FORWARD, input)
 						|| this.isMoveActivated(ClientController.BACKWARD, input)
 						|| this.isMoveActivated(ClientController.LEFT, input)
-						|| this.isMoveActivated(ClientController.RIGHT, input))
+						|| this.isMoveActivated(ClientController.RIGHT, input)) {
 					player.setyPos(smooth(player.getyPos(), this.nextPrediction.getPosition().getY()));
+				}
 				if (this.isMoveActivated(ClientController.ROTATE_ANTI_CLOCKWISE, input)
 						|| this.isMoveActivated(ClientController.ROTATE_CLOCKWISE, input)
 						|| this.isMoveActivated(ClientController.FORWARD, input)
@@ -153,19 +165,28 @@ public class Prediction {
 		return player;
 	}
 	
+	/**
+	 * Called when local machine needs to reconciliate with server.
+	 * @param playerState - player state on local machine
+	 * @param predictedState - player state predicted using server state
+	 * @return reconciled state
+	 */
 	public double smooth(double playerState, double predictedState){
 		double delta = playerState-predictedState;
 		return playerState-delta*this.converge;
 	}
 	
+	/**
+	 * Checks if a given move is performed.
+	 * @param c - move to be checked
+	 * @param input - set of inputs from user
+	 * @return whether that move is performed or not
+	 */
 	public boolean isMoveActivated(ClientController c, byte[] input){
 		for(int i=0; i<ClientProtocol.getIndexActionMap().size(); i=i+2){
 			try {
 				if(c==ClientProtocol.getByIndex(i)){
-					if(input[i+1]==1)
-						return true;
-					else
-						return false;
+					return input[i + 1] == 1;
 				}
 			} catch (IOException e) {
 				// TODO Auto-generated catch block

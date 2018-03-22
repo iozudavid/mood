@@ -1,9 +1,9 @@
 package com.knightlore.gui;
 
 import java.awt.Color;
-import java.awt.Graphics;
-import java.awt.Rectangle;
 import java.util.ArrayList;
+
+import com.knightlore.render.PixelBuffer;
 
 public class Group extends GUIObject{
 	
@@ -13,6 +13,7 @@ public class Group extends GUIObject{
 	private double padding;
 	private int screenHeight;
 	private SelectState state = SelectState.UP;
+	private double widthPadding = 0;
 	
 	public Group(int x, int y, ArrayList<GUIObject> objs, double padding, int screenHeight){
 		super(x-50, y-10, 0, 0);
@@ -22,8 +23,16 @@ public class Group extends GUIObject{
 		this.recalculate();
 	}
 	
-	
-	public void addToGroup(GUIObject g){
+    public Group(int x, int y, ArrayList<GUIObject> objs, double padding, double widthPadding, int screenHeight) {
+        super(x - 50, y - 10, 0, 0);
+        this.objectToGroup = objs;
+        this.padding = padding;
+        this.widthPadding = widthPadding;
+        this.screenHeight = screenHeight;
+        this.recalculate();
+    }
+
+    public void addToGroup(GUIObject g){
 		this.objectToGroup.add(g);
 		this.recalculate();
 	}
@@ -43,6 +52,7 @@ public class Group extends GUIObject{
 		for(GUIObject g : this.objectToGroup){
 			width = (int) Math.max(width, g.getRectangle().getWidth());
 		}
+		width += this.widthPadding;
 		width += 100;
 		return width;
 	}
@@ -98,9 +108,8 @@ public class Group extends GUIObject{
 	}
 
 	@Override
-	void Draw(Graphics g, Rectangle parentRect) {
-		g.setColor(activeColor());
-		g.fillRect(rect.x, rect.y, rect.width, rect.height);
+	void Draw(PixelBuffer pix, int x, int y) {
+		pix.fillRect(activeColor().getRGB(),rect.x, rect.y, rect.width, rect.height);
 	}
 
 }

@@ -17,8 +17,9 @@ public class ColorFilter {
 
     public void apply(int[] pix, final int CHROMA_KEY) {
         for (int i = 0; i < pix.length; i++) {
-            if (pix[i] == CHROMA_KEY)
+            if (pix[i] == CHROMA_KEY) {
                 continue;
+            }
             pix[i] = ColorUtils.mixColor(pix[i], color, blend);
         }
     }

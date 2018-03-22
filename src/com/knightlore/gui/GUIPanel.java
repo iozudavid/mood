@@ -1,9 +1,9 @@
 package com.knightlore.gui;
 
-import java.awt.Graphics;
-import java.awt.Rectangle;
 import java.util.ArrayList;
 import java.util.List;
+
+import com.knightlore.render.PixelBuffer;
 
 public class GUIPanel extends GUIObject {
 
@@ -43,14 +43,14 @@ public class GUIPanel extends GUIObject {
     }
     
     @Override
-    void Draw(Graphics g,Rectangle parentRect) {
+    void Draw(PixelBuffer pix, int x, int y) {
         if(!isVisible) {
             return;
         }
         // because sorted low -> high depth
         // standard iteration will draw them in order. lowest first
-        for(int i=0;i<children.size();i++){
-            children.get(i).Draw(g,rect);
+        for (GUIObject aChildren : children) {
+            aChildren.Draw(pix, x, y);
         }
     }
     

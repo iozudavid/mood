@@ -11,8 +11,8 @@ import com.knightlore.game.tile.Tile;
 
 public class TileButton extends JButton implements ActionListener {
 
-    private LevelEditorPanel pane;
-    private Map map;
+    private final LevelEditorPanel pane;
+    private final Map map;
     private final int x, y;
 
     public TileButton(LevelEditorPanel pane, Map map, int x, int y) {
@@ -30,17 +30,16 @@ public class TileButton extends JButton implements ActionListener {
         return map.getTile(x, y);
     }
 
-    public void setTile() {
-        int color = getTile().getMinimapColor();
-        Color c = new Color(color);
-        setBackground(c);
-        setForeground(c);
-    }
-
     public void actionPerformed(ActionEvent e) {
         map.setTile(LevelEditorWindow.pen.getTile(), x, y);
         setTile();
         pane.repaint();
     }
 
+    private void setTile() {
+        int color = getTile().getMinimapColor();
+        Color c = new Color(color);
+        setBackground(c);
+        setForeground(c);
+    }
 }

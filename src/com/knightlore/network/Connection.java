@@ -1,19 +1,14 @@
 package com.knightlore.network;
 
 import java.nio.ByteBuffer;
-import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
 import com.knightlore.network.server.Prunable;
 
 public abstract class Connection implements Runnable, Prunable {
-    public static final Charset CHARSET = StandardCharsets.UTF_8;
     // Wait 5 seconds without receiving packets before disconnecting.
     protected static int TIMEOUT_MILLIS = 500 * 1000;
-
-    // protected static int TIMEOUT_MILLIS = 30 * 1000;
 
     public volatile boolean terminated;
     // Stores the most recently received packet.
@@ -42,26 +37,26 @@ public abstract class Connection implements Runnable, Prunable {
     public void run() {
         // Receive packets and put them into the blocking queue, ready to be
         // taken.
-        while (true) {
+        while (!this.terminated) {
             ByteBuffer packet = Connection.this.receiveBlocking();
             if (packet == null) {
+                // Indicates that the connection has ended.
                 this.terminated = true;
-                System.err.println("Connection terminated.");
-                break;
+                continue;
             }
             try {
                 packets.put(packet);
             } catch (InterruptedException e) {
                 this.terminated = true;
-                System.err.println("Thread interrupted while receiving packet: ");
-                break;
+                System.err
+                        .println("Thread interrupted while receiving packet: ");
             }
         }
     }
-    
+
     @Override
     public boolean exists() {
         return terminated;
     }
-    
+
 }

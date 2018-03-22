@@ -34,7 +34,7 @@ public class ServerCommand {
     public static ServerCommand decodePacket(byte[] packet) {
         try {
             // creating the initial map
-            Map<ServerControl, Double> objectStats = new HashMap<ServerControl, Double>();
+            Map<ServerControl, Double> objectStats = new HashMap<>();
 
             // Metadata processing.
             ByteBuffer buf = ByteBuffer.wrap(packet);

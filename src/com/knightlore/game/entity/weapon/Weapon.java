@@ -34,8 +34,9 @@ public abstract class Weapon {
     public void fire(Entity shooter) {
         this.timer = 0;
 
-        if (GameSettings.isClient())
+        if (GameSettings.isClient()) {
             playShotSFX(shooter);
+        }
     }
 
     private void playShotSFX(Entity shooter) {
@@ -48,11 +49,13 @@ public abstract class Weapon {
         SoundManager soundManager = GameEngine.getSingleton().getSoundManager();
         // Scale against the default volume of sound effects.
         float volume = scale * soundManager.defaultVolume;
-        if (volume > 0)
+        if (volume > 0) {
             soundManager.playConcurrently(shootSFX, volume);
+        }
     }
 
     private int weaponBobX = GameSettings.MOTION_BOB ? 20 : 0, weaponBobY = GameSettings.MOTION_BOB ? 30 : 0;
+    private double weaponBobSpeed = 2;
     private int inertiaCoeffX = 125, inertiaCoeffY = 35;
 
     public void render(PixelBuffer pix, int x, int y, int inertiaX, int inertiaY, double distanceTraveled,
@@ -70,8 +73,8 @@ public abstract class Weapon {
         int xx = x + (pix.getWidth() - width) / 2;
         int yy = pix.getHeight() - height + 28 * SCALE;
 
-        int xOffset = (int) (Math.cos(distanceTraveled) * weaponBobX);
-        int yOffset = (int) (Math.abs(Math.sin(distanceTraveled) * weaponBobY));
+        int xOffset = (int) (Math.cos(distanceTraveled * weaponBobSpeed) * weaponBobX);
+        int yOffset = (int) (Math.abs(Math.sin(distanceTraveled * weaponBobSpeed) * weaponBobY));
 
         if (inertiaX < -120) {
             g = WeaponSprite.SHOTGUN_LEFT;
@@ -105,7 +108,7 @@ public abstract class Weapon {
     public int getInertiaCoeffY() {
         return inertiaCoeffY;
     }
-    
+
     public abstract WeaponType getWeaponType();
 
 }

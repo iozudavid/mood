@@ -7,7 +7,7 @@ import com.knightlore.render.graphic.texture.Texture;
 // it's a singleton to avoid having multiple copies of air
 public class AirTile extends Tile {
     private static final AirTile instance = new AirTile();
-
+    
     private AirTile() {
     }
 
@@ -36,7 +36,15 @@ public class AirTile extends Tile {
 
     @Override
     public void onEntered(Entity entity) {
-        // TODO Auto-generated method stub
-        
     }
+
+    @Override
+    public String toString() {
+        return "Air";
+    }
+
+    public char toChar() {
+        return ' ';
+    }
+    
 }

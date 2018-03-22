@@ -4,9 +4,7 @@ import java.nio.ByteBuffer;
 import java.util.UUID;
 
 import com.knightlore.engine.GameEngine;
-import com.knightlore.game.world.GameWorld;
 import com.knightlore.network.NetworkObject;
-import com.knightlore.utils.Vector2D;
 
 public class ClientFFAGame extends FFAGame {
     

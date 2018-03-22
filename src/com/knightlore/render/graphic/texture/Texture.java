@@ -14,11 +14,24 @@ public class Texture {
     public static final Graphic MOSSY_BRICK = GraphicSheet.TEXTURES.graphicAt(1, 1);
     public static final Graphic WEAPON_SPAWN = GraphicSheet.TEXTURES.graphicAt(2, 1);
 
+    public static final Graphic RED_BUSH = GraphicSheet.RED_TEXTURES.graphicAt(1, 0);
+    public static final Graphic BLUE_BUSH = GraphicSheet.BLUE_TEXTURES.graphicAt(1, 0);
+    
     public static final Graphic LAVA_F1 = GraphicSheet.TEXTURES.graphicAt(0, 2);
     public static final Graphic LAVA_F2 = GraphicSheet.TEXTURES.graphicAt(1, 2);
     public static final Graphic LAVA_F3 = GraphicSheet.TEXTURES.graphicAt(2, 2);
     public static final Graphic LAVA_F4 = GraphicSheet.TEXTURES.graphicAt(3, 2);
-
+    
+    public static final Graphic RED_LAVA_F1 = GraphicSheet.RED_TEXTURES.graphicAt(0, 2);
+    public static final Graphic RED_LAVA_F2 = GraphicSheet.RED_TEXTURES.graphicAt(1, 2);
+    public static final Graphic RED_LAVA_F3 = GraphicSheet.RED_TEXTURES.graphicAt(2, 2);
+    public static final Graphic RED_LAVA_F4 = GraphicSheet.RED_TEXTURES.graphicAt(3, 2);
+    
+    public static final Graphic BLUE_LAVA_F1 = GraphicSheet.BLUE_TEXTURES.graphicAt(0, 2);
+    public static final Graphic BLUE_LAVA_F2 = GraphicSheet.BLUE_TEXTURES.graphicAt(1, 2);
+    public static final Graphic BLUE_LAVA_F3 = GraphicSheet.BLUE_TEXTURES.graphicAt(2, 2);
+    public static final Graphic BLUE_LAVA_F4 = GraphicSheet.BLUE_TEXTURES.graphicAt(3, 2);
+    
     private Texture() {
     }
 

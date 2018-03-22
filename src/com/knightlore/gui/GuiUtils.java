@@ -13,26 +13,35 @@ public class GuiUtils {
 		return middle/2;
 	}
 	
-	public static int calculateHeight(int screenHeight, int procent){
+    public static int formatToRight(int screenWidth, int objWidth) {
+        int toRight = screenWidth - objWidth;
+        return toRight;
+    }
+	
+	public static int calculateHeight(int screenHeight, float procent){
 		double decimal = (double)procent/(double)100;
 		return (int)(decimal*screenHeight);
 	}
 	
 	public static int minX(ArrayList<GUIObject> g){
-		if(g.size()==0)
+		if(g.isEmpty()) {
 			return 0;
+		}
 		int min = g.get(0).getRectangle().x;
-		for(GUIObject obj : g)
+		for(GUIObject obj : g) {
 			min = Math.min(min, obj.getRectangle().x);
+		}
 		return min;
 	}
 	
 	public static int minY(ArrayList<GUIObject> g){
-		if(g.size()==0)
+		if(g.isEmpty()) {
 			return 0;
+		}
 		int min = g.get(0).getRectangle().y;
-		for(GUIObject obj : g)
+		for(GUIObject obj : g) {
 			min = Math.min(min, obj.getRectangle().y);
+		}
 		return min;
 	}
 	

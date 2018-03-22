@@ -6,11 +6,11 @@ import java.util.Random;
 
 import com.knightlore.game.Team;
 import com.knightlore.game.tile.AirTile;
+import com.knightlore.game.tile.PlayerSpawnTile;
 import com.knightlore.game.tile.Tile;
 import com.knightlore.utils.Vector2D;
 
 public class Map extends Area {
-    // TODO: read in maps from file
     private final long seed;
 
     public Map(Tile[][] grid, long seed) {
@@ -42,25 +42,28 @@ public class Map extends Area {
         return candidates.get(index);
     }
 
-    public List<Vector2D> getTilePoints(Team team/*, TileType type*/) {
-        /*List<Vector2D> positions = new ArrayList<>();
-        for (int i = 0; i < getWidth(); i++) {
-            for (int j = 0; j < getHeight(); j++) {
-
-                Tile tile = getTile(i, j);
-                // guard clauses
-                if (tile.getTileType() != type) {
+    public Vector2D getRandomSpawnPoint(Team team) {
+        List<Vector2D> candidates = new ArrayList<>();
+        for(int i = 0; i < getWidth(); i++) {
+            for( int j=0; j < getHeight(); j++) {
+                Tile currentTile = getTile(i,j);
+                if(! (currentTile instanceof PlayerSpawnTile)) {
                     continue;
                 }
-                if (tile.getTeam() != team) {
+                if(currentTile.getTeam() != team) {
                     continue;
                 }
 
-                positions.add(new Vector2D(i+0.5, j+0.5));
-
+                candidates.add(new Vector2D(i + 0.5, j + 0.5));
             }
         }
-        return positions;*/
-        return new ArrayList<>();
+        
+        if(candidates.isEmpty()) {
+            return getRandomSpawnPoint();
+        }
+        Random rand = new Random();
+        int index = rand.nextInt(candidates.size());
+        return candidates.get(index);
     }
+    
 }

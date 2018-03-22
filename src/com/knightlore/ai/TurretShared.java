@@ -31,8 +31,6 @@ public abstract class TurretShared extends Entity {
 
     @Override
     public void onCreate() {
-        // TODO Auto-generated method stub
-        
     }
     
     
@@ -70,8 +68,6 @@ public abstract class TurretShared extends Entity {
     
     @Override
     public void onDestroy() {
-        // TODO Auto-generated method stub
-        
     }
     
     @Override

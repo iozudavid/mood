@@ -1,15 +1,20 @@
 package com.knightlore.game.tile;
 
-import com.knightlore.engine.GameEngine;
+import com.knightlore.game.Player;
+import com.knightlore.game.buff.Fire;
+import com.knightlore.game.buff.SpawnVision;
 import com.knightlore.game.entity.Entity;
+import com.knightlore.game.entity.ZombieServer;
 import com.knightlore.render.animation.TimedAnimation;
 import com.knightlore.render.graphic.Graphic;
+import com.knightlore.engine.GameEngine;
+import com.knightlore.render.animation.Animation;
 import com.knightlore.render.graphic.texture.Texture;
 
 public class LavaTile extends Tile {
 
-    private static TimedAnimation<Graphic> LAVA_ANIM = new TimedAnimation<Graphic>(
-            (long) (GameEngine.UPDATES_PER_SECOND / 4));
+    private static final TimedAnimation<Graphic> LAVA_ANIM =
+            new TimedAnimation<>((long) (GameEngine.UPDATES_PER_SECOND / 4));
     static {
         LAVA_ANIM.addFrame(Texture.LAVA_F1);
         LAVA_ANIM.addFrame(Texture.LAVA_F2);
@@ -28,12 +33,32 @@ public class LavaTile extends Tile {
     }
 
     @Override
-    public void onEntered(Entity entity) {
+    public double getCost() {
+        return 100D / (1 - getSolidity());
     }
 
     @Override
     public Tile copy() {
         return new LavaTile();
+    }
+
+    @Override
+    public void onEntered(Entity entity) {
+        // not quite sure which zombie class to use...
+        if(entity instanceof Player || entity instanceof ZombieServer) {
+            entity.resetBuff(new Fire(entity));
+        }
+
+    }
+
+    @Override
+    public String toString() {
+        return "Lava";
+    }
+    
+    @Override
+    public char toChar() {
+        return 'L';
     }
 
     @Override

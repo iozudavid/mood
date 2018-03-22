@@ -1,12 +1,13 @@
 package com.knightlore.game.entity;
 
+import com.knightlore.GameSettings;
+import com.knightlore.ai.AIManager;
 import com.knightlore.engine.GameEngine;
 import com.knightlore.game.Player;
 import com.knightlore.game.world.GameWorld;
 import com.knightlore.utils.Vector2D;
 
 import java.awt.*;
-import java.nio.ByteBuffer;
 import java.util.*;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -14,14 +15,15 @@ import java.util.stream.Collectors;
 public class ZombieServer extends ZombieShared {
     private static final double DIRECTION_DIFFERENCE_TO_TURN = 0.1d;
     private static final long THINKING_FREQUENCY = 1000; // ms
-    private static final int MAX_HEALTH = 10;
-    private static final int DAMAGE = 100;
-    private static final int ATTACK_RANGE = 1;
+    private static final int MAX_HEALTH = 100;
+    private static final int DAMAGE = 20;
+    private static final double ATTACK_RANGE = 1D;
     
     private final GameWorld world = GameEngine.getSingleton().getWorld();
     private long lastThinkingTime = 0;
     private List<Point> currentPath = new LinkedList<>();
     private int currentHealth = MAX_HEALTH;
+    private Entity lastInflictor;
     
     public ZombieServer(Vector2D position) {
         super(position);
@@ -37,17 +39,36 @@ public class ZombieServer extends ZombieShared {
     
     @Override
     public void onUpdate() {
+        checkDeath();
+        
         if (System.currentTimeMillis() - lastThinkingTime > THINKING_FREQUENCY) {
             think();
         }
-        
         move();
     }
     
+    private void checkDeath() {
+        if(GameSettings.isClient()) {
+            return;
+        }
+        if (currentHealth <= 0) {
+            if(lastInflictor == null) {
+                System.out.println(this.getName() + " was killed by natural causes");
+            }else {
+                System.out.println(this.getName() + " was killed by " + lastInflictor.getName());
+                lastInflictor.killConfirmed(this);
+            }            
+            removeAllBuffs();
+            this.sendSystemMessage(this.getName(), lastInflictor);
+            this.destroy();
+        }
+    }
+    
     private void think() {
+        AIManager aiManager = world.getAiManager();
         List<Player> players = world.getPlayerManager().getPlayers();
         List<List<Point>> pathsToPlayers = players.stream()
-                .map(player -> world.getAiManager().findPath(this.position, player.getPosition()))
+                .map(player -> aiManager.findRawPath(this.position, player.getPosition()))
                 .collect(Collectors.toList());
         
         if (pathsToPlayers.isEmpty()) {
@@ -64,11 +85,11 @@ public class ZombieServer extends ZombieShared {
             }
         }
         
-        currentPath = shortestPath;
-        System.out.println("current path size" + currentPath.size());
-        if (currentPath.size() <= ATTACK_RANGE) {
+        currentPath = aiManager.pruneUnnecessaryNodes(shortestPath);
+        double distance = closestPlayer.getPosition().distance(this.position);
+        if (distance <= ATTACK_RANGE) {
             closestPlayer.takeDamage(DAMAGE, this);
-            System.out.println("Zombie attacked");
+            System.out.println("Zombie attacked " + closestPlayer.getName());
         }
         
         lastThinkingTime = System.currentTimeMillis();
@@ -80,7 +101,7 @@ public class ZombieServer extends ZombieShared {
         }
         
         Vector2D nextPointDirection = Vector2D.sub(new Vector2D(currentPath.get(0)), this.position);
-        if (Vector2D.ZERO.subtract(this.direction).isEqualTo(nextPointDirection)) {
+        if (Vector2D.ZERO.subtract(this.direction).equals(nextPointDirection)) {
             rotateClockwise();
             return;
         }
@@ -106,9 +127,8 @@ public class ZombieServer extends ZombieShared {
     @Override
     public void takeDamage(int damage, Entity inflictor) {
         currentHealth -= damage;
-        if (currentHealth <= 0) {
-            this.destroy();
-            this.sendSystemMessage(this.getName(), inflictor);
+        if(inflictor != null) {
+            lastInflictor = inflictor;
         }
     }
 

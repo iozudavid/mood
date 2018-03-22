@@ -19,7 +19,7 @@ public class Animation<T> {
     protected int currentFrame;
 
     public Animation() {
-        this.frames = new ArrayList<T>();
+        this.frames = new ArrayList<>();
         currentFrame = 0;
     }
 

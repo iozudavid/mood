@@ -26,8 +26,13 @@ public class MossBrickTile extends BrickTile {
     }
 
     @Override
+    public String toString() {
+        return "Moss brick";
+    }
+
+    @Override
     public char toChar() {
-        return super.toChar();
+        return 'M';
     }
 
 }

@@ -5,9 +5,16 @@ import com.knightlore.render.graphic.Graphic;
 import com.knightlore.render.graphic.texture.Texture;
 
 public class BrickTile extends Tile {
+
+    private static BrickTile instance = new BrickTile();
+    
     public BrickTile() {
     }
 
+    public static BrickTile getInstance() {
+        return instance;
+    }
+    
     @Override
     public Graphic getWallTexture() {
         return Texture.BRICK;
@@ -24,6 +31,11 @@ public class BrickTile extends Tile {
 
     @Override
     public void onEntered(Entity entity) {
+    }
+
+    @Override
+    public String toString() {
+        return "Brick";
     }
 
     @Override

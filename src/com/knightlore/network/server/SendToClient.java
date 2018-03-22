@@ -31,7 +31,6 @@ public class SendToClient implements Runnable {
                 nextState = commandQueue.take();
                 conn.send(nextState);
             } catch (InterruptedException e) {
-                // TODO Auto-generated catch block
                 e.printStackTrace();
             }
 

@@ -13,7 +13,8 @@ import com.knightlore.network.protocol.NetworkUtils;
 
 public abstract class NetworkObjectManager implements INetworkable, Runnable {
     // This is a special UUID that refers to the NetworkObjectManager itself.
-    public static final UUID MANAGER_UUID = UUID.fromString("00000000-0000-0000-0000-000000000000");
+    public static final UUID MANAGER_UUID = UUID
+            .fromString("00000000-0000-0000-0000-000000000000");
     protected Map<String, Consumer<ByteBuffer>> networkConsumers = new HashMap<>();
 
     private BlockingQueue<ByteBuffer> messages = new LinkedBlockingQueue<>();
@@ -68,7 +69,14 @@ public abstract class NetworkObjectManager implements INetworkable, Runnable {
                 return;
             }
             buf.position(0);
-            UUID objID = UUID.fromString(NetworkUtils.getStringFromBuf(buf));
+            UUID objID;
+            try {
+                // HACK
+                objID = UUID.fromString(NetworkUtils.getStringFromBuf(buf));
+            } catch (IllegalArgumentException e) {
+                // An illegal UUID probably indicates a malformed packet, so ignore it.
+                continue;
+            }
             String methodName = NetworkUtils.getStringFromBuf(buf);
             Consumer<ByteBuffer> cons;
             if (objID.equals(MANAGER_UUID)) {
@@ -76,8 +84,15 @@ public abstract class NetworkObjectManager implements INetworkable, Runnable {
                 cons = this.getNetworkConsumers().get(methodName);
             } else {
                 NetworkObject obj = this.getNetworkObject(objID);
+                if(obj == null) {
+                    System.err.println("Received data for unknown id "+objID);
+                    System.err.println("ignoring this packet ^ ");
+                    continue;
+                }
                 cons = obj.getNetworkConsumers().get(methodName);
                 if (this instanceof ClientNetworkObjectManager) {
+                    ClientNetworkObjectManager netManager = (ClientNetworkObjectManager)this;
+                    assert(netManager.getMyPlayer() != null);
                 	if (((ClientNetworkObjectManager)this).getMyPlayer()!= null &&
                 			((ClientNetworkObjectManager)this).getMyPlayer().getObjectId().equals(objID) &&
                 				methodName.equals("deserialize")) {
@@ -86,8 +101,9 @@ public abstract class NetworkObjectManager implements INetworkable, Runnable {
                 			buf.rewind();
                 			((ClientNetworkObjectManager)this).addToPlayerStateOnServer(buf);
                 			continue;
-                			} else
-                				i++;
+                			} else {
+                                i++;
+                            }
                 		}
                 	}
                 }

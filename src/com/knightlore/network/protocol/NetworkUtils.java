@@ -2,7 +2,7 @@ package com.knightlore.network.protocol;
 
 import java.nio.ByteBuffer;
 
-import com.knightlore.network.Connection;
+import com.knightlore.engine.GameEngine;
 
 public class NetworkUtils {
 
@@ -13,7 +13,7 @@ public class NetworkUtils {
      * @param string The String to insert.
      */
     public static void putStringIntoBuf(ByteBuffer buf, String string) {
-        byte[] bytes = string.getBytes(Connection.CHARSET);
+        byte[] bytes = string.getBytes(GameEngine.CHARSET);
         buf.putInt(bytes.length);
         buf.put(bytes);
     }
@@ -28,6 +28,6 @@ public class NetworkUtils {
         int len = buf.getInt();
         byte[] bytes = new byte[len];
         buf.get(bytes, 0, len);
-        return new String(bytes, Connection.CHARSET);
+        return new String(bytes, GameEngine.CHARSET);
     }
 }

@@ -5,7 +5,7 @@ public enum BackgroundMusic {
 
     public final SoundResource soundRes;
 
-    private BackgroundMusic(SoundResource bgMusic) {
+    BackgroundMusic(SoundResource bgMusic) {
         this.soundRes = bgMusic;
     }
 }

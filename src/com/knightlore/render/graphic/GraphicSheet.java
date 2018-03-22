@@ -24,6 +24,10 @@ public class GraphicSheet {
      */
     public final static GraphicSheet TEXTURES = new GraphicSheet("res/graphics/textures.png", 16);
 
+    public final static GraphicSheet RED_TEXTURES 
+    = new GraphicSheet("res/graphics/textures.png" , 16, ColorFilter.RED);
+    public final static GraphicSheet BLUE_TEXTURES
+    = new GraphicSheet("res/graphics/textures.png" , 16, ColorFilter.BLUE);
     /**
      * This graphicsheet stores weapon graphics for the player's point of view.
      */
@@ -35,7 +39,7 @@ public class GraphicSheet {
      * them.
      */
     public final static GraphicSheet PLAYER_SPRITES = new GraphicSheet("res/models/player_sprites.png", 128);
-    
+
     /**
      * A graphicsheet for the shotgun directional sprite.
      */
@@ -50,6 +54,12 @@ public class GraphicSheet {
      * A graphicsheet for the spectator camera directional sprite.
      */
     public final static GraphicSheet CAMERA_SPRITES = new GraphicSheet("res/models/camera_sprites.png", 128);
+
+    /**
+     * A graphicsheet for the gravestone directional sprite that appears when a
+     * player dies.
+     */
+    public final static GraphicSheet GRAVESTONE_SPRITES = new GraphicSheet("res/models/gravestone_sprites.png", 128);
 
     private final int cellSize;
     private BufferedImage sheet;

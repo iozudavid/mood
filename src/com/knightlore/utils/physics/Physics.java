@@ -2,7 +2,6 @@ package com.knightlore.utils.physics;
 
 import java.awt.Rectangle;
 import java.awt.geom.Rectangle2D;
-import java.awt.geom.Rectangle2D.Double;
 
 import com.knightlore.engine.GameEngine;
 import com.knightlore.game.area.Map;
@@ -19,20 +18,14 @@ public class Physics {
     
     // for use with physics
     public static Boolean pointInRectTest(Vector2D point, Rect rect) {
-        
+
         if (point.getX() < rect.x) {
             return false;
         }
         if (point.getX() > rect.x + rect.width) {
             return false;
         }
-        if (point.getY() < rect.y) {
-            return false;
-        }
-        if (point.getY() > rect.y + rect.height) {
-            return false;
-        }
-        return true;
+        return !(point.getY() < rect.y) && !(point.getY() > rect.y + rect.height);
     }
     
     // for use with physics
@@ -64,18 +57,16 @@ public class Physics {
      */
     public static boolean lineIntersect(Vector2D start1, Vector2D end1, Vector2D start2, Vector2D end2) {
         // convert to parametric
-        Vector2D p1 = start1;
         Vector2D d1 = end1.subtract(start1);
-        Vector2D p2 = start2;
         Vector2D d2 = end2.subtract(start2);
         
-        System.out.println("Intersecting " + p1 + "+s." + d1 + "  with  " + p2 + "+t." + d2);
+        System.out.println("Intersecting " + start1 + "+s." + d1 + "  with  " + start2 + "+t." + d2);
         
-        double x1 = p1.getX();
-        double y1 = p1.getY();
+        double x1 = start1.getX();
+        double y1 = start1.getY();
         
-        double x2 = p2.getX();
-        double y2 = p2.getY();
+        double x2 = start2.getX();
+        double y2 = start2.getY();
         
         // argh... maths
         // Pa + s*Da = Pb + t*Db
@@ -115,12 +106,8 @@ public class Physics {
             return false;
         }
         double s = (x2 - x1) + t * d2.getX() / d1.getX();
-        
-        if (s < 0 || s > 1) {
-            return false;
-        }
-        
-        return true;
+
+        return !(s < 0) && !(s > 1);
     }
     
     /**
@@ -137,9 +124,8 @@ public class Physics {
      * @return TRUE if there is something in the way
      */
     public static boolean linecastQuick(Vector2D start, Vector2D end, int segments) {
-        
         if(segments < 1) {
-            return false;
+            throw new IllegalStateException("can't linecast with <= 0 segments");
         }
         
         Map m = GameEngine.getSingleton().getWorld().getMap();

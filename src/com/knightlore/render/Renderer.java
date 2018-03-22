@@ -1,9 +1,13 @@
 package com.knightlore.render;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Stack;
 
+import com.knightlore.GameSettings;
+import com.knightlore.game.Player;
 import com.knightlore.game.area.Map;
 import com.knightlore.game.entity.Entity;
 import com.knightlore.game.tile.AirTile;
@@ -11,6 +15,7 @@ import com.knightlore.game.tile.Tile;
 import com.knightlore.game.world.ClientWorld;
 import com.knightlore.render.font.Font;
 import com.knightlore.render.graphic.Graphic;
+import com.knightlore.render.hud.HealthCounter;
 import com.knightlore.utils.Vector2D;
 
 /**
@@ -39,23 +44,26 @@ public class Renderer {
         this.world = world;
     }
 
-    private final int BLOCKINESS = 10; // how 'old school' you want to look.
-
     public void render() {
         if (camera == null || !camera.isSubjectSet()) {
             return;
         }
 
-        if (camera.getSubject().getDirection().isEqualTo(Vector2D.ZERO, 0.01))
+        if (camera.getSubject().getDirection().equals(Vector2D.ZERO, 0.01)) {
             return;
+        }
 
         // draw the perspective and the crosshairs
         int offset = camera.getMotionBobOffset();
-        drawPerspective(pix, offset);
 
-        camera.render(pix, 0, 0);
-        drawCrosshair(pix);
+        try {
+            drawPerspective(pix, offset);
 
+            camera.render(pix, 0, 0);
+            drawCrosshair(pix);
+        } catch (Exception e) {
+            // might miss a frame, but beats crashing :)
+        }
     }
 
     private void drawPerspective(PixelBuffer pix, int offset) {
@@ -69,9 +77,9 @@ public class Renderer {
          * adding new render items to a stack until we reach an opaque block.
          * The stack is then popped and rendered in turn.
          */
-        Stack<PerspectiveRenderItem> renderStack = new Stack<PerspectiveRenderItem>();
+        Stack<PerspectiveRenderItem> renderStack = new Stack<>();
 
-        for (int xx = 0; xx < width; xx += BLOCKINESS) {
+        for (int xx = 0; xx < width; xx += GameSettings.actualBlockiness) {
             // Calculate direction of the ray based on camera direction.
             double cameraX = 2 * xx / (double) (width) - 1;
             double rayX = camera.getxDir() + camera.getxPlane() * cameraX;
@@ -135,8 +143,9 @@ public class Renderer {
                 if (tile != AirTile.getInstance()) {
 
                     double opacity = tile.getOpacity();
-                    if (opacity >= 1)
+                    if (opacity >= 1) {
                         hit = true;
+                    }
 
                     distanceToWall = RaycasterUtils.getImpactDistance(camera, rayX, rayY, mapX, mapY, side, stepX,
                             stepY);
@@ -187,7 +196,6 @@ public class Renderer {
         }
 
         drawSprites(pix, zbuffer, offset);
-
     }
 
     private void floorCast(PixelBuffer pix, int offset, int xx, double rayX, double rayY, int mapX, int mapY,
@@ -222,7 +230,7 @@ public class Renderer {
 
         // stops us from getting weird rendering artifacts, since
         // we start drawing a pixel after drawEnd to avoid indexing errors.
-        pix.fillRect(0x000000, xx, drawEnd + offset, BLOCKINESS, 1);
+        pix.fillRect(0x000000, xx, drawEnd + offset, GameSettings.actualBlockiness, 1);
 
         // draw from drawEnd to the bottom of the screen
         for (int y = drawEnd + 1; y < h; y++) {
@@ -251,18 +259,19 @@ public class Renderer {
             int floorColor = floor.getPixels()[floor.getWidth() * floorTexY + floorTexX];
             floorColor = ColorUtils.darken(floorColor, world.getEnvironment().getDarkness(), currentDist);
 
-            pix.fillRect(floorColor, xx, y + offset, BLOCKINESS, 1);
+            pix.fillRect(floorColor, xx, y + offset, GameSettings.actualBlockiness, 1);
 
             // ceiling
             int ceilColor = ceil.getPixels()[ceil.getWidth() * floorTexY + floorTexX];
             ceilColor = ColorUtils.darken(ceilColor, world.getEnvironment().getDarkness(), currentDist);
-            pix.fillRect(ceilColor, xx, h - y + offset, BLOCKINESS, 1);
+            pix.fillRect(ceilColor, xx, h - y + offset, GameSettings.actualBlockiness, 1);
         }
     }
 
     private void draw(PixelBuffer pix, PerspectiveRenderItem p, int offset) {
-        if (p.opacity == 0)
+        if (p.opacity == 0) {
             return;
+        }
 
         // calculate y coordinate on texture
         for (int yy = p.drawStart; yy < p.drawEnd; yy++) {
@@ -275,16 +284,17 @@ public class Renderer {
             color = ColorUtils.mixColor(pix.pixelAt(p.xx, drawY), color, p.opacity);
 
             color = ColorUtils.darken(color, world.getEnvironment().getDarkness(), p.distanceToWall);
-            if (p.side)
+            if (p.side) {
                 color = ColorUtils.quickDarken(color);
-            pix.fillRect(color, p.xx, drawY, BLOCKINESS, 1);
+            }
+            pix.fillRect(color, p.xx, drawY, GameSettings.actualBlockiness, 1);
         }
     }
 
     private synchronized void drawSprites(PixelBuffer pix, double[] zbuffer, int offset) {
         synchronized (world) {
-            List<Entity> entities = world.getEntities();
-            entities.sort(new Comparator<Entity>() {
+            Entity[] entities = world.getEntityArray();
+            Comparator<Entity> c = new Comparator<Entity>() {
 
                 @Override
                 public int compare(Entity o1, Entity o2) {
@@ -293,9 +303,15 @@ public class Renderer {
                     return Double.compare(distance2, distance1);
                 }
 
-            });
+            };
+            Arrays.sort(entities, c);
+
+            List<Entity> visible = new ArrayList<Entity>();
+
             synchronized (entities) {
                 for (Entity m : entities) {
+                    boolean isVisible = false;
+
                     double spriteX = m.getPosition().getX() - camera.getxPos();
                     double spriteY = m.getPosition().getY() - camera.getyPos();
 
@@ -319,19 +335,21 @@ public class Renderer {
                     // calculate width of the sprite
                     int spriteWidth = Math.abs((int) (pix.getHeight() / transformY));
                     int drawStartX = -spriteWidth / 2 + spriteScreenX;
-                    if (drawStartX < 0)
+                    if (drawStartX < 0) {
                         drawStartX = 0;
+                    }
                     int drawEndX = spriteWidth / 2 + spriteScreenX;
-                    if (drawEndX >= pix.getWidth())
+                    if (drawEndX >= pix.getWidth()) {
                         drawEndX = pix.getWidth() - 1;
+                    }
 
                     // loop through every vertical stripe of the sprite on
                     // screen
                     for (int stripe = drawStartX; stripe < drawEndX; stripe++) {
                         Graphic g = m.getGraphic(camera.getPosition());
 
-                        int texX = (int) (256 * (stripe - (-spriteWidth / 2 + spriteScreenX)) * g.getWidth()
-                                / spriteWidth) / 256;
+                        int texX = 256 * (stripe - (-spriteWidth / 2 + spriteScreenX)) * g.getWidth() / spriteWidth
+                                / 256;
 
                         // the conditions in the if are:
                         // 1) it's in front of camera plane so you don't see
@@ -341,6 +359,7 @@ public class Renderer {
                         // 3) it's on the screen (right)
                         // 4) ZBuffer, with perpendicular distance
                         if (transformY > 0 && stripe > 0 && stripe < pix.getWidth() && transformY < zbuffer[stripe]) {
+                            isVisible = true;
                             for (int y = drawStartY; y < drawEndY; y++) {
                                 // 16 and 8 are factors to avoid division and
                                 // floats.
@@ -351,27 +370,42 @@ public class Renderer {
                                 int color = g.getPixels()[texX + g.getWidth() * texY];
 
                                 // dont draw transparent pixels.
-                                if (color == PixelBuffer.CHROMA_KEY)
+                                if (color == PixelBuffer.CHROMA_KEY) {
                                     continue;
+                                }
 
                                 color = ColorUtils.darken(color, world.getEnvironment().getDarkness(),
                                         camera.getPosition().distance(m.getPosition()));
 
                                 int drawY = y + offset;
 
-                                pix.fillRect(color, stripe, drawY, BLOCKINESS, 1);
+                                pix.fillRect(color, stripe, drawY, GameSettings.actualBlockiness, 1);
                             }
+                        }
+                    }
 
-                            final double sc = (drawEndY - drawStartY) / 90D;
-                            final double sp = (drawEndY - drawStartY) / 50D;
-                            final int sw = pix.stringWidth(Font.DEFAULT_WHITE, m.getName(), sc, sp);
+                    if (isVisible) {
+                        final double sc = (drawEndY - drawStartY) / 90D;
+                        final double sp = (drawEndY - drawStartY) / 50D;
+                        final int sw = pix.stringWidth(Font.DEFAULT_WHITE, m.getName(), sc, sp);
+                        if (m.renderName()) {
                             pix.drawString(Font.DEFAULT_WHITE, m.getName(), spriteScreenX - sw / 2, drawStartY + offset,
                                     sc, sp);
+                        }
+
+                        if (m instanceof Player) {
+                            pix.fillRect(HealthCounter.BASE, drawStartX, drawStartY - 20, drawEndX - drawStartX,
+                                    (int) sc * 3);
+                            double r = ((Player) m).getCurrentHealth() / (double) Player.MAX_HEALTH;
+                            pix.fillRect(HealthCounter.G1, drawStartX, drawStartY - 20,
+                                    (int) (r * (drawEndX - drawStartX)), (int) sc * 3);
                         }
                     }
                 }
             }
+
         }
+
     }
 
     private void drawCrosshair(PixelBuffer pix) {

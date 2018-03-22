@@ -20,36 +20,59 @@ public class GameFeed implements IRenderable {
     }
 
     private List<GameFeedMessage> messages;
-    private static final long MESSAGE_DURATION = (long) (GameEngine.UPDATES_PER_SECOND * 4);
+    private List<GameFeedMessage> damageMessages;
+    private final long MESSAGE_DURATION = (long) (GameEngine.UPDATES_PER_SECOND * 4);
 
     private GameFeed() {
-        this.messages = new ArrayList<>();
+        this.messages = new ArrayList<GameFeedMessage>();
+        this.damageMessages = new ArrayList<>();
     }
 
     @Override
     public void render(PixelBuffer pix, int x, int y) {
-        for (GameFeedMessage msg : messages) {
-            pix.drawString(Font.DEFAULT_WHITE, msg.message, x, y, 1, 2);
-            y += 10;
-        }
+		synchronized (damageMessages) {
+			ListIterator<GameFeedMessage> itr = damageMessages.listIterator();
+			while (itr.hasNext()) {
+				GameFeedMessage msg = itr.next();
+				pix.drawString(Font.DEFAULT_WHITE, msg.message, pix.getWidth() - 100, pix.getHeight() - 100, 3, 2);
+				y += 10;
+			}
+		}
+    }
+    
+    public void getFeed(GameChat chat){
+		synchronized (messages) {
+			for (GameFeedMessage message : this.messages) {
+				chat.getTextArea().addText("System: " + message.message);
+			}
+			this.messages.clear();
+		}
     }
 
-    public void getFeed(GameChat chat) {
-    	for(GameFeedMessage message: this.messages) {
-    		chat.getTextArea().addText("System: " + message.message);
+		public void update() {
+    	synchronized(messages){
+    		messages.removeIf((GameFeedMessage msg) -> msg.timeWhenGone <= GameEngine.ticker.getTime());
     	}
-    	this.messages.clear();
-    }
-
-    public void update() {
-        messages.removeIf((GameFeedMessage msg) -> msg.timeWhenGone <= GameEngine.ticker.getTime());
+		synchronized (damageMessages) {
+			damageMessages.removeIf((GameFeedMessage msg) -> msg.timeWhenGone <= GameEngine.ticker.getTime());
+		}
     }
 
     public void println(String str) {
-        GameFeedMessage msg = new GameFeedMessage(str, GameEngine.ticker.getTime() + MESSAGE_DURATION);
-        messages.add(msg);
+		synchronized (messages) {
+			GameFeedMessage msg = new GameFeedMessage(str, GameEngine.ticker.getTime() + MESSAGE_DURATION);
+			messages.add(msg);
+		}
     }
-
+   
+    public void printlnDamage(String str) {
+    	synchronized(damageMessages){
+    		GameFeedMessage msg = new GameFeedMessage(str, GameEngine.ticker.getTime()+50);
+    		damageMessages.clear();
+    		damageMessages.add(msg);
+    	}
+    }
+    
     private class GameFeedMessage {
 
         private String message;
