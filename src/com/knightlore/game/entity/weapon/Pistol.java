@@ -11,7 +11,7 @@ import com.knightlore.utils.physics.RaycastHit;
 public class Pistol extends Weapon {
 
     private static final SoundResource SHOOT_SFX = new SoundResource(
-            "res/sfx/shotgun.wav");
+            "res/sfx/pistol.wav");
     private static final long FIRE_DELAY = 10;
     private static final int BASE_DAMAGE = 100;
     private static final float SQR_RANGE = 10;
@@ -58,7 +58,7 @@ public class Pistol extends Weapon {
 
     @Override
     public WeaponType getWeaponType() {
-        return WeaponType.SHOTGUN;
+        return WeaponType.PISTOL;
     }
 
 }

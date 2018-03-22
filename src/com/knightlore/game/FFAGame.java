@@ -73,7 +73,7 @@ public class FFAGame extends GameManager {
         pickup.init();
         // nice adding :)
         GameEngine.getSingleton().getWorld().addEntity(pickup);
-        System.out.println("Weapon Pickup Created");
+        System.out.println(type + " Pickup Created");
     }
 
     @Override
