@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
+import java.util.Random;
 import java.util.UUID;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -13,9 +14,12 @@ import java.util.concurrent.LinkedBlockingQueue;
 
 import com.google.common.collect.ImmutableMap;
 import com.knightlore.GameSettings;
+import com.knightlore.engine.GameEngine;
+import com.knightlore.engine.audio.Grunt;
+import com.knightlore.engine.audio.SoundManager;
+import com.knightlore.engine.audio.SoundResource;
 import com.knightlore.game.InputModule;
 import com.knightlore.game.RemoteInput;
-import com.knightlore.engine.GameEngine;
 import com.knightlore.game.buff.Immune;
 import com.knightlore.game.buff.SpawnVision;
 import com.knightlore.game.entity.weapon.Weapon;
@@ -38,11 +42,14 @@ import com.knightlore.utils.Vector2D;
 
 public class Player extends Entity {
 
-    private PlayerMoveAnimation moveAnim = new PlayerMoveAnimation(PlayerGraphicMatrix.getGraphic(
-            PlayerGraphicMatrix.Color.BLUE, PlayerGraphicMatrix.Weapon.PISTOL, PlayerGraphicMatrix.Stance.MOVE));
+    private PlayerMoveAnimation moveAnim = new PlayerMoveAnimation(
+            PlayerGraphicMatrix.getGraphic(PlayerGraphicMatrix.Color.BLUE,
+                    PlayerGraphicMatrix.Weapon.PISTOL,
+                    PlayerGraphicMatrix.Stance.MOVE));
 
     private PlayerStandAnimation standAnim = new PlayerStandAnimation(
-            PlayerGraphicMatrix.getGraphic(PlayerGraphicMatrix.Color.BLUE, PlayerGraphicMatrix.Weapon.PISTOL,
+            PlayerGraphicMatrix.getGraphic(PlayerGraphicMatrix.Color.BLUE,
+                    PlayerGraphicMatrix.Weapon.PISTOL,
                     PlayerGraphicMatrix.Stance.STAND),
             (long) (GameEngine.UPDATES_PER_SECOND / 10));
 
@@ -52,11 +59,15 @@ public class Player extends Entity {
     private static final double SIZE = 0.25;
     // Maps all inputs that the player could be making to their values.
     private final ImmutableMap<ClientController, Runnable> ACTION_MAPPINGS = ImmutableMap
-            .<ClientController, Runnable>builder().put(ClientController.FORWARD, this::moveForward)
-            .put(ClientController.ROTATE_ANTI_CLOCKWISE, this::rotateAntiClockwise)
+            .<ClientController, Runnable>builder()
+            .put(ClientController.FORWARD, this::moveForward)
+            .put(ClientController.ROTATE_ANTI_CLOCKWISE,
+                    this::rotateAntiClockwise)
             .put(ClientController.BACKWARD, this::moveBackward)
-            .put(ClientController.ROTATE_CLOCKWISE, this::rotateClockwise).put(ClientController.LEFT, this::strafeLeft)
-            .put(ClientController.RIGHT, this::strafeRight).put(ClientController.SHOOT, this::shoot).build();
+            .put(ClientController.ROTATE_CLOCKWISE, this::rotateClockwise)
+            .put(ClientController.LEFT, this::strafeLeft)
+            .put(ClientController.RIGHT, this::strafeRight)
+            .put(ClientController.SHOOT, this::shoot).build();
 
     private final BlockingQueue<ByteBuffer> teamMessagesToSend = new LinkedBlockingQueue<>();
     private final BlockingQueue<ByteBuffer> allMessagesToSend = new LinkedBlockingQueue<>();
@@ -80,6 +91,8 @@ public class Player extends Entity {
     // DO NOT REMOVE, THESE ARE USED FOR CLIENT PREDICTION!!!!!
     private double timeToSend = 0;
     private boolean respawn = false;
+
+    private int previousHealth;
     // END DO NOT REMOVE
 
     // Returns a new instance. See NetworkObject for details.
@@ -131,7 +144,8 @@ public class Player extends Entity {
         super.render(pix, x, y, distanceTraveled);
 
         if (currentWeapon != null) {
-            currentWeapon.render(pix, x, y, inertiaX, inertiaY, distanceTraveled, hasShot);
+            currentWeapon.render(pix, x, y, inertiaX, inertiaY,
+                    distanceTraveled, hasShot);
         }
     }
 
@@ -146,7 +160,8 @@ public class Player extends Entity {
         synchronized (inputState) {
             while (buf.hasRemaining()) {
                 try {
-                    ClientController control = ClientProtocol.getByIndex(buf.getInt());
+                    ClientController control = ClientProtocol
+                            .getByIndex(buf.getInt());
                     Byte value = buf.get();
                     inputState.put(control, value);
                 } catch (IOException e) {
@@ -178,8 +193,10 @@ public class Player extends Entity {
     private void messageToTeam(ByteBuffer buf) {
         String message = NetworkUtils.getStringFromBuf(buf);
         message = "[" + this.team + "] " + this.getName() + ": " + message;
-        ByteBuffer bf = ByteBuffer.allocate(NetworkObject.BYTE_BUFFER_DEFAULT_SIZE);
-        NetworkUtils.putStringIntoBuf(bf, NetworkObjectManager.MANAGER_UUID.toString());
+        ByteBuffer bf = ByteBuffer
+                .allocate(NetworkObject.BYTE_BUFFER_DEFAULT_SIZE);
+        NetworkUtils.putStringIntoBuf(bf,
+                NetworkObjectManager.MANAGER_UUID.toString());
         NetworkUtils.putStringIntoBuf(bf, "displayMessage");
         NetworkUtils.putStringIntoBuf(bf, message);
         this.teamMessagesToSend.offer(bf);
@@ -202,8 +219,10 @@ public class Player extends Entity {
     private void messageToAll(ByteBuffer buf) {
         String message = NetworkUtils.getStringFromBuf(buf);
         message = "[all] " + this.getName() + ": " + message;
-        ByteBuffer bf = ByteBuffer.allocate(NetworkObject.BYTE_BUFFER_DEFAULT_SIZE);
-        NetworkUtils.putStringIntoBuf(bf, NetworkObjectManager.MANAGER_UUID.toString());
+        ByteBuffer bf = ByteBuffer
+                .allocate(NetworkObject.BYTE_BUFFER_DEFAULT_SIZE);
+        NetworkUtils.putStringIntoBuf(bf,
+                NetworkObjectManager.MANAGER_UUID.toString());
         NetworkUtils.putStringIntoBuf(bf, "displayMessage");
         NetworkUtils.putStringIntoBuf(bf, message);
         this.allMessagesToSend.offer(bf);
@@ -226,7 +245,8 @@ public class Player extends Entity {
     @Override
     public Graphic getGraphic(Vector2D playerPos) {
         if (currentHealth <= 0) {
-            return DirectionalSprite.GRAVESTONE_DIRECTIONAL_SPRITE.getCurrentGraphic(position, direction, playerPos);
+            return DirectionalSprite.GRAVESTONE_DIRECTIONAL_SPRITE
+                    .getCurrentGraphic(position, direction, playerPos);
         }
         DirectionalSprite frame = currentAnim.getFrame();
         return frame.getCurrentGraphic(position, direction, playerPos);
@@ -286,11 +306,13 @@ public class Player extends Entity {
         final double p = 0.07D;
         inertiaX += (int) (p * -inertiaX);
         inertiaY += (int) (p * -inertiaY);
-        Vector2D temp = new Vector2D(plane.getX() / plane.magnitude(), plane.getY() / plane.magnitude());
+        Vector2D temp = new Vector2D(plane.getX() / plane.magnitude(),
+                plane.getY() / plane.magnitude());
         double orthProjection = displacement.dot(temp);
         inertiaX -= orthProjection * currentWeapon.getInertiaCoeffX();
 
-        temp = new Vector2D(direction.getX() / direction.magnitude(), direction.getY() / direction.magnitude());
+        temp = new Vector2D(direction.getX() / direction.magnitude(),
+                direction.getY() / direction.magnitude());
         orthProjection = displacement.dot(temp);
         inertiaY += orthProjection * currentWeapon.getInertiaCoeffY();
 
@@ -341,6 +363,7 @@ public class Player extends Entity {
         this.timeToSend = buf.getDouble();
         this.respawn = buf.getInt() == 1;
         currentHealth = buf.getInt();
+        previousHealth = currentHealth;
         setScore(buf.getInt());
 
         WeaponType newWeaponType = WeaponType.VALUES[buf.getInt()];
@@ -365,14 +388,16 @@ public class Player extends Entity {
 
     @Override
     public void takeDamage(int damage, Entity inflictor) {
+        // Only play if the player is us.
         if (GameSettings.isClient()) {
             return;
-        }
-        damage = (int) (damage * damageTakenModifier);
-        int newHealth = currentHealth - damage;
-        currentHealth = Math.max(0, Math.min(MAX_HEALTH, newHealth));
-        if (inflictor != null) {
-            lastInflictor = inflictor;
+        } else {
+            damage = (int) (damage * damageTakenModifier);
+            int newHealth = currentHealth - damage;
+            currentHealth = Math.max(0, Math.min(MAX_HEALTH, newHealth));
+            if (inflictor != null) {
+                lastInflictor = inflictor;
+            }
         }
     }
 
@@ -380,21 +405,24 @@ public class Player extends Entity {
         if (GameSettings.isClient()) {
             return;
         }
-    
-        GameManager gameManager = GameEngine.getSingleton().getWorld().getGameManager();
+
+        GameManager gameManager = GameEngine.getSingleton().getWorld()
+                .getGameManager();
         if (currentHealth <= 0) {
             if (lastInflictor == null) {
-                System.out.println(this.getName() + " was killed by natural causes");
+                System.out.println(
+                        this.getName() + " was killed by natural causes");
                 gameManager.onEntityDeath(this);
             } else {
-                System.out.println(this.getName() + " was killed by " + lastInflictor.getName());
+                System.out.println(this.getName() + " was killed by "
+                        + lastInflictor.getName());
                 if (lastInflictor instanceof Player) {
-                    gameManager.onEntityDeath(this, (Player)lastInflictor);
+                    gameManager.onEntityDeath(this, (Player) lastInflictor);
                 } else {
                     gameManager.onEntityDeath(this);
                 }
             }
-            
+
             removeAllBuffs();
             this.resetBuff(new Immune(this));
             this.sendSystemMessage(this.getName(), lastInflictor);
@@ -444,7 +472,8 @@ public class Player extends Entity {
         inertiaY += 500;
         this.currentWeaponType = wt;
         this.currentWeapon = wt.getNewWeapon();
-        System.out.println("Player " + this.getName() + " is now holding a " + wt + ".");
+        System.out.println(
+                "Player " + this.getName() + " is now holding a " + wt + ".");
     }
 
     public int getCurrentHealth() {
@@ -468,7 +497,20 @@ public class Player extends Entity {
     }
 
     public void setHealth(int h) {
+        this.previousHealth = this.currentHealth;
         this.currentHealth = h;
+
+        // Only play if the player is us.
+        if (this == GameEngine.getSingleton().getCamera().getSubject()) {
+            playGrunts();
+        }
+    }
+
+    private void playGrunts() {
+        SoundManager sm = GameEngine.getSingleton().getSoundManager();
+        if (this.currentHealth < this.previousHealth) {
+            sm.playIfNotAlreadyPlaying(Grunt.getRandomGrunt(), sm.defaultVolume);
+        }
     }
 
     @Override
