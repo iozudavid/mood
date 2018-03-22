@@ -129,6 +129,7 @@ public class GraphicSheet {
     public Graphic graphicAt(int x, int y, int xx, int yy) {
         GraphicCacheItem item = new GraphicCacheItem(x, y, xx, yy);
         if (cache.containsKey(item)) {
+            System.out.println("ok, using cache :D ");
             return cache.get(item);
         }
 
@@ -152,6 +153,22 @@ public class GraphicSheet {
             this.y = y;
             this.xx = xx;
             this.yy = yy;
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (obj == null)
+                return false;
+            if (!(obj instanceof GraphicCacheItem))
+                return false;
+
+            GraphicCacheItem c = (GraphicCacheItem) obj;
+            return x == c.x && y == c.y && xx == c.xx && yy == c.yy;
+        }
+
+        @Override
+        public int hashCode() {
+            return x * y * xx * yy;
         }
 
     }
