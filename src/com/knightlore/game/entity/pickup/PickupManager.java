@@ -30,12 +30,16 @@ public class PickupManager implements TickListener{
                 Vector2D vector = Vector2D.fromGridRef(x, y);
                 PickupType type = tile.getPickupType();
                 PickupItem item;
-                switch(type){
-                    case shotgun : item = new ShotgunPickup(vector, this);
-                                   break;
-                    case health  : item = new HealthPickup(vector , this);
-                                   break;
-                    default      : item = new HealthPickup(vector, this);
+                switch(type) {
+                    case SHOTGUN:
+                        item = new ShotgunPickup(vector, this);
+                        break;
+                    case HEALTH:
+                        item = new HealthPickup(vector , this);
+                        break;
+                    default:
+                        item = new HealthPickup(vector, this);
+                        break;
                 }
                 pickupQueue.add(new PickupPlacement(0 , item));                
             }

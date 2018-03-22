@@ -97,6 +97,12 @@ public class PlayerSpawnTile extends Tile {
     public void onShot() {
     }
 
+    @Override
+    public String toString() {
+        return team.toString() + " spawn";
+    }
+
+    @Override
     public char toChar() {
         if (team == Team.NONE) {
             return '0';

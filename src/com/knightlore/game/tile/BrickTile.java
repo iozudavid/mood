@@ -34,6 +34,11 @@ public class BrickTile extends Tile {
     }
 
     @Override
+    public String toString() {
+        return "Brick";
+    }
+
+    @Override
     public char toChar() {
         return 'B';
     }

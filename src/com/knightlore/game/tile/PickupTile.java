@@ -42,6 +42,11 @@ public class PickupTile extends Tile {
     public double getOpacity() {
         return 0.0;
     }
+
+    @Override
+    public String toString() {
+        return pickupType.toString() + " pickup";
+    }
     
     @Override
     public char toChar() {

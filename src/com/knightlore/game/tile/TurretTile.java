@@ -42,6 +42,11 @@ public class TurretTile extends Tile {
     }
 
     @Override
+    public String toString() {
+        return team.toString() + " turret";
+    }
+
+    @Override
     public char toChar() {
         return 'T';
     }

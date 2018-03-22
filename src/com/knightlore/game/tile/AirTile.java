@@ -38,6 +38,11 @@ public class AirTile extends Tile {
     public void onEntered(Entity entity) {
     }
 
+    @Override
+    public String toString() {
+        return "Air";
+    }
+
     public char toChar() {
         return ' ';
     }
