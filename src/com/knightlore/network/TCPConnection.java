@@ -102,8 +102,8 @@ public class TCPConnection extends Connection {
                                     + "your instance of the game.");
                 }
                 byte[] tmp = new byte[size];
-                infoReceive.read(tmp, 0, size);
-                return ByteBuffer.wrap(tmp, 0, size);
+                infoReceive.readFully(tmp);
+                return ByteBuffer.wrap(tmp);
             } catch (IOException e) {
                 System.err.println("Communication broke...");
                 this.terminated = true;
