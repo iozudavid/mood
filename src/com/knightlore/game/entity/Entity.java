@@ -484,6 +484,10 @@ public abstract class Entity extends NetworkObject implements IMinimapObject, Ti
         return strafeSpeed;
     }
     
+    public double getDamageTakenModifier() {
+        return damageTakenModifier;
+    }
+    
     public void setDamageTakenModifier(double d) {
         damageTakenModifier = d;
     }
