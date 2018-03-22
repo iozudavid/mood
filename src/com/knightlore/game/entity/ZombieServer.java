@@ -26,14 +26,7 @@ public class ZombieServer extends ZombieShared {
     
     public ZombieServer(Vector2D position) {
         super(position);
-    }
-    
-    protected ZombieServer(Vector2D position, Vector2D direction) {
-        super(position, direction);
-    }
-    
-    protected ZombieServer(UUID uuid, double size, Vector2D position, Vector2D direction) {
-        super(uuid, size, position, direction);
+        this.rotationSpeed = 0.1D;
     }
     
     @Override
