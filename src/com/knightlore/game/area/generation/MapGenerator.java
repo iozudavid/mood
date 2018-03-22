@@ -19,11 +19,6 @@ public class MapGenerator extends ProceduralAreaGenerator {
     private static final int ROOM_COST_MODIFIER = 5;
     private static final int DOUBLE_PATH_COST_MODIFIER = 3;
     private static final int MIN_AREA_PER_ROOM = 100;
-    // ---
-    
-    // TODO: LAVA MOAT!!
-    // Make a room that has lava on it's four sides
-    // And undecided tiles in the middle
 
     private final List<RoomType> roomsToBuild = new LinkedList<>();
     private final List<Room> rooms = new LinkedList<>();
@@ -36,11 +31,32 @@ public class MapGenerator extends ProceduralAreaGenerator {
     public MapGenerator() {
     }
 
+    /**
+     * Returns a procedurally-generated map with the specified
+     * width, height and map type
+     * @param width
+     * @param height
+     * @param mt
+     * @author Thomas, Kacper
+     * @return map
+     */
     public Map createMap(int width, int height, MapType mt) {
         Random rand = new Random();
         return createMap(width, height, mt, rand.nextLong());
     }
 
+    /**
+     * Returns a procedurally-generated map with the specified
+     * width, height and map type. The seed is used to ensure
+     * this process is deterministic and that the map will be
+     * identical on server and clients alike
+     * @param width
+     * @param height
+     * @param mt
+     * @param seed
+     * @return
+     * @author Thomas, Kacper
+     */
     public Map createMap(int width, int height, MapType mt, long seed) {
         System.out.println("Creating map with seed: " + seed);
         mapType = mt;
@@ -50,7 +66,6 @@ public class MapGenerator extends ProceduralAreaGenerator {
             width = width / 2;
         }
         grid = new Tile[width][height];
-        // TODO: maybe make this correspond to map size
         int mapArea = width * height;
         maxRooms = mapArea / MIN_AREA_PER_ROOM;
         PerlinNoiseGenerator perlinGenerator = new PerlinNoiseGenerator(width, height, seed);
@@ -87,6 +102,7 @@ public class MapGenerator extends ProceduralAreaGenerator {
     }
 
     private void determineRoomsToBuild() {
+        
         if(mapType == MapType.LAVA_SUBMAP) {
             roomsToBuild.add(RoomType.LAVA_PLATFORM);
             roomsToBuild.add(RoomType.LAVA_PLATFORM);
@@ -98,6 +114,10 @@ public class MapGenerator extends ProceduralAreaGenerator {
             roomsToBuild.add(RoomType.NORMAL);
         }else {
             roomsToBuild.add(RoomType.SPAWN);
+        }
+        
+        if(mapType == MapType.TRAILER) {
+            return;
         }
         
         // TODO: A switch statement 
@@ -127,7 +147,6 @@ public class MapGenerator extends ProceduralAreaGenerator {
 
         for(RoomType rt : roomsToBuild) {
             Room room = roomGenerator.createRoom(rand.nextLong(), rt);
-            // TODO: potentially have different setRoomPositions
             if(setRoomPosition(room, rt)) {
                 rooms.add(room);
             }
@@ -135,7 +154,6 @@ public class MapGenerator extends ProceduralAreaGenerator {
     }
 
     private boolean setRoomPosition(Room room, RoomType rt) {
-        // TODO: modify this for different rooms types
         int width = grid.length;
         int height = grid[0].length;
         switch(rt){
@@ -209,9 +227,6 @@ public class MapGenerator extends ProceduralAreaGenerator {
         // place paths
         PathFinder pathFinder = new PathFinder(costGrid);
         pathFinder.setIsForMap(true);
-        // TODO: give a room a way to give us potential starting points for a path
-        // (allowing us to populate rooms with interesting features)
-        
         for (Room source : rooms) {
             for (Room target : source.getConnections()) {
                 List<Point> path = pathFinder.findPath(source.getCentre(), target.getCentre());
@@ -338,11 +353,11 @@ public class MapGenerator extends ProceduralAreaGenerator {
 
         grid = symMap;
     }
-
-    public static void main(String args[]) {
-        Random r = new Random();
+    
+    public static void main(String[] arg) {
         MapGenerator mg = new MapGenerator();
-        Map map = mg.createMap(70, 70, MapType.TDM, r.nextInt(1000));
+        Map map = mg.createMap(1000, 40, MapType.TRAILER, 40L);
+        //System.out.println("AAH");
         System.out.println(map.toDebugString());
     }
     

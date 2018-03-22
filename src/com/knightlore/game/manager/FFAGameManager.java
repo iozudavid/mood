@@ -18,6 +18,7 @@ public class FFAGameManager extends GameManager {
 
     private static final int WIN_SCORE = 1;
     private static final double ROUND_TIME_SECS = 300;
+
     private Entity winner;
 
     public FFAGameManager(UUID uuid) {
