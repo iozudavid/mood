@@ -21,7 +21,7 @@ public class ServerWorld extends GameWorld {
     }
 
     private void buildEntities() {
-        for (int i = 0; i < 5; i++) {
+        for (int i = 0; i < 20; i++) {
             ZombieServer zom = new ZombieServer(map.getRandomSpawnPoint());
             zom.init();
             this.addEntity(zom);
@@ -31,16 +31,14 @@ public class ServerWorld extends GameWorld {
         // Vector2D.UP);
         // tboi.init();
         for (int i = 0; i < 5; i++) {
-            Player botPlayer = new Player(map.getRandomSpawnPoint(),
-                    Vector2D.UP);
+            Player botPlayer = new Player(map.getRandomSpawnPoint(), Vector2D.UP);
             botPlayer.setInputModule(new BotInput());
             botPlayer.init();
             botPlayer.setName("bot" + i);
             playerManager.addPlayer(botPlayer);
         }
 
-        SpectatorCamera cam = new SpectatorCamera(new Vector2D(10, 20),
-                Vector2D.UP);
+        SpectatorCamera cam = new SpectatorCamera(new Vector2D(10, 20), Vector2D.UP);
         cam.init();
         this.addEntity(cam);
     }
@@ -52,8 +50,7 @@ public class ServerWorld extends GameWorld {
             Iterator<Entity> it = this.getEntityIterator();
             while (it.hasNext()) {
                 Entity ent = it.next();
-                if (player.getBoundingRectangle()
-                        .intersects(ent.getBoundingRectangle())) {
+                if (player.getBoundingRectangle().intersects(ent.getBoundingRectangle())) {
                     ent.onCollide(player);
                 }
             }
@@ -64,8 +61,7 @@ public class ServerWorld extends GameWorld {
         Vector2D pos = map.getRandomSpawnPoint();
         Player player = new Player(pos, Vector2D.UP);
         player.init();
-        player.sendSystemMessage(
-                "System: Player " + player.getName() + " " + " has connected.");
+        player.sendSystemMessage("System: Player " + player.getName() + " " + " has connected.");
         playerManager.addPlayer(player);
         return player;
     }

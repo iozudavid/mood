@@ -7,10 +7,13 @@ import com.knightlore.render.ColorUtils;
 import com.knightlore.render.PixelBuffer;
 
 public class HealthCounter extends HUDElement implements TickListener {
-    
+
     public static final int BASE = 0x450007;
     public static final int G1 = 0xA10000;
     public static final int G2 = 0x810000;
+
+    private double displayHealth;
+    private final double p = 0.1D;
 
     public HealthCounter() {
         super();
@@ -19,14 +22,20 @@ public class HealthCounter extends HUDElement implements TickListener {
 
     @Override
     public void render(PixelBuffer pix, int x, int y) {
-        assert(player != null);
+        assert (player != null);
         final int HEIGHT = 10;
 
         pix.fillRect(0x450007, 0, 0, pix.getWidth(), HEIGHT);
-        
-        int color = ColorUtils.mixColor(G1, G2, Math.sin(GameEngine.ticker.getTime() / 50D));
 
-        double r = player.getCurrentHealth() / (double) Player.MAX_HEALTH;
+        final int invulnColor = 0x0099CC;
+        int color;
+        if (player.getDamageTakenModifier() == 0) {
+            color = invulnColor;
+        } else {
+            color = ColorUtils.mixColor(G1, G2, Math.sin(GameEngine.ticker.getTime() / 50D));
+        }
+
+        double r = displayHealth / (double) Player.MAX_HEALTH;
         for (int xx = 0; xx < r * pix.getWidth(); xx++) {
             pix.fillRect(color, xx, y, 1, HEIGHT);
         }
@@ -36,11 +45,13 @@ public class HealthCounter extends HUDElement implements TickListener {
     @Override
     public void onTick() {
         anim++;
+        double delta = player.getCurrentHealth() - displayHealth;
+        displayHealth += delta * p;
     }
 
     @Override
     public long interval() {
-        return (long) (GameEngine.UPDATES_PER_SECOND / 4);
+        return 1L;
     }
 
 }
