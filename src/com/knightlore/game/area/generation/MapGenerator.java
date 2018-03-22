@@ -96,6 +96,13 @@ public class MapGenerator extends ProceduralAreaGenerator {
             roomsToBuild.add(RoomType.LAVA_PLATFORM);
             return;
         }
+        
+        if(mapType == MapType.FFA) {
+            roomsToBuild.add(RoomType.NORMAL);
+        }else {
+            roomsToBuild.add(RoomType.SPAWN);
+        }
+        
         // TODO: A switch statement 
         if(symmetrical) {
             roomsToBuild.add(RoomType.MIDDLE);
@@ -105,12 +112,6 @@ public class MapGenerator extends ProceduralAreaGenerator {
         if(grid.length > 25 && grid[0].length > 25) {
             System.out.println("ADDING BIG_LAVA_ROOM");
             roomsToBuild.add(RoomType.BIG_LAVA_ROOM);
-        }
-        
-        if(mapType == MapType.FFA) {
-            roomsToBuild.add(RoomType.NORMAL);
-        }else {
-            roomsToBuild.add(RoomType.SPAWN);
         }
         
         for(int i=1; i < maxRooms; i++) {
@@ -297,7 +298,7 @@ public class MapGenerator extends ProceduralAreaGenerator {
     private void connectToY() {
         int width = grid.length;
         
-        int numConnectToReflect = rand.nextInt(rooms.size() / 3);
+        int numConnectToReflect = rand.nextInt( Math.max(1, rooms.size() / 3));
         numConnectToReflect = Math.max(1, numConnectToReflect);
         
         for(int i=0; i < numConnectToReflect; i++) {
