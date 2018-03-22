@@ -1,8 +1,11 @@
 package com.knightlore.game.manager;
 
+import java.util.Optional;
 import java.util.UUID;
 
+import com.knightlore.game.entity.Entity;
 import com.knightlore.game.entity.Player;
+import com.knightlore.game.entity.ZombieShared;
 import com.knightlore.network.NetworkObject;
 
 public abstract class GameManager extends NetworkObject {
@@ -26,9 +29,13 @@ public abstract class GameManager extends NetworkObject {
     
     public abstract void gameOver();
     
-    public abstract void onPlayerDeath(Player p);
+    public abstract void onEntityDeath(ZombieShared victim, Player inflictor);
     
-    public abstract void awardScore(Player p, int score);
+    public abstract void onEntityDeath(ZombieShared victim);
+    
+    public abstract void onEntityDeath(Player victim, Player inflictor);
+    
+    public abstract void onEntityDeath(Player victim);
     
     public String timeLeftString() {
         long second = (ticksLeft / 1000) % 60;

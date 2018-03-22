@@ -36,10 +36,4 @@ public class ClientFFAGameManager extends FFAGameManager {
     public void onUpdate() {
         // client does nothing
     }
-    
-    @Override
-    public void onPlayerDeath(Player p) {
-        // do nothing
-    }
-    
 }

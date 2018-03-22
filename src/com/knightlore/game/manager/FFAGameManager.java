@@ -7,6 +7,7 @@ import java.util.UUID;
 import com.knightlore.engine.GameEngine;
 import com.knightlore.game.entity.Player;
 import com.knightlore.game.entity.Entity;
+import com.knightlore.game.entity.ZombieShared;
 import com.knightlore.game.entity.pickup.PistolPickup;
 import com.knightlore.game.entity.pickup.ShotgunPickup;
 import com.knightlore.game.entity.pickup.WeaponPickup;
@@ -14,8 +15,7 @@ import com.knightlore.game.entity.weapon.WeaponType;
 import com.knightlore.utils.Vector2D;
 
 public class FFAGameManager extends GameManager {
-
-    private static final int WIN_SCORE = 10;
+    
     private static final double ROUND_TIME_SECS = 300;
     private Entity winner;
 
@@ -42,21 +42,34 @@ public class FFAGameManager extends GameManager {
                 + (long) (GameEngine.UPDATES_PER_SECOND * ROUND_TIME_SECS);
 
     }
-
+    
     @Override
-    public void onPlayerDeath(Player p) {
-        // reduce their score for dying
-        p.addScore(-1);
-        // drop the WEAPON in their current position
-
-        spawnPickup(p.getPosition(), p.getCurrentWeapon().getWeaponType());
-
-        // generate random SPAWN point
-        Vector2D spawnPos = GameEngine.getSingleton().getWorld().getMap()
-                .getRandomSpawnPoint();
-        p.respawn(spawnPos);
+    public void onEntityDeath(ZombieShared victim, Player inflictor) {
+        onEntityDeath(victim);
+    }
+    
+    @Override
+    public void onEntityDeath(ZombieShared victim) {
+        Vector2D spawnPos = GameEngine.getSingleton().getWorld().getMap().getRandomSpawnPoint();
+        victim.respawn(spawnPos);
+    }
+    
+    @Override
+    public void onEntityDeath(Player victim, Player inflictor) {
+        inflictor.addScore(1);
+        onEntityDeath(victim);
     }
 
+    @Override
+    public void onEntityDeath(Player victim) {
+        victim.addScore(-1);
+        // drop the WEAPON in their current position
+        spawnPickup(victim.getPosition(), victim.getCurrentWeapon().getWeaponType());
+        
+        Vector2D spawnPos = GameEngine.getSingleton().getWorld().getMap().getRandomSpawnPoint();
+        victim.respawn(spawnPos);
+    }
+    
     private void spawnPickup(Vector2D pos, WeaponType type) {
         WeaponPickup pickup;
         switch (type) {
@@ -87,12 +100,10 @@ public class FFAGameManager extends GameManager {
         }
 
         // check for winners
-        PlayerManager playerManager = GameEngine.getSingleton().getWorld()
-                .getPlayerManager();
+        PlayerManager playerManager = GameEngine.getSingleton().getWorld().getPlayerManager();
         List<Player> players = playerManager.getPlayers();
 
-        if (GameEngine.ticker.getTime() > gameOverTick
-                && gameState != GameState.FINISHED) {
+        if (GameEngine.ticker.getTime() > gameOverTick && gameState != GameState.FINISHED) {
             gameState = GameState.FINISHED;
             int highScore = Integer.MIN_VALUE;
             for (Player p : players) {
@@ -102,25 +113,11 @@ public class FFAGameManager extends GameManager {
                 }
             }
             gameOver();
-            return;
-        }
-
-        for (Player p : players) {
-            if (p.getScore() >= WIN_SCORE) {
-                winner = p;
-                gameOver();
-                return;
-            }
         }
     }
 
     @Override
     public void onDestroy() {
-    }
-
-    @Override
-    public void awardScore(Player p, int score) {
-        p.addScore(score);
     }
 
     @Override
