@@ -40,8 +40,6 @@ public abstract class Connection implements Runnable, Prunable {
         while (!this.terminated) {
             ByteBuffer packet = Connection.this.receiveBlocking();
             if (packet == null) {
-                // Indicates that the connection has ended.
-                this.terminated = true;
                 continue;
             }
             try {

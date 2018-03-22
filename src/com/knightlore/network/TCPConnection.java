@@ -17,6 +17,9 @@ public class TCPConnection extends Connection {
     private DataOutputStream infoSend;
     private Socket socket;
 
+    Object receiveLock = new Object();
+    Object sendLock = new Object();
+
     public TCPConnection(Socket socket) {
         this.socket = socket;
         try {
@@ -49,8 +52,7 @@ public class TCPConnection extends Connection {
          * is not written to in parallel. Don't use the 'synchronized' method
          * modifier since we can run this in parallel with receive().
          */
-        Object lock = new Object();
-        synchronized (lock) {
+        synchronized (sendLock) {
             try {
                 int dataLength = data.position();
                 if (dataLength == 0) {
@@ -77,8 +79,7 @@ public class TCPConnection extends Connection {
          * is not read from in parallel. Don't use the 'synchronized' method
          * modifier since we can run this in parallel with send().
          */
-        Object lock = new Object();
-        synchronized (lock) {
+        synchronized (receiveLock) {
             /*
              * Whether the received packet is broken. If so, we should error
              * out, since this is a reliable TCPConnection, so a malformed
@@ -89,7 +90,10 @@ public class TCPConnection extends Connection {
                 int size = -1;
                 try {
                     size = infoReceive.readInt();
-                    if (size <= 0 || size > 2048) {
+                    if (size == 0) {
+                        return null;
+                    }
+                    if (size < 0 || size > 2048) {
                         malformed = true;
                     }
                 } catch (NumberFormatException e) {
