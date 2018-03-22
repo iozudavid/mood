@@ -9,20 +9,20 @@ import com.knightlore.utils.funcptrs.BooleanFunction;
 import com.knightlore.utils.funcptrs.VoidFunction;
 
 public class MultiplayerMenu {
-	
-	private GUICanvas gui;
-	private final int screenHeight;
-	private final int screenWidth;
-	private Image coverImage;
-	private Text ipText;
-	private TextField ipTextField;
-	private Group groupIp;
-	private Text portText;
-	private TextField portTextField;
-	private Group groupPort;
-	private Button connectButton;
-	private Button cancelButton;
 
+    private GUICanvas gui;
+    private final int screenHeight;
+    private final int screenWidth;
+    private Image coverImage;
+    private Text ipText;
+    private TextField ipTextField;
+    private Group groupIp;
+    private Text portText;
+    private TextField portTextField;
+    private Group groupPort;
+    private Button connectButton;
+    private Button cancelButton;
+    
 	public MultiplayerMenu(int screenHeight, int screenWidth){
 		this.gui = new GUICanvas(screenWidth, screenHeight);	
 		this.gui.init();
@@ -69,24 +69,22 @@ public class MultiplayerMenu {
             MultiplayerMenu.this.gui.destroy();
             GameEngine.getSingleton().guiState = GUIState.StartMenu;
         };
-		
-		this.connectButton.clickFunction = new VoidFunction() {
-			
-			@Override
-			public void call() {
-				ConnectionDetails.PORT = Integer.parseInt(MultiplayerMenu.this.portTextField.getText());
-				ConnectionDetails.SERVER_HOSTNAME = MultiplayerMenu.this.ipTextField.getText();
-				MultiplayerMenu.this.gui.destroy();
-				GameEngine.getSingleton().startGame();
-			}
-		};
-		
-	}
-	
-	public void render(PixelBuffer pix, int x, int y){
-		this.gui.render(pix, x, y);
-	}
-	
-	
-	
+
+        this.connectButton.clickFunction = new VoidFunction() {
+
+            @Override
+            public void call() {
+                ConnectionDetails.PORT = Integer.parseInt(MultiplayerMenu.this.portTextField.getText());
+                ConnectionDetails.SERVER_HOSTNAME = MultiplayerMenu.this.ipTextField.getText();
+                MultiplayerMenu.this.gui.destroy();
+                GameEngine.getSingleton().startGame();
+            }
+        };
+
+    }
+
+    public void render(PixelBuffer pix, int x, int y) {
+        this.gui.render(pix, x, y);
+    }
+
 }
