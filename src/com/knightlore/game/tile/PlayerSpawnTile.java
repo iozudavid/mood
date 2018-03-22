@@ -90,7 +90,7 @@ public class PlayerSpawnTile extends Tile {
 
     @Override
     public int getMinimapColor() {
-        return 0x00FF00;
+        return team.getColor();
     }
 
     @Override
