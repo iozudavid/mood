@@ -57,10 +57,15 @@ public class Renderer {
 
         // draw the perspective and the crosshairs
         int offset = camera.getMotionBobOffset();
-        drawPerspective(pix, offset);
 
-        camera.render(pix, 0, 0);
-        drawCrosshair(pix);
+        try {
+            drawPerspective(pix, offset);
+
+            camera.render(pix, 0, 0);
+            drawCrosshair(pix);
+        } catch (Exception e) {
+            // might miss a frame, but beats crashing :)
+        }
     }
 
     private void drawPerspective(PixelBuffer pix, int offset) {
@@ -418,13 +423,13 @@ public class Renderer {
     public PixelBuffer getPixelBuffer() {
         return pix;
     }
-    
-    public static void setBlockiness(int b){
+
+    public static void setBlockiness(int b) {
         BLOCKINESS = b;
     }
-    
-    public static int getBlockiness(){
+
+    public static int getBlockiness() {
         return BLOCKINESS;
     }
-    
+
 }
