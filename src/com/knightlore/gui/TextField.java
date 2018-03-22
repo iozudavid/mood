@@ -162,6 +162,9 @@ public class TextField extends GUIObject {
         System.out.println("LOST FOCUS");
         GUICanvas.activeTextField = null;
         if (this.restrictValue.isPresent()) {
+            if (this.text.length() == 0) {
+                text = "10";
+            }
             if (!this.restrictValue.get().test(text)) {
                 if (this.text.length() == 0) {
                     text = "10";

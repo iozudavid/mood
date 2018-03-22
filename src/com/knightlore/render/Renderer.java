@@ -44,8 +44,6 @@ public class Renderer {
         this.world = world;
     }
 
-    private static int BLOCKINESS = 10; // how 'old school' you want to look.
-
     public void render() {
         if (camera == null || !camera.isSubjectSet()) {
             return;
@@ -421,14 +419,6 @@ public class Renderer {
 
     public PixelBuffer getPixelBuffer() {
         return pix;
-    }
-
-    public static void setBlockiness(int b) {
-        BLOCKINESS = b;
-    }
-
-    public static int getBlockiness() {
-        return BLOCKINESS;
     }
 
 }

@@ -55,12 +55,14 @@ public class SettingsMenu {
         this.blockinessText = new Text(GuiUtils.middleWidth(this.screenWidth, 150),
                 GuiUtils.calculateHeight(this.screenHeight, 45), 150, 30, "Blockiness(5-20): ", 25);
         this.blockinessTextField = new TextField(GuiUtils.middleWidth(this.screenWidth, 300),
-                GuiUtils.calculateHeight(this.screenHeight, 52), 300, 30, Renderer.getBlockiness() + "");
+                GuiUtils.calculateHeight(this.screenHeight, 52), 300, 30, GameSettings.desiredBlockiness + "");
         this.blockinessTextField.fontSize = 3;
         this.blockinessTextField.setRestriction((Character c) -> Character.isDigit(c));
         this.blockinessTextField.setRestrictionLength((Integer i) -> i <= 2);
+
         this.blockinessTextField
                 .setRestrictionValue((String s) -> Integer.parseInt(s) >= 5 && Integer.parseInt(s) <= 20);
+
         ArrayList<GUIObject> objsBlock = new ArrayList<>();
         objsBlock.add(blockinessText);
         objsBlock.add(blockinessTextField);
@@ -117,7 +119,13 @@ public class SettingsMenu {
             public void call() {
                 GameSettings.MOTION_BOB = SettingsMenu.this.bobCheckBox.getBobingMode();
                 GameEngine.getSingleton().setVolume(SettingsMenu.this.soundSlider.getValue());
-                Renderer.setBlockiness(Integer.parseInt(SettingsMenu.this.blockinessTextField.getText()));
+                try {
+                    GameSettings.desiredBlockiness = (Integer
+                            .parseInt(SettingsMenu.this.blockinessTextField.getText()));
+                } catch (NumberFormatException e) {
+                    GameSettings.desiredBlockiness = GameSettings.DEFAULT_BLOCKINESS;
+                    blockinessTextField.setText("" + GameSettings.DEFAULT_BLOCKINESS);
+                }
                 GameSettings.PLAYER_NAME = SettingsMenu.this.nameTextField.getText();
                 GameEngine.getSingleton().guiState = GUIState.SettingsMenuApply;
             }
