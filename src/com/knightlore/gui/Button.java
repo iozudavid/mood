@@ -19,17 +19,17 @@ public class Button extends GUIObject {
     }
 
     public Button(int x, int y, int width, int height, String text, int fontSize) {
-        this(x, y, width, height, 0, text, fontSize / 15);
+        this(x, y, width, height, 0, text, ((double)(fontSize / 15D)));
     }
 
-    public Button(int x, int y, int width, int height, int depth, String text, int fontSize) {
+    public Button(int x, int y, int width, int height, int depth, String text, double fontSize) {
         this(x, y, width, height, depth);
         this.textArea = text;
         this.fontSize = fontSize;
     }
 
     private String textArea;
-    private int fontSize;
+    private double fontSize;
 
     private Graphic activeGraphic = null;
     private Graphic activeGraphic2 = null;

@@ -82,9 +82,8 @@ public class Table extends GUIObject{
 	void Draw(PixelBuffer pix, int x, int y) {
 		synchronized (this.entries) {
 		    int color = Color.DARK_GRAY.getRGB();
-			//g.setFont(new java.awt.Font("Bookman Old Style Bold", 10, 15));
 			int totalHeight = 0;
-			totalHeight = (Font.DEFAULT_WHITE.getHeight() + 5) * (1 + this.entries.size());
+			totalHeight = (Font.DEFAULT_WHITE.getHeight() + 15) * (1 + this.entries.size());
 			pix.fillRect(color, rect.x, rect.y, rect.width, totalHeight);
 			color = Color.WHITE.getRGB();
 			int lastX = rect.x;
@@ -96,15 +95,15 @@ public class Table extends GUIObject{
 			for (String t : this.headersAndWidth.keySet()) {
 				// draw cell
 				pix.drawRect(color, lastX, lastY, (int) (this.rect.width * this.headersAndWidth.get(t)),
-						totalHeight + 5);
+						totalHeight);
 				// draw text
 				int hOffset = Font.DEFAULT_WHITE.getHeight();
 				// draw the characters of the string
-				pix.drawString(Font.DEFAULT_WHITE, t, lastX, lastY+hOffset, 15, 2);
+				pix.drawString(Font.DEFAULT_WHITE, t, lastX, lastY+hOffset, 1.2, 2);
 				lastX += this.rect.width * this.headersAndWidth.get(t);
 				entriesWidth.add(this.headersAndWidth.get(t));
 			}
-			lastY += Font.DEFAULT_WHITE.getHeight() + 5;
+			lastY += Font.DEFAULT_WHITE.getHeight() + 15;
 			lastX = rect.x;
 			
 			this.orderTableByScore();
@@ -119,15 +118,15 @@ public class Table extends GUIObject{
 					}
 					// draw cell
 					pix.drawRect(color, lastX, lastY, (int) (this.rect.width * entriesWidth.get(i)),
-							Font.DEFAULT_WHITE.getHeight() + 5);
+							Font.DEFAULT_WHITE.getHeight() + 15);
 					// draw text
 					int hOffset = Font.DEFAULT_WHITE.getHeight();
 					// draw the characters of the string
-					pix.drawString(Font.DEFAULT_WHITE, entry, lastX, lastY+hOffset, 15, 2);
+					pix.drawString(Font.DEFAULT_WHITE, entry, lastX, lastY+hOffset, 1.2, 2);
 					lastX += this.rect.width * entriesWidth.get(i);
 					i++;
 				}
-				lastY += Font.DEFAULT_WHITE.getHeight() + 5;
+				lastY += Font.DEFAULT_WHITE.getHeight() + 15;
 				lastX = rect.x;
 			}
 		}
