@@ -76,12 +76,6 @@ public abstract class Weapon {
         int xOffset = (int) (Math.cos(distanceTraveled * weaponBobSpeed) * weaponBobX);
         int yOffset = (int) (Math.abs(Math.sin(distanceTraveled * weaponBobSpeed) * weaponBobY));
 
-        if (inertiaX < -120) {
-            g = WeaponSprite.SHOTGUN_LEFT;
-        } else if (inertiaX > 120) {
-            g = WeaponSprite.SHOTGUN_RIGHT;
-        }
-
         if (muzzleFlash) {
             pix.fillOval(0xFCC07F, xx + xOffset + inertiaX + width / 4, yy + yOffset + inertiaY + height / 4, width / 2,
                     height / 2, 500);
