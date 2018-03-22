@@ -17,6 +17,7 @@ import com.knightlore.utils.Vector2D;
 import com.knightlore.utils.funcptrs.BooleanFunction;
 
 public class TextField extends GUIObject {
+
     private static final Color upColour = Color.WHITE;
     private static final Color downColour = Color.LIGHT_GRAY;
     private static final Color hoverColour = Color.GRAY;
@@ -108,10 +109,12 @@ public class TextField extends GUIObject {
         // draw the characters of the string
         color = Color.BLACK.getRGB();
 
+        Font font = state == SelectState.UP ? Font.DEFAULT_BLACK : Font.DEFAULT_WHITE;
+
         if (text != null) {
-            int width = pix.stringWidth(font, rawChars.toString(), this.fontSize, 2);
+            int width = pix.stringWidth(font, rawChars.toString(), this.fontSize / 1.5, 2);
             if (width < this.rect.width) {
-                pix.drawString(font, new String(rawChars), rect.x, rect.y, this.fontSize, 2);
+                pix.drawString(font, new String(rawChars), rect.x, rect.y, this.fontSize / 1.5, 2);
             } else {
                 width = pix.stringWidth(font, rawChars.toString(), this.fontSize, 2);
                 char[] toDisplay = rawChars;
