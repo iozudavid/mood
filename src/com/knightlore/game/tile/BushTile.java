@@ -25,6 +25,16 @@ public class BushTile extends Tile {
     }
 
     @Override
+    public String toString() {
+        return "Bush";
+    }
+
+    @Override
+    public char toChar() {
+        return 'b';
+    }
+
+    @Override
     public Tile copy() {
         return new BushTile();
     }

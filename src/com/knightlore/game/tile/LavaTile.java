@@ -50,12 +50,18 @@ public class LavaTile extends Tile {
         }
 
     }
+
+    @Override
+    public String toString() {
+        return "Lava";
+    }
     
     @Override
     public char toChar() {
         return 'L';
     }
-    
+
+    @Override
     public double getSolidity() {
         return 0.75D;
     }

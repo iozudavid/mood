@@ -18,6 +18,8 @@ import com.knightlore.utils.funcptrs.BooleanFunction;
 
 public class TextField extends GUIObject {
 
+    private static final String CURSOR = "_";
+
     private static final Color upColour = Color.WHITE;
     private static final Color downColour = Color.LIGHT_GRAY;
     private static final Color hoverColour = Color.GRAY;
@@ -75,7 +77,7 @@ public class TextField extends GUIObject {
     }
 
     public void displayText(String t) {
-        synchronized(this.rawChars){
+        synchronized (this.rawChars) {
             rawChars = t.toCharArray();
         }
     }
@@ -190,11 +192,11 @@ public class TextField extends GUIObject {
         }
 
         if (text.isEmpty()) {
-            insertString = c + "|";
+            insertString = c + CURSOR;
         } else {
-            insertString = text.substring(0, insertPosition) + c + '|' + text.substring(insertPosition);
+            insertString = text.substring(0, insertPosition) + c + CURSOR + text.substring(insertPosition);
         }
-        text = insertString.replace("|", "");
+        text = insertString.replace(CURSOR, "");
         insertPosition++;
         displayText(insertString);
     }
@@ -202,11 +204,11 @@ public class TextField extends GUIObject {
     void onMessage(char c) {
         this.sendTo = c;
         if (text == null || text.isEmpty()) {
-            insertString = "|";
+            insertString = CURSOR;
         } else {
-            insertString = text.substring(0, insertPosition) + '|' + text.substring(insertPosition);
+            insertString = text.substring(0, insertPosition) + CURSOR + text.substring(insertPosition);
         }
-        text = insertString.replace("|", "");
+        text = insertString.replace(CURSOR, "");
         displayText(insertString);
     }
 
@@ -220,15 +222,15 @@ public class TextField extends GUIObject {
         ByteBuffer nextMessage = constructMessage(manager.getMyPlayer().getObjectId());
         manager.addToChat(nextMessage);
         this.insertPosition = 0;
-        this.insertString = "|";
-        this.text = this.insertString.replaceAll("|", "");
+        this.insertString = CURSOR;
+        this.text = this.insertString.replaceAll(CURSOR, "");
         displayText(insertString);
     }
 
     void escape() {
         this.insertPosition = 0;
         this.insertString = "";
-        this.text = this.insertString.replaceAll("|", "");
+        this.text = this.insertString.replaceAll(CURSOR, "");
         displayText(insertString);
     }
 
@@ -250,7 +252,7 @@ public class TextField extends GUIObject {
             insertPosition = 0;
         }
 
-        insertString = text.substring(0, insertPosition) + '|' + text.substring(insertPosition);
+        insertString = text.substring(0, insertPosition) + CURSOR + text.substring(insertPosition);
         displayText(insertString);
     }
 
@@ -259,7 +261,7 @@ public class TextField extends GUIObject {
         if (insertPosition > text.length()) {
             insertPosition = text.length();
         }
-        insertString = text.substring(0, insertPosition) + '|' + text.substring(insertPosition);
+        insertString = text.substring(0, insertPosition) + CURSOR + text.substring(insertPosition);
         displayText(insertString);
     }
 
@@ -270,18 +272,18 @@ public class TextField extends GUIObject {
             insertPosition = text.length();
             if (text.length() == 1) {
                 insertPosition = 0;
-                insertString = "|";
+                insertString = CURSOR;
             } else {
-                insertString = text.substring(0, insertPosition - 1) + '|';
+                insertString = text.substring(0, insertPosition - 1) + CURSOR;
                 insertPosition--;
             }
             displayText(insertString);
         } else {
-            insertString = text.substring(0, insertPosition - 1) + '|' + text.substring(insertPosition);
+            insertString = text.substring(0, insertPosition - 1) + CURSOR + text.substring(insertPosition);
             insertPosition--;
             displayText(insertString);
         }
-        text = insertString.replace("|", "");
+        text = insertString.replace(CURSOR, "");
     }
 
     @Override
@@ -328,7 +330,7 @@ public class TextField extends GUIObject {
                 this.insertPosition = text.length();
             }
         }
-        insertString = text.substring(0, chooseLocation) + "|" + text.substring(chooseLocation);
+        insertString = text.substring(0, chooseLocation) + CURSOR + text.substring(chooseLocation);
         displayText(insertString);
         state = SelectState.DOWN;
     }
