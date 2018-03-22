@@ -82,15 +82,11 @@ public class Button extends GUIObject {
         int color = Color.BLACK.getRGB();
         if (state != SelectState.UP_PHASE_1 && state != SelectState.UP_PHASE_2 && activeGraphic != null
                 && activeGraphic.getImage() != null) {
-            BufferedImage resized = Image.resize(activeGraphic.getImage(), (int) (rect.getHeight() + 10),
-                    (int) (rect.getHeight() + 10));
-            pix.drawGraphic(new Graphic(resized), (int) (rect.x - rect.getHeight() - 20), rect.y);
+            pix.drawGraphic(activeGraphic, (int) (rect.x - rect.getHeight() - 20), rect.y, 50, 50);
         }
         if (state != SelectState.UP_PHASE_1 && state != SelectState.UP_PHASE_2 && activeGraphic2 != null
                 && activeGraphic2.getImage() != null) {
-            BufferedImage resized = Image.resize(activeGraphic2.getImage(), (int) (rect.getHeight() + 10),
-                    (int) (rect.getHeight() + 10));
-            pix.drawGraphic(new Graphic(resized), (int) (rect.x + rect.getWidth()), rect.y);
+            pix.drawGraphic(activeGraphic2, (int) (rect.x + rect.getWidth() + 10), rect.y, 50, 50);
         }
         color = Color.DARK_GRAY.getRGB();
         pix.fillRect(color, rect.x - 2, rect.y - 2, rect.width + 2, rect.height + 2);
@@ -148,28 +144,16 @@ public class Button extends GUIObject {
 
     @Override
     void onMouseEnter() {
-        if (state == SelectState.HOVER_PHASE_1) {
-            state = SelectState.HOVER_PHASE_2;
-        } else {
-            state = SelectState.HOVER_PHASE_1;
-        }
+        state = SelectState.HOVER_PHASE_2;
     }
 
     void onMouseOver() {
-        if (state == SelectState.HOVER_PHASE_1) {
-            state = SelectState.HOVER_PHASE_2;
-        } else {
-            state = SelectState.HOVER_PHASE_1;
-        }
+        state = SelectState.HOVER_PHASE_2;
     }
 
     @Override
     void OnMouseExit() {
-        if (state == SelectState.UP_PHASE_1) {
-            state = SelectState.UP_PHASE_2;
-        } else {
-            state = SelectState.UP_PHASE_1;
-        }
+        state = SelectState.UP_PHASE_1;
     }
 
     @Override

@@ -57,8 +57,6 @@ public class Font {
 
             filter.apply(g.getPixels(), PixelBuffer.CHROMA_KEY);
             symbols.put(order.charAt(i / 2), g);
-
-            System.out.println(order.charAt(i / 2));
         }
 
     }

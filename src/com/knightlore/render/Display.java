@@ -59,8 +59,6 @@ public class Display implements IRenderable {
             minimap.render();
             hud.render();
 
-            
-
             final int w = pix.getWidth(), h = pix.getHeight();
             pix.composite(renderer.getPixelBuffer(), x, y);
 
