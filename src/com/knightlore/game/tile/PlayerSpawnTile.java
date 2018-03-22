@@ -2,14 +2,9 @@ package com.knightlore.game.tile;
 
 import com.knightlore.engine.GameEngine;
 import com.knightlore.game.Team;
-import com.knightlore.game.buff.BuffType;
-import com.knightlore.game.buff.Fire;
-import com.knightlore.game.buff.Immune;
 import com.knightlore.game.buff.Push;
-import com.knightlore.game.buff.Slow;
 import com.knightlore.game.buff.SpawnVision;
 import com.knightlore.game.entity.Entity;
-import com.knightlore.render.animation.Animation;
 import com.knightlore.render.animation.TimedAnimation;
 import com.knightlore.render.graphic.Graphic;
 import com.knightlore.render.graphic.texture.Texture;

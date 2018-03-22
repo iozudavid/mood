@@ -1,4 +1,4 @@
-package com.knightlore.game;
+package com.knightlore.game.entity;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
@@ -13,12 +13,11 @@ import java.util.concurrent.LinkedBlockingQueue;
 
 import com.google.common.collect.ImmutableMap;
 import com.knightlore.GameSettings;
-import com.knightlore.ai.InputModule;
-import com.knightlore.ai.RemoteInput;
+import com.knightlore.game.InputModule;
+import com.knightlore.game.RemoteInput;
 import com.knightlore.engine.GameEngine;
 import com.knightlore.game.buff.Immune;
 import com.knightlore.game.buff.SpawnVision;
-import com.knightlore.game.entity.Entity;
 import com.knightlore.game.entity.weapon.Weapon;
 import com.knightlore.game.entity.weapon.WeaponType;
 import com.knightlore.game.world.ClientWorld;
@@ -38,12 +37,12 @@ import com.knightlore.utils.Vector2D;
 
 public class Player extends Entity {
 
-    private PlayerMoveAnimation moveAnim = new PlayerMoveAnimation(
+    private final PlayerMoveAnimation moveAnim = new PlayerMoveAnimation(
             PlayerGraphicMatrix.getGraphic(PlayerGraphicMatrix.Color.BLUE,
                     PlayerGraphicMatrix.Weapon.PISTOL,
                     PlayerGraphicMatrix.Stance.MOVE));
 
-    private PlayerStandAnimation standAnim = new PlayerStandAnimation(
+    private final PlayerStandAnimation standAnim = new PlayerStandAnimation(
             PlayerGraphicMatrix.getGraphic(PlayerGraphicMatrix.Color.BLUE,
                     PlayerGraphicMatrix.Weapon.PISTOL,
                     PlayerGraphicMatrix.Stance.STAND),
@@ -440,7 +439,7 @@ public class Player extends Entity {
         return score;
     }
 
-    void respawn(Vector2D spawnPos) {
+    public void respawn(Vector2D spawnPos) {
         this.position = spawnPos;
         currentHealth = MAX_HEALTH;
         inputModule.onRespawn(this);

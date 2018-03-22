@@ -1,6 +1,6 @@
 package com.knightlore.render.hud;
 
-import com.knightlore.game.Player;
+import com.knightlore.game.entity.Player;
 import com.knightlore.render.PixelBuffer;
 import com.knightlore.render.font.Font;
 

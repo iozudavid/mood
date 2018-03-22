@@ -1,10 +1,8 @@
-package com.knightlore.ai;
+package com.knightlore.game.entity;
 
 import java.util.List;
 
 import com.knightlore.engine.GameEngine;
-import com.knightlore.game.Player;
-import com.knightlore.game.entity.Entity;
 import com.knightlore.utils.physics.Physics;
 import com.knightlore.utils.physics.RaycastHit;
 import com.knightlore.utils.Vector2D;

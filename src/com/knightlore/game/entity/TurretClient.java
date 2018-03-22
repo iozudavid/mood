@@ -1,9 +1,8 @@
-package com.knightlore.ai;
+package com.knightlore.game.entity;
 
 import java.nio.ByteBuffer;
 import java.util.UUID;
 
-import com.knightlore.game.Player;
 import com.knightlore.network.NetworkObject;
 import com.knightlore.utils.Vector2D;
 

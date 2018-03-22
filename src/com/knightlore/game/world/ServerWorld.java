@@ -2,9 +2,9 @@ package com.knightlore.game.world;
 
 import java.util.Iterator;
 
-import com.knightlore.ai.BotInput;
-import com.knightlore.game.FFAGame;
-import com.knightlore.game.Player;
+import com.knightlore.game.BotInput;
+import com.knightlore.game.manager.FFAGameManager;
+import com.knightlore.game.entity.Player;
 import com.knightlore.game.entity.Entity;
 import com.knightlore.game.entity.SpectatorCamera;
 import com.knightlore.game.entity.ZombieServer;
@@ -15,7 +15,7 @@ public class ServerWorld extends GameWorld {
     @Override
     public void setUpWorld(Long mapSeed) {
         super.setUpWorld(mapSeed);
-        gameManager = new FFAGame();
+        gameManager = new FFAGameManager();
         gameManager.init();
         buildEntities();
     }

@@ -1,4 +1,4 @@
-package com.knightlore.ai;
+package com.knightlore.game;
 
 import java.awt.Point;
 import java.util.ArrayList;
@@ -6,9 +6,10 @@ import java.util.List;
 import java.util.Map;
 
 import com.knightlore.engine.GameEngine;
-import com.knightlore.game.Player;
-import com.knightlore.game.PlayerManager;
+import com.knightlore.game.entity.Player;
+import com.knightlore.game.manager.PlayerManager;
 import com.knightlore.game.entity.Entity;
+import com.knightlore.game.manager.AIManager;
 import com.knightlore.network.protocol.ClientController;
 import com.knightlore.utils.physics.RaycastHit;
 import com.knightlore.utils.Vector2D;
