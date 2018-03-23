@@ -1,10 +1,9 @@
-package com.knightlore.ai;
+package com.knightlore.game.entity;
 
 import java.nio.ByteBuffer;
 import java.util.UUID;
 
 import com.knightlore.game.Team;
-import com.knightlore.game.entity.Entity;
 import com.knightlore.render.graphic.sprite.DirectionalSprite;
 import com.knightlore.utils.Vector2D;
 

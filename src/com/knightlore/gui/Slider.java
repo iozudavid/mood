@@ -1,10 +1,10 @@
 package com.knightlore.gui;
 
 import java.awt.Color;
-import java.awt.Graphics;
 import java.awt.Rectangle;
 
 import com.knightlore.engine.input.InputManager;
+import com.knightlore.render.PixelBuffer;
 import com.knightlore.utils.Vector2D;
 
 public class Slider extends GUIObject {
@@ -14,20 +14,26 @@ public class Slider extends GUIObject {
     public Color downColour = Color.BLACK;
 
     private Rectangle sliderPos;
-    private final float defaultValue = 0.8f;
+    private float defaultValue = 0.8f;
     private float actualValue = defaultValue;
     private SelectState state = SelectState.UP;
     private boolean isClicked=false;
 
     public Slider(int x, int y, int width, int height, int depth) {
         super(x, y, width, height, depth);
-        System.out.println(((double) defaultValue * (double) (x + width)));
         this.sliderPos = new Rectangle((int) (x + ((double) defaultValue * (double) (width))),
                 (int) (y - (double) (height) / 2D), 5, height * 2);
     }
 
     public Slider(int x, int y, int width, int height) {
         this(x, y, width, height, 0);
+    }
+    public Slider(int x, int y, int width, int height, int depth, float val) {
+        super(x, y, width, height, depth);
+        this.defaultValue=val;
+        this.actualValue=this.defaultValue;
+        this.sliderPos = new Rectangle((int) (x + ((double) defaultValue * (double) (width))),
+                (int) (y - (double) (height) / 2D), 5, height * 2);
     }
 
     public Color activeColor() {
@@ -57,13 +63,13 @@ public class Slider extends GUIObject {
     }
 
     @Override
-    void Draw(Graphics g, Rectangle parentRect) {
-        g.setColor(Color.DARK_GRAY);
-        g.fillRect(rect.x, rect.y, rect.width, rect.height);
-        g.setColor(this.activeColor());
+    void Draw(PixelBuffer pix, int x, int y) {
+        int color = Color.DARK_GRAY.getRGB();
+        pix.fillRect(color, rect.x, rect.y, rect.width, rect.height);
+        color = this.activeColor().getRGB();
         this.sliderPos = new Rectangle((int) (rect.x + ((double) actualValue * (double) (rect.width))),
                 (int)sliderPos.getY(), (int)sliderPos.getWidth(), (int)sliderPos.getHeight());
-        g.fillRect(sliderPos.x, sliderPos.y, sliderPos.width, sliderPos.height);
+        pix.fillRect(color, sliderPos.x, sliderPos.y, sliderPos.width, sliderPos.height);
     }
 
     @Override

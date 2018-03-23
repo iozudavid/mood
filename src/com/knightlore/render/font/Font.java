@@ -1,5 +1,6 @@
 package com.knightlore.render.font;
 
+import java.awt.Color;
 import java.awt.image.BufferedImage;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -16,10 +17,12 @@ import com.knightlore.render.graphic.filter.ColorFilter;
 
 public class Font {
 
-    public static final Font DEFAULT_WHITE = new Font("res/font/font.png",
-            "ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890 ?!-+", 0xFFFFFF);
+    private static final String FONT_STRING = "ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890 ?!-+|:().[]_";
+    public static final Font DEFAULT_WHITE = new Font("res/font/font.png", FONT_STRING, 0xFFFFFF);
+    public static final Font DEFAULT_BLACK = new Font("res/font/font.png", FONT_STRING, 0x000000);
+    public static final Font DEFAULT_RED = new Font("res/font/font.png", FONT_STRING, Color.red.getRGB());
 
-    private static final int BOUNDS_COLOR = -65536; // pure red.
+    private static final int BOUNDS_COLOR = 0xFFFF0000; // pure red.
 
     private BufferedImage sheet;
     private Map<Character, Graphic> symbols;
@@ -55,8 +58,6 @@ public class Font {
 
             filter.apply(g.getPixels(), PixelBuffer.CHROMA_KEY);
             symbols.put(order.charAt(i / 2), g);
-
-            System.out.println(order.charAt(i / 2));
         }
 
     }
@@ -65,15 +66,15 @@ public class Font {
         if (symbols.containsKey(c)) {
             return symbols.get(c);
         }
-        
+
         c = Character.toUpperCase(c);
         if (symbols.containsKey(c)) {
             return symbols.get(c);
         }
-        
-        final char[] backupSymbols = new char[] {'?', '!', ' '};
-        for(char x : backupSymbols) {
-            if(symbols.containsKey(x)) {
+
+        final char[] backupSymbols = new char[] { '?', '!', ' ' };
+        for (char x : backupSymbols) {
+            if (symbols.containsKey(x)) {
                 return symbols.get(x);
             }
         }

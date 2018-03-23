@@ -3,6 +3,8 @@ package com.knightlore.render.graphic;
 import java.awt.image.BufferedImage;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.imageio.ImageIO;
 
@@ -24,10 +26,9 @@ public class GraphicSheet {
      */
     public final static GraphicSheet TEXTURES = new GraphicSheet("res/graphics/textures.png", 16);
 
-    public final static GraphicSheet RED_TEXTURES 
-    = new GraphicSheet("res/graphics/textures.png" , 16, ColorFilter.RED);
-    public final static GraphicSheet BLUE_TEXTURES
-    = new GraphicSheet("res/graphics/textures.png" , 16, ColorFilter.BLUE);
+    public final static GraphicSheet RED_TEXTURES = new GraphicSheet("res/graphics/textures.png", 16, ColorFilter.RED);
+    public final static GraphicSheet BLUE_TEXTURES = new GraphicSheet("res/graphics/textures.png", 16,
+            ColorFilter.BLUE);
     /**
      * This graphicsheet stores weapon graphics for the player's point of view.
      */
@@ -38,7 +39,7 @@ public class GraphicSheet {
      * plain white. The coloured player sprites have a colour filter applied to
      * them.
      */
-    public final static GraphicSheet PLAYER_SPRITES = new GraphicSheet("res/models/player_sprites.png", 128);
+    public final static GraphicSheet ZOMBIE_SPRITES = new GraphicSheet("res/models/player_sprites.png", 128);
 
     /**
      * A graphicsheet for the shotgun directional sprite.
@@ -64,6 +65,8 @@ public class GraphicSheet {
     private final int cellSize;
     private BufferedImage sheet;
 
+    private Map<GraphicCacheItem, Graphic> cache;
+
     /**
      * A colour filter for the graphicsheet. This can be used to give the models
      * in the graphicsheet a different colour tint.
@@ -77,6 +80,7 @@ public class GraphicSheet {
     public GraphicSheet(String path, int cellSize, ColorFilter filter) {
         this.cellSize = cellSize;
         this.filter = filter;
+        this.cache = new HashMap<GraphicCacheItem, Graphic>();
         load(path);
     }
 
@@ -123,12 +127,49 @@ public class GraphicSheet {
      *         ending at (xx, yy).
      */
     public Graphic graphicAt(int x, int y, int xx, int yy) {
+        GraphicCacheItem item = new GraphicCacheItem(x, y, xx, yy);
+        if (cache.containsKey(item)) {
+            return cache.get(item);
+        }
+
         BufferedImage subImg = sheet.getSubimage(x * cellSize, y * cellSize, xx * cellSize, yy * cellSize);
         Graphic graphic = new Graphic(subImg);
         if (filter != null) {
             filter.apply(graphic.getPixels(), PixelBuffer.CHROMA_KEY);
         }
+
+        // add to cache
+        cache.put(item, graphic);
+
         return graphic;
+    }
+
+    class GraphicCacheItem {
+        public int x, y, xx, yy;
+
+        public GraphicCacheItem(int x, int y, int xx, int yy) {
+            this.x = x;
+            this.y = y;
+            this.xx = xx;
+            this.yy = yy;
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (obj == null)
+                return false;
+            if (!(obj instanceof GraphicCacheItem))
+                return false;
+
+            GraphicCacheItem c = (GraphicCacheItem) obj;
+            return x == c.x && y == c.y && xx == c.xx && yy == c.yy;
+        }
+
+        @Override
+        public int hashCode() {
+            return x * y * xx * yy;
+        }
+
     }
 
 }

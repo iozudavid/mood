@@ -2,14 +2,9 @@ package com.knightlore.game.tile;
 
 import com.knightlore.engine.GameEngine;
 import com.knightlore.game.Team;
-import com.knightlore.game.buff.BuffType;
-import com.knightlore.game.buff.Fire;
-import com.knightlore.game.buff.Immune;
 import com.knightlore.game.buff.Push;
-import com.knightlore.game.buff.Slow;
 import com.knightlore.game.buff.SpawnVision;
 import com.knightlore.game.entity.Entity;
-import com.knightlore.render.animation.Animation;
 import com.knightlore.render.animation.TimedAnimation;
 import com.knightlore.render.graphic.Graphic;
 import com.knightlore.render.graphic.texture.Texture;
@@ -90,13 +85,19 @@ public class PlayerSpawnTile extends Tile {
 
     @Override
     public int getMinimapColor() {
-        return 0x00FF00;
+        return team.getColor();
     }
 
     @Override
     public void onShot() {
     }
 
+    @Override
+    public String toString() {
+        return team.toString() + " spawn";
+    }
+
+    @Override
     public char toChar() {
         if (team == Team.NONE) {
             return '0';

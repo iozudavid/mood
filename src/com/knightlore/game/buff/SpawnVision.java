@@ -6,7 +6,7 @@ import com.knightlore.game.entity.Entity;
 public class SpawnVision extends Buff {
 
     private static final double SPAWN_VISION_FREQUENCY = 1 / 32d;
-    private static final double SPAWN_VISION_LENGTH = 8;
+    private static final double SPAWN_VISION_LENGTH = 4;
 
     public SpawnVision(Entity ent) {
         super(ent, SPAWN_VISION_FREQUENCY, SPAWN_VISION_LENGTH);

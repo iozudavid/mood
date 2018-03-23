@@ -17,6 +17,9 @@ public class TCPConnection extends Connection {
     private DataOutputStream infoSend;
     private Socket socket;
 
+    Object receiveLock = new Object();
+    Object sendLock = new Object();
+
     public TCPConnection(Socket socket) {
         this.socket = socket;
         try {
@@ -26,7 +29,7 @@ public class TCPConnection extends Connection {
         } catch (IOException e) {
             System.err.println("The connection doesn't seem to work...");
             System.exit(1);
-        }
+        } 
     }
 
     /**
@@ -44,8 +47,12 @@ public class TCPConnection extends Connection {
 
     @Override
     public void send(ByteBuffer data) {
-        Object lock = new Object();
-        synchronized (lock) {
+        /*
+         * Effectively synchronise this method with itself, ensuring the stream
+         * is not written to in parallel. Don't use the 'synchronized' method
+         * modifier since we can run this in parallel with receive().
+         */
+        synchronized (sendLock) {
             try {
                 int dataLength = data.position();
                 if (dataLength == 0) {
@@ -59,6 +66,7 @@ public class TCPConnection extends Connection {
                 infoSend.write(data.array(), 0, dataLength);
             } catch (IOException e) {
                 System.err.println("Communication broke...");
+                e.printStackTrace();
                 this.terminated = true;
             }
         }
@@ -66,30 +74,44 @@ public class TCPConnection extends Connection {
 
     @Override
     public ByteBuffer receiveBlocking() {
-        Object lock = new Object();
-        synchronized (lock) {
+        /*
+         * Effectively synchronise this method with itself, ensuring the stream
+         * is not read from in parallel. Don't use the 'synchronized' method
+         * modifier since we can run this in parallel with send().
+         */
+        synchronized (receiveLock) {
+            /*
+             * Whether the received packet is broken. If so, we should error
+             * out, since this is a reliable TCPConnection, so a malformed
+             * packet indicates a fatal game error.
+             */
+            boolean malformed = false;
             try {
-                int size;
+                int size = -1;
                 try {
                     size = infoReceive.readInt();
+                    if (size == 0) {
+                        return null;
+                    }
+                    if (size < 0 || size > 2048) {
+                        malformed = true;
+                    }
                 } catch (NumberFormatException e) {
-                    System.err.println(
-                            "Warning: received malformed packet. Ignoring.");
-                    return null;
+                    malformed = true;
                 }
-                if (size <= 0 || size > 2048) {
-                    System.err.println(
-                            "Error: Trying to receive a ByteBuffer of size "
-                                    + size
-                                    + "! Assuming this is an error, ignoring.");
-                    return null;
+                if (malformed) {
+                    throw new IOException(
+                            "Fatal: received a malformed packet of size " + size
+                                    + " bytes. Usually this indicates an error in the "
+                                    + "client-server connection; try restarting "
+                                    + "your instance of the game.");
                 }
                 byte[] tmp = new byte[size];
-                // Reuse the same byte arrays to avoid heap thrashing.
-                infoReceive.read(tmp, 0, size);
-                return ByteBuffer.wrap(tmp, 0, size);
+                infoReceive.readFully(tmp);
+                return ByteBuffer.wrap(tmp);
             } catch (IOException e) {
                 System.err.println("Communication broke...");
+                e.printStackTrace();
                 this.terminated = true;
                 return null;
             }

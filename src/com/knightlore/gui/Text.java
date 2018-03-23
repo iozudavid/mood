@@ -1,28 +1,28 @@
 package com.knightlore.gui;
 
 import java.awt.Color;
-import java.awt.Graphics;
-import java.awt.Rectangle;
+
+import com.knightlore.render.PixelBuffer;
+import com.knightlore.render.font.Font;
 
 public class Text extends GUIObject {
     protected String text;
     protected char[] rawChars;
-    private int fontSize;
+    private double fontSize;
     public Color currentColor = Color.BLACK;
-    
-    
-    public Text(int x, int y, int width, int height, String text, int fontSize) {
+
+    public Text(int x, int y, int width, int height, String text, double fontSize) {
         super(x, y, width, height, 0);
-        this.fontSize = fontSize;
+        this.fontSize = (double)(fontSize / 15D);
         SetText(text);
     }
-    
-    public Text(int x, int y, int width, int height, int depth, String text, int fontSize) {
+
+    public Text(int x, int y, int width, int height, int depth, String text, double fontSize) {
         super(x, y, width, height, depth);
-        this.fontSize = fontSize;
+        this.fontSize = (double)(fontSize / 15D);
         SetText(text);
     }
-    
+
     public void SetText(String newText) {
         if (newText == null) {
             text = "";
@@ -31,13 +31,17 @@ public class Text extends GUIObject {
         }
         rawChars = text.toCharArray();
     }
-    
+
     @Override
-    void Draw(Graphics g, Rectangle parentRect) {
-        g.setColor(currentColor);
-        g.setFont(new java.awt.Font("Bookman Old Style Bold", 10, fontSize));
-        int hOffset = g.getFontMetrics().getHeight();
+    void Draw(PixelBuffer pix, int x, int y) {
+        int hOffset = Font.DEFAULT_WHITE.getHeight();
         // draw the characters of the string
-        g.drawChars(rawChars, 0, rawChars.length, rect.x, rect.y + hOffset);
+        if (this.currentColor == Color.RED)
+            pix.drawString(Font.DEFAULT_RED, new String(rawChars), rect.x, rect.y + hOffset, this.fontSize, 2);
+        else if (this.currentColor == Color.BLACK)
+            pix.drawString(Font.DEFAULT_BLACK, new String(rawChars), rect.x, rect.y + hOffset, this.fontSize, 2);
+        else
+            pix.drawString(Font.DEFAULT_WHITE, new String(rawChars), rect.x, rect.y + hOffset, this.fontSize, 2);
+
     }
 }

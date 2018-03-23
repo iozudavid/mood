@@ -1,4 +1,4 @@
-package com.knightlore.ai;
+package com.knightlore.game;
 
 import java.util.Map;
 

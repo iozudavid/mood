@@ -1,13 +1,14 @@
 package com.knightlore.gui;
 
 import java.awt.Color;
-import java.awt.Graphics;
-import java.awt.Rectangle;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
+
+import com.knightlore.render.PixelBuffer;
+import com.knightlore.render.font.Font;
 
 public class Table extends GUIObject{
 	 
@@ -78,14 +79,13 @@ public class Table extends GUIObject{
 	}
 
 	@Override
-	void Draw(Graphics g, Rectangle parentRect) {
+	void Draw(PixelBuffer pix, int x, int y) {
 		synchronized (this.entries) {
-			g.setColor(Color.DARK_GRAY);
-			g.setFont(new java.awt.Font("Bookman Old Style Bold", 10, 15));
+		    int color = Color.DARK_GRAY.getRGB();
 			int totalHeight = 0;
-			totalHeight = (g.getFontMetrics().getHeight() + 5) * (1 + this.entries.size());
-			g.fillRect(rect.x, rect.y, rect.width, totalHeight);
-			g.setColor(Color.WHITE);
+			totalHeight = (Font.DEFAULT_WHITE.getHeight() + 15) * (1 + this.entries.size());
+			pix.fillRect(color, rect.x, rect.y, rect.width, totalHeight);
+			color = Color.WHITE.getRGB();
 			int lastX = rect.x;
 			int lastY = rect.y;
 
@@ -94,16 +94,16 @@ public class Table extends GUIObject{
 			// render the header
 			for (String t : this.headersAndWidth.keySet()) {
 				// draw cell
-				g.drawRect(lastX, lastY, (int) (this.rect.width * this.headersAndWidth.get(t)),
-						g.getFontMetrics().getHeight() + 5);
+				pix.drawRect(color, lastX, lastY, (int) (this.rect.width * this.headersAndWidth.get(t)),
+						totalHeight);
 				// draw text
-				int hOffset = g.getFontMetrics().getHeight();
+				int hOffset = Font.DEFAULT_WHITE.getHeight();
 				// draw the characters of the string
-				g.drawChars(t.toCharArray(), 0, t.toCharArray().length, lastX, lastY + hOffset);
+				pix.drawString(Font.DEFAULT_WHITE, t, lastX, lastY+hOffset, 1.2, 2);
 				lastX += this.rect.width * this.headersAndWidth.get(t);
 				entriesWidth.add(this.headersAndWidth.get(t));
 			}
-			lastY += g.getFontMetrics().getHeight() + 5;
+			lastY += Font.DEFAULT_WHITE.getHeight() + 15;
 			lastX = rect.x;
 			
 			this.orderTableByScore();
@@ -117,16 +117,16 @@ public class Table extends GUIObject{
 						continue;
 					}
 					// draw cell
-					g.drawRect(lastX, lastY, (int) (this.rect.width * entriesWidth.get(i)),
-							g.getFontMetrics().getHeight() + 5);
+					pix.drawRect(color, lastX, lastY, (int) (this.rect.width * entriesWidth.get(i)),
+							Font.DEFAULT_WHITE.getHeight() + 15);
 					// draw text
-					int hOffset = g.getFontMetrics().getHeight();
+					int hOffset = Font.DEFAULT_WHITE.getHeight();
 					// draw the characters of the string
-					g.drawChars(entry.toCharArray(), 0, entry.toCharArray().length, lastX, lastY + hOffset);
+					pix.drawString(Font.DEFAULT_WHITE, entry, lastX, lastY+hOffset, 1.2, 2);
 					lastX += this.rect.width * entriesWidth.get(i);
 					i++;
 				}
-				lastY += g.getFontMetrics().getHeight() + 5;
+				lastY += Font.DEFAULT_WHITE.getHeight() + 15;
 				lastX = rect.x;
 			}
 		}

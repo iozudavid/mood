@@ -13,7 +13,7 @@ public class SpriteSheetMaker {
     private static int height;
     private static int numDirs;
     private static int numFrames;
-
+    
     public static void main(String[] args) {
         if (args.length == 0) {
             System.out.println("expected more arguments, got " + args.length);
@@ -95,7 +95,7 @@ public class SpriteSheetMaker {
                 System.out.println("Failed to read image " + fileName + ", see above error ^");
                 return;
             }
-
+            
             // calc position
             int yPos = i * height;
             // splat image outside
@@ -117,9 +117,23 @@ public class SpriteSheetMaker {
         }
         
         System.out.println("Spritesheet written to: " + outFileName);
+        System.out.println("Removing source files...");
+        for (int d = 0; d < numDirs; d++) {
+            // get file name
+            fileName = baseFileName + "_" + (d) + ".png";
+            File file = new File(fileName);
+            // try to read the image
+            try {
+                file.delete();
+            } catch (Exception e) {
+                System.err.println(e);
+                System.out.println("Failed to delete " + fileName + ", see above error ^");
+                return;
+            }
+        }
         System.out.println("Done.");
     }
-
+    
     private static void createAnimated() {
         int totalWidth = width * numFrames;
         int totalHeight = height * numDirs;
@@ -148,7 +162,7 @@ public class SpriteSheetMaker {
                     System.out.println("Failed to read image " + fileName + ", see above error ^");
                     return;
                 }
-
+                
                 // calc position
                 int yPos = d * height;
                 // splat image outside
@@ -173,7 +187,6 @@ public class SpriteSheetMaker {
         System.out.println("Spritesheet written to: " + outFileName);
         System.out.println("Removing source files...");
         for (int f = 0; f < numFrames; f++) {
-            int xPos = f * width;
             for (int d = 0; d < numDirs; d++) {
                 // get file name
                 fileName = baseFileName + "_" + (d) + "_f" + (f) + ".png";

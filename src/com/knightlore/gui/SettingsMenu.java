@@ -4,9 +4,7 @@ import java.util.ArrayList;
 
 import com.knightlore.GameSettings;
 import com.knightlore.engine.GameEngine;
-import com.knightlore.engine.GameState;
 import com.knightlore.render.PixelBuffer;
-import com.knightlore.render.Renderer;
 import com.knightlore.utils.funcptrs.VoidFunction;
 
 public class SettingsMenu {
@@ -19,7 +17,7 @@ public class SettingsMenu {
     private TextField nameTextField;
     private Group nameGroup;
     private Text blockinessText;
-    private TextField blockinessTextField;
+    private Slider blockinessSlider;
     private Group blockinessGroup;
     private Group soundGroup;
     private Text soundText;
@@ -35,111 +33,120 @@ public class SettingsMenu {
         this.gui.init();
         this.screenWidth = screenWidth;
         this.screenHeight = screenHeight;
-        this.coverImage = new Image(0, 0, this.screenWidth, this.screenHeight, "res/graphics/settings_modified.jpg");
+        this.coverImage = new Image(0, 0, this.screenWidth, this.screenHeight, "res/graphics/mppadjusted.png");
         this.gui.addGUIObject(this.coverImage);
         this.nameText = new Text(GuiUtils.middleWidth(this.screenWidth, 100),
-                GuiUtils.calculateHeight(this.screenHeight, 25), 100, 30, "Username: ", 20);
+                GuiUtils.calculateHeight(this.screenHeight, 15), 100, 30, "Username: ", 25);
         this.nameTextField = new TextField(GuiUtils.middleWidth(this.screenWidth, 300),
-                GuiUtils.calculateHeight(this.screenHeight, 32), 300, 30, "Client Player");
-        this.nameTextField.setRestrictionLength((Integer i) -> i<=20);
+                GuiUtils.calculateHeight(this.screenHeight, 22), 300, 30, "Client Player");
+        this.nameTextField.fontSize = 3;
+        this.nameTextField.setRestrictionLength((Integer i) -> i <= 20);
         this.gui.addGUIObject(this.coverImage);
         ArrayList<GUIObject> objs = new ArrayList<>();
         objs.add(nameText);
         objs.add(nameTextField);
-        double nameDiff = 32 - 25;
+        double nameDiff = 22 - 15;
         this.nameGroup = new Group(GuiUtils.minX(objs), GuiUtils.minY(objs), objs, nameDiff * 0.01, screenHeight);
         this.gui.addGUIObject(nameGroup);
         this.gui.addGUIObject(this.nameText);
         this.gui.addGUIObject(this.nameTextField);
-        
-        this.blockinessText = new Text(GuiUtils.middleWidth(this.screenWidth, 150),
-                GuiUtils.calculateHeight(this.screenHeight, 45), 150, 30, "Blockiness(5-20): ", 20);
-        this.blockinessTextField = new TextField(GuiUtils.middleWidth(this.screenWidth, 300),
-                GuiUtils.calculateHeight(this.screenHeight, 52), 300, 30, Renderer.getBlockiness()+"");
-        this.blockinessTextField.setRestriction((Character c) -> Character.isDigit(c));
-        this.blockinessTextField.setRestrictionLength((Integer i) -> i<=2);
-        this.blockinessTextField.setRestrictionValue((String s) -> Integer.parseInt(s)>=5 && Integer.parseInt(s)<=20);
+
+        this.blockinessText = new Text((int) (this.nameGroup.getRectangle().getX()) + 50,
+                GuiUtils.calculateHeight(this.screenHeight, 40), 100, 30, "Blockiness: ", 25);
+        this.blockinessSlider = new Slider(
+                (int) (this.blockinessText.getRectangle().getX() + (int) (this.blockinessText.getRectangle().getWidth()) + 90),
+                (int) (this.blockinessText.getRectangle().getHeight() / 2D) + (int) (this.blockinessText.getRectangle().getY())-5,
+                150, 10, 0, (float)(GameSettings.DEFAULT_BLOCKINESS-5)/20F);
         ArrayList<GUIObject> objsBlock = new ArrayList<>();
         objsBlock.add(blockinessText);
-        objsBlock.add(blockinessTextField);
-        double blockDiff = 52 - 45;
-        this.blockinessGroup = new Group(GuiUtils.minX(objsBlock), GuiUtils.minY(objsBlock), objsBlock, blockDiff * 0.01, screenHeight);
+        objsBlock.add(blockinessSlider);
+        double blockDiff = this.blockinessSlider.getRectangle().getWidth() * 100;
+        this.blockinessGroup = new Group(GuiUtils.minX(objsBlock), GuiUtils.minY(objsBlock), objsBlock, 0,
+                blockDiff * 0.01, screenHeight);
         this.gui.addGUIObject(blockinessGroup);
         this.gui.addGUIObject(this.blockinessText);
-        this.gui.addGUIObject(this.blockinessTextField);
-        
-        this.soundText = new Text((int)(this.blockinessGroup.getRectangle().getX())+50,
-                GuiUtils.calculateHeight(this.screenHeight, 65), 100, 30, "Sound Volume: ", 20);
-        this.soundSlider = new Slider((int)(this.soundText.getRectangle().getX()+(int)(this.soundText.getRectangle().getWidth())+90),
-                (int)(this.soundText.getRectangle().getHeight()/2D)+(int)(this.soundText.getRectangle().getY()), 150, 10);
+        this.gui.addGUIObject(this.blockinessSlider);
+
+        this.soundText = new Text((int) (this.nameGroup.getRectangle().getX()) + 50,
+                GuiUtils.calculateHeight(this.screenHeight, 55), 100, 30, "Sound Volume: ", 25);
+        this.soundSlider = new Slider(
+                (int) (this.soundText.getRectangle().getX() + (int) (this.soundText.getRectangle().getWidth()) + 90),
+                (int) (this.soundText.getRectangle().getHeight() / 2D) + (int) (this.soundText.getRectangle().getY())-5,
+                150, 10);
         ArrayList<GUIObject> soundBlock = new ArrayList<>();
         soundBlock.add(soundText);
         soundBlock.add(soundSlider);
-        double soundDiff = this.soundSlider.getRectangle().getWidth()*100;
-        this.soundGroup = new Group(GuiUtils.minX(soundBlock), GuiUtils.minY(soundBlock), soundBlock, 0, soundDiff * 0.01, screenHeight);
+        double soundDiff = this.soundSlider.getRectangle().getWidth() * 100;
+        this.soundGroup = new Group(GuiUtils.minX(soundBlock), GuiUtils.minY(soundBlock), soundBlock, 0,
+                soundDiff * 0.01, screenHeight);
         this.gui.addGUIObject(soundGroup);
         this.gui.addGUIObject(soundText);
         this.gui.addGUIObject(soundSlider);
-        
-        this.bobText = new Text((int)(this.blockinessGroup.getRectangle().getX())+50,
-                GuiUtils.calculateHeight(this.screenHeight, 74.5f), 100, 20, "Motion bob: ", 20);
-        this.bobCheckBox = new CheckBox((int)(this.bobText.getRectangle().getX()+(int)(this.bobText.getRectangle().getWidth())+90+this.soundSlider.getRectangle().getWidth()/2D),
-                (int)(this.bobText.getRectangle().getHeight()/2D)+(int)(this.bobText.getRectangle().getY())-5, 20, 20, 0, true);
+
+        this.bobText = new Text((int) (this.nameGroup.getRectangle().getX()) + 50,
+                GuiUtils.calculateHeight(this.screenHeight, 70f), 100, 20, "Motion bob: ", 25);
+        this.bobCheckBox = new CheckBox(
+                (int) (this.bobText.getRectangle().getX() + (int) (this.bobText.getRectangle().getWidth()) + 90
+                        + this.soundSlider.getRectangle().getWidth() / 2D),
+                (int) (this.bobText.getRectangle().getHeight() / 2D) + (int) (this.bobText.getRectangle().getY()) - 5,
+                20, 20, 0, true);
         ArrayList<GUIObject> bobBlock = new ArrayList<>();
         bobBlock.add(bobText);
         bobBlock.add(bobCheckBox);
-        double bobDiff = this.soundSlider.getRectangle().getWidth()*133.5;
-        this.bobGroup = new Group(GuiUtils.minX(bobBlock), GuiUtils.minY(bobBlock), bobBlock, 0, bobDiff * 0.01, screenHeight);
+        double bobDiff = this.soundSlider.getRectangle().getWidth() * 133.5;
+        this.bobGroup = new Group(GuiUtils.minX(bobBlock), GuiUtils.minY(bobBlock), bobBlock, 0, bobDiff * 0.01,
+                screenHeight);
         this.gui.addGUIObject(bobGroup);
         this.gui.addGUIObject(bobText);
         this.gui.addGUIObject(bobCheckBox);
-        
-        this.cancelButton = new Button(GuiUtils.middleWidth(this.screenWidth/2, 300), GuiUtils.calculateHeight(this.screenHeight, 85), 300, 40, "Cancel",20);
-        this.applyButton = new Button((int)(GuiUtils.middleWidth(this.screenWidth/2, 300)+this.screenWidth/2), GuiUtils.calculateHeight(this.screenHeight, 85), 300, 40, "Apply",20);
+
+        this.cancelButton = new Button(GuiUtils.middleWidth(this.screenWidth / 2, 300),
+                GuiUtils.calculateHeight(this.screenHeight, 85), 300, 40, "Cancel", 21);
+        this.applyButton = new Button((int) (GuiUtils.middleWidth(this.screenWidth / 2, 300) + this.screenWidth / 2),
+                GuiUtils.calculateHeight(this.screenHeight, 85), 300, 40, "Apply", 21);
         this.gui.addGUIObject(applyButton);
         this.gui.addGUIObject(cancelButton);
-        
+
         this.applyButton.clickFunction = new VoidFunction() {
-            
+
             @Override
             public void call() {
                 GameSettings.MOTION_BOB = SettingsMenu.this.bobCheckBox.getBobingMode();
                 GameEngine.getSingleton().setVolume(SettingsMenu.this.soundSlider.getValue());
-                Renderer.setBlockiness(Integer.parseInt(SettingsMenu.this.blockinessTextField.getText()));
+                GameSettings.desiredBlockiness = (int)(SettingsMenu.this.blockinessSlider.getValue()*20F);
                 GameSettings.PLAYER_NAME = SettingsMenu.this.nameTextField.getText();
-                GameEngine.getSingleton().gameState = GameState.SettingsMenuApply;
+                GameEngine.getSingleton().guiState = GUIState.SettingsMenuApply;
             }
         };
-        
+
         this.cancelButton.clickFunction = new VoidFunction() {
-            
+
             @Override
             public void call() {
-                GameEngine.getSingleton().gameState = GameState.SettingsMenuCancel;                
+                GameEngine.getSingleton().guiState = GUIState.SettingsMenuCancel;
             }
         };
-        
+
     }
-    
-    public ArrayList<Object> getObj(){
+
+    public ArrayList<Object> getObj() {
         ArrayList<Object> obj = new ArrayList<>();
         obj.add(this.nameTextField.getText());
-        obj.add(this.blockinessTextField.getText());
+        obj.add(this.blockinessSlider.getValue());
         obj.add(this.soundSlider.getValue());
         obj.add(this.bobCheckBox.getBobingMode());
         return obj;
     }
 
-    public void setObj(ArrayList<Object> o){
-        this.nameTextField.setText((String)o.get(0));
-        this.blockinessTextField.setText((String)o.get(1));
-        this.soundSlider.setValue((float)o.get(2));
-        this.bobCheckBox.setBobingMode((boolean)o.get(3));
+    public void setObj(ArrayList<Object> o) {
+        this.nameTextField.setText((String) o.get(0));
+        this.blockinessSlider.setValue((float) o.get(1));
+        this.soundSlider.setValue((float) o.get(2));
+        this.bobCheckBox.setBobingMode((boolean) o.get(3));
     }
-    
+
     public void render(PixelBuffer pix, int x, int y) {
         this.gui.render(pix, x, y);
     }
-    
 
 }

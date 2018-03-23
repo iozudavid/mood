@@ -3,6 +3,7 @@ package com.knightlore.engine;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ListIterator;
+import java.util.concurrent.LinkedBlockingQueue;
 
 /**
  * Timekeeper for the game engine. Keeps track of the current tick value and
@@ -30,6 +31,8 @@ public class Ticker {
      * Listeners attached to this ticker.
      */
     private List<TickListener> tickListeners;
+    // Fix concurrent modification issues with a toAdd queue.
+    private LinkedBlockingQueue<TickListener> toAdd = new LinkedBlockingQueue<>();
 
     protected Ticker() {
         tick = 0;
@@ -42,8 +45,8 @@ public class Ticker {
      * @param t
      *            the tick listener to receive updates.
      */
-    public void addTickListener(TickListener t) {
-        tickListeners.add(t);
+    public synchronized void addTickListener(TickListener t) {
+        toAdd.add(t);
     }
 
     /**
@@ -60,6 +63,11 @@ public class Ticker {
      * is incremented. All tick listeners are run if it is their time.
      */
     protected void tick() {
+        // Add all the tick listeners waiting in the queue.
+        while (!toAdd.isEmpty()) {
+            TickListener t = toAdd.poll();
+            tickListeners.add(t);
+        }
         tick++;
         ListIterator<TickListener> itr = tickListeners.listIterator();
         while (itr.hasNext()) {

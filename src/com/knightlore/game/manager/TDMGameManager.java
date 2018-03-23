@@ -1,14 +1,17 @@
-package com.knightlore.game;
+package com.knightlore.game.manager;
 
 import java.nio.ByteBuffer;
 import java.util.UUID;
 
 import com.knightlore.engine.GameEngine;
+import com.knightlore.game.Team;
+import com.knightlore.game.entity.Player;
+import com.knightlore.game.entity.ZombieShared;
 import com.knightlore.utils.Vector2D;
 
-public class TDMGame extends GameManager {
+public class TDMGameManager extends GameManager {
     
-    public TDMGame(UUID uuid) {
+    public TDMGameManager(UUID uuid) {
         super(uuid);
     }
 
@@ -34,14 +37,23 @@ public class TDMGame extends GameManager {
     }
     
     @Override
-    public void onPlayerDeath(Player p) {
+    public void onEntityDeath(ZombieShared victim, Player inflictor) {
+        // TODO
     }
     
     @Override
-    public void awardScore(Player p, int score) {
-        p.addScore(-1);
-        Vector2D spawnPos = GameEngine.getSingleton().getWorld().getMap().getRandomSpawnPoint();
-        p.respawn(spawnPos);
+    public void onEntityDeath(ZombieShared victim) {
+        // TODO
+    }
+    
+    @Override
+    public void onEntityDeath(Player victim, Player inflictor) {
+        // TODO
+    }
+    
+    @Override
+    public void onEntityDeath(Player victim) {
+        // TODO
     }
     
     @Override
@@ -96,7 +108,7 @@ public class TDMGame extends GameManager {
 
     @Override
     public String getClientClassName() {
-        return TDMGameClient.class.getName();
+        return TDMGameManagerClient.class.getName();
     }
     
 }

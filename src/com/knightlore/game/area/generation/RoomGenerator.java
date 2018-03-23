@@ -27,15 +27,24 @@ public class RoomGenerator extends ProceduralAreaGenerator {
     private static final int DEFAULT_MAX_CONNECTIONS = 6;
     private static final int SPAWN_ROOM_MIN_CONNECTIONS = 1;
     private static final int SPAWN_ROOM_MAX_CONNECTIONS = 2;
-    
-    //private static final int MAX_INTERNAL_WALLS = 6;
+
     private static final int MAX_DOMINANT_INTERNAL_WALLS = 4;
     private static final int MAX_SUBDOMINANT_INTERNAL_WALLS = 1;
     private static final double INTERNAL_WALL_PROBABILITY = 0.3;
 
+    private long seed;
     private RoomType roomType = RoomType.NORMAL;
-
+    
+    /**
+     * Creates a room using the given seed, and according
+     * to the provided room type.
+     * @param seed
+     * @param rt
+     * @return a room
+     * @author Thomas, Kacper
+     */
     public Room createRoom(long seed, RoomType rt) {
+        this.seed = seed;
         roomType = rt;
         rand = new Random(seed);
         determineRoomSize();
@@ -49,64 +58,63 @@ public class RoomGenerator extends ProceduralAreaGenerator {
             return new Room(grid, 1 , 2);
         }
         if (rt == RoomType.SPAWN) {
-            return new Room(grid, SPAWN_ROOM_MIN_CONNECTIONS , SPAWN_ROOM_MAX_CONNECTIONS);
+            return new Room(grid, SPAWN_ROOM_MIN_CONNECTIONS, SPAWN_ROOM_MAX_CONNECTIONS);
         }
         return new Room(grid, DEFAULT_MIN_CONNECTIONS, DEFAULT_MAX_CONNECTIONS);
     }
-    
+
     private void determineRoomSize() {
-        int width , height;
-        
-        switch(roomType) {
-        case SPAWN :
-            width = MIN_SIZE;
-            height = width;
-            break;
-        case BIG_LAVA_ROOM:
-            width = getGaussianNum(MAX_SIZE , MAX_SIZE*2);
-            height = getGaussianNum(MAX_SIZE -3 , MAX_SIZE);
-            break;
-        case LAVA_PLATFORM :
-            width = 3 ; //3 + rand.nextInt(3); //MAKE CONSTANT
-            height = width;
-            break;
-        default:
-            width = getGaussianNum(MIN_SIZE, MAX_SIZE);
-            height = getGaussianNum(MIN_SIZE, MAX_SIZE);
+        int width, height;
+        switch (roomType) {
+            case SPAWN:
+                width = MIN_SIZE;
+                height = width;
+                break;
+            case BIG_LAVA_ROOM:
+                width = getGaussianNum(MAX_SIZE, MAX_SIZE * 2);
+                height = getGaussianNum(MAX_SIZE - 3, MAX_SIZE);
+                break;
+            case LAVA_PLATFORM:
+                width = 2;
+                height = width;
+                break;
+            default:
+                width = getGaussianNum(MIN_SIZE, MAX_SIZE);
+                height = getGaussianNum(MIN_SIZE, MAX_SIZE);
         }
         grid = new Tile[width][height];
     }
-    
+
     @Override
     protected void fillGrid() {
         int width = grid.length;
         int height = grid[0].length;
-        int midx = width/2;
-        int midy = height/2;
-        switch(roomType) {
+        int midx = width / 2;
+        int midy = height / 2;
+        switch (roomType) {
             case SPAWN:
-                for(int i=midx-1; i <= midx+1; i++){
-                    grid[i][midy-1] = new PlayerSpawnTile(Team.BLUE, Vector2D.DOWN);
+                for (int i = midx - 1; i <= midx + 1; i++) {
+                    grid[i][midy - 1] = new PlayerSpawnTile(Team.BLUE, Vector2D.DOWN);
                 }
-                grid[midx-1][midy] = new PlayerSpawnTile(Team.BLUE, Vector2D.LEFT);
+                grid[midx - 1][midy] = new PlayerSpawnTile(Team.BLUE, Vector2D.LEFT);
                 grid[midx][midy] = new PlayerSpawnTile(Team.BLUE);
-                grid[midx+1][midy] = new PlayerSpawnTile(Team.BLUE, Vector2D.RIGHT);
-                for(int i=midx-1 ; i<= midx+1; i++) {
-                    grid[i][midy+1] = new PlayerSpawnTile(Team.BLUE, Vector2D.UP);
+                grid[midx + 1][midy] = new PlayerSpawnTile(Team.BLUE, Vector2D.RIGHT);
+                for (int i = midx - 1; i <= midx + 1; i++) {
+                    grid[i][midy + 1] = new PlayerSpawnTile(Team.BLUE, Vector2D.UP);
                 }
                 fillUndecidedTiles();
                 break;
             case WEAPON:
-                for(int i=0; i<width; i++) {
-                    for(int j=0; j<height; j++) {
+                for (int i = 0; i < width; i++) {
+                    for (int j = 0; j < height; j++) {
                         grid[i][j] = new LavaTile();
                     }
                 }
-                grid[midx][midy] = new PickupTile(PickupType.shotgun);
+                grid[midx][midy] = new PickupTile(PickupType.SHOTGUN);
                 fillUndecidedTiles();
                 break;
             case MIDDLE:
-                if(rand.nextDouble() > 0.5) {
+                if (rand.nextDouble() > 0.5) {
                     roomType = RoomType.WEAPON;
                     fillGrid();
                 } else {
@@ -118,13 +126,14 @@ public class RoomGenerator extends ProceduralAreaGenerator {
                 return; // does not use addWalls
             case BIG_LAVA_ROOM:
                 MapGenerator mg = new MapGenerator();
-                Map subMap = mg.createMap(width, height, MapType.LAVA_SUBMAP);
-                for(int i=0; i<width; i++) {
-                    for(int j=0; j<height; j++) {
+
+                Map subMap = mg.createMap(width, height, MapType.LAVA_SUBMAP, seed);
+                for (int i = 0; i < width; i++) {
+                    for (int j = 0; j < height; j++) {
                         grid[i][j] = subMap.getTile(i, j);
                     }
                 }
-                fillUndecidedTiles() ;
+                fillUndecidedTiles();
                 break;
             case LAVA_PLATFORM:
                 if(rand.nextDouble() < 0.33) {
@@ -133,105 +142,80 @@ public class RoomGenerator extends ProceduralAreaGenerator {
                 fillUndecidedTiles();
                 return; // does not use addWalls
             case NORMAL:
-                addInternalWalls(BrickTile.class);
+                addInternalWalls();
+                addRandomPickup();
                 fillUndecidedTiles();
                 addRandomPickup();
         }
         addWalls();
     }
 
-    private void addInternalWalls(Class roomClass) {
-        try {
-            int width = grid.length;
-            int height = grid[0].length;
-            
-            int numHorizontalInternalWalls = 0;
-            int numVerticalInternalWalls = 0;
-            
-            int maxHorizontalInternalWalls = MAX_SUBDOMINANT_INTERNAL_WALLS;
-            int maxVerticalInternalWalls = MAX_SUBDOMINANT_INTERNAL_WALLS;
-            
-            if(width > height) {
-                maxVerticalInternalWalls = MAX_DOMINANT_INTERNAL_WALLS;
-            }else {
-                maxHorizontalInternalWalls = MAX_DOMINANT_INTERNAL_WALLS;
+    private void addInternalWalls() {
+
+        int width = grid.length;
+        int height = grid[0].length;
+
+        int numHorizontalInternalWalls = 0;
+        int numVerticalInternalWalls = 0;
+
+        int maxHorizontalInternalWalls = MAX_SUBDOMINANT_INTERNAL_WALLS;
+        int maxVerticalInternalWalls = MAX_SUBDOMINANT_INTERNAL_WALLS;
+
+        if (width > height) {
+            maxVerticalInternalWalls = MAX_DOMINANT_INTERNAL_WALLS;
+        } else {
+            maxHorizontalInternalWalls = MAX_DOMINANT_INTERNAL_WALLS;
+        }
+
+        for (int j = 2; j < height - 3; j++) {
+            if (numHorizontalInternalWalls == maxHorizontalInternalWalls) {
+                break;
             }
-            
-            for(int j=2; j<height-3; j++) {
-                if(numHorizontalInternalWalls == maxHorizontalInternalWalls) { break; };
-                if(rand.nextDouble() <= INTERNAL_WALL_PROBABILITY) {
-                    addHorizontalInternalWall(j, roomClass);
-                    numHorizontalInternalWalls++;
-                    j++; // skip next iteration
-                }
+            ;
+            if (rand.nextDouble() <= INTERNAL_WALL_PROBABILITY) {
+                addHorizontalInternalWall(j);
+                numHorizontalInternalWalls++;
+                j++; // skip next iteration
             }
-            
-            for(int i=2; i<width-3; i++) {
-                if(numVerticalInternalWalls == maxVerticalInternalWalls){ break; };
-                if(rand.nextDouble() <= INTERNAL_WALL_PROBABILITY) {
-                    addVerticalInternalWall(i, roomClass);
-                    numVerticalInternalWalls++;
-                    i++; // skip next iteration
-                }
+        }
+
+        for (int i = 2; i < width - 3; i++) {
+            if (numVerticalInternalWalls == maxVerticalInternalWalls) {
+                break;
             }
-            
-        }catch(InstantiationException e) {
-            System.out.println("Could not instantiate given class");
-        }catch(IllegalAccessException e) {
-            System.out.println("Could not cast class to Tile");
+            ;
+            if (rand.nextDouble() <= INTERNAL_WALL_PROBABILITY) {
+                addVerticalInternalWall(i);
+                numVerticalInternalWalls++;
+                i++; // skip next iteration
+            }
         }
     }
-    
-    private void addHorizontalInternalWall(int y, Class roomClass) throws InstantiationException, IllegalAccessException {
+
+    private void addHorizontalInternalWall(int y) {
         int width = grid.length;
-        int distanceIntoRoom = 2; //+ rand.nextInt(width/4);
+        int distanceIntoRoom = 2 + rand.nextInt(width / 4);
         int start = distanceIntoRoom;
         int end = (width - 1) - distanceIntoRoom;
         // place straight wall
-        for(int i=start; i <= end; i++) {
-            grid[i][y] = (Tile) roomClass.newInstance();
+        for (int i = start; i < end; i++) {
+            grid[i][y] = new BrickTile();
             grid[i][y].setPathable(false);
         }
-        // now put in gaps
-        addHorizontalGaps(y , start, end);
     }
-    
-    private void addVerticalInternalWall(int x, Class roomClass) throws InstantiationException, IllegalAccessException {
+
+    private void addVerticalInternalWall(int x) {
         int height = grid[0].length;
-        int distanceIntoRoom = 2; //+ rand.nextInt(height/4);
+        int distanceIntoRoom = 2 + rand.nextInt(height / 4);
         int start = distanceIntoRoom;
         int end = (height - 1) - distanceIntoRoom;
         // place straight wall
-        for(int j=start; j <= end; j++) {
-            grid[x][j] = (Tile) roomClass.newInstance();
+        for (int j = start; j < end; j++) {
+            grid[x][j] = new BrickTile();
             grid[x][j].setPathable(false);
         }
-        // now put in gaps
-        addVerticalGaps(x, start, end);
     }
-    
-    private void addHorizontalGaps(int y, int startx, int endx) {
-        int midx = startx + ( (endx - startx) / 2);
-        //TODO: Non-recursive definition
-        int gapApps = 0;
-        for(int i=0; i<gapApps; i++) {
-            int x = rand.nextInt(midx+1);
-            grid[x][y] = UndecidedTile.getInstance();
-            grid[midx + (midx-x)][y] = UndecidedTile.getInstance();
-        }
-    }
-    
-    private void addVerticalGaps(int x, int starty, int endy) {
-        int midy = starty + ( (endy - starty) / 2);
-        //TODO: Non-recursive definition
-        int gapApps = 0;
-        for(int j=0; j<gapApps; j++) {
-            int y = rand.nextInt(midy+1);
-            grid[x][y] = UndecidedTile.getInstance();
-            grid[x][midy + (midy-y)] = UndecidedTile.getInstance();
-        }
-    }
-    
+
     private void addWalls() {
         int width = grid.length;
         int height = grid[0].length;
@@ -260,24 +244,24 @@ public class RoomGenerator extends ProceduralAreaGenerator {
                 if( i == x && j == y) {
                     continue;
                 }
-                if(grid[i][j] instanceof AirTile) {
+                if (grid[i][j] instanceof AirTile) {
                     numOfAir++;
                 }
-            }            
+            }
         }
-        
+
         return numOfAir;
     }
-    
+
     private PickupType randomPickupType() {
         int randInt = rand.nextInt(2);
-        if(randInt == 0) {
-            return PickupType.shotgun;
-        }else {
-            return PickupType.health;
+        if (randInt == 0) {
+            return PickupType.SHOTGUN;
+        } else {
+            return PickupType.HEALTH;
         }
     }
-    
+
     private List<Point> possiblePickupLocations() {
         List<Point> candidateLocations = new ArrayList<Point>();
         int minAirTiles = 24;
@@ -290,20 +274,21 @@ public class RoomGenerator extends ProceduralAreaGenerator {
         }
         return candidateLocations;
     }
-    
+
     private void addRandomPickup() {
-        List<Point>candidateLocations = possiblePickupLocations(); 
-        if(candidateLocations.size() == 0) {
+        List<Point> candidateLocations = possiblePickupLocations();
+        if (candidateLocations.isEmpty()) {
             return;
         }
+
         int index = rand.nextInt(candidateLocations.size());
         Point placeLocation = candidateLocations.get(index);
-        
+
         PickupTile pTile = new PickupTile(randomPickupType());
-        
+
         grid[placeLocation.x][placeLocation.y] = pTile;
     }
-    
+
     @Override
     protected void fillUndecidedTiles() {
         for (int x = 0; x < grid.length; x++) {
@@ -316,11 +301,11 @@ public class RoomGenerator extends ProceduralAreaGenerator {
     }
 
     private void removeRightWall() {
-        for(int y=1; y < grid[0].length -1 ; y++) {
-            grid[grid.length-1][y] = new LavaTile();
+        for (int y = 1; y < grid[0].length - 1; y++) {
+            grid[grid.length - 1][y] = new LavaTile();
         }
     }
-    
+
     private int getGaussianNum(int min, int max) {
         int mean = (max + min) / 2;
         int std_dev = (mean - min) / 2;

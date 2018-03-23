@@ -1,14 +1,12 @@
 package com.knightlore.game.tile;
 
-import com.knightlore.game.Player;
+import com.knightlore.game.entity.Player;
 import com.knightlore.game.buff.Fire;
-import com.knightlore.game.buff.SpawnVision;
 import com.knightlore.game.entity.Entity;
 import com.knightlore.game.entity.ZombieServer;
 import com.knightlore.render.animation.TimedAnimation;
 import com.knightlore.render.graphic.Graphic;
 import com.knightlore.engine.GameEngine;
-import com.knightlore.render.animation.Animation;
 import com.knightlore.render.graphic.texture.Texture;
 
 public class LavaTile extends Tile {
@@ -50,12 +48,18 @@ public class LavaTile extends Tile {
         }
 
     }
+
+    @Override
+    public String toString() {
+        return "Lava";
+    }
     
     @Override
     public char toChar() {
         return 'L';
     }
-    
+
+    @Override
     public double getSolidity() {
         return 0.75D;
     }

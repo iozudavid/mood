@@ -1,5 +1,6 @@
 package com.knightlore.game.entity;
 
+import java.awt.Point;
 import java.awt.geom.Rectangle2D;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
@@ -12,7 +13,6 @@ import java.util.concurrent.LinkedBlockingQueue;
 import com.knightlore.GameSettings;
 import com.knightlore.engine.GameEngine;
 import com.knightlore.engine.TickListener;
-import com.knightlore.game.Player;
 import com.knightlore.game.Team;
 import com.knightlore.game.area.Map;
 import com.knightlore.game.buff.Buff;
@@ -54,8 +54,19 @@ public abstract class Entity extends NetworkObject implements IMinimapObject, Ti
      */
     protected double rotationSpeed = .025;
     
+    /**
+     * A value by which incoming damage is multiplied.
+     */
     protected double damageTakenModifier = 1;
+    
+    /**
+     * A list of active buffs possessed by the entity.
+     */
     protected ArrayList<Buff> buffList = new ArrayList<Buff>();
+    
+    /**
+     * Rate at which buffs are updated.
+     */
     private static final double BUFF_TICK_RATE = GameEngine.UPDATES_PER_SECOND / 16;
 
     // this constant will decide
@@ -78,7 +89,7 @@ public abstract class Entity extends NetworkObject implements IMinimapObject, Ti
 
     // cannot have invalid values
     // anyone can set a team and get a team
-    public Team team=Team.NONE;
+    public Team team = Team.NONE;
 
     /**
      * Used for rendering exclusively. A higher zOffset means that the entities
@@ -88,7 +99,7 @@ public abstract class Entity extends NetworkObject implements IMinimapObject, Ti
     private boolean creationCall;
     private boolean settingCall;
 
-    protected String name = "entity";
+    private String name = "entity";
 
     protected BlockingQueue<ByteBuffer> systemMessages;
 
@@ -161,10 +172,10 @@ public abstract class Entity extends NetworkObject implements IMinimapObject, Ti
      */
     public abstract void onCollide(Player player);
 
-    public void killConfirmed(Player victim) {
-        // do nothing
-    }
-
+    /**
+     * Periodically calls the onEntered method of the tile corresponding to the
+     * player's current location.
+     */
     @Override
     public void onUpdate() {
         // Tell the tile that we're currently standing on that we've entered it.
@@ -232,26 +243,12 @@ public abstract class Entity extends NetworkObject implements IMinimapObject, Ti
         return plane;
     }
 
-    public double getxPlane() {
-        return getPlane().getX();
-    }
-
-    public double getyPlane() {
-        return getPlane().getY();
-    }
-
-    public void setxPlane(double xPlane) {
-        plane = new Vector2D(xPlane, plane.getY());
-        direction = plane.perpendicular();
-    }
-
-    public void setyPlane(double yPlane) {
-        plane = new Vector2D(plane.getX(), yPlane);
-        direction = plane.perpendicular();
-    }
-
     public int getzOffset() {
         return zOffset;
+    }
+    
+    public void respawn(Vector2D spawnPos) {
+        this.position = spawnPos;
     }
 
     /**
@@ -484,6 +481,10 @@ public abstract class Entity extends NetworkObject implements IMinimapObject, Ti
         return strafeSpeed;
     }
     
+    public double getDamageTakenModifier() {
+        return damageTakenModifier;
+    }
+    
     public void setDamageTakenModifier(double d) {
         damageTakenModifier = d;
     }
@@ -497,15 +498,22 @@ public abstract class Entity extends NetworkObject implements IMinimapObject, Ti
         }
     }
     
+    /**
+     * Append the given buff to the buff list, and call its
+     * onApply() method.
+     * @param buff
+     */
     private synchronized void addBuff(Buff buff) {
         buffList.add(buff);
         buff.onApply();
     }
     
+    /**
+     * Restarts the current buff if its type is present in the
+     * entity's buff list, otherwise adds it to the buff list.
+     * @param rbuff
+     */
     public synchronized void resetBuff(Buff rbuff) {
-        //if(GameSettings.isClient()) {
-        //    return;
-        //}
         BuffType bt = rbuff.getType();
         for(Buff buff : buffList) {
             if(buff.getType() == bt) {
@@ -516,12 +524,20 @@ public abstract class Entity extends NetworkObject implements IMinimapObject, Ti
         addBuff(rbuff);
     }
     
+    /**
+     * Sets all buffs to done, ensuring they will be removed from the list
+     * on the next onTick() call.
+     */
     public synchronized void removeAllBuffs() {
         for(Iterator<Buff> iter = buffList.iterator() ; iter.hasNext(); ) {
             iter.next().setDone(true);
         }
     }
     
+    /**
+     * Iterates over the buff list, removing buffs or continuing their
+     * execution as appropriate.
+     */
     @Override
     public synchronized void onTick() {
         
@@ -536,6 +552,10 @@ public abstract class Entity extends NetworkObject implements IMinimapObject, Ti
         }
     }
 
+    /**
+     * Returns the rate at which buffs are checked and executed
+     * @return BUFF_TICK_RATE
+     */
     public static double getBuffTickRate() {
         return BUFF_TICK_RATE;
     }
