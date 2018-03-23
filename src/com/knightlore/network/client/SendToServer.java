@@ -124,7 +124,7 @@ public class SendToServer implements Runnable {
             if (updateCounter++ >= REGULAR_UPDATE_FREQ) {
 
                 updateCounter = 1;
-                conn.send(currentState);
+                this.send(currentState);
                 this.lastState = currentState;
             }
             boolean check = true;
@@ -154,7 +154,7 @@ public class SendToServer implements Runnable {
                 this.prediction.update(this.manager.getMyPlayer(),
                         inputsAsArray, sendTime);
                 this.currentState.position(this.lastPosition);
-                conn.send(currentState);
+                this.send(currentState);
                 this.lastState = currentState;
             }
         }
@@ -197,7 +197,12 @@ public class SendToServer implements Runnable {
                 this.packetNumber++;
             }
             this.tick();
-
+            try {
+                Thread.sleep(5);
+            } catch (InterruptedException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
         }
         this.manager.getMyPlayer().destroy();
     }
@@ -208,7 +213,9 @@ public class SendToServer implements Runnable {
      * @param buf:
      *            The buffer to be sent.
      */
+    int debug=0;
     public void send(ByteBuffer buf) {
+        System.out.println("snd " + debug++);
         conn.send(buf);
     }
 }
