@@ -17,6 +17,12 @@ public final class GameSettings {
 
     public static boolean MOTION_BOB = true;
 
+    public static int mapWidth;
+
+    public static int mapHeight;
+
+    public static int mapSeed;
+
     private GameSettings() {
     }
 
