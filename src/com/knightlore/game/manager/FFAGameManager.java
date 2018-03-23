@@ -1,8 +1,6 @@
 package com.knightlore.game.manager;
 
-import java.nio.ByteBuffer;
 import java.util.Iterator;
-import java.util.List;
 import java.util.UUID;
 
 import com.knightlore.engine.GameEngine;
@@ -94,12 +92,8 @@ public class FFAGameManager extends GameManager {
 
     @Override
     public void onUpdate() {
-
-        // update ticks left
-        if (gameState != GameState.FINISHED) {
-            ticksLeft = gameOverTick - GameEngine.ticker.getTime();
-        }
-
+        super.onUpdate();
+        
         // check for winners
         PlayerManager playerManager = GameEngine.getSingleton().getWorld().getPlayerManager();
 

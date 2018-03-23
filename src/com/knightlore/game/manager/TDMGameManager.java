@@ -1,8 +1,6 @@
 package com.knightlore.game.manager;
 
-import java.nio.ByteBuffer;
 import java.util.Iterator;
-import java.util.List;
 import java.util.UUID;
 
 import com.knightlore.engine.GameEngine;
@@ -16,11 +14,11 @@ import com.knightlore.game.entity.weapon.WeaponType;
 import com.knightlore.utils.Vector2D;
 
 public class TDMGameManager extends GameManager {
-    
+
     public TDMGameManager(UUID uuid) {
         super(uuid);
     }
-    
+
     public TDMGameManager() {
         super(UUID.randomUUID());
     }
@@ -28,17 +26,17 @@ public class TDMGameManager extends GameManager {
     private static final double ROUND_TIME_SECS = 300;
     private long SCORE_UPDATE_PERIOD = (long) GameEngine.UPDATES_PER_SECOND * 5;
     private long nextScoreUpdate;
-    
+
     private int blueScore = 0;
     private int redScore = 0;
-    
+
     @Override
     public void startLobby() {
         gameState = GameState.LOBBY;
     }
-    
-    // TODO: PLAYER TEAM ASSIGNMENT 
-    
+
+    // TODO: PLAYER TEAM ASSIGNMENT
+
     @Override
     public void beginGame() {
         gameState = GameState.PLAYING;
@@ -52,37 +50,37 @@ public class TDMGameManager extends GameManager {
         gameOverTick = GameEngine.ticker.getTime() + (long) (GameEngine.UPDATES_PER_SECOND * ROUND_TIME_SECS);
         nextScoreUpdate = SCORE_UPDATE_PERIOD;
     }
-    
+
     @Override
     public void gameOver() {
         gameState = GameState.FINISHED;
         System.out.println("GAME OVER");
-        if(blueScore > redScore) {
+        if (blueScore > redScore) {
             System.out.println("KNIGHTLORE WINS!");
-        }else if(blueScore < redScore) {
+        } else if (blueScore < redScore) {
             System.out.println("THE ANARCHISTS WIN!");
-        }else {
+        } else {
             System.out.println("DRAW! THE DAY BELONGS TO THE ZOMBIES!");
         }
     }
-    
+
     @Override
     public void onEntityDeath(ZombieShared victim, Player inflictor) {
         onEntityDeath(victim);
     }
-    
+
     @Override
     public void onEntityDeath(ZombieShared victim) {
         Vector2D spawnPos = GameEngine.getSingleton().getWorld().getMap().getRandomSpawnPoint();
-        victim.respawn(spawnPos); 
+        victim.respawn(spawnPos);
     }
-    
+
     @Override
     public void onEntityDeath(Player victim, Player inflictor) {
         inflictor.addScore(1);
         onEntityDeath(victim);
     }
-    
+
     @Override
     public void onEntityDeath(Player victim) {
         victim.addScore(-1);
@@ -90,7 +88,7 @@ public class TDMGameManager extends GameManager {
         Vector2D spawnPos = GameEngine.getSingleton().getWorld().getMap().getRandomSpawnPoint(victim.team);
         victim.respawn(spawnPos);
     }
-    
+
     private void spawnPickup(Vector2D pos, WeaponType type) {
         WeaponPickup pickup;
         switch (type) {
@@ -108,13 +106,14 @@ public class TDMGameManager extends GameManager {
         GameEngine.getSingleton().getWorld().addEntity(pickup);
         System.out.println(type + " Pickup Created");
     }
-    
+
     @Override
     public void onCreate() {
     }
-    
+
     @Override
     public void onUpdate() {
+        super.onUpdate();
         
         if (GameEngine.ticker.getTime() > gameOverTick && gameState != GameState.FINISHED) {
             gameState = GameState.FINISHED;
@@ -122,7 +121,7 @@ public class TDMGameManager extends GameManager {
         
         if (GameEngine.ticker.getTime() > nextScoreUpdate) {
             // compute scores
-            
+
             PlayerManager playerManager = GameEngine.getSingleton().getWorld().getPlayerManager();
             synchronized (playerManager) {
                 blueScore = 0;
@@ -140,22 +139,14 @@ public class TDMGameManager extends GameManager {
             nextScoreUpdate += SCORE_UPDATE_PERIOD;
         }
     }
-    
+
     @Override
     public void onDestroy() {
-    }
-    
-    @Override
-    public String timeLeftString() {
-        long time = gameOverTick - GameEngine.ticker.getTime();
-        long second = (time / 1000) % 60;
-        long minute = (time / (1000 * 60)) % 60;
-        return String.format("%02d:%02d", minute, second);
     }
 
     @Override
     public String getClientClassName() {
         return TDMGameManagerClient.class.getName();
     }
-    
+
 }

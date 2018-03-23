@@ -37,9 +37,18 @@ public abstract class GameManager extends NetworkObject {
 
     public abstract void onEntityDeath(Player victim);
     
+    @Override
+    public void onUpdate() {
+        // update ticks left
+        if (gameState != GameState.FINISHED) {
+            ticksLeft = gameOverTick - GameEngine.ticker.getTime();
+        }
+    }
+
     public String timeLeftString() {
         long second = (long) (ticksLeft / GameEngine.UPDATES_PER_SECOND);
         long minute = (long) (second / 60);
+        System.out.println(ticksLeft);
         return String.format("%02d:%02d", minute % 60, second % 60);
     }
 
@@ -50,7 +59,7 @@ public abstract class GameManager extends NetworkObject {
         buf.putLong(ticksLeft);
         return buf;
     }
-    
+
     @Override
     public void deserialize(ByteBuffer buffer) {
         gameState = GameState.values()[buffer.getInt()];
