@@ -3,6 +3,8 @@ package com.knightlore.game.world;
 import com.knightlore.engine.GameEngine;
 import com.knightlore.engine.audio.BackgroundMusic;
 import com.knightlore.engine.audio.SoundManager;
+import com.knightlore.game.manager.GameManager;
+import com.knightlore.game.manager.GameState;
 import com.knightlore.gui.GameChat;
 import com.knightlore.render.Environment;
 
@@ -21,6 +23,10 @@ public class ClientWorld extends GameWorld {
         super.update();
         if (gameChat != null && gameManager != null) {
             gameChat.setTimeLeft(gameManager.timeLeftString());
+        }
+        
+        if (GameManager.getGameState() == GameState.FINISHED) {
+            gameChat.setScoreMenuVisible();
         }
     }
 

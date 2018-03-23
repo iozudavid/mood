@@ -65,5 +65,10 @@ public class Animation<T> {
     public void setFrame(int frame) {
         currentFrame = frame;
     }
+    
+    protected void clearFrames() {
+        currentFrame = 0;
+        frames.clear();
+    }
 
 }

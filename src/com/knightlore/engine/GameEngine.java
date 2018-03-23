@@ -251,7 +251,7 @@ public class GameEngine implements Runnable {
                 synchronized(this.gameObjectManager){
                     gameObjectManager.updateObjects();
                 }
-                if (world!=null && GameManager.getGameState() == GameState.PLAYING) {
+                if (world != null) {
                     world.update();
                     GameFeed.getInstance().update();
                 }

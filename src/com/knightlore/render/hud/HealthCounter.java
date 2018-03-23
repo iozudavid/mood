@@ -13,7 +13,7 @@ public class HealthCounter extends HUDElement implements TickListener {
     public static final int G2 = 0x810000;
 
     private double displayHealth;
-    private final double p = 0.1D;
+    private final double p = 0.2D;
 
     private double delta = 0D;
 

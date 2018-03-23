@@ -4,7 +4,7 @@ import com.knightlore.game.entity.Entity;
 
 public class Fire extends Buff {
 
-    private static int FIRE_DAMAGE = 6;
+    private static final int FIRE_DAMAGE = 6;
     private static final double FIRE_FREQUENCY = 1;
     private static final double FIRE_LENGTH = 8;
 
@@ -26,7 +26,6 @@ public class Fire extends Buff {
     @Override
     public void onRemove() {
         // TODO: Remove fiery effect on the player's display
-
     }
 
     @Override
