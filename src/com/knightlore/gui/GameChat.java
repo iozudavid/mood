@@ -5,6 +5,8 @@ import java.util.ArrayList;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import com.knightlore.engine.GameEngine;
+import com.knightlore.game.manager.GameManager;
+import com.knightlore.game.manager.GameState;
 import com.knightlore.network.client.ClientManager;
 import com.knightlore.render.PixelBuffer;
 import com.knightlore.utils.funcptrs.VoidFunction;
@@ -39,7 +41,7 @@ public class GameChat extends GUICanvas {
     @Override
     public void init() {
         super.init();
-        this.pix = new PixelBuffer((int) (screenWidth), (int) (screenHeight));
+        this.pix = new PixelBuffer(screenWidth, screenHeight);
         this.pix.flood(-16711936);
         this.textArea = new TextArea(0, 0, (int) (screenWidth * 0.3), (int) (screenHeight * 0.3));
         this.textField = new TextField(0,
@@ -71,69 +73,41 @@ public class GameChat extends GUICanvas {
         timeLeftText.currentColor = Color.WHITE;
         this.addGUIObject(timeLeftText);
         timeLeftText.SetText("00:00");
-        GUICanvas.setOnEscFunction(new VoidFunction() {
+        GUICanvas.setOnEscFunction(() -> GameChat.this.setPauseMenuVisible(!GameChat.this.lastPauseVisible));
 
-            @Override
-            public void call() {
-                GameChat.this.setPauseMenuVisible(!GameChat.this.lastPauseVisible);
-            }
+        GUICanvas.setOnQFunction(() -> {
+            if (GameChat.this.lastScoreVisible)
+                return;
+            GameChat.this.lastScoreVisible = true;
+            GameChat.this.setScoreMenuVisible();
         });
 
-        GUICanvas.setOnQFunction(new VoidFunction() {
-
-            @Override
-            public void call() {
-                if (GameChat.this.lastScoreVisible)
-                    return;
-                GameChat.this.lastScoreVisible = true;
-                GameChat.this.setScoreMenuVisible();
-            }
-        });
-
-        GUICanvas.setOnQReleaseFunction(new VoidFunction() {
-
-            @Override
-            public void call() {
-                if (!GameChat.this.lastScoreVisible)
-                    return;
-                GameChat.this.lastScoreVisible = false;
-                GameChat.this.setScoreMenuVisible();
-            }
+        GUICanvas.setOnQReleaseFunction(() -> {
+            if (!GameChat.this.lastScoreVisible)
+                return;
+            GameChat.this.lastScoreVisible = false;
+            GameChat.this.setScoreMenuVisible();
         });
     }
 
-    public void initPauseHidden() {
+    private void initPauseHidden() {
         this.resumeButton = new Button(GuiUtils.middleWidth(screenWidth, 300),
                 GuiUtils.calculateHeight(screenHeight, 30), 300, 40, "Resume", 20);
         this.mainMenuButton = new Button(GuiUtils.middleWidth(screenWidth, 300),
                 GuiUtils.calculateHeight(screenHeight, 40), 300, 40, "Main Menu", 20);
         this.exitButton = new Button(GuiUtils.middleWidth(screenWidth, 300), GuiUtils.calculateHeight(screenHeight, 50),
                 300, 40, "Exit", 20);
-        this.resumeButton.clickFunction = new VoidFunction() {
-
-            @Override
-            public void call() {
-                GameChat.this.setPauseMenuVisible(false);
-            }
+        this.resumeButton.clickFunction = () -> GameChat.this.setPauseMenuVisible(false);
+        this.mainMenuButton.clickFunction = () -> {
+            GameEngine.getSingleton().stopGame();
+            ClientManager.disconnect();
+            GameChat.this.destroy();
+            GameEngine.getSingleton().guiState = GUIState.StartMenu;
         };
-        this.mainMenuButton.clickFunction = new VoidFunction() {
-
-            @Override
-            public void call() {
-                GameEngine.getSingleton().stopGame();
-                ClientManager.disconnect();
-                GameChat.this.destroy();
-                GameEngine.getSingleton().guiState = GUIState.StartMenu;
-            }
-        };
-        this.exitButton.clickFunction = new VoidFunction() {
-
-            @Override
-            public void call() {
-                ClientManager.disconnect();
-                GameChat.this.destroy();
-                GameEngine.getSingleton().stop();
-            }
+        this.exitButton.clickFunction = () -> {
+            ClientManager.disconnect();
+            GameChat.this.destroy();
+            GameEngine.getSingleton().stop();
         };
     }
 
@@ -179,7 +153,7 @@ public class GameChat extends GUICanvas {
         this.scoreBoard.removeTableEntry(uuid);
     }
 
-    public void setPauseMenuVisible(boolean b) {
+    private void setPauseMenuVisible(boolean b) {
         this.lastPauseVisible = b;
         if (b) {
             this.initPauseHidden();
@@ -199,7 +173,7 @@ public class GameChat extends GUICanvas {
     }
 
     public void setScoreMenuVisible() {
-        if (this.lastScoreVisible) {
+        if (this.lastScoreVisible || GameManager.getGameState() == GameState.FINISHED) {
             this.addGUIObject(scoreBoardImage);
             this.addGUIObject(scoreBoard);
         } else {

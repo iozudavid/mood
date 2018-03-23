@@ -23,6 +23,7 @@ import com.knightlore.game.buff.SpawnVision;
 import com.knightlore.game.entity.weapon.Weapon;
 import com.knightlore.game.entity.weapon.WeaponType;
 import com.knightlore.game.manager.GameManager;
+import com.knightlore.game.manager.GameState;
 import com.knightlore.game.world.ClientWorld;
 import com.knightlore.network.NetworkObject;
 import com.knightlore.network.NetworkObjectManager;
@@ -240,6 +241,10 @@ public class Player extends Entity {
     @Override
     public void onUpdate() {
         super.onUpdate();
+        if (GameManager.getGameState() == GameState.FINISHED) {
+            return;
+        }
+        
         this.sendStatsToScoreBoard();
 
         hasShot = false;
@@ -321,8 +326,7 @@ public class Player extends Entity {
     @Override
     public void onCollide(Player player) {
     }
-
-    // TODO: serialize weapon etc.
+    
     @Override
     public ByteBuffer serialize() {
         ByteBuffer bb = super.serialize();
@@ -399,7 +403,9 @@ public class Player extends Entity {
                     gameManager.onEntityDeath(this);
                 }
             }
+
             respawn = true;
+            setCurrentWeaponType(WeaponType.PISTOL);
             removeAllBuffs();
             this.resetBuff(new Immune(this));
             this.sendSystemMessage(this.getName(), lastInflictor);
@@ -438,8 +444,7 @@ public class Player extends Entity {
      * Make the player hold a weapon of the given type. Instantiates a new
      * weapon of this type.
      * 
-     * @param wt
-     *            The type of weapon for the player to be holding.
+     * @param wt The type of weapon for the player to be holding.
      */
     public synchronized void setCurrentWeaponType(WeaponType wt) {
         if (wt == this.currentWeaponType) {

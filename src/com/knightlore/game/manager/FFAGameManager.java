@@ -15,10 +15,8 @@ import com.knightlore.game.entity.weapon.WeaponType;
 import com.knightlore.utils.Vector2D;
 
 public class FFAGameManager extends GameManager {
-
-    private static final int WIN_SCORE = 1;
-    private static final double ROUND_TIME_SECS = 300;
-
+    
+    private static final double ROUND_TIME_SECS = 540;
     private Entity winner;
 
     public FFAGameManager(UUID uuid) {
