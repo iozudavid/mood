@@ -1,5 +1,6 @@
 package com.knightlore.game.manager;
 
+import com.knightlore.game.Team;
 import com.knightlore.game.entity.Player;
 
 import java.util.LinkedList;
@@ -19,4 +20,19 @@ public class PlayerManager {
     public List<Player> getPlayers() {
         return players;
     }
+    
+    public int numPlayer() {
+        return players.size();
+    }
+    
+    public int numPlayers(Team t) {
+        int num = 0;
+        for(Player p : players) {
+            if(p.team == t) {
+                num++;
+            }
+        }
+        return num;
+    }
+    
 }

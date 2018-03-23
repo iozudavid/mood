@@ -133,19 +133,6 @@ public class FFAGameManager extends GameManager {
     }
 
     @Override
-    public ByteBuffer serialize() {
-        ByteBuffer buf = super.serialize();
-        buf.putLong(ticksLeft);
-        return buf;
-    }
-
-    @Override
-    public void deserialize(ByteBuffer buffer) {
-        gameState = GameState.values()[buffer.getInt()];
-        ticksLeft = buffer.getLong();
-    }
-
-    @Override
     public String getClientClassName() {
         return ClientFFAGameManager.class.getName();
     }

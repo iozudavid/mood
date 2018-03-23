@@ -135,7 +135,9 @@ public class MapGenerator extends ProceduralAreaGenerator {
         
         if(mapType == MapType.FFA) {
             roomsToBuild.add(RoomType.NORMAL);
+            roomsToBuild.add(RoomType.NORMAL);
         }else {
+            roomsToBuild.add(RoomType.SPAWN);
             roomsToBuild.add(RoomType.SPAWN);
         }
         
@@ -151,12 +153,6 @@ public class MapGenerator extends ProceduralAreaGenerator {
         
         if(grid.length > 20 && grid[0].length > 20) {
             roomsToBuild.add(RoomType.BIG_LAVA_ROOM);
-        }
-        
-        if(mapType == MapType.FFA) {
-            roomsToBuild.add(RoomType.NORMAL);
-        }else {
-            roomsToBuild.add(RoomType.SPAWN);
         }
         
         while(roomsToBuild.size() <= maxRooms) {

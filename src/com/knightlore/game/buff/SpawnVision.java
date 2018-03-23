@@ -14,7 +14,6 @@ public class SpawnVision extends Buff {
 
     @Override
     public void onApply() {
-        // TODO Auto-generated method stub
         GameSettings.actualBlockiness = 100;
     }
 
@@ -23,26 +22,23 @@ public class SpawnVision extends Buff {
         double delta;
         delta = GameSettings.desiredBlockiness - GameSettings.actualBlockiness;
 
-        final double pp = 0.02;
+        final double pp = 0.01;
         GameSettings.actualBlockiness += pp * delta;
     }
 
     @Override
     public void onRemove() {
-        // TODO Auto-generated method stub
         GameSettings.actualBlockiness = GameSettings.desiredBlockiness;
     }
 
     @Override
     public BuffType getType() {
-        // TODO Auto-generated method stub
         return BuffType.SPAWNVISION;
     }
 
     @Override
     public String toString() {
-        // TODO Auto-generated method stub
-        return "BLOCKINESS";
+        return "SPAWNVISION";
     }
     
     @Override
