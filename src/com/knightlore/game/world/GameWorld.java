@@ -88,7 +88,7 @@ public abstract class GameWorld {
         if (mapSeed == null) {
             mapSeed = TEST_SEED;
         }
-        map = new MapGenerator().createMap(TEST_XSIZE, TEST_YSIZE, MapType.FFA, mapSeed);
+        map = new MapGenerator().createMap(TEST_XSIZE, TEST_YSIZE, MapType.FFA);
         ents = new LinkedList<>();
         aiManager = new AIManager(map);
         playerManager = new PlayerManager();
