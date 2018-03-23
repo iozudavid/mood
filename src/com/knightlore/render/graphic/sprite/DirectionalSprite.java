@@ -21,6 +21,9 @@ public class DirectionalSprite {
     public static final GravestoneSprite GRAVESTONE_DIRECTIONAL_SPRITE = new GravestoneSprite(
             GraphicSheet.GRAVESTONE_SPRITES);
 
+    public static final SpeedSprite SPEED_DIRECTION_SPRITE = new SpeedSprite(
+            GraphicSheet.SPEED_SPRITES);
+    
     private List<Graphic> angles;
 
     public DirectionalSprite() {

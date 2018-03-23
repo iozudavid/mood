@@ -67,6 +67,9 @@ public class GraphicSheet {
      */
     public final static GraphicSheet GRAVESTONE_SPRITES = new GraphicSheet("res/models/gravestone_sprites.png", 128);
 
+    
+    public final static GraphicSheet SPEED_SPRITES = new GraphicSheet("res/models/speedup_static_sprites",128);
+    
     private final int cellSize;
     private BufferedImage sheet;
 

@@ -2,8 +2,13 @@ package com.knightlore.game.buff;
 
 import com.knightlore.game.entity.Entity;
 
-public class Slow extends Buff {
+public class Speed extends Buff {
     
+    protected Speed(Entity ent, double frequency, double length) {
+        super(ent, frequency, length);
+        // TODO Auto-generated constructor stub
+    }
+
     private double originalMoveSpeed;
     private double originalRotateSpeed;
     private double originalStrafeSpeed;
@@ -15,7 +20,7 @@ public class Slow extends Buff {
     private static final double SLOW_FREQUENCY = 0.5;
     private static final double SLOW_LENGTH = 1.0;
     
-    public Slow(Entity ent) {
+    public Speed(Entity ent) {
         super(ent, SLOW_FREQUENCY, SLOW_LENGTH);
     }
     
