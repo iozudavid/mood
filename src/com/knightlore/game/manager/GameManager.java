@@ -48,7 +48,6 @@ public abstract class GameManager extends NetworkObject {
     public String timeLeftString() {
         long second = (long) (ticksLeft / GameEngine.UPDATES_PER_SECOND);
         long minute = (long) (second / 60);
-        System.out.println(ticksLeft);
         return String.format("%02d:%02d", minute % 60, second % 60);
     }
 
