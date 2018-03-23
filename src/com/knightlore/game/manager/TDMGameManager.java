@@ -16,8 +16,6 @@ import com.knightlore.utils.Vector2D;
 
 public class TDMGameManager extends GameManager {
     
-    
-    
     public TDMGameManager(UUID uuid) {
         super(uuid);
     }
@@ -29,14 +27,16 @@ public class TDMGameManager extends GameManager {
     private static final double ROUND_TIME_SECS = 300;
     private long SCORE_UPDATE_PERIOD = (long) GameEngine.UPDATES_PER_SECOND * 5;
     private long nextScoreUpdate;
-    private int blueScore;
-    private int redScore;
-    private static final long SCORE_UPDATE_DELAY = 20;
+    
+    private int blueScore = 0;
+    private int redScore = 0;
     
     @Override
     public void startLobby() {
         gameState = GameState.LOBBY;
     }
+    
+    // TODO: PLAYER TEAM ASSIGNMENT 
     
     @Override
     public void beginGame() {

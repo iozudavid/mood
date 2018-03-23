@@ -36,7 +36,7 @@ public abstract class GameManager extends NetworkObject {
     public abstract void onEntityDeath(Player victim, Player inflictor);
 
     public abstract void onEntityDeath(Player victim);
-
+    
     public String timeLeftString() {
         long second = (long) (ticksLeft / GameEngine.UPDATES_PER_SECOND);
         long minute = (long) (second / 60);
