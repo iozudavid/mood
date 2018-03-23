@@ -50,6 +50,13 @@ public class RoomGenerator extends ProceduralAreaGenerator {
         determineRoomSize();
         resetGrid();
         fillGrid();
+        if (rt == RoomType.BIG_LAVA_ROOM) {
+            return new Room(grid,1 , 2);
+        }
+        
+        if (rt == RoomType.LAVA_PLATFORM) {
+            return new Room(grid, 1 , 2);
+        }
         if (rt == RoomType.SPAWN) {
             return new Room(grid, SPAWN_ROOM_MIN_CONNECTIONS, SPAWN_ROOM_MAX_CONNECTIONS);
         }
@@ -58,7 +65,6 @@ public class RoomGenerator extends ProceduralAreaGenerator {
 
     private void determineRoomSize() {
         int width, height;
-
         switch (roomType) {
             case SPAWN:
                 width = MIN_SIZE;
@@ -120,17 +126,17 @@ public class RoomGenerator extends ProceduralAreaGenerator {
                 return; // does not use addWalls
             case BIG_LAVA_ROOM:
                 MapGenerator mg = new MapGenerator();
+
                 Map subMap = mg.createMap(width, height, MapType.LAVA_SUBMAP, seed);
                 for (int i = 0; i < width; i++) {
                     for (int j = 0; j < height; j++) {
-                        // HAVE I GOT TO USE .copy()
                         grid[i][j] = subMap.getTile(i, j);
                     }
                 }
                 fillUndecidedTiles();
                 break;
             case LAVA_PLATFORM:
-                if (rand.nextDouble() > 0.2) {
+                if(rand.nextDouble() < 0.33) {
                     grid[midx][midy] = new PickupTile(randomPickupType());
                 }
                 fillUndecidedTiles();
@@ -139,6 +145,7 @@ public class RoomGenerator extends ProceduralAreaGenerator {
                 addInternalWalls();
                 addRandomPickup();
                 fillUndecidedTiles();
+                addRandomPickup();
         }
         addWalls();
     }
@@ -223,26 +230,18 @@ public class RoomGenerator extends ProceduralAreaGenerator {
         }
     }
 
-    private int neighbouringAirTiles(int x, int y) {
+    private int neighbouringAirTiles(int x, int y, int radius) {
         int numOfAir = 0;
         int width = grid.length;
         int height = grid[0].length;
-        if (x <= 2) {
-            return 0;
-        }
-        if (y <= 2) {
-            return 0;
-        }
-        if (x >= width - 2) {
-            return 0;
-        }
-        if (y >= height - 2) {
-            return 0;
-        }
-
-        for (int i = x - 1; i < x + 2; i++) {
-            for (int j = y - 1; j < y + 2; j++) {
-                if (i == x && j == y) {
+        if(x <= radius+1) { return 0; }
+        if(y <= radius+1) { return 0; }
+        if(x >= width-1-radius) { return 0; }
+        if(y >= height-1-radius) { return 0; }
+        
+        for(int i = x-radius; i <= x+radius; i++) {
+            for(int j = y-radius; j <= y+radius; j++) {
+                if( i == x && j == y) {
                     continue;
                 }
                 if (grid[i][j] instanceof AirTile) {
@@ -265,10 +264,10 @@ public class RoomGenerator extends ProceduralAreaGenerator {
 
     private List<Point> possiblePickupLocations() {
         List<Point> candidateLocations = new ArrayList<Point>();
-        int minAirTiles = 8;
-        for (int i = 0; i < grid.length - 1; i++) {
-            for (int j = 0; j < grid[0].length - 1; j++) {
-                if (neighbouringAirTiles(i, j) >= minAirTiles) {
+        int minAirTiles = 24;
+        for(int i=0; i< grid.length - 1; i++) {
+            for(int j=0; j<grid[0].length - 1; j++) {
+                if(neighbouringAirTiles(i,j,2) >= minAirTiles) {
                     candidateLocations.add(new Point(i, j));
                 }
             }

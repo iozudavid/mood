@@ -422,7 +422,7 @@ public class Player extends Entity {
                     gameManager.onEntityDeath(this);
                 }
             }
-
+            respawn = true;
             removeAllBuffs();
             this.resetBuff(new Immune(this));
             this.sendSystemMessage(this.getName(), lastInflictor);
