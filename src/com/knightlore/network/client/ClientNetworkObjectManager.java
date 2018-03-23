@@ -183,8 +183,8 @@ public class ClientNetworkObjectManager extends NetworkObjectManager {
      *            - ByteBuffer containing map seed information
      */
     private synchronized void receiveMapSeed(ByteBuffer buf) {
-        System.out.println("received map seed");
         long seed = buf.getLong();
+        System.out.println("received map seed " + seed);
         clientWorld.setUpWorld(seed);
     }
 
