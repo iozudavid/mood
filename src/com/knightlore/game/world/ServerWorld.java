@@ -4,12 +4,11 @@ import java.util.Iterator;
 
 import com.knightlore.game.BotInput;
 import com.knightlore.game.Team;
-import com.knightlore.game.manager.FFAGameManager;
-import com.knightlore.game.manager.TDMGameManager;
-import com.knightlore.game.entity.Player;
 import com.knightlore.game.entity.Entity;
+import com.knightlore.game.entity.Player;
 import com.knightlore.game.entity.SpectatorCamera;
 import com.knightlore.game.entity.ZombieServer;
+import com.knightlore.game.manager.TDMGameManager;
 import com.knightlore.utils.Vector2D;
 
 public class ServerWorld extends GameWorld {
@@ -36,6 +35,7 @@ public class ServerWorld extends GameWorld {
         for (int i = 0; i < 0; i++) {
             Player botPlayer = new Player(map.getRandomSpawnPoint(), Vector2D.UP);
             botPlayer.setInputModule(new BotInput());
+            botPlayer.team = Team.BLUE;
             botPlayer.init();
             botPlayer.setName("bot" + i);
             playerManager.addPlayer(botPlayer);

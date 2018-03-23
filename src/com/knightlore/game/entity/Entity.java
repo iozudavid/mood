@@ -1,6 +1,5 @@
 package com.knightlore.game.entity;
 
-import java.awt.Point;
 import java.awt.geom.Rectangle2D;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;

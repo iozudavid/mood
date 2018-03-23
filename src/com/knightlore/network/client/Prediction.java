@@ -5,6 +5,7 @@ import java.nio.ByteBuffer;
 import java.util.Arrays;
 import java.util.LinkedHashMap;
 
+import com.knightlore.game.Team;
 import com.knightlore.game.entity.Player;
 import com.knightlore.game.entity.weapon.WeaponType;
 import com.knightlore.network.NetworkObject;
@@ -68,6 +69,8 @@ public class Prediction {
         WeaponType newWeaponType = WeaponType.VALUES[received.getInt()];
         player.setCurrentWeaponType(newWeaponType);
         
+        player.setTeam(Team.values()[received.getInt()]);
+
         // remove data inserted before this packet was sent
         if (!Arrays.equals(this.lastReceivedFromServer.array(), received.array())) {
 			if(this.nextPrediction==null){

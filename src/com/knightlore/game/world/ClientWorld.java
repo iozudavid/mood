@@ -22,7 +22,6 @@ public class ClientWorld extends GameWorld {
     public void update() {
         super.update();
         if (gameChat != null && gameManager != null) {
-            String str = gameManager.timeLeftString();
             gameChat.setTimeLeft(gameManager.timeLeftString());
         }
 
