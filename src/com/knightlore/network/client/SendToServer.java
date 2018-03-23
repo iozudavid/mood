@@ -198,7 +198,7 @@ public class SendToServer implements Runnable {
             }
             this.tick();
             try {
-                Thread.sleep(5);
+                Thread.sleep(5 * 2);
             } catch (InterruptedException e) {
                 // TODO Auto-generated catch block
                 e.printStackTrace();

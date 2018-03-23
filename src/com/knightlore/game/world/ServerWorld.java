@@ -17,14 +17,14 @@ public class ServerWorld extends GameWorld {
     @Override
     public void setUpWorld(Long mapSeed) {
         super.setUpWorld(mapSeed);
-        //gameManager = new FFAGameManager();
+        // gameManager = new FFAGameManager();
         gameManager = new TDMGameManager();
         gameManager.init();
         buildEntities();
     }
 
     private void buildEntities() {
-        for (int i = 0; i < 20; i++) {
+        for (int i = 0; i < 1; i++) {
             ZombieServer zom = new ZombieServer(map.getRandomSpawnPoint());
             zom.init();
             this.addEntity(zom);
@@ -33,7 +33,7 @@ public class ServerWorld extends GameWorld {
         // TurretShared tboi = new TurretServer(3, map.getRandomSpawnPoint(),
         // Vector2D.UP);
         // tboi.init();
-        for (int i = 0; i < 5; i++) {
+        for (int i = 0; i < 0; i++) {
             Player botPlayer = new Player(map.getRandomSpawnPoint(), Vector2D.UP);
             botPlayer.setInputModule(new BotInput());
             botPlayer.init();
@@ -64,14 +64,14 @@ public class ServerWorld extends GameWorld {
 
     public Player createPlayer() {
         // TODO: Initialise given player team in the
-        // player the constructor 
+        // player the constructor
         Vector2D pos = map.getRandomSpawnPoint();
         Team team = Team.NONE;
-        if(gameManager instanceof TDMGameManager) {
-            if(playerManager.numPlayers(Team.BLUE) <= playerManager.numPlayers(Team.RED)) {
+        if (gameManager instanceof TDMGameManager) {
+            if (playerManager.numPlayers(Team.BLUE) <= playerManager.numPlayers(Team.RED)) {
                 System.out.println("BLUE");
                 team = Team.BLUE;
-            }else {
+            } else {
                 System.out.println("RED");
                 team = Team.RED;
             }

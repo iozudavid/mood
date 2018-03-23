@@ -244,7 +244,7 @@ public class Player extends Entity {
         if (GameManager.getGameState() == GameState.FINISHED) {
             return;
         }
-        
+
         this.sendStatsToScoreBoard();
 
         hasShot = false;
@@ -326,7 +326,7 @@ public class Player extends Entity {
     @Override
     public void onCollide(Player player) {
     }
-    
+
     @Override
     public ByteBuffer serialize() {
         ByteBuffer bb = super.serialize();
@@ -361,7 +361,7 @@ public class Player extends Entity {
 
     @Override
     public DirectionalSprite getDirectionalSprite() {
-        return DirectionalSprite.PLAYER_DIRECTIONAL_SPRITE;
+        return null;
     }
 
     @Override
@@ -444,7 +444,8 @@ public class Player extends Entity {
      * Make the player hold a weapon of the given type. Instantiates a new
      * weapon of this type.
      * 
-     * @param wt The type of weapon for the player to be holding.
+     * @param wt
+     *            The type of weapon for the player to be holding.
      */
     public synchronized void setCurrentWeaponType(WeaponType wt) {
         if (wt == this.currentWeaponType) {
@@ -467,7 +468,7 @@ public class Player extends Entity {
         default:
             w = PlayerGraphicMatrix.Weapon.PISTOL;
         }
-        
+
         System.out.println(w);
 
         this.moveAnim.setFrames(PlayerGraphicMatrix.getGraphic(Color.BLUE, w, Stance.MOVE));
