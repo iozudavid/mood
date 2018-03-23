@@ -33,6 +33,7 @@ public abstract class GameWorld {
     private final ConcurrentLinkedQueue<Entity> entsToRemove = new ConcurrentLinkedQueue<Entity>();
 
     public void update() {
+        playerManager.update();
         while (entsToAdd.peek() != null) {
             ents.add(entsToAdd.poll());
         }
@@ -116,16 +117,17 @@ public abstract class GameWorld {
             double sqrSize;
 
             // cast against players
-            List<Player> playerList = playerManager.getPlayers();
-            for (Player aPlayerList : playerList) {
-                if (aPlayerList == ignore) {
+            Iterator<Player> playerIter = playerManager.getPlayerIterator();
+            while (playerIter.hasNext()) {
+                Player player = playerIter.next();
+                if (player == ignore) {
                     continue;
                 }
-                sqrSize = aPlayerList.getSize() * aPlayerList.getSize();
-                sqrDist = aPlayerList.getPosition().sqrDistTo(p);
+                sqrSize = player.getSize() * player.getSize();
+                sqrDist = player.getPosition().sqrDistTo(p);
                 if (sqrDist < sqrSize) {
                     return new RaycastHit(RaycastHitType.PLAYER, p,
-                            aPlayerList);
+                            player);
                 }
             }
             // now against entities

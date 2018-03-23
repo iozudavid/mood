@@ -2,6 +2,7 @@ package com.knightlore.game;
 
 import java.awt.Point;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -114,8 +115,9 @@ public final class BotInput extends InputModule {
         target = null;
         // Find our target
         PlayerManager playerManager = GameEngine.getSingleton().getWorld().getPlayerManager();
-        List<Player> players = playerManager.getPlayers();
-        for (Player player : players) {
+        Iterator<Player> playerIter = playerManager.getPlayerIterator();
+        while (playerIter.hasNext()) {
+            Player player = playerIter.next();
             Vector2D displacement = player.getPosition().subtract(myPlayer.getPosition());
             Vector2D dir = displacement.normalised();
 

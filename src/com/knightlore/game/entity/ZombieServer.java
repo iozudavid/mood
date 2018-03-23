@@ -1,5 +1,6 @@
 package com.knightlore.game.entity;
 
+import com.google.common.collect.Lists;
 import com.knightlore.GameSettings;
 import com.knightlore.game.manager.AIManager;
 import com.knightlore.engine.GameEngine;
@@ -69,7 +70,7 @@ public class ZombieServer extends ZombieShared {
     
     private void think() {
         AIManager aiManager = world.getAiManager();
-        List<Player> players = world.getPlayerManager().getPlayers();
+        List<Player> players = Lists.newArrayList(world.getPlayerManager().getPlayerIterator());
         List<List<Point>> pathsToPlayers = players.stream()
                 .map(player -> aiManager.findRawPath(this.position, player.getPosition()))
                 .collect(Collectors.toList());

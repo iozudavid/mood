@@ -1,6 +1,7 @@
 package com.knightlore.game.manager;
 
 import java.nio.ByteBuffer;
+import java.util.Iterator;
 import java.util.List;
 import java.util.UUID;
 
@@ -42,9 +43,9 @@ public class TDMGameManager extends GameManager {
     public void beginGame() {
         gameState = GameState.PLAYING;
         PlayerManager playerManager = GameEngine.getSingleton().getWorld().getPlayerManager();
-        List<Player> players = playerManager.getPlayers();
-
-        for (Player p : players) {
+        Iterator<Player> playerIter = playerManager.getPlayerIterator();
+        while (playerIter.hasNext()) {
+            Player p = playerIter.next();
             Vector2D spawnPos = GameEngine.getSingleton().getWorld().getMap().getRandomSpawnPoint(p.team);
             p.respawn(spawnPos);
         }
@@ -126,7 +127,9 @@ public class TDMGameManager extends GameManager {
             synchronized (playerManager) {
                 blueScore = 0;
                 redScore = 0;
-                for (Player p : playerManager.getPlayers()) {
+                Iterator<Player> playerIter = playerManager.getPlayerIterator();
+                while (playerIter.hasNext()) {
+                    Player p = playerIter.next();
                     if (p.team == Team.BLUE) {
                         blueScore += p.getScore();
                     } else if (p.team == Team.RED) {

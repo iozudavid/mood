@@ -49,7 +49,9 @@ public class ServerWorld extends GameWorld {
     @Override
     public void update() {
         super.update();
-        for (Player player : playerManager.getPlayers()) {
+        Iterator<Player> playerIter = playerManager.getPlayerIterator();
+        while (playerIter.hasNext()) {
+            Player player = playerIter.next();
             Iterator<Entity> it = this.getEntityIterator();
             while (it.hasNext()) {
                 Entity ent = it.next();
