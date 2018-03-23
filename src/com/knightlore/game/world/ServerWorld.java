@@ -4,6 +4,7 @@ import java.util.Iterator;
 
 import com.knightlore.game.BotInput;
 import com.knightlore.game.manager.FFAGameManager;
+import com.knightlore.game.manager.TDMGameManager;
 import com.knightlore.game.entity.Player;
 import com.knightlore.game.entity.Entity;
 import com.knightlore.game.entity.SpectatorCamera;
@@ -15,7 +16,8 @@ public class ServerWorld extends GameWorld {
     @Override
     public void setUpWorld(Long mapSeed) {
         super.setUpWorld(mapSeed);
-        gameManager = new FFAGameManager();
+        //gameManager = new FFAGameManager();
+        gameManager = new TDMGameManager();
         gameManager.init();
         buildEntities();
     }

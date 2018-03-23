@@ -47,7 +47,14 @@ public abstract class GameManager extends NetworkObject {
     public ByteBuffer serialize() {
         ByteBuffer buf = newByteBuffer("deserialize");
         buf.putInt(gameState.ordinal());
+        buf.putLong(ticksLeft);
         return buf;
+    }
+    
+    @Override
+    public void deserialize(ByteBuffer buffer) {
+        gameState = GameState.values()[buffer.getInt()];
+        ticksLeft = buffer.getLong();
     }
 
 }
