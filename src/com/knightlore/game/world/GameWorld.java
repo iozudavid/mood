@@ -198,7 +198,7 @@ public abstract class GameWorld {
                     continue;
                 }
                 sqrSize = aPlayerList.getSize() * aPlayerList.getSize();
-                sqrDist = aPlayerList.getPosition().sqrDistTo(p) - (radius*radius);
+                sqrDist = aPlayerList.getPosition().sqrDistTo(p);
                 if (sqrDist < sqrSize) {
                     return new RaycastHit(RaycastHitType.PLAYER, p,
                             aPlayerList);
@@ -212,8 +212,8 @@ public abstract class GameWorld {
                 if (ent == ignore) {
                     continue;
                 }
-                sqrSize = ent.getSize() * ent.getSize();
-                sqrDist = ent.getPosition().sqrDistTo(p) - (radius*radius);
+                sqrSize = ent.getSize() * ent.getSize() + (radius * radius);
+                sqrDist = ent.getPosition().sqrDistTo(p);
                 if (sqrDist < sqrSize) {
                     return new RaycastHit(RaycastHitType.ENTITY, p, ent);
                 }
