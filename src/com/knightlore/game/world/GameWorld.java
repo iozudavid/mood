@@ -168,6 +168,61 @@ public abstract class GameWorld {
 
         return new RaycastHit(RaycastHitType.NOTHING, Vector2D.ZERO, null);
     }
+    
+    public RaycastHit sphereCast(Vector2D pos, Vector2D direction, int segments, double radius,
+            double maxDist, Entity ignore) {
+        if (segments <= 0) {
+            throw new IllegalStateException("can't raycast with <= 0 segments");
+        }
+
+        Vector2D step = Vector2D.mul(direction.normalised(),
+                maxDist / segments);
+
+        Vector2D p = pos;
+        int x, y;
+
+        for (int i = 0; i < segments; i++) {
+            x = (int) p.getX();
+            y = (int) p.getY();
+            if (map.getTile(x, y).blockLOS()) {
+                return new RaycastHit(RaycastHitType.WALL, p, null);
+            }
+
+            double sqrDist;
+            double sqrSize;
+
+            // cast against players
+            List<Player> playerList = playerManager.getPlayers();
+            for (Player aPlayerList : playerList) {
+                if (aPlayerList == ignore) {
+                    continue;
+                }
+                sqrSize = aPlayerList.getSize() * aPlayerList.getSize();
+                sqrDist = aPlayerList.getPosition().sqrDistTo(p) - (radius*radius);
+                if (sqrDist < sqrSize) {
+                    return new RaycastHit(RaycastHitType.PLAYER, p,
+                            aPlayerList);
+                }
+            }
+            // now against entities
+            Iterator<Entity> it = this.getEntityIterator();
+            while (it.hasNext()) {
+
+                Entity ent = it.next();
+                if (ent == ignore) {
+                    continue;
+                }
+                sqrSize = ent.getSize() * ent.getSize();
+                sqrDist = ent.getPosition().sqrDistTo(p) - (radius*radius);
+                if (sqrDist < sqrSize) {
+                    return new RaycastHit(RaycastHitType.ENTITY, p, ent);
+                }
+            }
+            p = p.add(step);
+        }
+
+        return new RaycastHit(RaycastHitType.NOTHING, Vector2D.ZERO, null);
+    }
 
     public GameManager getGameManager() {
         return gameManager;
