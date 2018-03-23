@@ -4,6 +4,7 @@ import com.knightlore.GameSettings;
 import com.knightlore.game.manager.AIManager;
 import com.knightlore.engine.GameEngine;
 import com.knightlore.game.manager.GameManager;
+import com.knightlore.game.manager.GameState;
 import com.knightlore.game.world.GameWorld;
 import com.knightlore.utils.Vector2D;
 
@@ -33,6 +34,9 @@ public class ZombieServer extends ZombieShared {
     @Override
     public void onUpdate() {
         checkDeath();
+        if (GameManager.getGameState() == GameState.FINISHED) {
+            return;
+        }
         
         if (System.currentTimeMillis() - lastThinkingTime > THINKING_FREQUENCY) {
             think();

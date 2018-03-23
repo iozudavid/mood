@@ -21,7 +21,7 @@ public class ServerWorld extends GameWorld {
     }
 
     private void buildEntities() {
-        for (int i = 0; i < 0; i++) {
+        for (int i = 0; i < 20; i++) {
             ZombieServer zom = new ZombieServer(map.getRandomSpawnPoint());
             zom.init();
             this.addEntity(zom);
@@ -30,7 +30,7 @@ public class ServerWorld extends GameWorld {
         // TurretShared tboi = new TurretServer(3, map.getRandomSpawnPoint(),
         // Vector2D.UP);
         // tboi.init();
-        for (int i = 0; i < 0; i++) {
+        for (int i = 0; i < 5; i++) {
             Player botPlayer = new Player(map.getRandomSpawnPoint(), Vector2D.UP);
             botPlayer.setInputModule(new BotInput());
             botPlayer.init();

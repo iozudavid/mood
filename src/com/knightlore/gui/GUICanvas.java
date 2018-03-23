@@ -85,21 +85,15 @@ public class GUICanvas extends GameObject implements IRenderable {
 		if (activeTextField != null) {
 			activeTextField = null;
 			gameTextField.escape();
-		} else if(onPressEscape.isPresent()){
-			onPressEscape.get().call();
-		}
+		} else onPressEscape.ifPresent(VoidFunction::call);
 	}
 	
 	public static void pressQ(){
-		if(onPressQ.isPresent()){
-			onPressQ.get().call();
-		}
+		onPressQ.ifPresent(VoidFunction::call);
 	}
 	
 	public static void releaseQ(){
-		if(onReleaseQ.isPresent()){
-			onReleaseQ.get().call();
-		}
+		onReleaseQ.ifPresent(VoidFunction::call);
 	}
 	
 	
@@ -236,8 +230,11 @@ public class GUICanvas extends GameObject implements IRenderable {
             if (gui instanceof TextField) {
                 gameTextField = (TextField) gui;
             }
-            guis.add(gui);
-            sort();
+            
+            if (!guis.contains(gui)) {
+				guis.add(gui);
+				sort();
+			}
         }
 	}
 	

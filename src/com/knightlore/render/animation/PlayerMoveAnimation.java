@@ -25,23 +25,15 @@ public class PlayerMoveAnimation extends Animation<DirectionalSprite> {
 
     public PlayerMoveAnimation(GraphicSheet sheet) {
         super();
-        for (int i = 0; i < animationFrames; i++) {
-            ArrayList<Graphic> angles = new ArrayList<>();
-            for (int y = 0; y < 32; y++) {
-                angles.add(sheet.graphicAt(i, y));
-            }
-
-            DirectionalSprite d = new DirectionalSprite(angles);
-            this.frames.add(d);
-        }
+        setFrames(sheet);
     }
 
     public void update(double displacement) {
-        if(displacement == 0) {
+        if (displacement == 0) {
             timeLeft--;
             return;
         }
-        
+
         timeLeft = LIFESPAN;
         distanceTraveled += displacement;
         if (distanceTraveled > nextFrameDistance) {
@@ -52,6 +44,20 @@ public class PlayerMoveAnimation extends Animation<DirectionalSprite> {
 
     public boolean expired() {
         return timeLeft <= 0;
+    }
+
+    public void setFrames(GraphicSheet sheet) {
+        this.clearFrames();
+        for (int i = 0; i < animationFrames; i++) {
+            ArrayList<Graphic> angles = new ArrayList<>();
+            for (int y = 0; y < 32; y++) {
+                angles.add(sheet.graphicAt(i, y));
+            }
+
+            DirectionalSprite d = new DirectionalSprite(angles);
+            this.frames.add(d);
+        }
+
     }
 
 }
