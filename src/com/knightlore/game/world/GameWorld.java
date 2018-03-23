@@ -3,6 +3,7 @@ package com.knightlore.game.world;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Random;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 import com.knightlore.game.manager.AIManager;
@@ -86,9 +87,9 @@ public abstract class GameWorld {
      */
     public void setUpWorld(Long mapSeed) {
         if (mapSeed == null) {
-            mapSeed = TEST_SEED;
+            mapSeed = new Random().nextLong();
         }
-        map = new MapGenerator().createMap(TEST_XSIZE, TEST_YSIZE, MapType.FFA);
+        map = new MapGenerator().createMap(TEST_XSIZE, TEST_YSIZE, MapType.FFA, mapSeed);
         ents = new LinkedList<>();
         aiManager = new AIManager(map);
         playerManager = new PlayerManager();
