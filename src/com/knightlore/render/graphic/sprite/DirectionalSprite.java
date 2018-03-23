@@ -11,6 +11,7 @@ public class DirectionalSprite {
 
     public static final PlayerSprite PLAYER_DIRECTIONAL_SPRITE = new PlayerSprite(GraphicSheet.ZOMBIE_SPRITES);
 
+    public static final ShotgunSprite PISTOL_DIRECTIONAL_SPRITE = new ShotgunSprite(GraphicSheet.PISTOL_SPRITES);
     public static final ShotgunSprite SHOTGUN_DIRECTIONAL_SPRITE = new ShotgunSprite(GraphicSheet.SHOTGUN_SPRITES);
 
     public static final TurretSprite TURRET_DIRECTIONAL_SPRITE = new TurretSprite();

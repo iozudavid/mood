@@ -11,8 +11,8 @@ import com.knightlore.utils.Vector2D;
 
 public class PistolPickup extends WeaponPickup {
     // FIXME: add pistol directional sprite.
-    private static final DirectionalSprite DSPRITE = DirectionalSprite.TURRET_DIRECTIONAL_SPRITE;
-    
+    private static final DirectionalSprite DSPRITE = DirectionalSprite.PISTOL_DIRECTIONAL_SPRITE;
+
     // Returns a new instance. See NetworkObject for details.
     public static NetworkObject build(UUID uuid, ByteBuffer state) {
         NetworkObject obj = new PistolPickup(uuid, Vector2D.ONE, null);
@@ -25,8 +25,7 @@ public class PistolPickup extends WeaponPickup {
         super(position, DSPRITE, pickupManager);
     }
 
-    public PistolPickup(UUID uuid, Vector2D position,
-            PickupManager pickupManager) {
+    public PistolPickup(UUID uuid, Vector2D position, PickupManager pickupManager) {
         super(uuid, position, DSPRITE, pickupManager);
     }
 
@@ -39,7 +38,7 @@ public class PistolPickup extends WeaponPickup {
     public String getName() {
         return "PISTOL";
     }
-    
+
     @Override
     public void onCollide(Player player) {
         super.onCollide(player);
