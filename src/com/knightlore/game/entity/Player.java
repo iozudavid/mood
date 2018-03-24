@@ -87,7 +87,18 @@ public class Player extends Entity {
 
     private PlayerGraphicMatrix.Color color = PlayerGraphicMatrix.Color.RED;
 
-    // Returns a new instance. See NetworkObject for details.
+    /**
+     * Called by the network when creating the client-side representation of
+     * this object. Instantiates a copy of the client class, and deserializes
+     * the state into it.
+     * 
+     * @param uuid
+     *            The uuid provided to this object
+     * @param state
+     *            The initial state of this object
+     * @returns The client-side network object
+     * @see NetworkObject
+     */
     public static NetworkObject build(UUID uuid, ByteBuffer state) {
         System.out.println("Player build, state size: " + state.remaining());
         NetworkObject obj = new Player(uuid, Vector2D.ONE, Vector2D.ONE);
