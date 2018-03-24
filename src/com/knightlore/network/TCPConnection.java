@@ -52,7 +52,7 @@ public class TCPConnection extends Connection {
     @Override
     public void send(ByteBuffer data) {
         /*
-         * Effectively synchronise this method with itself, ensuring the stream
+         * Effectively synchronize this method with itself, ensuring the stream
          * is not written to in parallel. Don't use the 'synchronized' method
          * modifier since we can run this in parallel with receive().
          */
@@ -94,6 +94,7 @@ public class TCPConnection extends Connection {
                 int size = -1;
                 try {
                     size = infoReceive.readInt();
+                    System.out.println(size);
                     if (size == 0) {
                         return null;
                     }
