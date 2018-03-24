@@ -45,6 +45,10 @@ public class TCPConnection extends Connection {
         }
     }
 
+    /**
+     * Sends a packet using standard TCP Protocol.
+     * @param data - packet to be sent.
+     */
     @Override
     public void send(ByteBuffer data) {
         /*

@@ -45,6 +45,9 @@ public abstract class NetworkObjectManager implements INetworkable, Runnable {
         // N.B. The manager should never be serialised...
     }
 
+    /**
+     * @return manager unique UUID
+     */
     @Override
     public UUID getObjectId() {
         return MANAGER_UUID;
@@ -56,6 +59,12 @@ public abstract class NetworkObjectManager implements INetworkable, Runnable {
         System.out.println("Object manager started");
     }
 
+    /**
+     * This is used by both client and server sides. A new packet is waited to
+     * arrive. Then it's depacked up to the method name to be called. When we
+     * know the class and the method we need to call, just perform the call and
+     * pass the packet by.
+     */
     @Override
     public void run() {
     	int i=0;
