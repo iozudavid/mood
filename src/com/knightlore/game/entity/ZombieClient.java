@@ -34,7 +34,18 @@ public class ZombieClient extends ZombieShared {
         super(uuid, size, position, direction);
     }
 
-    // Returns a new instance. See NetworkObject for details.
+    /**
+     * Called by the network when creating the client-side representation of
+     * this object. Instantiates a copy of the client class, and deserializes
+     * the state into it.
+     * 
+     * @param uuid
+     *            The uuid provided to this object
+     * @param state
+     *            The initial state of this object
+     * @returns The client-side network object
+     * @see NetworkObject
+     */
     public static NetworkObject build(UUID uuid, ByteBuffer state) {
         NetworkObject obj = new ZombieClient(uuid, 0, Vector2D.ONE, Vector2D.ONE);
         obj.init();

@@ -13,30 +13,52 @@ import com.knightlore.game.entity.pickup.WeaponPickup;
 import com.knightlore.game.entity.weapon.WeaponType;
 import com.knightlore.utils.Vector2D;
 
+/**
+ * Contains data and methods to handle the Team Deathmatch game mode
+ * client-side.
+ * 
+ * @author James, Tom
+ */
 public class TDMGameManager extends GameManager {
-
-    public TDMGameManager(UUID uuid) {
-        super(uuid);
-    }
-
+    
+    /**
+     * Creates a Game Manager with a random UUID.
+     */
     public TDMGameManager() {
         super(UUID.randomUUID());
     }
-
+    
+    /**
+     * Creates a Game Manager with the given UUID.
+     * 
+     * @param uuid
+     *            the UUID of this network object
+     */
+    public TDMGameManager(UUID uuid) {
+        super(uuid);
+    }
+    
     private static final double ROUND_TIME_SECS = 300;
     private long SCORE_UPDATE_PERIOD = (long) GameEngine.UPDATES_PER_SECOND * 5;
     private long nextScoreUpdate;
-
+    
     private int blueScore = 0;
     private int redScore = 0;
-
+    
+    /**
+     * Sets the game state to LOBBY.
+     */
     @Override
     public void startLobby() {
         gameState = GameState.LOBBY;
     }
-
+    
     // TODO: PLAYER TEAM ASSIGNMENT
-
+    
+    /**
+     * Sets the game state to be PLAYING and respawns all of the players. Also
+     * computes the time when the round will end
+     */
     @Override
     public void beginGame() {
         gameState = GameState.PLAYING;
@@ -50,7 +72,10 @@ public class TDMGameManager extends GameManager {
         gameOverTick = GameEngine.ticker.getTime() + (long) (GameEngine.UPDATES_PER_SECOND * ROUND_TIME_SECS);
         nextScoreUpdate = SCORE_UPDATE_PERIOD;
     }
-
+    
+    /**
+     * Ends the game, prints the winning team to the console.
+     */
     @Override
     public void gameOver() {
         gameState = GameState.FINISHED;
@@ -63,24 +88,41 @@ public class TDMGameManager extends GameManager {
             System.out.println("DRAW! THE DAY BELONGS TO THE ZOMBIES!");
         }
     }
-
+    
+    /**
+     * @see com.knightlore.game.manager.TDMGameManager#onEntityDeath(ZombieShared)
+     */
     @Override
     public void onEntityDeath(ZombieShared victim, Player inflictor) {
         onEntityDeath(victim);
     }
-
+    
+    /**
+     * Handles a Zombie death. Respawns the <code>victim</code> at a random
+     * place in the map.
+     */
     @Override
     public void onEntityDeath(ZombieShared victim) {
         Vector2D spawnPos = GameEngine.getSingleton().getWorld().getMap().getRandomSpawnPoint();
         victim.respawn(spawnPos);
     }
-
+    
+    /**
+     * Handles a Player death when killed by another player. Gives the
+     * <code>inflictor</code> 1 point then calls onEntityDeath(victim);
+     * 
+     * @see com.knightlore.game.manager.TDMGameManager#onEntityDeath(Player)
+     */
     @Override
     public void onEntityDeath(Player victim, Player inflictor) {
         inflictor.addScore(1);
         onEntityDeath(victim);
     }
-
+    
+    /**
+     * Handles a Player death, reduces the player score by 1, drops their
+     * current weapon on the floor and then respawns that player.
+     */
     @Override
     public void onEntityDeath(Player victim) {
         victim.addScore(-1);
@@ -88,7 +130,7 @@ public class TDMGameManager extends GameManager {
         Vector2D spawnPos = GameEngine.getSingleton().getWorld().getMap().getRandomSpawnPoint(victim.team);
         victim.respawn(spawnPos);
     }
-
+    
     private void spawnPickup(Vector2D pos, WeaponType type) {
         WeaponPickup pickup;
         switch (type) {
@@ -106,11 +148,14 @@ public class TDMGameManager extends GameManager {
         GameEngine.getSingleton().getWorld().addEntity(pickup);
         System.out.println(type + " Pickup Created");
     }
-
+    
     @Override
     public void onCreate() {
     }
-
+    
+    /**
+     * Determines when the game is over. Computes the team scores.
+     */
     @Override
     public void onUpdate() {
         super.onUpdate();
@@ -121,7 +166,7 @@ public class TDMGameManager extends GameManager {
         
         if (GameEngine.ticker.getTime() > nextScoreUpdate) {
             // compute scores
-
+            
             PlayerManager playerManager = GameEngine.getSingleton().getWorld().getPlayerManager();
             synchronized (playerManager) {
                 blueScore = 0;
@@ -139,14 +184,14 @@ public class TDMGameManager extends GameManager {
             nextScoreUpdate += SCORE_UPDATE_PERIOD;
         }
     }
-
+    
     @Override
     public void onDestroy() {
     }
-
+    
     @Override
     public String getClientClassName() {
         return TDMGameManagerClient.class.getName();
     }
-
+    
 }

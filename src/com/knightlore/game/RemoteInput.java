@@ -12,6 +12,9 @@ import com.knightlore.network.protocol.ClientController;
  */
 public final class RemoteInput extends InputModule {
 
+    /**
+     * Returns the given input state, as this player has it's input state provided by the network 
+     */
     @Override
     public Map<ClientController, Byte> updateInput(Map<ClientController, Byte> inputState, Entity myPlayer) {
         // do nothing, just hand it back to the player
