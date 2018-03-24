@@ -5,6 +5,10 @@ import java.nio.ByteBuffer;
 import com.knightlore.engine.GameEngine;
 import com.knightlore.network.Connection;
 
+/**
+ * Thread listening for new packets received by networking.
+ *
+ */
 public class Receive implements Runnable {
     private Connection conn;
 
@@ -12,6 +16,10 @@ public class Receive implements Runnable {
         this.conn = conn;
     }
 
+    /**
+     * Checks if a new packet was sent via networking and pass it to network
+     * manager to be processed.
+     */
     @Override
     public void run() {
         ByteBuffer buf;

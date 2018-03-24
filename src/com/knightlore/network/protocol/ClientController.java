@@ -3,11 +3,24 @@ package com.knightlore.network.protocol;
 import java.awt.event.KeyEvent;
 import java.io.IOException;
 
+/**
+ * Controllers performed by user
+ *
+ */
 public enum ClientController {
     FORWARD, LEFT, BACKWARD, RIGHT, ROTATE_CLOCKWISE, ROTATE_ANTI_CLOCKWISE, SHOOT;
 
-    public static int getKeyCode(ClientController k) throws IOException {
-        switch (k) {
+    /**
+     * Transition from Controller to actual keyboard inputs
+     * 
+     * @param cControl
+     *            - control to be converted
+     * @return actual keyboard key pressed
+     * @throws IOException
+     *             when control not recognized
+     */
+    public static int getKeyCode(ClientController cControl) throws IOException {
+        switch (cControl) {
         // at this moment only these keys are provided
         case FORWARD:
             return KeyEvent.VK_W;
