@@ -18,6 +18,7 @@ import com.knightlore.network.protocol.NetworkUtils;
 import com.knightlore.network.protocol.NetworkUtilsTest;
 import com.knightlore.network.server.ReceiveTest;
 import com.knightlore.utils.pathfinding.PathFinderTest;
+import com.knightlore.utils.physics.PhysicsTest;
 
 @RunWith(Suite.class)
 @SuiteClasses({
@@ -32,7 +33,8 @@ import com.knightlore.utils.pathfinding.PathFinderTest;
     PathFinderTest.class,
     NetworkUtilsTest.class,
     ReceiveTest.class,
-    TCPConnectionTest.class
+    TCPConnectionTest.class,
+    PhysicsTest.class
 })
 
 public class AllTests {}
