@@ -12,6 +12,11 @@ import com.knightlore.game.area.generation.RoomGeneratorTest;
 import com.knightlore.game.manager.AIManagerTest;
 import com.knightlore.leveleditor.PenTest;
 import com.knightlore.leveleditor.TileButtonTest;
+import com.knightlore.network.TCPConnection;
+import com.knightlore.network.TCPConnectionTest;
+import com.knightlore.network.protocol.NetworkUtils;
+import com.knightlore.network.protocol.NetworkUtilsTest;
+import com.knightlore.network.server.ReceiveTest;
 import com.knightlore.utils.pathfinding.PathFinderTest;
 
 @RunWith(Suite.class)
@@ -24,7 +29,10 @@ import com.knightlore.utils.pathfinding.PathFinderTest;
     AIManagerTest.class,
     PenTest.class,
     TileButtonTest.class,
-    PathFinderTest.class
+    PathFinderTest.class,
+    NetworkUtilsTest.class,
+    ReceiveTest.class,
+    TCPConnectionTest.class
 })
 
 public class AllTests {}
