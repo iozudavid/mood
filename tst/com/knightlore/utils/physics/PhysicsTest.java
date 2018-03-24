@@ -25,7 +25,7 @@ public class PhysicsTest {
 
     private Map m;
     @Mock
-    GameEngine ge;
+    private GameEngine ge;
     
     @Before
     public void setUp(){

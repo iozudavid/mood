@@ -33,7 +33,8 @@ public class SendToClient implements Runnable {
     @Override
     public void run() {
 
-        while (!conn.terminated) {
+        while (!conn.getTerminated()) {
+            System.out.println("da");
             ByteBuffer nextState;
             try {
                 nextState = commandQueue.take();

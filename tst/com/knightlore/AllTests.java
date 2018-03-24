@@ -17,6 +17,7 @@ import com.knightlore.network.TCPConnectionTest;
 import com.knightlore.network.protocol.NetworkUtils;
 import com.knightlore.network.protocol.NetworkUtilsTest;
 import com.knightlore.network.server.ReceiveTest;
+import com.knightlore.network.server.SendToClientTest;
 import com.knightlore.utils.pathfinding.PathFinderTest;
 import com.knightlore.utils.physics.PhysicsTest;
 
@@ -34,7 +35,8 @@ import com.knightlore.utils.physics.PhysicsTest;
     NetworkUtilsTest.class,
     ReceiveTest.class,
     TCPConnectionTest.class,
-    PhysicsTest.class
+    PhysicsTest.class,
+    SendToClientTest.class
 })
 
 public class AllTests {}
