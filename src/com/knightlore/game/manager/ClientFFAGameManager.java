@@ -17,14 +17,17 @@ import com.knightlore.network.NetworkObject;
 public class ClientFFAGameManager extends FFAGameManager {
     
     /**
-     * Creates a Game Manager with a random UUID.
+     * Creates a Game Manager with a random UUID. Calls the other constructor
+     * with this UUID.
+     * 
+     * @see com.knightlore.game.manager.ClientFFAGameManager#ClientFFAGameManager(UUID)
      */
     public ClientFFAGameManager() {
         super(UUID.randomUUID());
     }
     
     /**
-     * Creates a Game Manager with the given UUID.
+     * Creates a Game Manager with the given UUID. Also changes
      * 
      * @param uuid
      *            the UUID of this network object

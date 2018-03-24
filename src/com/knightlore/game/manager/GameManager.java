@@ -24,6 +24,12 @@ public abstract class GameManager extends NetworkObject {
     protected long gameOverTick;
     protected long ticksLeft;
     
+    /**
+     * Creates a Game Manager with the given UUID.
+     * 
+     * @param uuid
+     *            the UUID of this network object
+     */
     public GameManager(UUID uuid) {
         super(uuid);
     }
