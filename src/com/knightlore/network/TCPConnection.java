@@ -94,7 +94,6 @@ public class TCPConnection extends Connection {
                 int size = -1;
                 try {
                     size = infoReceive.readInt();
-                    System.out.println(size);
                     if (size == 0) {
                         return null;
                     }
