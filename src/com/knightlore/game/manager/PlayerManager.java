@@ -64,7 +64,7 @@ public class PlayerManager {
      *            The Team to search for
      * @returns How many players exist on that team
      */
-    public int numPlayers(Team t) {
+    public synchronized int numPlayers(Team t) {
         int num = 0;
         for (Player p : players) {
             if (p.team == t) {

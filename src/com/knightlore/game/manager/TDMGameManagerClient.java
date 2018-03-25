@@ -3,6 +3,7 @@ package com.knightlore.game.manager;
 import java.nio.ByteBuffer;
 import java.util.UUID;
 
+import com.knightlore.GameSettings;
 import com.knightlore.engine.GameEngine;
 import com.knightlore.network.NetworkObject;
 
@@ -33,7 +34,26 @@ public class TDMGameManagerClient extends TDMGameManager {
         obj.deserialize(state);
         return obj;
     }
+
+    private boolean gameOver;
     
+    
+    /**
+     * Checks if the game is over.
+     */
+    @Override
+    public void onUpdate() {
+        if (!gameOver && gameState == GameState.FINISHED) {
+            onGameOver();
+            gameOver = true;
+        }
+    }
+    
+    private void onGameOver() {
+        GameSettings.desiredBlockiness = 70;
+        System.out.println("!!!!!");
+    }
+
     /**
      * Creates a Game Manager with a random UUID. Calls the other constructor
      * with this UUID.

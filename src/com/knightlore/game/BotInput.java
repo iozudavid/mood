@@ -166,6 +166,13 @@ public final class BotInput extends InputModule {
         Iterator<Player> playerIter = playerManager.getPlayerIterator();
         while (playerIter.hasNext()) {
             Player player = playerIter.next();
+            
+            // check for friendlies
+            if(myPlayer.team != Team.NONE && player.team == myPlayer.team) {
+                continue;
+            }
+            
+            
             Vector2D displacement = player.getPosition().subtract(myPlayer.getPosition());
             Vector2D dir = displacement.normalised();
             

@@ -123,6 +123,15 @@ public abstract class GameWorld {
             mapType = MapType.TDM;
         }
         
+        if(mapType == MapType.TDM) {
+            // TDM maps need a minimum size
+            if(GameSettings.mapWidth < 32) {
+                GameSettings.mapWidth = 32;
+            }
+            if(GameSettings.mapHeight < 32) {
+                GameSettings.mapHeight = 32;
+            }
+        }
         map = new MapGenerator().createMap(GameSettings.mapWidth, GameSettings.mapHeight, mapType, mapSeed);
         System.out.println("Generated map.");
         ents = new LinkedList<>();

@@ -59,7 +59,7 @@ public class MapGenerator extends ProceduralAreaGenerator {
      * @author Thomas, Kacper
      */
     public Map createMap(int width, int height, MapType mt, long seed) {
-        System.out.println("Creating map with seed: " + seed);
+        System.out.println("Creating "+mt+" map with seed: " + seed);
         mapType = mt;
         determineSymmetrical();
         rand = new Random(seed);

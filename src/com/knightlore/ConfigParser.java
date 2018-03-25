@@ -122,7 +122,7 @@ public class ConfigParser {
             if (valStr.equals("FFA")) {
                 GameManager.desiredGameMode = GameMode.FFA;
             } else if (valStr.equals("TDM")) {
-                GameManager.desiredGameMode = GameMode.FFA;
+                GameManager.desiredGameMode = GameMode.TDM;
             } else if (valStr.equals("ZOM")) {
                 GameManager.desiredGameMode = GameMode.SURVIVAL;
             } else {

@@ -4,6 +4,7 @@ import java.util.Iterator;
 import java.util.UUID;
 
 import com.knightlore.engine.GameEngine;
+import com.knightlore.game.BotInput;
 import com.knightlore.game.Team;
 import com.knightlore.game.entity.Player;
 import com.knightlore.game.entity.ZombieShared;
@@ -11,6 +12,8 @@ import com.knightlore.game.entity.pickup.PistolPickup;
 import com.knightlore.game.entity.pickup.ShotgunPickup;
 import com.knightlore.game.entity.pickup.WeaponPickup;
 import com.knightlore.game.entity.weapon.WeaponType;
+import com.knightlore.game.world.GameWorld;
+import com.knightlore.game.world.ServerWorld;
 import com.knightlore.utils.Vector2D;
 
 /**
@@ -51,9 +54,22 @@ public class TDMGameManager extends GameManager {
     @Override
     public void startLobby() {
         gameState = GameState.LOBBY;
+        PlayerManager playerManager = GameEngine.getSingleton().getWorld().getPlayerManager();
+        ServerWorld world = (ServerWorld)GameEngine.getSingleton().getWorld();
+        for (int i = 0; i < GameManager.numBots; i++) {
+            Team team = Team.BLUE;
+            if(i%2 == 0) {
+                team = Team.RED;
+            }
+            Vector2D pos = world.getMap().getRandomSpawnPoint(team);
+            Player botPlayer = new Player(pos, Vector2D.UP, team);
+            botPlayer.init();
+            botPlayer.sendSystemMessage("System: Added " + botPlayer.getName() + " BOT");
+            botPlayer.setInputModule(new BotInput());
+            botPlayer.setName("bot" + i);
+            playerManager.addPlayer(botPlayer);
+        }
     }
-    
-    // TODO: PLAYER TEAM ASSIGNMENT
     
     /**
      * Sets the game state to be PLAYING and respawns all of the players. Also
