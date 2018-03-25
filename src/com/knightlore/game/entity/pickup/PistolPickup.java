@@ -10,10 +10,21 @@ import com.knightlore.render.graphic.sprite.DirectionalSprite;
 import com.knightlore.utils.Vector2D;
 
 public class PistolPickup extends WeaponPickup {
-    // FIXME: add pistol directional sprite.
-    private static final DirectionalSprite DSPRITE = DirectionalSprite.TURRET_DIRECTIONAL_SPRITE;
     
-    // Returns a new instance. See NetworkObject for details.
+    private static final DirectionalSprite DSPRITE = DirectionalSprite.PISTOL_DIRECTIONAL_SPRITE;
+
+    /**
+     * Called by the network when creating the client-side representation of
+     * this object. Instantiates a copy of the client class, and deserializes
+     * the state into it.
+     * 
+     * @param uuid
+     *            The uuid provided to this object
+     * @param state
+     *            The initial state of this object
+     * @returns The client-side network object
+     * @see NetworkObject
+     */
     public static NetworkObject build(UUID uuid, ByteBuffer state) {
         NetworkObject obj = new PistolPickup(uuid, Vector2D.ONE, null);
         obj.init();
@@ -25,8 +36,7 @@ public class PistolPickup extends WeaponPickup {
         super(position, DSPRITE, pickupManager);
     }
 
-    public PistolPickup(UUID uuid, Vector2D position,
-            PickupManager pickupManager) {
+    public PistolPickup(UUID uuid, Vector2D position, PickupManager pickupManager) {
         super(uuid, position, DSPRITE, pickupManager);
     }
 
@@ -39,7 +49,7 @@ public class PistolPickup extends WeaponPickup {
     public String getName() {
         return "PISTOL";
     }
-    
+
     @Override
     public void onCollide(Player player) {
         super.onCollide(player);

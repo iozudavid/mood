@@ -3,12 +3,15 @@ package com.knightlore.game.world;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Random;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 import com.knightlore.game.manager.AIManager;
 import com.knightlore.game.manager.GameManager;
 import com.knightlore.game.entity.Player;
 import com.knightlore.game.manager.PlayerManager;
+import com.knightlore.GameSettings;
+import com.knightlore.game.GameMode;
 import com.knightlore.game.area.Map;
 import com.knightlore.game.area.generation.MapGenerator;
 import com.knightlore.game.area.generation.MapType;
@@ -17,22 +20,36 @@ import com.knightlore.utils.Vector2D;
 import com.knightlore.utils.physics.RaycastHit;
 import com.knightlore.utils.physics.RaycastHitType;
 
+/**
+ * Representation of the World in the Game. Subclass this to make new worlds.
+ * Has Client and Server subclass implementations
+ * 
+ * @author James Adey
+ * @see ClientWorld
+ * @see ServerWorld
+ */
 public abstract class GameWorld {
-
+    
     private static final int TEST_XSIZE = 40; // 16;
     private static final int TEST_YSIZE = 60; // 32;
-    private static final long TEST_SEED = 47L; // 25L;
-
+    
     protected Map map;
     protected PlayerManager playerManager;
     protected GameManager gameManager = null;
     private AIManager aiManager;
     private List<Entity> ents;
-
+    
     private final ConcurrentLinkedQueue<Entity> entsToAdd = new ConcurrentLinkedQueue<Entity>();
     private final ConcurrentLinkedQueue<Entity> entsToRemove = new ConcurrentLinkedQueue<Entity>();
-
+    
+    /**
+     * Updates the PlayerManager, and makes any required changes the entity
+     * list.
+     * 
+     * @see PlayerManager
+     */
     public void update() {
+        playerManager.update();
         while (entsToAdd.peek() != null) {
             ents.add(entsToAdd.poll());
         }
@@ -41,97 +58,137 @@ public abstract class GameWorld {
         }
     }
     
-    private Map generateMap(int xSize, int ySize, MapType mt, long seed) {
-        return new MapGenerator().createMap(xSize, ySize, mt, seed);
-    }
-
     public Map getMap() {
         return map;
     }
-
+    
     public PlayerManager getPlayerManager() {
         return playerManager;
     }
-
+    
     public AIManager getAiManager() {
         return aiManager;
     }
-
+    
     public Iterator<Entity> getEntityIterator() {
         return ents.iterator();
     }
-
+    
     /**
-     * 
-     * @returns a copy of the entities stored as an array
+     * @returns a new copy of the entities stored as an array
      */
     public Entity[] getEntityArray() {
         return ents.toArray(new Entity[0]);
     }
-
+    
+    /**
+     * Queues a new entity to be added to the world, will actually be added next
+     * world update.
+     * 
+     * @param ent
+     *            the Entity to add
+     */
     public void addEntity(Entity ent) {
         entsToAdd.offer(ent);
     }
-
+    
+    /**
+     * Queues a new entity to be removed from the world, will actually be
+     * removed next world update.
+     * 
+     * @param ent
+     *            the Entity to remove
+     */
     public void removeEntity(Entity ent) {
         entsToRemove.offer(ent);
     }
-
+    
     /**
-     * Populate the world with things initially.
+     * Generates the map and creates the AIManager and the PlayerManager.
+     * <p>
+     * Note: a null map seed will cause the map to generate a random map.
      * 
-     * A null mapSeed will cause a map to be generated with the hard-coded test
-     * seed.
+     * @param mapSeed
+     *            the desired seed for this map
+     * @see MapGenerator
+     * @see AIManager
+     * @see PlayerManager
      */
     public void setUpWorld(Long mapSeed) {
         if (mapSeed == null) {
-            mapSeed = TEST_SEED;
+            mapSeed = new Random().nextLong();
         }
-        map = new MapGenerator().createMap(TEST_XSIZE, TEST_YSIZE, MapType.FFA, mapSeed);
+        MapType mapType = MapType.FFA;
+        if(GameManager.desiredGameMode == GameMode.TDM) {
+            mapType = MapType.TDM;
+        }
+        
+        map = new MapGenerator().createMap(GameSettings.mapWidth, GameSettings.mapHeight, MapType.FFA, mapSeed);
         ents = new LinkedList<>();
         aiManager = new AIManager(map);
         playerManager = new PlayerManager();
     }
-
-    public RaycastHit raycast(Vector2D pos, Vector2D direction, int segments,
-            double maxDist, Entity ignore) {
+    
+    /**
+     * Traces an infinitely thin line(ray) from a start point, in a specific
+     * direction. This method casts the line against the world, entities and
+     * players, and determines the closets thing it intersects with.
+     * <p>
+     * Note: This method is a "quick" cast, so will check only
+     * <code>segment</code> points along the line, this means it may miss some
+     * intersections.
+     * 
+     * @param pos
+     *            the start point of this ray
+     * @param direction
+     *            the direction (doesn't have to be normalised) that this ray
+     *            travels in
+     * @param segments
+     *            how many points along the line to check
+     * @param maxDist
+     *            how far to cast the ray
+     * @param ignore
+     *            which entity to ignore whilst casting this ray
+     * @returns a RaycastHit structure with information about what was hit
+     * @see RaycastHit
+     */
+    public RaycastHit raycast(Vector2D pos, Vector2D direction, int segments, double maxDist, Entity ignore) {
         if (segments <= 0) {
             throw new IllegalStateException("can't raycast with <= 0 segments");
         }
-
-        Vector2D step = Vector2D.mul(direction.normalised(),
-                maxDist / segments);
-
+        
+        Vector2D step = Vector2D.mul(direction.normalised(), maxDist / segments);
+        
         Vector2D p = pos;
         int x, y;
-
+        
         for (int i = 0; i < segments; i++) {
             x = (int) p.getX();
             y = (int) p.getY();
             if (map.getTile(x, y).blockLOS()) {
                 return new RaycastHit(RaycastHitType.WALL, p, null);
             }
-
+            
             double sqrDist;
             double sqrSize;
-
+            
             // cast against players
-            List<Player> playerList = playerManager.getPlayers();
-            for (Player aPlayerList : playerList) {
-                if (aPlayerList == ignore) {
+            Iterator<Player> playerIter = playerManager.getPlayerIterator();
+            while (playerIter.hasNext()) {
+                Player player = playerIter.next();
+                if (player == ignore) {
                     continue;
                 }
-                sqrSize = aPlayerList.getSize() * aPlayerList.getSize();
-                sqrDist = aPlayerList.getPosition().sqrDistTo(p);
+                sqrSize = player.getSize() * player.getSize();
+                sqrDist = player.getPosition().sqrDistTo(p);
                 if (sqrDist < sqrSize) {
-                    return new RaycastHit(RaycastHitType.PLAYER, p,
-                            aPlayerList);
+                    return new RaycastHit(RaycastHitType.PLAYER, p, player);
                 }
             }
             // now against entities
             Iterator<Entity> it = this.getEntityIterator();
             while (it.hasNext()) {
-
+                
                 Entity ent = it.next();
                 if (ent == ignore) {
                     continue;
@@ -142,96 +199,33 @@ public abstract class GameWorld {
                     return new RaycastHit(RaycastHitType.ENTITY, p, ent);
                 }
             }
-            // FIXME? for some reason bounding rectangles don't work properly?
-            // i can't visualise them to help debug the ray...
-            // they should collide, but don't.
-            // i think it's due to the fact that these are GUI rectangles. not
-            // actual squares.
-            // the x,y is in one corner, with a width and a height for the other
-            // corner
-            // this means that the bounding rectangle isn't centered on the
-            // PLAYER
-            /*
-             * for (int n = 0; n < ents.size(); n++) { if
-             * (Physics.pointInRectangleDoubleTest(p,
-             * ents.get(n).getBoundingRectangle())) { return new
-             * RaycastHit(RaycastHitType.ENTITY, p, ents.get(n)); } }
-             * 
-             * List<Player> playerList = playerManager.getPlayers(); for(int
-             * n=0;n<playerList.size();n++) { if
-             * (Physics.pointInRectangleDoubleTest(p,
-             * playerList.get(n).getBoundingRectangle())) { return new
-             * RaycastHit(RaycastHitType.ENTITY, p, playerList.get(n)); } }
-             */
             p = p.add(step);
         }
-
+        
         return new RaycastHit(RaycastHitType.NOTHING, Vector2D.ZERO, null);
     }
     
-    public RaycastHit sphereCast(Vector2D pos, Vector2D direction, int segments, double radius,
-            double maxDist, Entity ignore) {
-        if (segments <= 0) {
-            throw new IllegalStateException("can't raycast with <= 0 segments");
-        }
-
-        Vector2D step = Vector2D.mul(direction.normalised(),
-                maxDist / segments);
-
-        Vector2D p = pos;
-        int x, y;
-
-        for (int i = 0; i < segments; i++) {
-            x = (int) p.getX();
-            y = (int) p.getY();
-            if (map.getTile(x, y).blockLOS()) {
-                return new RaycastHit(RaycastHitType.WALL, p, null);
-            }
-
-            double sqrDist;
-            double sqrSize;
-
-            // cast against players
-            List<Player> playerList = playerManager.getPlayers();
-            for (Player aPlayerList : playerList) {
-                if (aPlayerList == ignore) {
-                    continue;
-                }
-                sqrSize = aPlayerList.getSize() * aPlayerList.getSize();
-                sqrDist = aPlayerList.getPosition().sqrDistTo(p);
-                if (sqrDist < sqrSize) {
-                    return new RaycastHit(RaycastHitType.PLAYER, p,
-                            aPlayerList);
-                }
-            }
-            // now against entities
-            Iterator<Entity> it = this.getEntityIterator();
-            while (it.hasNext()) {
-
-                Entity ent = it.next();
-                if (ent == ignore) {
-                    continue;
-                }
-                sqrSize = ent.getSize() * ent.getSize() + (radius * radius);
-                sqrDist = ent.getPosition().sqrDistTo(p);
-                if (sqrDist < sqrSize) {
-                    return new RaycastHit(RaycastHitType.ENTITY, p, ent);
-                }
-            }
-            p = p.add(step);
-        }
-
-        return new RaycastHit(RaycastHitType.NOTHING, Vector2D.ZERO, null);
-    }
-
     public GameManager getGameManager() {
         return gameManager;
     }
-
+    
+    /**
+     * Changes the game manager, should be used for switching game modes. Called
+     * to assign the game mode on the client once it receives it from the
+     * server.
+     * 
+     * @param game
+     *            the new game manager
+     */
     public void changeGameManager(GameManager game) {
         gameManager = game;
     }
-
+    
+    /**
+     * Called by the engine, once it has started the game and finished
+     * initialising. Should be used for adding elements to the game world that
+     * are dependent on other parts of the engine, i.e. GUI
+     */
     public abstract void onPostEngineInit();
-
+    
 }

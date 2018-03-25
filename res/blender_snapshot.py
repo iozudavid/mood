@@ -12,10 +12,12 @@ bpy.context.scene.render.resolution_x = width
 bpy.context.scene.render.resolution_y = height
 bpy.context.scene.render.use_antialiasing = False
 outputDir = os.path.dirname(bpy.data.filepath)
-fileName = "zo_walk_"
+fileName = "pistol_"
+
+isAnim = False
 
 NUM_DIRS = 32
-NUM_FRAMES = 8
+NUM_FRAMES = 1
 DIST = 8
 baseAng = 360.0/NUM_DIRS
 
@@ -29,7 +31,10 @@ def take_snapshot(num, dist, animFrame):
     direction = -position
     rotation_quat = direction.to_track_quat("-Z","Y")
     cam_obj.rotation_euler = rotation_quat.to_euler()
-    filePath = (outputDir+"/"+fileName+str(num)+animFrame)
+    if(isAnim == True):
+        filePath = (outputDir+"/"+fileName+str(num)+animFrame)
+    else:
+        filePath = (outputDir+"/"+fileName+str(num))
     bpy.context.scene.render.filepath = filePath
     bpy.ops.render.render(write_still=True)
     print(angle)

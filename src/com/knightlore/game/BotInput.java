@@ -2,6 +2,7 @@ package com.knightlore.game;
 
 import java.awt.Point;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -15,9 +16,9 @@ import com.knightlore.utils.physics.RaycastHit;
 import com.knightlore.utils.Vector2D;
 
 /**
- * Input module for those players that are controlled by bots
+ * Input module for those players that are controlled by bots.
  * 
- * @authors James, Tom
+ * @authors James Adey, Tom Wiliams
  *
  */
 public final class BotInput extends InputModule {
@@ -37,6 +38,11 @@ public final class BotInput extends InputModule {
     private List<Point> path = new ArrayList<>();
     private Vector2D lookPos = Vector2D.ZERO;
     
+    /**
+     * Runs the main AI code, generates inputs for each AI player.
+     * 
+     * @returns the new InputModule for the supplied player
+     */
     @Override
     public Map<ClientController, Byte> updateInput(Map<ClientController, Byte> inputState, Entity myPlayer) {
         long currentTime = GameEngine.ticker.getTime();
@@ -54,6 +60,13 @@ public final class BotInput extends InputModule {
         return axesToInput(inputState);
     }
     
+    /**
+     * Updates the move inputs for this Bot. Sets the walk and strafe inputs. in
+     * the input map.
+     * 
+     * @param myPlayer
+     *            the Player that this input module is serving
+     */
     private void move(Entity myPlayer) {
         Vector2D displacement = goalPos.subtract(myPlayer.getPosition());
         double dotRight = displacement.dot(myPlayer.getDirection().perpendicular());
@@ -62,7 +75,7 @@ public final class BotInput extends InputModule {
         
         strafeInput = dblToAxis(dotRight, MOVE_ACC);
         walkInput = dblToAxis(dotForward, MOVE_ACC);
-        //System.out.println(myPlayer.getName() + "->" + sqrDist);
+        // System.out.println(myPlayer.getName() + "->" + sqrDist);
         if (path.isEmpty()) {
             getPath(myPlayer);
             strafeInput = 0;
@@ -78,6 +91,12 @@ public final class BotInput extends InputModule {
         
     }
     
+    /**
+     * Determines where to look, which way to turn and when to shoot.
+     * 
+     * @param myPlayer
+     *            the Player that this input module is serving
+     */
     private void aim(Entity myPlayer) {
         
         Vector2D displacement = lookPos.subtract(myPlayer.getPosition());
@@ -92,7 +111,24 @@ public final class BotInput extends InputModule {
         }
     }
     
-    private double dblToAxis(double val, double acc) {
+    /**
+     * A helper method to convert a double value to an input axis. Input axes
+     * are floating point values always between -1 and 1. This method takes a
+     * double, and a threshold and returns which way <code>val</code> must
+     * change if it is to fit within the threshold.
+     * 
+     * @param val
+     *            the value to threshold
+     * @param acc
+     *            A value used to form the threshold spanning <code>-acc</code>
+     *            to 0 to <code>acc</code>.
+     * @returns
+     *          <li>1 if <code>val</code> > <code>acc</code>
+     *          <li>-1 if <code>val</code> < <code>acc</code>
+     *          <li>0 if <code>acc</code> <= <code>val</code> <=
+     *          <code>acc</code>
+     */
+    public static double dblToAxis(double val, double acc) {
         if (val > acc) {
             return 1;
         } else if (val < -acc) {
@@ -103,6 +139,13 @@ public final class BotInput extends InputModule {
         
     }
     
+    /**
+     * A helper method that populates the path stored for this bot. Currently,
+     * this is the path to random spawn postitions.
+     * 
+     * @param myPlayer
+     *            the Player that this input module is serving
+     */
     private void getPath(Entity myPlayer) {
         Vector2D goal = GameEngine.getSingleton().getWorld().getMap().getRandomSpawnPoint();
         AIManager aiManager = GameEngine.getSingleton().getWorld().getAiManager();
@@ -110,28 +153,35 @@ public final class BotInput extends InputModule {
         goalPos = myPlayer.getPosition();
     }
     
+    /**
+     * Decides on the target that this bot should be aiming atF
+     * 
+     * @param myPlayer
+     *            the Player that this input module is serving
+     */
     private void think(Entity myPlayer) {
         target = null;
         // Find our target
         PlayerManager playerManager = GameEngine.getSingleton().getWorld().getPlayerManager();
-        List<Player> players = playerManager.getPlayers();
-        for (Player player : players) {
+        Iterator<Player> playerIter = playerManager.getPlayerIterator();
+        while (playerIter.hasNext()) {
+            Player player = playerIter.next();
             Vector2D displacement = player.getPosition().subtract(myPlayer.getPosition());
             Vector2D dir = displacement.normalised();
-
+            
             double sqrDist = displacement.sqrMagnitude();
             // check if out of our sight distance
             if (sqrDist > SQR_SIGHT_DIST) {
                 continue;
             }
-
+            
             double dot = dir.dot(myPlayer.getDirection().normalised());
             double cosFOV = Math.cos(Math.toRadians(fov));
             // check out of field of view
             if (dot > cosFOV) {
                 continue;
             }
-
+            
             // check actual Line of sight
             RaycastHit hit = GameEngine.getSingleton().getWorld().raycast(myPlayer.getPosition(), dir, 100, SIGHT_DIST,
                     myPlayer);
@@ -148,6 +198,14 @@ public final class BotInput extends InputModule {
         }
     }
     
+    /**
+     * Fills the map provided with mappings representing the input axes of this
+     * bot.
+     * 
+     * @param inputState
+     *            the inputState to fill wiht mappings
+     * @returns a modified <code>inputState</code> containing new mappings
+     */
     private Map<ClientController, Byte> axesToInput(Map<ClientController, Byte> inputState) {
         if (walkInput > 0) {
             inputState.put(ClientController.FORWARD, ONE);
@@ -193,6 +251,9 @@ public final class BotInput extends InputModule {
         return inputState;
     }
     
+    /**
+     * Gets the path for the bot when the player respawns.
+     */
     @Override
     public void onRespawn(Entity myPlayer) {
         getPath(myPlayer);

@@ -4,8 +4,9 @@ import com.knightlore.game.entity.Entity;
 import com.knightlore.utils.Vector2D;
 
 /**
- * A plain old data class, for storing information about what was hit in a raycast.
+ * A plain old data class, for storing information about what was hit in a raycast or linecast.
  * @author James
+ * @see GameWorld#raycast
  */
 public final class RaycastHit {
     
@@ -23,10 +24,19 @@ public final class RaycastHit {
         return hitType;
     }
     
+    /**
+     * 
+     * @returns True if the ray hit something, i.e. getHitType is not NOTHING
+     * @see RaycastHitType
+     */
     public boolean didHit() {
         return hitType != RaycastHitType.NOTHING;
     }
     
+    /**
+     * @returns True if the ray hit any entity, i.e. getEntity() will not return null
+     * @see getEntity
+     */
     public boolean didHitEntity() {
         return entity != null;
     }

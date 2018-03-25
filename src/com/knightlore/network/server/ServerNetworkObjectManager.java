@@ -22,12 +22,16 @@ import com.knightlore.network.protocol.NetworkUtils;
 import com.knightlore.utils.Tuple;
 
 public class ServerNetworkObjectManager extends NetworkObjectManager {
-    // How often to send an update of state, rather than just if the
-    // states have changed. A value of 100 means that in every 100 loops,
-    // at *least* one update will be sent.
+   /**
+    * How often to send an update of state, rather than just if the states have
+    * changed. A value of 100 means that in every 100 loops, at *least* one
+    * update will be sent.
+    */
     private static final int REGULAR_UPDATE_FREQ = 100;
-    // Maps network objects to their most recent state. Used to check if the new
-    // state has changed (if it hasn't, don't resend it).
+    /**
+     * Maps network objects to their most recent state. Used to check if the new
+     * state has changed (if it hasn't, don't resend it).
+     */
     private final Map<UUID, Tuple<NetworkObject, ByteBuffer>> networkObjects = new HashMap<>();
     private final List<SendToClient> clientSenders = new CopyOnWriteArrayList<>();
     // Counter for REGULAR_UPDATE_FREQ
@@ -42,10 +46,20 @@ public class ServerNetworkObjectManager extends NetworkObjectManager {
         setNetworkConsumers();
     }
 
+    /**
+     * Assign method names to actual methods to be called via networking.
+     */
     private void setNetworkConsumers() {
         networkConsumers.put("receiveName", this::receiveName);
     }
 
+    /**
+     * Add a network object to the game by keeping it in memory and inform all
+     * other clients about it.
+     * 
+     * @param obj
+     *            - network object to be registered in game.
+     */
     @Override
     public synchronized void registerNetworkObject(NetworkObject obj) {
         UUID uuid = obj.getObjectId();
@@ -54,6 +68,13 @@ public class ServerNetworkObjectManager extends NetworkObjectManager {
         this.sendToClients(getObjectCreationMessage(obj));
     }
 
+    /**
+     * Generate a ByteBuffer which respects the protocol of creation packet.
+     * 
+     * @param obj
+     *            - network object from which we want the creation packet
+     * @return creation packet containing UUID of the new created object
+     */
     private ByteBuffer getObjectCreationMessage(NetworkObject obj) {
         // Send the current state when sending the creation message.
         ByteBuffer state = networkObjects.get(obj.getObjectId()).y;
@@ -73,6 +94,13 @@ public class ServerNetworkObjectManager extends NetworkObjectManager {
         return buf;
     }
 
+    /**
+     * Generate a ByteBuffer which respects the protocol of destruction packet.
+     * 
+     * @param obj
+     *            - network object from which we want the destruction packet
+     * @return destruction packet containing UUID of the destructed object
+     */
     private ByteBuffer getObjectDestroyMessage(NetworkObject obj) {
         ByteBuffer buf = ByteBuffer.allocate(BYTE_BUFFER_DEFAULT_SIZE);
         // Send the message to the ClientNetworkObjectManager.
@@ -84,7 +112,13 @@ public class ServerNetworkObjectManager extends NetworkObjectManager {
         return buf;
     }
 
-    // Notify a particular client of all existing objects.
+    /**
+     * Notify a particular client of all existing objects.
+     * 
+     * @param sender
+     *            - the object representing the channel we want to send
+     *            information.
+     */
     private synchronized void notifyOfAllObjs(SendToClient sender) {
         System.out.println("Notifying new client of all objects");
         for (Entry<UUID, Tuple<NetworkObject, ByteBuffer>> e : networkObjects
@@ -95,13 +129,23 @@ public class ServerNetworkObjectManager extends NetworkObjectManager {
         }
     }
 
-    // call this function to disconnect client
-    // with the given id
-    // onUpdate will do the job
+
+    /**
+     * Disconnect client with the given id. onUpdate functionwill do the job
+     * 
+     * @param uuid
+     *            - object's UUID we want to disconnect
+     */
     public void disconnectClient(UUID uuid) {
         // TODO
     }
 
+    /**
+     * Remove a network object from game and inform all clients about this.
+     * 
+     * @param obj
+     *            - network object to be removed from game
+     */
     public synchronized void removeNetworkObject(NetworkObject obj) {
         System.out.println("Removing " + obj.getObjectId());
         UUID uuid = obj.getObjectId();
@@ -110,6 +154,14 @@ public class ServerNetworkObjectManager extends NetworkObjectManager {
         this.networkObjects.remove(uuid);
     }
 
+    /**
+     * Register a new communication channel by sending map seed, player creation
+     * state and keeping track of this new connection.
+     * 
+     * @param sender
+     *            - communication channel to be registered
+     * @return player's UUID
+     */
     public UUID registerClientSender(SendToClient sender) {
         // Tell the player the seed to generate the map from.
         sendMapSeed(sender);
@@ -128,6 +180,12 @@ public class ServerNetworkObjectManager extends NetworkObjectManager {
         return newPlayer.getObjectId();
     }
 
+    /**
+     * Send a packet to confirm that the client is ready to start.
+     * 
+     * @param sender
+     *            - the channel to be sent the information to.
+     */
     private void sendReadySignal(SendToClient sender) {
         ByteBuffer buf = ByteBuffer.allocate(BYTE_BUFFER_DEFAULT_SIZE);
         NetworkUtils.putStringIntoBuf(buf, MANAGER_UUID.toString());
@@ -135,6 +193,12 @@ public class ServerNetworkObjectManager extends NetworkObjectManager {
         sender.send(buf);
     }
 
+    /**
+     * Send a packet announcing the current map on the game.
+     * 
+     * @param sender
+     *            - the channel to be sent the information to.
+     */
     private void sendMapSeed(SendToClient sender) {
         System.out.println("Sending map seed");
         ByteBuffer buf = ByteBuffer.allocate(BYTE_BUFFER_DEFAULT_SIZE);
@@ -144,6 +208,12 @@ public class ServerNetworkObjectManager extends NetworkObjectManager {
         sender.send(buf);
     }
 
+    /**
+     * Send a packet announcing the player's identity by sending its UUID.
+     * 
+     * @param sender
+     *            - the channel to be sent the information to.
+     */
     private void sendPlayerIdentity(SendToClient sender, Player player) {
         System.out.println("sending player identity " + player.getObjectId());
         ByteBuffer buf = ByteBuffer
@@ -154,6 +224,13 @@ public class ServerNetworkObjectManager extends NetworkObjectManager {
         sender.send(buf);
     }
 
+    /**
+     * When connection broke, remove the unused channel as the client doesn't
+     * need to receive updates on game anymore.
+     * 
+     * @param obj
+     *            - channel to be removed.
+     */
     public void removeClientSender(SendToClient obj) {
         synchronized (this.clientSenders) {
             this.clientSenders.remove(obj);
@@ -180,6 +257,10 @@ public class ServerNetworkObjectManager extends NetworkObjectManager {
         serverWorld.setUpWorld(null);
     }
 
+    /**
+     * Keeps track of the new changes in the game. If the state of a game object
+     * has been changed then inform the clients of new game state.
+     */
     private synchronized void syncStates() {
         // Iterate through each networkable object. If its state
         // has changed, send the new state to each client.
@@ -227,6 +308,12 @@ public class ServerNetworkObjectManager extends NetworkObjectManager {
         }
     }
 
+    /**
+     * Retrieve the object which has the given UUID.
+     * 
+     * @param uuid
+     *            - object's UUID we want to get.
+     */
     public synchronized NetworkObject getNetworkObject(UUID uuid) {
         if (networkObjects.containsKey(uuid)) {
             return networkObjects.get(uuid).x;
@@ -237,7 +324,12 @@ public class ServerNetworkObjectManager extends NetworkObjectManager {
 
     }
 
-    // Send a message to all connected clients.
+    /**
+     * Send a message to all connected clients.
+     * 
+     * @param buf
+     *            - packet containing the message we want to send
+     */
     private void sendToClients(ByteBuffer buf) {
         synchronized (clientSenders) {
             for (SendToClient s : clientSenders) {
@@ -261,7 +353,15 @@ public class ServerNetworkObjectManager extends NetworkObjectManager {
         System.out.println("Name is now " + player.getName());
     }
 
-    
+    /**
+     * Send a message to a part of the connected clients.
+     * 
+     * @param buf
+     *            - packet containing the message we want to send.
+     * @param pred
+     *            - condition that needs to be true to send the packet to that
+     *            client
+     */
     private void sendToClientsIf(ByteBuffer buf, Predicate<Entity> pred) {
     	synchronized (clientSenders) {
             for (SendToClient s : clientSenders) {

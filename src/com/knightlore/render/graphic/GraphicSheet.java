@@ -47,6 +47,11 @@ public class GraphicSheet {
     public final static GraphicSheet SHOTGUN_SPRITES = new GraphicSheet("res/models/shotgun_sprites.png", 128);
 
     /**
+     * A graphicsheet for the shotgun directional sprite.
+     */
+    public final static GraphicSheet PISTOL_SPRITES = new GraphicSheet("res/models/pistol_static_sprites.png", 128);
+
+    /**
      * A graphicsheet for the turret directional sprite.
      */
     public final static GraphicSheet TURRET_SPRITES = new GraphicSheet("res/models/turret_sprites.png", 128);
@@ -61,6 +66,9 @@ public class GraphicSheet {
      * player dies.
      */
     public final static GraphicSheet GRAVESTONE_SPRITES = new GraphicSheet("res/models/gravestone_sprites.png", 128);
+
+    public final static GraphicSheet HEALTHKIT_SPRITES = new GraphicSheet("res/models/healthkit_static_sprites.png",
+            128);
 
     private final int cellSize;
     private BufferedImage sheet;

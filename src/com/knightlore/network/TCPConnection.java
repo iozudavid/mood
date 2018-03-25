@@ -45,10 +45,14 @@ public class TCPConnection extends Connection {
         }
     }
 
+    /**
+     * Sends a packet using standard TCP Protocol.
+     * @param data - packet to be sent.
+     */
     @Override
     public void send(ByteBuffer data) {
         /*
-         * Effectively synchronise this method with itself, ensuring the stream
+         * Effectively synchronize this method with itself, ensuring the stream
          * is not written to in parallel. Don't use the 'synchronized' method
          * modifier since we can run this in parallel with receive().
          */

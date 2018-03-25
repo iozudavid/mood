@@ -18,6 +18,7 @@ import com.knightlore.engine.audio.Grunt;
 import com.knightlore.engine.audio.SoundManager;
 import com.knightlore.game.InputModule;
 import com.knightlore.game.RemoteInput;
+import com.knightlore.game.Team;
 import com.knightlore.game.buff.Immune;
 import com.knightlore.game.buff.SpawnVision;
 import com.knightlore.game.entity.weapon.Weapon;
@@ -43,13 +44,9 @@ import com.knightlore.utils.Vector2D;
 
 public class Player extends Entity {
 
-    private PlayerMoveAnimation moveAnim = new PlayerMoveAnimation(PlayerGraphicMatrix.getGraphic(
-            PlayerGraphicMatrix.Color.BLUE, PlayerGraphicMatrix.Weapon.PISTOL, PlayerGraphicMatrix.Stance.MOVE));
+    private PlayerMoveAnimation moveAnim;
 
-    private PlayerStandAnimation standAnim = new PlayerStandAnimation(
-            PlayerGraphicMatrix.getGraphic(PlayerGraphicMatrix.Color.BLUE, PlayerGraphicMatrix.Weapon.PISTOL,
-                    PlayerGraphicMatrix.Stance.STAND),
-            (long) (GameEngine.UPDATES_PER_SECOND / 10));
+    private PlayerStandAnimation standAnim;
 
     private Animation<DirectionalSprite> currentAnim = standAnim;
 
@@ -88,7 +85,20 @@ public class Player extends Entity {
     private int previousHealth;
     // END DO NOT REMOVE
 
-    // Returns a new instance. See NetworkObject for details.
+    private PlayerGraphicMatrix.Color color = PlayerGraphicMatrix.Color.RED;
+
+    /**
+     * Called by the network when creating the client-side representation of
+     * this object. Instantiates a copy of the client class, and deserializes
+     * the state into it.
+     * 
+     * @param uuid
+     *            The uuid provided to this object
+     * @param state
+     *            The initial state of this object
+     * @returns The client-side network object
+     * @see NetworkObject
+     */
     public static NetworkObject build(UUID uuid, ByteBuffer state) {
         System.out.println("Player build, state size: " + state.remaining());
         NetworkObject obj = new Player(uuid, Vector2D.ONE, Vector2D.ONE);
@@ -101,18 +111,26 @@ public class Player extends Entity {
         super(uuid, SIZE, pos, dir);
         setNetworkConsumers();
 
+        this.team = Team.RED;
+
         zOffset = 100;
         moveSpeed = 0.060;
         strafeSpeed = moveSpeed / 2;
         rotationSpeed = 0.06;
 
-        // add tick listener to game engine
-        // as some buffs will affect the player periodically
-        GameEngine.ticker.addTickListener(this);
+        // Player.this.finished = true;
+
+        moveAnim = new PlayerMoveAnimation(PlayerGraphicMatrix.getGraphic(color, PlayerGraphicMatrix.Weapon.PISTOL,
+                PlayerGraphicMatrix.Stance.MOVE));
+
+        standAnim = new PlayerStandAnimation(PlayerGraphicMatrix.getGraphic(color, PlayerGraphicMatrix.Weapon.PISTOL,
+                PlayerGraphicMatrix.Stance.STAND), (long) (GameEngine.UPDATES_PER_SECOND / 10));
 
         this.setCurrentWeaponType(WeaponType.PISTOL);
 
-        // Player.this.finished = true;
+        // add tick listener to game engine
+        // as some buffs will affect the player periodically
+        GameEngine.ticker.addTickListener(this);
     }
 
     public Player(Vector2D pos, Vector2D dir) {
@@ -244,7 +262,7 @@ public class Player extends Entity {
         if (GameManager.getGameState() == GameState.FINISHED) {
             return;
         }
-        
+
         this.sendStatsToScoreBoard();
 
         hasShot = false;
@@ -326,7 +344,7 @@ public class Player extends Entity {
     @Override
     public void onCollide(Player player) {
     }
-    
+
     @Override
     public ByteBuffer serialize() {
         ByteBuffer bb = super.serialize();
@@ -337,6 +355,7 @@ public class Player extends Entity {
         bb.putInt(currentHealth);
         bb.putInt(score);
         bb.putInt(this.currentWeaponType.ordinal());
+        bb.putInt(team.ordinal());
         return bb;
     }
 
@@ -361,7 +380,7 @@ public class Player extends Entity {
 
     @Override
     public DirectionalSprite getDirectionalSprite() {
-        return DirectionalSprite.PLAYER_DIRECTIONAL_SPRITE;
+        return null;
     }
 
     @Override
@@ -444,7 +463,8 @@ public class Player extends Entity {
      * Make the player hold a weapon of the given type. Instantiates a new
      * weapon of this type.
      * 
-     * @param wt The type of weapon for the player to be holding.
+     * @param wt
+     *            The type of weapon for the player to be holding.
      */
     public synchronized void setCurrentWeaponType(WeaponType wt) {
         if (wt == this.currentWeaponType) {
@@ -467,11 +487,11 @@ public class Player extends Entity {
         default:
             w = PlayerGraphicMatrix.Weapon.PISTOL;
         }
-        
+
         System.out.println(w);
 
-        this.moveAnim.setFrames(PlayerGraphicMatrix.getGraphic(Color.BLUE, w, Stance.MOVE));
-        this.standAnim.setFrames(PlayerGraphicMatrix.getGraphic(Color.BLUE, w, Stance.STAND));
+        this.moveAnim.setFrames(PlayerGraphicMatrix.getGraphic(color, w, Stance.MOVE));
+        this.standAnim.setFrames(PlayerGraphicMatrix.getGraphic(color, w, Stance.STAND));
     }
 
     public int getCurrentHealth() {
@@ -519,6 +539,20 @@ public class Player extends Entity {
     public void onClientRespawn() {
         this.resetBuff(new SpawnVision(this));
         this.resetBuff(new Immune(this)); // just for health bar cosmetic
+    }
+
+    public void setTeam(Team team) {
+        if (team == this.team)
+            return;
+
+        this.team = team;
+        this.color = team == Team.RED ? PlayerGraphicMatrix.Color.RED : PlayerGraphicMatrix.Color.BLUE;
+        moveAnim = new PlayerMoveAnimation(PlayerGraphicMatrix.getGraphic(color, PlayerGraphicMatrix.Weapon.PISTOL,
+                PlayerGraphicMatrix.Stance.MOVE));
+
+        standAnim = new PlayerStandAnimation(PlayerGraphicMatrix.getGraphic(color, PlayerGraphicMatrix.Weapon.PISTOL,
+                PlayerGraphicMatrix.Stance.STAND), (long) (GameEngine.UPDATES_PER_SECOND / 10));
+
     }
 
 }

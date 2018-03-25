@@ -9,8 +9,10 @@ public class NetworkUtils {
     /**
      * Put a String into a ByteBuffer.
      * 
-     * @param buf The ByteBuffer to insert into.
-     * @param string The String to insert.
+     * @param buf
+     *            The ByteBuffer to insert into.
+     * @param string
+     *            The String to insert.
      */
     public static void putStringIntoBuf(ByteBuffer buf, String string) {
         byte[] bytes = string.getBytes(GameEngine.CHARSET);
@@ -21,7 +23,8 @@ public class NetworkUtils {
     /**
      * Gets a String from a ByteBuffer.
      * 
-     * @param buf The ByteBuffer to use.
+     * @param buf
+     *            The ByteBuffer to use.
      * @return The extracted String.
      */
     public static String getStringFromBuf(ByteBuffer buf) {

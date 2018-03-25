@@ -28,7 +28,7 @@ public abstract class ZombieShared extends Entity {
 
     @Override
     public DirectionalSprite getDirectionalSprite() {
-        return DirectionalSprite.PLAYER_DIRECTIONAL_SPRITE;
+        return null;
     }
 
     @Override

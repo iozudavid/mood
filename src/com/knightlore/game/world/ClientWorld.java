@@ -24,7 +24,7 @@ public class ClientWorld extends GameWorld {
         if (gameChat != null && gameManager != null) {
             gameChat.setTimeLeft(gameManager.timeLeftString());
         }
-        
+
         if (GameManager.getGameState() == GameState.FINISHED) {
             gameChat.setScoreMenuVisible();
         }
