@@ -34,7 +34,7 @@ public class SendToClient implements Runnable {
     public void run() {
 
         while (!conn.getTerminated()) {
-            System.out.println("da");
+            //System.out.println("da");
             ByteBuffer nextState;
             try {
                 nextState = commandQueue.take();

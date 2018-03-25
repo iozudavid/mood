@@ -570,6 +570,7 @@ public abstract class Entity extends NetworkObject implements IMinimapObject, Ti
     	NetworkUtils.putStringIntoBuf(bf, NetworkObjectManager.MANAGER_UUID.toString());
     	NetworkUtils.putStringIntoBuf(bf, "displayMessage");
     	NetworkUtils.putStringIntoBuf(bf, message);
+    	this.systemMessages.offer(bf);
     }
 
     protected void sendSystemMessage(String name, Entity inflictor){

@@ -1,5 +1,5 @@
 // ----- CLIENT CONFIG -----
-dest_port = 6666
+dest_port = 27001
 
 // ----- SERVER CONFIG -----
 
@@ -10,9 +10,9 @@ random_map = false
 map_seed = 31415926
 
 // NETWORKING
-listen_port = 6666
+listen_port = 27001
 
 // GAME MODES
-game_mode = FFA
-num_bots = 4
-num_zombies = 10
+game_mode = TDM
+num_bots = 10
+num_zombies = 0
