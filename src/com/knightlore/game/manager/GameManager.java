@@ -5,6 +5,7 @@ import java.util.UUID;
 
 import com.knightlore.GameSettings;
 import com.knightlore.engine.GameEngine;
+import com.knightlore.game.GameMode;
 import com.knightlore.game.entity.Player;
 import com.knightlore.game.entity.ZombieShared;
 import com.knightlore.network.NetworkObject;
@@ -35,7 +36,10 @@ public abstract class GameManager extends NetworkObject {
     }
     
     protected static GameState gameState = GameState.LOBBY;
-    
+    public static GameMode desiredGameMode = GameMode.FFA;
+    public static int numBots = 0;
+    public static int numZombies = 0;
+
     public static GameState getGameState() {
         return gameState;
     }
