@@ -49,7 +49,7 @@ public class TDMGameManager extends GameManager {
     private int redScore = 0;
     
     /**
-     * Sets the game state to LOBBY.
+     * Sets the game state to LOBBY and spawns the bots.
      */
     @Override
     public void startLobby() {
@@ -57,6 +57,7 @@ public class TDMGameManager extends GameManager {
         PlayerManager playerManager = GameEngine.getSingleton().getWorld().getPlayerManager();
         ServerWorld world = (ServerWorld) GameEngine.getSingleton().getWorld();
         for (int i = 0; i < GameManager.numBots; i++) {
+            // attempt even teams
             Team team = Team.BLUE;
             if (i % 2 == 0) {
                 team = Team.RED;
@@ -67,7 +68,6 @@ public class TDMGameManager extends GameManager {
             
             botPlayer.setInputModule(new BotInput());
             botPlayer.setName("bot" + i);
-            botPlayer.sendSystemMessage("System: Added " + botPlayer.getName() + " BOT");
             playerManager.addPlayer(botPlayer);
         }
     }

@@ -160,7 +160,7 @@ public class FFAGameManager extends GameManager {
     }
     
     /**
-     * Sets the game state to LOBBY.
+     * Sets the game state to LOBBY and spawns the bots.
      */
     @Override
     public void startLobby() {
@@ -168,13 +168,11 @@ public class FFAGameManager extends GameManager {
         PlayerManager playerManager = GameEngine.getSingleton().getWorld().getPlayerManager();
         ServerWorld world = (ServerWorld) GameEngine.getSingleton().getWorld();
         for (int i = 0; i < GameManager.numBots; i++) {
-
             Vector2D pos = world.getMap().getRandomSpawnPoint();
             Player botPlayer = new Player(pos, Vector2D.UP, Team.NONE);
             botPlayer.init();
             botPlayer.setInputModule(new BotInput());
             botPlayer.setName("bot" + i);
-            botPlayer.sendSystemMessage("System: Added " + botPlayer.getName() + " BOT");
             playerManager.addPlayer(botPlayer);
         }
     }
