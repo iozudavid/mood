@@ -5,7 +5,12 @@ import java.util.UUID;
 
 import com.knightlore.GameSettings;
 import com.knightlore.engine.GameEngine;
+import com.knightlore.game.BotInput;
+import com.knightlore.game.Team;
+import com.knightlore.game.entity.Player;
+import com.knightlore.game.world.ServerWorld;
 import com.knightlore.network.NetworkObject;
+import com.knightlore.utils.Vector2D;
 
 /**
  * Contains data and methods to handle the Free For All game mode client-side.
@@ -37,7 +42,13 @@ public class TDMGameManagerClient extends TDMGameManager {
 
     private boolean gameOver;
     
-    
+    /**
+     * Sets the game state to LOBBY.
+     */
+    @Override
+    public void startLobby() {
+        gameState = GameState.LOBBY;
+    }
     /**
      * Checks if the game is over.
      */

@@ -4,14 +4,16 @@ import java.util.Iterator;
 import java.util.UUID;
 
 import com.knightlore.engine.GameEngine;
+import com.knightlore.game.BotInput;
+import com.knightlore.game.Team;
 import com.knightlore.game.entity.Entity;
 import com.knightlore.game.entity.Player;
-import com.knightlore.game.entity.ZombieServer;
 import com.knightlore.game.entity.ZombieShared;
 import com.knightlore.game.entity.pickup.PistolPickup;
 import com.knightlore.game.entity.pickup.ShotgunPickup;
 import com.knightlore.game.entity.pickup.WeaponPickup;
 import com.knightlore.game.entity.weapon.WeaponType;
+import com.knightlore.game.world.ServerWorld;
 import com.knightlore.utils.Vector2D;
 
 /**
@@ -22,7 +24,7 @@ import com.knightlore.utils.Vector2D;
  */
 public class FFAGameManager extends GameManager {
     
-    private static final double ROUND_TIME_SECS = 540;
+    private static final double ROUND_TIME_SECS = 300;
     private Entity winner;
     
     /**
@@ -163,6 +165,18 @@ public class FFAGameManager extends GameManager {
     @Override
     public void startLobby() {
         gameState = GameState.LOBBY;
+        PlayerManager playerManager = GameEngine.getSingleton().getWorld().getPlayerManager();
+        ServerWorld world = (ServerWorld) GameEngine.getSingleton().getWorld();
+        for (int i = 0; i < GameManager.numBots; i++) {
+
+            Vector2D pos = world.getMap().getRandomSpawnPoint();
+            Player botPlayer = new Player(pos, Vector2D.UP, Team.NONE);
+            botPlayer.init();
+            botPlayer.setInputModule(new BotInput());
+            botPlayer.setName("bot" + i);
+            botPlayer.sendSystemMessage("System: Added " + botPlayer.getName() + " BOT");
+            playerManager.addPlayer(botPlayer);
+        }
     }
     
     /**

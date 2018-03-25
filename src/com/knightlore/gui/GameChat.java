@@ -32,6 +32,7 @@ public class GameChat extends GUICanvas {
 
     public GameChat(int screenWidth, int screenHeight) {
         super(screenWidth, screenHeight);
+        System.out.println("CHATTTTTTTTTTTTTTTTT");
         this.screenWidth = screenWidth;
         this.screenHeight = screenHeight;
         // shouldn't be in constructor... but damn race conditions

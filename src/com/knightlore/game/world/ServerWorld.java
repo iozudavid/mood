@@ -82,7 +82,7 @@ public class ServerWorld extends GameWorld {
         
         Player player = new Player(pos, Vector2D.UP, team);
         player.init();
-        player.sendSystemMessage("System: Player " + player.getName() + " " + " has connected.");
+        //player.sendSystemMessage("System: Player " + player.getName() + " " + " has connected.");
         playerManager.addPlayer(player);
         return player;
     }
