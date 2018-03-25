@@ -59,9 +59,12 @@ public class ConfigParser {
         
         switch (keyStr) {
         case "dest_port":
+            if(GameSettings.isServer()) {
+                break;
+            }
             try {
                 int destPort = Integer.parseInt(valStr);
-                ConnectionDetails.PORT = destPort;
+                ConnectionDetails.DEFAULT_PORT = destPort;
             } catch (Exception e) {
                 System.err.println("Failed to read dest_port, value given=" + valStr);
             }
@@ -105,8 +108,11 @@ public class ConfigParser {
             }
             break;
         case "listen_port":
+            if(GameSettings.isClient()) {
+                break;
+            }
             try {
-                int listenPort = Short.parseShort(valStr);
+                int listenPort = Integer.parseInt(valStr);
                 ConnectionDetails.PORT = listenPort;
             } catch (Exception e) {
                 System.err.println("Failed to read listen_port, value given=" + valStr);
