@@ -70,8 +70,6 @@ public class ServerWorld extends GameWorld {
     }
     
     public Player createPlayer() {
-        // TODO: Initialise given player team in the
-        // player the constructor
         Vector2D pos = map.getRandomSpawnPoint();
         Team team = Team.NONE;
         if (gameManager instanceof TDMGameManager) {
@@ -83,7 +81,7 @@ public class ServerWorld extends GameWorld {
                 team = Team.RED;
             }
         }
-        Player player = new Player(pos, Vector2D.UP);
+        Player player = new Player(pos, Vector2D.UP,team);
         player.init();
         player.sendSystemMessage("System: Player " + player.getName() + " " + " has connected.");
         playerManager.addPlayer(player);

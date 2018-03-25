@@ -137,6 +137,11 @@ public class Player extends Entity {
         this(UUID.randomUUID(), pos, dir);
     }
 
+    public Player(Vector2D pos, Vector2D dir, Team team) {
+        this(UUID.randomUUID(), pos, dir);
+        this.team = team;
+    }
+
     public void sendStatsToScoreBoard() {
         if (GameSettings.isServer())
             return;

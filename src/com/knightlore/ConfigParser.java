@@ -69,8 +69,8 @@ public class ConfigParser {
         case "map_width":
             try {
                 int map_width = Integer.parseInt(valStr);
-                if(map_width < 8) {
-                    map_width = 8;
+                if (map_width < 16) {
+                    map_width = 16;
                 }
                 GameSettings.mapWidth = map_width;
             } catch (Exception e) {
@@ -80,12 +80,20 @@ public class ConfigParser {
         case "map_height":
             try {
                 int map_height = Integer.parseInt(valStr);
-                if(map_height < 8) {
-                    map_height = 8;
+                if (map_height < 16) {
+                    map_height = 16;
                 }
                 GameSettings.mapHeight = map_height;
             } catch (Exception e) {
                 System.err.println("Failed to read map_height, value given=" + valStr);
+            }
+            break;
+        case "random_map":
+            try {
+                boolean random_map = Boolean.parseBoolean(valStr);
+                GameSettings.randomMap = random_map;
+            } catch (Exception e) {
+                System.err.println("Failed to read random_map, value given=" + valStr);
             }
             break;
         case "map_seed":

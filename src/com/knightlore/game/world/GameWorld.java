@@ -123,7 +123,8 @@ public abstract class GameWorld {
             mapType = MapType.TDM;
         }
         
-        map = new MapGenerator().createMap(GameSettings.mapWidth, GameSettings.mapHeight, MapType.FFA, mapSeed);
+        map = new MapGenerator().createMap(GameSettings.mapWidth, GameSettings.mapHeight, mapType, mapSeed);
+        System.out.println("Generated map.");
         ents = new LinkedList<>();
         aiManager = new AIManager(map);
         playerManager = new PlayerManager();

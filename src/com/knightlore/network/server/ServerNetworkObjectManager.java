@@ -11,6 +11,7 @@ import java.util.UUID;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.function.Predicate;
 
+import com.knightlore.GameSettings;
 import com.knightlore.engine.GameEngine;
 import com.knightlore.engine.TickListener;
 import com.knightlore.game.entity.Player;
@@ -253,8 +254,13 @@ public class ServerNetworkObjectManager extends NetworkObjectManager {
             }
 
         });
-        // Initialise the world without specifying a seed.
-        serverWorld.setUpWorld(null);
+        if(GameSettings.randomMap) {
+        
+            serverWorld.setUpWorld(null);
+        }
+        else {
+            serverWorld.setUpWorld((long)GameSettings.mapSeed);
+        }
     }
 
     /**

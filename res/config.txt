@@ -4,8 +4,9 @@ dest_port = 27001
 // ----- SERVER CONFIG -----
 
 // MAP
-map_width = 64
-map_height = 64
+map_width = 0
+map_height = 0
+random_map = true
 map_seed = 31415926
 
 // NETWORKING
