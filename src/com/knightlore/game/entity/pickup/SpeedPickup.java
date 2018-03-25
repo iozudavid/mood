@@ -46,12 +46,14 @@ public class SpeedPickup extends PickupItem {
     
     @Override
     public void onCollide(Player player) {
-        // update pickup manager
-        addToPickupManager();
-        // apply speed buff
-        player.resetBuff(new Speed(player));
-        // remove pickup
-        this.destroy();
+        if(exists) {
+            // update pickup manager
+            addToPickupManager();
+            // apply speed buff
+            player.resetBuff(new Speed(player));
+            // remove pickup
+            this.destroy();
+        }
     }
 
 }

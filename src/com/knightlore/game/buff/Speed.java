@@ -4,8 +4,8 @@ import com.knightlore.game.entity.Entity;
 
 public class Speed extends Buff {
 
-    private double originalMoveSpeed;
-    private double originalStrafeSpeed;
+    private static final double DEFAULT_MOVE_SPEED = 0.66;
+    private static final double DEFAULT_STRAFE_SPEED = DEFAULT_MOVE_SPEED/2;
     
     private static final double FAST_MOVE_SPEED = .015;
     private static final double FAST_STRAFE_SPEED = .0125;
@@ -24,9 +24,6 @@ public class Speed extends Buff {
     @Override
     public void onApply() {
         // TODO: Maybe make some kind of sound
-        originalMoveSpeed = ent.getMoveSpeed();
-        originalStrafeSpeed = ent.getStrafeSpeed();
-        
         ent.setMoveSpeed(FAST_MOVE_SPEED);
         ent.setRotateSpeed(FAST_STRAFE_SPEED);
     }
@@ -38,8 +35,8 @@ public class Speed extends Buff {
     @Override
     public void onRemove() {
         // TODO: Maybe make some kind of sound
-        ent.setMoveSpeed(originalMoveSpeed);
-        ent.setStrafeSpeed(originalStrafeSpeed);
+        ent.setMoveSpeed(DEFAULT_MOVE_SPEED);
+        ent.setStrafeSpeed(DEFAULT_STRAFE_SPEED);
     }
 
     @Override
