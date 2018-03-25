@@ -136,7 +136,7 @@ public class RoomGenerator extends ProceduralAreaGenerator {
                 fillUndecidedTiles();
                 break;
             case LAVA_PLATFORM:
-                if(rand.nextDouble() < 0.33) {
+                if(rand.nextDouble() < 0.5) {
                     grid[midx][midy] = new PickupTile(randomPickupType());
                 }
                 fillUndecidedTiles();
