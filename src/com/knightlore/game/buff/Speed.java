@@ -3,38 +3,32 @@ package com.knightlore.game.buff;
 import com.knightlore.game.entity.Entity;
 
 public class Speed extends Buff {
+
+    private double originalMoveSpeed;
+    private double originalStrafeSpeed;
+    
+    private static final double FAST_MOVE_SPEED = .015;
+    private static final double FAST_STRAFE_SPEED = .0125;
+    
+    private static final double SPEED_BUFF_FREQUENCY = 0.5;
+    private static final double SPEED_BUFF_LENGTH = 1.0;
+    
+    public Speed(Entity ent) {
+        super(ent, SPEED_BUFF_FREQUENCY, SPEED_BUFF_LENGTH);
+    }
     
     protected Speed(Entity ent, double frequency, double length) {
         super(ent, frequency, length);
-        // TODO Auto-generated constructor stub
-    }
-
-    private double originalMoveSpeed;
-    private double originalRotateSpeed;
-    private double originalStrafeSpeed;
-    
-    private static final double SLOW_MOVE_SPEED = .015;
-    private static final double SLOW_ROTATE_SPEED = .005;
-    private static final double SLOW_STRAFE_SPEED = .0125;
-    
-    private static final double SLOW_FREQUENCY = 0.5;
-    private static final double SLOW_LENGTH = 1.0;
-    
-    public Speed(Entity ent) {
-        super(ent, SLOW_FREQUENCY, SLOW_LENGTH);
     }
     
     @Override
     public void onApply() {
         // TODO: Maybe make some kind of sound
-        
         originalMoveSpeed = ent.getMoveSpeed();
-        originalRotateSpeed = ent.getRotateSpeed();
         originalStrafeSpeed = ent.getStrafeSpeed();
         
-        ent.setMoveSpeed(SLOW_MOVE_SPEED);
-        ent.setRotateSpeed(SLOW_ROTATE_SPEED);
-        ent.setRotateSpeed(SLOW_STRAFE_SPEED);
+        ent.setMoveSpeed(FAST_MOVE_SPEED);
+        ent.setRotateSpeed(FAST_STRAFE_SPEED);
     }
 
     @Override
@@ -45,18 +39,17 @@ public class Speed extends Buff {
     public void onRemove() {
         // TODO: Maybe make some kind of sound
         ent.setMoveSpeed(originalMoveSpeed);
-        ent.setRotateSpeed(originalRotateSpeed);
         ent.setStrafeSpeed(originalStrafeSpeed);
     }
 
     @Override
     public BuffType getType() {
-        return BuffType.SLOW;
+        return BuffType.SPEED;
     }
 
     @Override
     public String toString() {
-        return "Slow";
+        return "Speed";
     }
     
 }

@@ -2,6 +2,6 @@ package com.knightlore.game.buff;
 
 public enum BuffType {
 
-    FIRE, IMMUNE, PUSH, SLOW, SPAWNVISION;
+    FIRE, IMMUNE, PUSH, SPEED, SPAWNVISION;
     
 }

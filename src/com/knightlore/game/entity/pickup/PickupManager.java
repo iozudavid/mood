@@ -31,17 +31,20 @@ public class PickupManager implements TickListener{
                 PickupType type = tile.getPickupType();
                 PickupItem item;
                 switch(type) {
-                    case SHOTGUN:
+                    case SHOTGUN :
                         item = new ShotgunPickup(vector, this);
                         break;
-                    case HEALTH:
+                    case HEALTH :
                         item = new HealthPickup(vector , this);
                         break;
-                    case PISTOL:
+                    case PISTOL :
                         item = new PistolPickup(vector, this);
+                        break;
+                    case SPEED :
+                        item = new SpeedPickup(vector, this);
+                        break;
                     default:
                         item = new HealthPickup(vector, this);
-                        break;
                 }
                 pickupQueue.add(new PickupPlacement(0 , item));                
             }

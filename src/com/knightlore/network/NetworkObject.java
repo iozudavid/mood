@@ -41,6 +41,10 @@ public abstract class NetworkObject extends GameObject implements INetworkable {
         setNetworkConsumers();
     }
 
+    /**
+     * Set a map containing methods name to be callable over network and actual
+     * implementation of the methods.
+     */
     private void setNetworkConsumers() {
         networkConsumers.put("deserialize", this::deserialize);
     }
@@ -60,10 +64,21 @@ public abstract class NetworkObject extends GameObject implements INetworkable {
         networkObjectManager.registerNetworkObject(this);
     }
 
+    /**
+     * Game Engine will call this method when a new object of this type is
+     * created. If there must be a special action to be performed at creation
+     * time, this method should implement it.
+     */
     @Override
     public void onCreate() {
     }
 
+    /**
+     * Game Engine will call this method when an object of this type is
+     * destroyed. If there must be a special action to be performed at creation
+     * time, this method should implement it.
+     * For this type, it removes the object from the manager of the networking.
+     */
     @Override
     public void onDestroy() {
         networkObjectManager.removeNetworkObject(this);
@@ -86,7 +101,8 @@ public abstract class NetworkObject extends GameObject implements INetworkable {
     }
 
     /**
-     * Return the name of the counterpart client class for this type of object.
+     * 
+     * @return name of the counterpart client class for this type of object.
      */
     public abstract String getClientClassName();
 

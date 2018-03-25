@@ -9,29 +9,39 @@ import com.knightlore.utils.Vector2D;
 
 public class DirectionalSprite {
 
-    public static final PlayerSprite PLAYER_DIRECTIONAL_SPRITE = new PlayerSprite(GraphicSheet.ZOMBIE_SPRITES);
+    private static final int ANGLES = 32;
 
-    public static final ShotgunSprite PISTOL_DIRECTIONAL_SPRITE = new ShotgunSprite(GraphicSheet.PISTOL_SPRITES);
-    public static final ShotgunSprite SHOTGUN_DIRECTIONAL_SPRITE = new ShotgunSprite(GraphicSheet.SHOTGUN_SPRITES);
+    public static final DirectionalSprite PISTOL_DIRECTIONAL_SPRITE = new DirectionalSprite(
+            GraphicSheet.PISTOL_SPRITES);
+    public static final DirectionalSprite SHOTGUN_DIRECTIONAL_SPRITE = new DirectionalSprite(
+            GraphicSheet.SHOTGUN_SPRITES);
 
-    public static final TurretSprite TURRET_DIRECTIONAL_SPRITE = new TurretSprite();
+    public static final DirectionalSprite TURRET_DIRECTIONAL_SPRITE = new DirectionalSprite(
+            GraphicSheet.TURRET_SPRITES);
 
-    public static final CameraSprite CAMERA_DIRECTIONAL_SPRITE = new CameraSprite(GraphicSheet.CAMERA_SPRITES);
+    public static final DirectionalSprite CAMERA_DIRECTIONAL_SPRITE = new DirectionalSprite(
+            GraphicSheet.CAMERA_SPRITES);
 
-    public static final GravestoneSprite GRAVESTONE_DIRECTIONAL_SPRITE = new GravestoneSprite(
+    public static final DirectionalSprite GRAVESTONE_DIRECTIONAL_SPRITE = new DirectionalSprite(
             GraphicSheet.GRAVESTONE_SPRITES);
 
-    public static final SpeedSprite SPEED_DIRECTION_SPRITE = new SpeedSprite(
+    public static final DirectionalSprite SPEED_DIRECTION_SPRITE = new DirectionalSprite(
             GraphicSheet.SPEED_SPRITES);
-    
+
+    public static final DirectionalSprite HEALTHKIT_DIRECTIONAL_SPRITE = new DirectionalSprite(
+            GraphicSheet.HEALTHKIT_SPRITES);
+
     private List<Graphic> angles;
 
-    public DirectionalSprite() {
-        this(new ArrayList<>());
+    public DirectionalSprite(List<Graphic> angles) {
+        this.angles = angles;
     }
 
-    public DirectionalSprite(ArrayList<Graphic> angles) {
-        this.angles = angles;
+    public DirectionalSprite(GraphicSheet sheet) {
+        this.angles = new ArrayList<Graphic>(ANGLES);
+        for (int i = 0; i < ANGLES; i++) {
+            addGraphic(sheet.graphicAt(0, i));
+        }
     }
 
     public Graphic getCurrentGraphic(Vector2D myPosition, Vector2D myDirection, Vector2D viewPosition) {

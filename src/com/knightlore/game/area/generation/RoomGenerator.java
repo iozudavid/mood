@@ -254,11 +254,13 @@ public class RoomGenerator extends ProceduralAreaGenerator {
     }
 
     private PickupType randomPickupType() {
-        int randInt = rand.nextInt(2);
+        int randInt = rand.nextInt(3);
         if (randInt == 0) {
             return PickupType.SHOTGUN;
-        } else {
+        } else if(randInt == 1){
             return PickupType.HEALTH;
+        }else {
+            return PickupType.SPEED;
         }
     }
 

@@ -3,6 +3,7 @@ package com.knightlore.game.entity.pickup;
 import java.nio.ByteBuffer;
 import java.util.UUID;
 
+import com.knightlore.game.buff.Speed;
 import com.knightlore.game.entity.Player;
 import com.knightlore.network.NetworkObject;
 import com.knightlore.render.graphic.sprite.DirectionalSprite;
@@ -10,8 +11,7 @@ import com.knightlore.utils.Vector2D;
 
 public class SpeedPickup extends PickupItem {
 
-    
- // Returns a new instance. See NetworkObject for details.
+    // Returns a new instance. See NetworkObject for details.
     public static NetworkObject build(UUID uuid, ByteBuffer state) {
         NetworkObject obj = new SpeedPickup(uuid, Vector2D.ONE, null);
         obj.init();
@@ -19,12 +19,13 @@ public class SpeedPickup extends PickupItem {
         return obj;
     }
     
-    public SpeedPickup(UUID uuid, Vector2D position, PickupManager pickupManager) {
-        this(UUID.randomUUID(), position, DirectionalSprite.SPEED_DIRECTION_SPRITE,pickupManager);
+    public SpeedPickup(Vector2D position, PickupManager pickupManager) {
+        this(UUID.randomUUID(), position, pickupManager);
     }
     
-    public SpeedPickup(UUID uuid, Vector2D position, DirectionalSprite sprite, PickupManager pickupManager) {
-        super(uuid, position, DirectionalSprite.SPEED_DIRECTION_SPRITE, pickupManager);
+    public SpeedPickup(UUID uuid, Vector2D position, PickupManager pickupManager) {
+        super(uuid, position, DirectionalSprite.SPEED_DIRECTION_SPRITE,pickupManager);
+        spawnDelay = 10;
     }
 
     @Override
@@ -34,15 +35,23 @@ public class SpeedPickup extends PickupItem {
     }
 
     @Override
-    public void onCollide(Player player) {
-        // TODO Auto-generated method stub
-
-    }
-
-    @Override
     public String getClientClassName() {
-        // TODO Auto-generated method stub
-        return null;
+        return this.getClass().getName();
+    }
+    
+    @Override
+    public String getName() {
+        return "SPEED";
+    }
+    
+    @Override
+    public void onCollide(Player player) {
+        // update pickup manager
+        addToPickupManager();
+        // apply speed buff
+        player.resetBuff(new Speed(player));
+        // remove pickup
+        this.destroy();
     }
 
 }

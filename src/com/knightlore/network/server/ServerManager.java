@@ -20,6 +20,10 @@ public class ServerManager implements Runnable {
     private ConcurrentHashMap<UUID, Connection> connections = new ConcurrentHashMap<>();
     private ServerSocket serverSocket = null;
 
+    /**
+     * Establish a connection by setting a port to listen on. Wait for clients
+     * to connect and start receiving and sending packets processes.
+     */
     @Override
     public void run() {
         System.out.println("Server started");

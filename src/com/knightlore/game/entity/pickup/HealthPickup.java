@@ -10,21 +10,32 @@ import com.knightlore.render.graphic.sprite.DirectionalSprite;
 import com.knightlore.utils.Vector2D;
 
 public class HealthPickup extends PickupItem {
-    
- // Returns a new instance. See NetworkObject for details.
+
+    /**
+     * Called by the network when creating the client-side representation of
+     * this object. Instantiates a copy of the client class, and deserializes
+     * the state into it.
+     * 
+     * @param uuid
+     *            The uuid provided to this object
+     * @param state
+     *            The initial state of this object
+     * @returns The client-side network object
+     * @see NetworkObject
+     */
     public static NetworkObject build(UUID uuid, ByteBuffer state) {
         NetworkObject obj = new HealthPickup(uuid, Vector2D.ONE, null);
         obj.init();
         obj.deserialize(state);
         return obj;
     }
-    
+
     public HealthPickup(Vector2D position, PickupManager pickupManager) {
         this(UUID.randomUUID(), position, pickupManager);
     }
-    
+
     public HealthPickup(UUID uuid, Vector2D position, PickupManager pickupManager) {
-        super(uuid, position, DirectionalSprite.PLAYER_DIRECTIONAL_SPRITE, pickupManager);
+        super(uuid, position, DirectionalSprite.HEALTHKIT_DIRECTIONAL_SPRITE, pickupManager);
         spawnDelay = 10;
     }
 
@@ -37,22 +48,22 @@ public class HealthPickup extends PickupItem {
     public String getClientClassName() {
         return this.getClass().getName();
     }
-    
+
     @Override
     public String getName() {
         return "HEALTH";
     }
-    
+
     @Override
     public void onCollide(Player player) {
-        if(exists) {
-        // update pickup manager
-        addToPickupManager();
-        // heal player
-        player.removeBuff(BuffType.FIRE);
-        player.applyHeal(30);
-        // set existence to false
-        this.destroy();
+        if (exists) {
+            // update pickup manager
+            addToPickupManager();
+            // heal player
+            player.removeBuff(BuffType.FIRE);
+            player.applyHeal(30);
+            // remove pickup
+            this.destroy();
         }
     }
 

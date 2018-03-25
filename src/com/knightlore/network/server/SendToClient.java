@@ -8,6 +8,10 @@ import java.util.concurrent.LinkedBlockingQueue;
 import com.knightlore.engine.GameEngine;
 import com.knightlore.network.Connection;
 
+/**
+ * Thread which sends packets about game state to the client.
+ *
+ */
 public class SendToClient implements Runnable {
 
     private Connection conn;
@@ -22,10 +26,15 @@ public class SendToClient implements Runnable {
         this.uuid = manager.registerClientSender(this);
     }
 
+    /**
+     * Continuously checking if there are any packets to be sent to the client.
+     * If there are send them.
+     */
     @Override
     public void run() {
 
-        while (!conn.terminated) {
+        while (!conn.getTerminated()) {
+            System.out.println("da");
             ByteBuffer nextState;
             try {
                 nextState = commandQueue.take();
@@ -38,10 +47,21 @@ public class SendToClient implements Runnable {
         manager.removeClientSender(this);
     }
 
+    /**
+     * Add a new packet to the list of packets to be sent.
+     * 
+     * @param data
+     *            - packet to be sent to the user.
+     */
     public void send(ByteBuffer data) {
         commandQueue.offer(data);
     }
 
+    /**
+     * 
+     * @return the UUID of the client which is on the other side of the given
+     *         connection.
+     */
     public UUID getUUID() {
         return this.uuid;
     }

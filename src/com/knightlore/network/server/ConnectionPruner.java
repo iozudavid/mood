@@ -22,7 +22,11 @@ public class ConnectionPruner implements Runnable {
     public ConnectionPruner(Map<UUID, Connection> conns) {
         this.conns = conns;
     }
-
+    
+    /**
+     * If a connection has been lost remove the client and its player and inform
+     * other clients
+     */
     public void run() {
         while (true) {
             Iterator<Entry<UUID, Connection>> i = conns.entrySet().iterator();
