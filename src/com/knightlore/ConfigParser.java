@@ -60,7 +60,7 @@ public class ConfigParser {
         switch (keyStr) {
         case "dest_port":
             try {
-                int destPort = Short.parseShort(valStr);
+                int destPort = Integer.parseInt(valStr);
                 ConnectionDetails.PORT = destPort;
             } catch (Exception e) {
                 System.err.println("Failed to read dest_port, value given=" + valStr);
@@ -69,6 +69,9 @@ public class ConfigParser {
         case "map_width":
             try {
                 int map_width = Integer.parseInt(valStr);
+                if(map_width < 8) {
+                    map_width = 8;
+                }
                 GameSettings.mapWidth = map_width;
             } catch (Exception e) {
                 System.err.println("Failed to read map_width, value given=" + valStr);
@@ -77,6 +80,9 @@ public class ConfigParser {
         case "map_height":
             try {
                 int map_height = Integer.parseInt(valStr);
+                if(map_height < 8) {
+                    map_height = 8;
+                }
                 GameSettings.mapHeight = map_height;
             } catch (Exception e) {
                 System.err.println("Failed to read map_height, value given=" + valStr);
