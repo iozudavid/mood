@@ -49,7 +49,12 @@ public class Prediction {
 		received.position(0);
 		NetworkUtils.getStringFromBuf(received);
 		NetworkUtils.getStringFromBuf(received);
-
+        double moveSpeed = received.getDouble();
+        double strafeSpeed = received.getDouble();
+        double rotationSpeed = received.getDouble();
+        player.setMoveSpeed(moveSpeed);
+        player.setStrafeSpeed(strafeSpeed);
+        player.setRotateSpeed(rotationSpeed);
 		// get player's stats on server
 		double size = received.getDouble();
 		player.setSize(size);

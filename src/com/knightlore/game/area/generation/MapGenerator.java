@@ -380,7 +380,7 @@ public class MapGenerator extends ProceduralAreaGenerator {
     
     public static void main(String[] arg) {
         MapGenerator mg = new MapGenerator();
-        Map map = mg.createMap(1000, 40, MapType.TRAILER, 40L);
+        Map map = mg.createMap(40, 40, MapType.TDM, 40L);
         System.out.println(map.toDebugString());
     }
     

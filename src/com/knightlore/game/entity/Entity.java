@@ -342,6 +342,9 @@ public abstract class Entity extends NetworkObject implements IMinimapObject, Ti
     @Override
     public synchronized ByteBuffer serialize() {
         ByteBuffer buf = newByteBuffer("deserialize");
+        buf.putDouble(this.moveSpeed);
+        buf.putDouble(this.strafeSpeed);
+        buf.putDouble(this.rotationSpeed);
         buf.putDouble(size);
         buf.putDouble(position.getX());
         buf.putDouble(position.getY());
@@ -357,7 +360,11 @@ public abstract class Entity extends NetworkObject implements IMinimapObject, Ti
     @Override
     public synchronized void deserialize(ByteBuffer buf) {
         // interpolation only on client side
-        if (!this.creationCall || !this.settingCall || GameSettings.isServer()) {
+        if (!this.creationCall || !this.settingCall
+                || GameSettings.isServer()) {
+            this.moveSpeed = buf.getDouble();
+            this.strafeSpeed = buf.getDouble();
+            this.rotationSpeed = buf.getDouble();
             size = buf.getDouble();
             double posX = buf.getDouble();
             double posY = buf.getDouble();
@@ -378,6 +385,9 @@ public abstract class Entity extends NetworkObject implements IMinimapObject, Ti
                 this.settingCall = true;
             }
         } else {
+            this.moveSpeed = buf.getDouble();
+            this.strafeSpeed = buf.getDouble();
+            this.rotationSpeed = buf.getDouble();
             size = buf.getDouble();
             double posX = buf.getDouble();
             double posY = buf.getDouble();

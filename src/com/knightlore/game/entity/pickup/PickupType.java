@@ -9,8 +9,8 @@ package com.knightlore.game.entity.pickup;
 public enum PickupType {
     SHOTGUN("Shotgun"),
     PISTOL("Pistol"),
-    HEALTH("Health");
-
+    HEALTH("Health"),
+    SPEED("Speed");
 
     private final String name;
 

@@ -66,7 +66,9 @@ public class GraphicSheet {
      * player dies.
      */
     public final static GraphicSheet GRAVESTONE_SPRITES = new GraphicSheet("res/models/gravestone_sprites.png", 128);
-
+    
+    public final static GraphicSheet SPEED_SPRITES = new GraphicSheet("res/models/speedup_static_sprites.png",128);
+    
     public final static GraphicSheet HEALTHKIT_SPRITES = new GraphicSheet("res/models/healthkit_static_sprites.png",
             128);
 

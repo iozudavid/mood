@@ -149,6 +149,5 @@ public class PlayerSpawnTile extends Tile {
     @Override
     public void onEntered(Entity entity) {
         entity.resetBuff(new Push(entity, pushVector));
-        entity.resetBuff(new SpawnVision(entity));
     }
 }

@@ -62,7 +62,7 @@ public class HealthPickup extends PickupItem {
             // heal player
             player.removeBuff(BuffType.FIRE);
             player.applyHeal(30);
-            // set existence to false
+            // remove pickup
             this.destroy();
         }
     }

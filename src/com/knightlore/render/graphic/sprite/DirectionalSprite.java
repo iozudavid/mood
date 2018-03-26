@@ -25,6 +25,9 @@ public class DirectionalSprite {
     public static final DirectionalSprite GRAVESTONE_DIRECTIONAL_SPRITE = new DirectionalSprite(
             GraphicSheet.GRAVESTONE_SPRITES);
 
+    public static final DirectionalSprite SPEED_DIRECTION_SPRITE = new DirectionalSprite(
+            GraphicSheet.SPEED_SPRITES);
+
     public static final DirectionalSprite HEALTHKIT_DIRECTIONAL_SPRITE = new DirectionalSprite(
             GraphicSheet.HEALTHKIT_SPRITES);
 
