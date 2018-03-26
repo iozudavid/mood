@@ -30,9 +30,6 @@ import com.knightlore.utils.physics.RaycastHitType;
  */
 public abstract class GameWorld {
     
-    private static final int TEST_XSIZE = 40; // 16;
-    private static final int TEST_YSIZE = 60; // 32;
-    
     protected Map map;
     protected PlayerManager playerManager;
     protected GameManager gameManager = null;

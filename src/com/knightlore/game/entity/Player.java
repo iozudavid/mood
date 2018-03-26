@@ -37,11 +37,16 @@ import com.knightlore.render.animation.PlayerMoveAnimation;
 import com.knightlore.render.animation.PlayerStandAnimation;
 import com.knightlore.render.graphic.Graphic;
 import com.knightlore.render.graphic.PlayerGraphicMatrix;
-import com.knightlore.render.graphic.PlayerGraphicMatrix.Color;
 import com.knightlore.render.graphic.PlayerGraphicMatrix.Stance;
 import com.knightlore.render.graphic.sprite.DirectionalSprite;
 import com.knightlore.utils.Vector2D;
 
+/**
+ * The main class for Players in our game.
+ * 
+ * @authors All
+ *
+ */
 public class Player extends Entity {
     
     private PlayerMoveAnimation moveAnim;
@@ -107,6 +112,14 @@ public class Player extends Entity {
         return obj;
     }
     
+    /**
+     * Creates a player with the given parameters. Also initialises the
+     * tickListener, weapon and deafult animation graphic matrices.
+     * 
+     * @param uuid
+     * @param pos
+     * @param dir
+     */
     public Player(UUID uuid, Vector2D pos, Vector2D dir) {
         super(uuid, SIZE, pos, dir);
         setNetworkConsumers();
@@ -131,15 +144,41 @@ public class Player extends Entity {
         GameEngine.ticker.addTickListener(this);
     }
     
+    /**
+     * Generates a random UUID for this player, then calls the other
+     * constructor.
+     * 
+     * @param pos
+     *            - spawn position
+     * @param dir
+     *            - spawn direction
+     * @see Player#Player(UUID, Vector2D, Vector2D)
+     */
     public Player(Vector2D pos, Vector2D dir) {
         this(UUID.randomUUID(), pos, dir);
     }
     
+    /**
+     * Generates a random UUID for this player, then calls the other
+     * constructor. Finally it sets the team.
+     * 
+     * @param pos
+     *            - spawn position
+     * @param dir
+     *            - spawn direction
+     * @param team
+     *            - player team
+     * @see Player#Player(UUID, Vector2D, Vector2D)
+     */
     public Player(Vector2D pos, Vector2D dir, Team team) {
         this(UUID.randomUUID(), pos, dir);
-        this.team = team;
+        this.setTeam(team);
     }
     
+    /**
+     * Updates the data for this player on the scoreboard. Does nothing on the
+     * server.
+     */
     public void sendStatsToScoreBoard() {
         if (GameSettings.isServer())
             return;
@@ -155,6 +194,9 @@ public class Player extends Entity {
         }
     }
     
+    /**
+     * Draws the player, then draws the current weapon on the HUD.
+     */
     @Override
     public void render(PixelBuffer pix, int x, int y, double distanceTraveled) {
         super.render(pix, x, y, distanceTraveled);
@@ -186,6 +228,14 @@ public class Player extends Entity {
         
     }
     
+    /**
+     * Reads a given byte array and puts it into the local inputState. Used as
+     * part of prediction.
+     * 
+     * @param inputs
+     *            - the byte array encoded inputs
+     * @see Prediction
+     */
     public void setInputState(byte[] inputs) {
         synchronized (inputState) {
             for (int i = 0; i < inputs.length; i = i + 2) {
@@ -214,6 +264,11 @@ public class Player extends Entity {
         this.teamMessagesToSend.offer(bf);
     }
     
+    /**
+     * Called by the server when synchronizing the state to send team messages.
+     * 
+     * @returns a byte buffer containing a single pending team chat message.
+     */
     public Optional<ByteBuffer> getTeamMessages() {
         if (this.teamMessagesToSend.isEmpty()) {
             return Optional.empty();
@@ -238,6 +293,12 @@ public class Player extends Entity {
         this.allMessagesToSend.offer(bf);
     }
     
+    /**
+     * Called by the server when synchronizing the state to send global
+     * messages.
+     * 
+     * @returns a byte buffer containing a single pending global chat message.
+     */
     public Optional<ByteBuffer> getAllMessages() {
         if (this.allMessagesToSend.isEmpty()) {
             return Optional.empty();
@@ -261,6 +322,9 @@ public class Player extends Entity {
         return frame.getCurrentGraphic(position, direction, playerPos);
     }
     
+    /**
+     * updates the stat
+     */
     @Override
     public void onUpdate() {
         super.onUpdate();
@@ -396,6 +460,11 @@ public class Player extends Entity {
         return this.getClass().getName();
     }
     
+    /**
+     * Reduces this Player's health by <code> damage </code>. The players health
+     * is clamped between 0 and MAX_HEALTH. Also remembers the inflictor for
+     * kill crediting.
+     */
     @Override
     public void takeDamage(int damage, Entity inflictor) {
         // Only play if the player is us.
@@ -438,6 +507,14 @@ public class Player extends Entity {
         }
     }
     
+    /**
+     * Heals the player, by applying takeDamage but with <code> -heal </code> as
+     * the parameter and a null inflictor.
+     * 
+     * @param heal
+     *            How much to heal the player by, should be positive.
+     * @see Player#takeDamage(int,Entity)
+     */
     public void applyHeal(int heal) {
         takeDamage(-heal, null);
     }
@@ -446,6 +523,10 @@ public class Player extends Entity {
         return score;
     }
     
+    /**
+     * Moves the player to <code> spawnPos </code>, and resets their health to
+     * MAX_HEALTH. Also notifies the input module of being respawned.
+     */
     @Override
     public void respawn(Vector2D spawnPos) {
         this.position = spawnPos;
@@ -454,6 +535,11 @@ public class Player extends Entity {
         System.out.println(this.getName() + " respawned.");
     }
     
+    /**
+     * Changes the input module on this player. Used for creating bot players.
+     * 
+     * @param inp
+     */
     public void setInputModule(InputModule inp) {
         this.inputModule = inp;
     }
@@ -505,6 +591,11 @@ public class Player extends Entity {
         return currentHealth;
     }
     
+    /**
+     * Assigns the score, note, any scores below 0 will be clamped at 0.
+     * 
+     * @param score
+     */
     public void setScore(int score) {
         if (score < 0) {
             this.score = 0;
@@ -513,14 +604,30 @@ public class Player extends Entity {
         }
     }
     
+    /**
+     * Adds <code> amount </code> to score.
+     * 
+     * @param amount
+     */
     public void addScore(int amount) {
         setScore(score + amount);
     }
     
+    /**
+     * Called from the client prediction to indicate whether we have respawned.
+     * 
+     * @param b
+     */
     public void setRespawn(boolean b) {
         this.respawn = b;
     }
     
+    /**
+     * Sets health and plays grunt sounds.
+     * 
+     * @param h
+     *            The new health of this player
+     */
     public void setHealth(int h) {
         this.previousHealth = this.currentHealth;
         this.currentHealth = h;
@@ -543,11 +650,27 @@ public class Player extends Entity {
         return true;
     }
     
+    /**
+     * Applies the SpawnVision and Immune buffs.
+     * 
+     * @see SpawnVision
+     * @see Immune
+     */
     public void onClientRespawn() {
-        this.resetBuff(new SpawnVision(this));
+        // only if local player
+        if (this == GameEngine.getSingleton().getCamera().getSubject()) {
+            this.resetBuff(new SpawnVision(this));
+        }
         this.resetBuff(new Immune(this)); // just for health bar cosmetic
     }
     
+    /**
+     * Sets the team of this player, and sets up the appropriate graphic sheet
+     * for animation.
+     * 
+     * @param team
+     *            the new team of this player
+     */
     public void setTeam(Team team) {
         if (team == this.team)
             return;

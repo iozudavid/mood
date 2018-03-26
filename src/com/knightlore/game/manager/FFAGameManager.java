@@ -5,9 +5,11 @@ import java.util.UUID;
 
 import com.knightlore.engine.GameEngine;
 import com.knightlore.game.BotInput;
+import com.knightlore.game.GameMode;
 import com.knightlore.game.Team;
 import com.knightlore.game.entity.Entity;
 import com.knightlore.game.entity.Player;
+import com.knightlore.game.entity.ZombieServer;
 import com.knightlore.game.entity.ZombieShared;
 import com.knightlore.game.entity.pickup.PistolPickup;
 import com.knightlore.game.entity.pickup.ShotgunPickup;
@@ -68,6 +70,9 @@ public class FFAGameManager extends GameManager {
      */
     @Override
     public void onEntityDeath(ZombieShared victim, Player inflictor) {
+        if (desiredGameMode == GameMode.SURVIVAL) {
+            inflictor.addScore(1);
+        }
         onEntityDeath(victim);
     }
     
@@ -167,13 +172,21 @@ public class FFAGameManager extends GameManager {
         gameState = GameState.LOBBY;
         PlayerManager playerManager = GameEngine.getSingleton().getWorld().getPlayerManager();
         ServerWorld world = (ServerWorld) GameEngine.getSingleton().getWorld();
-        for (int i = 0; i < GameManager.numBots; i++) {
-            Vector2D pos = world.getMap().getRandomSpawnPoint();
-            Player botPlayer = new Player(pos, Vector2D.UP, Team.NONE);
-            botPlayer.init();
-            botPlayer.setInputModule(new BotInput());
-            botPlayer.setName("bot" + i);
-            playerManager.addPlayer(botPlayer);
+        if (desiredGameMode == GameMode.SURVIVAL) {
+            for (int i = 0; i < numBots; i++) {
+                ZombieServer zom = new ZombieServer(world.getMap().getRandomSpawnPoint());
+                zom.init();
+                world.addEntity(zom);
+            }
+        } else {
+            for (int i = 0; i < GameManager.numBots; i++) {
+                Vector2D pos = world.getMap().getRandomSpawnPoint();
+                Player botPlayer = new Player(pos, Vector2D.UP, Team.NONE);
+                botPlayer.init();
+                botPlayer.setInputModule(new BotInput());
+                botPlayer.setName("bot" + i);
+                playerManager.addPlayer(botPlayer);
+            }
         }
     }
     

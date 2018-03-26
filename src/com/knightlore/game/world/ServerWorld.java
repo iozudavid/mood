@@ -13,8 +13,16 @@ import com.knightlore.game.manager.GameManager;
 import com.knightlore.game.manager.TDMGameManager;
 import com.knightlore.utils.Vector2D;
 
+/**
+ * The server side implementation of the GameWorld.
+ * @author James
+ */
 public class ServerWorld extends GameWorld {
     
+    /**
+     * Creates the GameManager, AI Manager, Player Manager and Populates the
+     * world with any required zombies.
+     */
     @Override
     public void setUpWorld(Long mapSeed) {
         super.setUpWorld(mapSeed);
@@ -44,6 +52,9 @@ public class ServerWorld extends GameWorld {
         this.addEntity(cam);
     }
     
+    /**
+     * Performs collisions between players and other entities
+     */
     @Override
     public void update() {
         super.update();
@@ -82,7 +93,7 @@ public class ServerWorld extends GameWorld {
         
         Player player = new Player(pos, Vector2D.UP, team);
         player.init();
-        //player.sendSystemMessage("System: Player " + player.getName() + " " + " has connected.");
+        player.sendSystemMessage("System: Player " + player.getName() + " has connected.");
         playerManager.addPlayer(player);
         return player;
     }
