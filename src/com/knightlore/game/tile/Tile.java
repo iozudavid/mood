@@ -129,20 +129,36 @@ public abstract class Tile implements Serializable {
         return this;
     }
 
+    /**
+     * Whether the tile blocks line of sight.
+     */
     public boolean blockLOS() {
         return getSolidity() == 1D;
     }
 
+    /**
+     * Return the team associated with this particular
+     * tile.
+     * @return team
+     */
     public Team getTeam() {
         return Team.NONE;
     }
 
     public abstract Tile copy();
 
+    /**
+     * Set whether this tile is overriden by
+     * a path travelling through it.
+     */
     public void setPathable(boolean b) {
         pathable = b;
     }
     
+    /**
+     * Whether this block is overriden by
+     * a path travelling through it.
+     */
     public boolean overiddenByPath() {
         return pathable;
     }
