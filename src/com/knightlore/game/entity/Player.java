@@ -28,6 +28,7 @@ import com.knightlore.game.manager.GameState;
 import com.knightlore.game.world.ClientWorld;
 import com.knightlore.network.NetworkObject;
 import com.knightlore.network.NetworkObjectManager;
+import com.knightlore.network.client.Prediction;
 import com.knightlore.network.protocol.ClientController;
 import com.knightlore.network.protocol.ClientProtocol;
 import com.knightlore.network.protocol.NetworkUtils;
@@ -53,7 +54,7 @@ public class Player extends Entity {
     
     private PlayerStandAnimation standAnim;
     
-    private Animation<DirectionalSprite> currentAnim = standAnim;
+    private Animation<DirectionalSprite> currentAnim;
     
     public static final int MAX_HEALTH = 100;
     private static final double SIZE = 0.25;
@@ -83,12 +84,9 @@ public class Player extends Entity {
     
     private Entity lastInflictor;
     
-    // DO NOT REMOVE, THESE ARE USED FOR CLIENT PREDICTION!!!!!
     private double timeToSend = 0;
     private boolean respawn = false;
-    
     private int previousHealth;
-    // END DO NOT REMOVE
     
     private PlayerGraphicMatrix.Color color = PlayerGraphicMatrix.Color.RED;
     
@@ -97,10 +95,8 @@ public class Player extends Entity {
      * this object. Instantiates a copy of the client class, and deserializes
      * the state into it.
      * 
-     * @param uuid
-     *            The uuid provided to this object
-     * @param state
-     *            The initial state of this object
+     * @param uuid The uuid provided to this object
+     * @param state The initial state of this object
      * @returns The client-side network object
      * @see NetworkObject
      */
@@ -115,10 +111,6 @@ public class Player extends Entity {
     /**
      * Creates a player with the given parameters. Also initialises the
      * tickListener, weapon and deafult animation graphic matrices.
-     * 
-     * @param uuid
-     * @param pos
-     * @param dir
      */
     public Player(UUID uuid, Vector2D pos, Vector2D dir) {
         super(uuid, SIZE, pos, dir);
@@ -148,10 +140,8 @@ public class Player extends Entity {
      * Generates a random UUID for this player, then calls the other
      * constructor.
      * 
-     * @param pos
-     *            - spawn position
-     * @param dir
-     *            - spawn direction
+     * @param pos - spawn position
+     * @param dir - spawn direction
      * @see Player#Player(UUID, Vector2D, Vector2D)
      */
     public Player(Vector2D pos, Vector2D dir) {
@@ -162,12 +152,9 @@ public class Player extends Entity {
      * Generates a random UUID for this player, then calls the other
      * constructor. Finally it sets the team.
      * 
-     * @param pos
-     *            - spawn position
-     * @param dir
-     *            - spawn direction
-     * @param team
-     *            - player team
+     * @param pos - spawn position
+     * @param dir - spawn direction
+     * @param team - player team
      * @see Player#Player(UUID, Vector2D, Vector2D)
      */
     public Player(Vector2D pos, Vector2D dir, Team team) {
@@ -179,7 +166,7 @@ public class Player extends Entity {
      * Updates the data for this player on the scoreboard. Does nothing on the
      * server.
      */
-    public void sendStatsToScoreBoard() {
+    private void sendStatsToScoreBoard() {
         if (GameSettings.isServer())
             return;
         // add to scoreboard
@@ -470,13 +457,14 @@ public class Player extends Entity {
         // Only play if the player is us.
         if (GameSettings.isClient()) {
             return;
-        } else {
-            damage = (int) (damage * damageTakenModifier);
-            int newHealth = currentHealth - damage;
-            currentHealth = Math.max(0, Math.min(MAX_HEALTH, newHealth));
-            if (inflictor != null) {
-                lastInflictor = inflictor;
-            }
+        }
+        
+        
+        damage = (int) (damage * damageTakenModifier);
+        int newHealth = currentHealth - damage;
+        currentHealth = Math.max(0, Math.min(MAX_HEALTH, newHealth));
+        if (inflictor != null) {
+            lastInflictor = inflictor;
         }
     }
     
@@ -537,8 +525,6 @@ public class Player extends Entity {
     
     /**
      * Changes the input module on this player. Used for creating bot players.
-     * 
-     * @param inp
      */
     public void setInputModule(InputModule inp) {
         this.inputModule = inp;
@@ -556,8 +542,7 @@ public class Player extends Entity {
      * Make the player hold a weapon of the given type. Instantiates a new
      * weapon of this type.
      * 
-     * @param wt
-     *            The type of weapon for the player to be holding.
+     * @param wt The type of weapon for the player to be holding.
      */
     public synchronized void setCurrentWeaponType(WeaponType wt) {
         if (wt == this.currentWeaponType) {
@@ -593,8 +578,6 @@ public class Player extends Entity {
     
     /**
      * Assigns the score, note, any scores below 0 will be clamped at 0.
-     * 
-     * @param score
      */
     public void setScore(int score) {
         if (score < 0) {
@@ -606,8 +589,6 @@ public class Player extends Entity {
     
     /**
      * Adds <code> amount </code> to score.
-     * 
-     * @param amount
      */
     public void addScore(int amount) {
         setScore(score + amount);
@@ -615,8 +596,6 @@ public class Player extends Entity {
     
     /**
      * Called from the client prediction to indicate whether we have respawned.
-     * 
-     * @param b
      */
     public void setRespawn(boolean b) {
         this.respawn = b;
@@ -625,8 +604,7 @@ public class Player extends Entity {
     /**
      * Sets health and plays grunt sounds.
      * 
-     * @param h
-     *            The new health of this player
+     * @param h The new health of this player
      */
     public void setHealth(int h) {
         this.previousHealth = this.currentHealth;
@@ -668,12 +646,12 @@ public class Player extends Entity {
      * Sets the team of this player, and sets up the appropriate graphic sheet
      * for animation.
      * 
-     * @param team
-     *            the new team of this player
+     * @param team the new team of this player
      */
     public void setTeam(Team team) {
-        if (team == this.team)
+        if (team == this.team) {
             return;
+        }
         
         this.team = team;
         this.color = team == Team.RED ? PlayerGraphicMatrix.Color.RED : PlayerGraphicMatrix.Color.BLUE;
@@ -682,7 +660,5 @@ public class Player extends Entity {
         
         standAnim = new PlayerStandAnimation(PlayerGraphicMatrix.getGraphic(color, PlayerGraphicMatrix.Weapon.PISTOL,
                 PlayerGraphicMatrix.Stance.STAND), (long) (GameEngine.UPDATES_PER_SECOND / 10));
-        
     }
-    
 }

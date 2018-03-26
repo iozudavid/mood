@@ -61,7 +61,7 @@ public abstract class Entity extends NetworkObject implements IMinimapObject, Ti
     /**
      * A list of active buffs possessed by the entity.
      */
-    protected ArrayList<Buff> buffList = new ArrayList<Buff>();
+    private ArrayList<Buff> buffList = new ArrayList<Buff>();
     
     /**
      * Rate at which buffs are updated.
@@ -70,13 +70,13 @@ public abstract class Entity extends NetworkObject implements IMinimapObject, Ti
     
     // this constant will decide
     // how smooth will be rendered other entities
-    private final double smoothiness = 0.1D;
+    private static final double SMOOTHINESS = 0.1D;
     
     /**
      * The map which the entity exists in. This is required for collision
      * detection.
      */
-    private Map map;
+    private final Map map;
     
     /**
      * The size of the bounding rectangle of the entity.
@@ -100,7 +100,7 @@ public abstract class Entity extends NetworkObject implements IMinimapObject, Ti
     
     private String name = "entity";
     
-    protected BlockingQueue<ByteBuffer> systemMessages;
+    private final BlockingQueue<ByteBuffer> systemMessages;
     
     // Allow you to create an entity with a specified UUID. Useful for creating
     // "synchronised" objects on the client-side.
@@ -123,8 +123,7 @@ public abstract class Entity extends NetworkObject implements IMinimapObject, Ti
     /**
      * Creates an Entity with random UUID
      * 
-     * @param size
-     *            - the collision size of the entity
+     * @param size - the collision size of the entity
      * @param position
      * @param direction
      */
@@ -431,13 +430,13 @@ public abstract class Entity extends NetworkObject implements IMinimapObject, Ti
         if (Math.abs(difX) < this.treshold) {
             finalX = remote.getX();
         } else {
-            finalX = local.getX() + difX * this.smoothiness;
+            finalX = local.getX() + difX * this.SMOOTHINESS;
         }
         double difY = remote.getY() - local.getY();
         if (Math.abs(difY) < this.treshold) {
             finalY = remote.getY();
         } else {
-            finalY = local.getY() + difY * this.smoothiness;
+            finalY = local.getY() + difY * this.SMOOTHINESS;
         }
         return new Vector2D(finalX, finalY);
     }
