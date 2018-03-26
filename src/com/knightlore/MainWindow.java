@@ -50,6 +50,9 @@ public class MainWindow extends JFrame {
         pack();
     }
 
+    /**
+     * Finishes setting up the screen.
+     */
     public void finalise() {
         int w = WIDTH, h = HEIGHT;
         if (fullscreen) {
@@ -67,6 +70,9 @@ public class MainWindow extends JFrame {
         return screen;
     }
 
+    /**
+     * Enters fullscreen mode.
+     */
     public void goFullscreen() {
         GraphicsEnvironment gd = GraphicsEnvironment.getLocalGraphicsEnvironment();
         GraphicsDevice device = gd.getDefaultScreenDevice();
