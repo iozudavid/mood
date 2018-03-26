@@ -10,39 +10,17 @@ import com.knightlore.utils.Vector2D;
  */
 public final class RaycastHit {
     
-    private RaycastHitType hitType = RaycastHitType.NOTHING;
-    private Vector2D hitPos = Vector2D.ZERO;
-    private Entity entity = null;
+    private final Entity entity;
     
-    public RaycastHit(RaycastHitType type,Vector2D pos, Entity ent) {
-        this.hitType = type;
-        this.hitPos = pos;
+    public RaycastHit(Entity ent) {
         this.entity = ent;
     }
     
-    public RaycastHitType getHitType() {
-        return hitType;
-    }
-    
     /**
-     * 
-     * @returns True if the ray hit something, i.e. getHitType is not NOTHING
-     * @see RaycastHitType
-     */
-    public boolean didHit() {
-        return hitType != RaycastHitType.NOTHING;
-    }
-    
-    /**
-     * @returns True if the ray hit any entity, i.e. getEntity() will not return null
-     * @see getEntity
+     * @returns True if the ray hit any entity
      */
     public boolean didHitEntity() {
         return entity != null;
-    }
-    
-    public Vector2D getHitPos() {
-        return hitPos;
     }
     
     public Entity getEntity() {

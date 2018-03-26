@@ -7,11 +7,11 @@ public abstract class Buff {
     
     protected Entity ent;
     protected boolean done = false;
-    private int applyGap; // on multiples of the applyGap,
+    private final int applyGap; // on multiples of the applyGap,
                           // the counter will trigger the
                           // periodic effect
-    private int maxSteps;
-    protected int counter;
+    private final int maxSteps;
+    private int counter;
     
     protected Buff(Entity ent, double frequency, double length) {
         this.ent = ent;
@@ -19,17 +19,20 @@ public abstract class Buff {
         maxSteps = calculateMaxSteps(length);
     }
     
-    /** The affect the buff has on application
+    /**
+     * The affect the buff has on application
      */
     public abstract void onApply();
     
     
-    /** The continuous affect of the buff. loop() will
+    /**
+     * The continuous affect of the buff. loop() will
      * call this periodically as appropriate
      */
     protected abstract void periodicEffect();
     
-    /** Called by the onTick() method in Entity.
+    /**
+     * Called by the onTick() method in Entity.
      *  Manages all the mechanisms of each buff.
      */
     public void loop() {
@@ -41,6 +44,7 @@ public abstract class Buff {
         if(counter % applyGap == 0) {
             periodicEffect();
         }
+        
         counter++;
     }
     
@@ -59,24 +63,25 @@ public abstract class Buff {
         }
     }
     
-    /** Can manually set a buff to be done (ie. upon 
-     *  the death of a player)
-     * @param b
+    /**
+     * Can manually set a buff to be done (ie. upon
+     * the death of a player)
      */
     public void setDone(boolean b) {
         done = b;
     }
     
-    /** Used by Entity to check whether a buff should be 
-     *  removed from the buffList
-     * @return
+    /**
+     * Used by Entity to check whether a buff should be
+     * removed from the buffList
      */
     public boolean isDone() {
         return done;
     }
     
-    /** Anything that must be done upon the removal
-     *  of a buff
+    /**
+     * Anything that must be done upon the removal
+     * of a buff
      */
     public abstract void onRemove();
     
