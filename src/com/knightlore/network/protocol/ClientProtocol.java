@@ -7,19 +7,20 @@ import java.util.Map;
 
 /**
  * Protocol of how data is encapsulating in a packet by the client
+ *
  * @author David Iozu, Will Miller
  */
 public final class ClientProtocol {
     /**
-     *  The number of bytes taken up at the start of each packet with metadata.
+     * The number of bytes taken up at the start of each packet with metadata.
      */
     public static final int METADATA_LENGTH = 8;
 
     /**
      * Position in the byte array - key map convention of the client to create the packet
-     * 
      */
     private static final Map<Integer, ClientController> indexAction;
+
     static {
         indexAction = new HashMap<>();
         indexAction.put(0, ClientController.FORWARD);
@@ -33,11 +34,10 @@ public final class ClientProtocol {
 
     /**
      * Pass the index of the control and retrieve the actual control.
-     * @param i
-     *            - index in key map
+     *
+     * @param i - index in key map
      * @return actual control found at the given index
-     * @throws IOException
-     *             when index not found in map
+     * @throws IOException when index not found in map
      */
     public static ClientController getByIndex(int i) throws IOException {
         if (!indexAction.containsKey(i)) {
@@ -48,12 +48,10 @@ public final class ClientProtocol {
 
     /**
      * Pass the control and receive its index in map.
-     * 
-     * @param key
-     *            - control passed to get the index
+     *
+     * @param key - control passed to get the index
      * @return index of the given control
-     * @throws IOException
-     *             when no control is found in map
+     * @throws IOException when no control is found in map
      */
     public static int getByKey(ClientController key) throws IOException {
         if (!indexAction.containsValue(key)) {
@@ -68,16 +66,14 @@ public final class ClientProtocol {
     }
 
     /**
-     * 
      * @return the index - control map convention
      */
     public static Map<Integer, ClientController> getIndexActionMap() {
         return indexAction;
     }
 
-  
+
     /**
-     * 
      * @return generic metadata to be placed at the start of each packet.
      */
     public static byte[] getMetadata() {

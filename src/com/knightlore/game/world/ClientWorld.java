@@ -13,18 +13,18 @@ import com.knightlore.render.Environment;
 
 /**
  * The client side implementation of the GameWorld.
- * 
+ *
  * @author James Adey
  */
 public class ClientWorld extends GameWorld {
     
-    public GameChat getGameChat() {
-        return gameChat;
-    }
-    
     private GameChat gameChat;
     private int screenWidth;
     private int screenHeight;
+
+    public GameChat getGameChat() {
+        return gameChat;
+    }
     
     /**
      * Sets the time left in the GUI, and displays the scoreboard if the game is
@@ -51,9 +51,8 @@ public class ClientWorld extends GameWorld {
      * AIManager and the PlayerManager.
      * <p>
      * Note: a null map seed will cause the map to generate a random map.
-     * 
-     * @param mapSeed
-     *            the desired seed for this map
+     *
+     * @param mapSeed the desired seed for this map
      * @see MapGenerator
      * @see AIManager
      * @see PlayerManager
@@ -82,7 +81,7 @@ public class ClientWorld extends GameWorld {
     /**
      * Creates the UI, called after the display has finished initialising from
      * the GameEngine
-     * 
+     *
      * @see GameEngine
      */
     @Override

@@ -7,13 +7,14 @@ import com.knightlore.engine.GameEngine;
 import com.knightlore.network.ConnectionDetails;
 import com.knightlore.render.PixelBuffer;
 import com.knightlore.utils.funcptrs.VoidFunction;
+
 /**
  * Creating and rendering all objects on multiplayer menu.
- * @author David Iozu.
  *
+ * @author David Iozu.
  */
 public class MultiplayerMenu {
-
+    
     private final GUICanvas gui;
     private final int screenHeight;
     private final int screenWidth;
@@ -27,14 +28,12 @@ public class MultiplayerMenu {
     private final Button connectButton;
     private final Button cancelButton;
     private final Text noConnection;
-
+    
     /**
      * SetUp all the GUIObjects needed for MultiplayerMenu
-     * 
-     * @param screenHeight
-     *            - height of the screen
-     * @param screenWidth
-     *            - width of the screen
+     *
+     * @param screenHeight - height of the screen
+     * @param screenWidth  - width of the screen
      */
     public MultiplayerMenu(int screenHeight, int screenWidth) {
         this.gui = new GUICanvas(screenWidth, screenHeight);
@@ -78,14 +77,14 @@ public class MultiplayerMenu {
                 GuiUtils.calculateHeight(this.screenHeight, 80), 300, 40, "Connect", 21);
         this.gui.addGUIObject(connectButton);
         this.gui.addGUIObject(cancelButton);
-
+        
         this.cancelButton.clickFunction = () -> {
             MultiplayerMenu.this.gui.destroy();
             GameEngine.getSingleton().guiState = GUIState.StartMenu;
         };
-
+        
         this.connectButton.clickFunction = new VoidFunction() {
-
+            
             @Override
             public void call() {
                 ConnectionDetails.PORT = Integer.parseInt(MultiplayerMenu.this.portTextField.getText());
@@ -99,25 +98,22 @@ public class MultiplayerMenu {
                 MultiplayerMenu.this.gui.destroy();
             }
         };
-
+        
         this.noConnection = new Text(GuiUtils.middleWidth(this.screenWidth, 120),
                 GuiUtils.calculateHeight(this.screenHeight, 75), 120, 40, "No connection!", 21);
         noConnection.currentColor = Color.RED;
-
+        
     }
-
+    
     /**
      * Render actual menu
-     * 
-     * @param pix
-     *            - PixelBuffer we render on
-     * @param x
-     *            - X position to start render from
-     * @param y
-     *            - Y position to start render from
+     *
+     * @param pix - PixelBuffer we render on
+     * @param x   - X position to start render from
+     * @param y   - Y position to start render from
      */
     public void render(PixelBuffer pix, int x, int y) {
         this.gui.render(pix, x, y);
     }
-
+    
 }

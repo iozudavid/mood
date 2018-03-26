@@ -8,42 +8,40 @@ import java.util.List;
  * Handles the creation, updating, deletion and general management of all
  * GameObjects. GameObjects are added to this class automatically, so the
  * process is mostly transparent.
- * 
- * @author James Adey/Joe Ellis
  *
+ * @author James Adey/Joe Ellis
  */
 public class GameObjectManager {
-
+    
     /**
      * All of the game objects currently present in existence.
      */
     private final List<GameObject> objects;
-
+    
     /**
      * List of things that are due to be created in the next update. This is to
      * ensure that all game objects have their onCreate() method called before
      * their first update.
      */
     private final List<GameObject> notifyToCreate;
-
+    
     /**
      * List of things that are due to be destroyed in the next update. This
      * ensures that all game object have the onDestroy() method called before
      * they're destroyed.
      */
     private final List<GameObject> notifyToDestroy;
-
+    
     public GameObjectManager() {
         this.objects = new ArrayList<>();
         this.notifyToCreate = new LinkedList<>();
         this.notifyToDestroy = new LinkedList<>();
     }
-
+    
     /**
      * Adds a game object to the GameObjectManager.
-     * 
-     * @param g
-     *            the game object to add.
+     *
+     * @param g the game object to add.
      */
     public void addGameObject(GameObject g) {
         // delay adding until next loop
@@ -52,16 +50,15 @@ public class GameObjectManager {
         }
     }
     
-    public void stop(){
-    	//hard to stop
-    	System.exit(0);
+    public void stop() {
+        //hard to stop
+        System.exit(0);
     }
-
+    
     /**
      * Deletes a game object from the GameObjetManager.
-     * 
-     * @param g
-     *            the game object to delete.
+     *
+     * @param g the game object to delete.
      */
     void removeGameObject(GameObject g) {
         // delay deleting until next loop
@@ -69,7 +66,7 @@ public class GameObjectManager {
             notifyToDestroy.add(g);
         }
     }
-
+    
     /**
      * This method does 3 things: first, it traverses the notifyToCreate list
      * and creates any pending objects. It then updates existing objects.
@@ -95,16 +92,15 @@ public class GameObjectManager {
         }
         // update all objects
         for (GameObject obj : objects) {
-        	obj.onUpdate();
+            obj.onUpdate();
         }
     }
-
+    
     /**
      * Greps the list of game objects and returns a list of all of those that
      * are of a particular type.
-     * 
-     * @param c
-     *            the class type of the objects
+     *
+     * @param c the class type of the objects
      * @return a list of objects of type c.
      */
     public <T> ArrayList<T> findObjectsOfType(Class<T> c) {
@@ -113,7 +109,7 @@ public class GameObjectManager {
         try {
             for (GameObject object : objects) {
                 if (c.isInstance(object)) {
-                    results.add((T) object);
+                    results.add((T)object);
                 }
             }
         } catch (ClassCastException e) {
@@ -122,5 +118,5 @@ public class GameObjectManager {
         }
         return results;
     }
-
+    
 }

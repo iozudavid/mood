@@ -9,9 +9,8 @@ import javax.imageio.ImageIO;
 /**
  * The second half of the graphics pipeline. This should be used as a command
  * line tool for creating sprite sheets.
- * 
- * @author James
  *
+ * @author James
  */
 public class SpriteSheetMaker {
     
@@ -34,44 +33,44 @@ public class SpriteSheetMaker {
         String mode = args[0];
         String[] dimString;
         switch (mode) {
-        case "-static":
-            if (args.length != 4) {
-                System.out.println("expected 4 arguments, got " + args.length);
-                System.out.println("Usage:");
-                System.out.println("-static <dimensions> <directions> <name>");
-                return;
-            }
-            // calc dimensions
-            dimString = args[1].split("x");
-            width = Integer.parseInt(dimString[0]);
-            height = Integer.parseInt(dimString[1]);
-            numDirs = Integer.parseInt(args[2]);
-            // get file name
-            baseFileName = args[3];
-            createStatic();
-            break;
-        
-        case "-animated":
+            case "-static":
+                if (args.length != 4) {
+                    System.out.println("expected 4 arguments, got " + args.length);
+                    System.out.println("Usage:");
+                    System.out.println("-static <dimensions> <directions> <name>");
+                    return;
+                }
+                // calc dimensions
+                dimString = args[1].split("x");
+                width = Integer.parseInt(dimString[0]);
+                height = Integer.parseInt(dimString[1]);
+                numDirs = Integer.parseInt(args[2]);
+                // get file name
+                baseFileName = args[3];
+                createStatic();
+                break;
             
-            if (args.length != 5) {
-                System.out.println("expected 5 arguments, got " + args.length);
-                System.out.println("Usage:");
-                System.out.println("-animated <dimensions> <directions> <frames> <name>");
-                return;
-            }
-            // calc dimensions
-            dimString = args[1].split("x");
-            width = Integer.parseInt(dimString[0]);
-            height = Integer.parseInt(dimString[1]);
-            numDirs = Integer.parseInt(args[2]);
-            // get frames
-            numFrames = Integer.parseInt(args[3]);
-            // get file name
-            baseFileName = args[4];
-            createAnimated();
-            break;
-        default:
-            System.err.println("Unknown mode " + mode);
+            case "-animated":
+                
+                if (args.length != 5) {
+                    System.out.println("expected 5 arguments, got " + args.length);
+                    System.out.println("Usage:");
+                    System.out.println("-animated <dimensions> <directions> <frames> <name>");
+                    return;
+                }
+                // calc dimensions
+                dimString = args[1].split("x");
+                width = Integer.parseInt(dimString[0]);
+                height = Integer.parseInt(dimString[1]);
+                numDirs = Integer.parseInt(args[2]);
+                // get frames
+                numFrames = Integer.parseInt(args[3]);
+                // get file name
+                baseFileName = args[4];
+                createAnimated();
+                break;
+            default:
+                System.err.println("Unknown mode " + mode);
         }
     }
     

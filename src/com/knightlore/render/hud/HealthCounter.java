@@ -11,10 +11,8 @@ public class HealthCounter extends HUDElement implements TickListener {
     public static final int BASE = 0x450007;
     public static final int G1 = 0xA10000;
     public static final int G2 = 0x810000;
-
-    private double displayHealth;
     private final double p = 0.2D;
-
+    private double displayHealth;
     private double delta = 0D;
 
     public HealthCounter() {
@@ -27,7 +25,7 @@ public class HealthCounter extends HUDElement implements TickListener {
         assert (player != null);
         final double HEIGHT = 10;
 
-        pix.fillRect(0x450007, 0, 0, pix.getWidth(), (int) HEIGHT);
+        pix.fillRect(0x450007, 0, 0, pix.getWidth(), (int)HEIGHT);
 
         final int invulnColor = 0x0099CC;
         int color;
@@ -37,9 +35,9 @@ public class HealthCounter extends HUDElement implements TickListener {
             color = ColorUtils.mixColor(G1, G2, Math.sin(GameEngine.ticker.getTime() / 50D));
         }
 
-        double r = displayHealth / (double) Player.MAX_HEALTH;
+        double r = displayHealth / (double)Player.MAX_HEALTH;
         for (int xx = 0; xx < r * pix.getWidth(); xx++) {
-            pix.fillRect(color, xx, y, 1, (int) (Math.max(HEIGHT, HEIGHT * Math.abs(delta) * 0.1)));
+            pix.fillRect(color, xx, y, 1, (int)(Math.max(HEIGHT, HEIGHT * Math.abs(delta) * 0.1)));
         }
 
     }

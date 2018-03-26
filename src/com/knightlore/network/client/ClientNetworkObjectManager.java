@@ -25,20 +25,17 @@ import com.knightlore.render.Camera;
 /**
  * Manager on the client side. Updates other game objects states to keep the
  * client in touch with the game
- * 
- * @author David Iozu, Will Miller
  *
+ * @author David Iozu, Will Miller
  */
 public class ClientNetworkObjectManager extends NetworkObjectManager {
     private final Map<UUID, NetworkObject> networkObjects = new HashMap<>();
+    private final ArrayList<ByteBuffer> myPlayerStateOnServer;
+    private final ClientWorld clientWorld;
+    private final BlockingQueue<ByteBuffer> teamChat;
     private Player myPlayer = null;
     // Whether we've received enough information to start the game.
     private boolean finishedSetUp = false;
-    private final ArrayList<ByteBuffer> myPlayerStateOnServer;
-
-    private final ClientWorld clientWorld;
-
-    private final BlockingQueue<ByteBuffer> teamChat;
     private SendToServer sendToServer;
 
     public ClientNetworkObjectManager(ClientWorld world) {
@@ -65,9 +62,8 @@ public class ClientNetworkObjectManager extends NetworkObjectManager {
     /**
      * Called remotely when new a network object has connected. Store it to
      * client's game.
-     * 
-     * @param obj
-     *            - network object to be registered
+     *
+     * @param obj - network object to be registered
      */
     @Override
     public synchronized void registerNetworkObject(NetworkObject obj) {
@@ -77,9 +73,8 @@ public class ClientNetworkObjectManager extends NetworkObjectManager {
 
     /**
      * Removes a network object from client's game.
-     * 
-     * @param obj
-     *            - network object to be removed
+     *
+     * @param obj - network object to be removed
      */
     @Override
     public synchronized void removeNetworkObject(NetworkObject obj) {
@@ -87,7 +82,6 @@ public class ClientNetworkObjectManager extends NetworkObjectManager {
     }
 
     /**
-     * 
      * @return current player
      */
     public Player getMyPlayer() {
@@ -96,9 +90,8 @@ public class ClientNetworkObjectManager extends NetworkObjectManager {
 
     /**
      * Receives a message via networking and add it to chat GUI to be displayed.
-     * 
-     * @param b
-     *            - ByteBuffer containing message to be displayed
+     *
+     * @param b - ByteBuffer containing message to be displayed
      */
     private synchronized void displayMessage(ByteBuffer b) {
         // can't put a message if the engine isn't done...
@@ -108,7 +101,7 @@ public class ClientNetworkObjectManager extends NetworkObjectManager {
         }
         String message = NetworkUtils.getStringFromBuf(b);
         GameEngine g = GameEngine.getSingleton();
-        ClientWorld world = (ClientWorld) g.getWorld();
+        ClientWorld world = (ClientWorld)g.getWorld();
         GameChat c = world.getGameChat();
         if (c == null) {
             return;
@@ -120,9 +113,8 @@ public class ClientNetworkObjectManager extends NetworkObjectManager {
 
     /**
      * Called remotely when a new network object is created on the server.
-     * 
-     * @param buf
-     *            - buffer containing serialization of the new object
+     *
+     * @param buf - buffer containing serialization of the new object
      */
     @SuppressWarnings("unchecked")
     private synchronized void newObjCreated(ByteBuffer buf) {
@@ -135,17 +127,17 @@ public class ClientNetworkObjectManager extends NetworkObjectManager {
             return;
         }
         try {
-            Class<Entity> cls = (Class<Entity>) Class.forName(className);
+            Class<Entity> cls = (Class<Entity>)Class.forName(className);
             // Build the new object.
             Method method = cls.getMethod("build", UUID.class,
                     ByteBuffer.class);
             // Static method, so pass null for object reference. The remainder
             // of the ByteBuffer constitutes
             // the state of the object.
-            NetworkObject obj = (NetworkObject) method.invoke(null, objID, buf);
+            NetworkObject obj = (NetworkObject)method.invoke(null, objID, buf);
             // Entities need to exist in the world.
             if (obj instanceof Entity) {
-                clientWorld.addEntity((Entity) obj);
+                clientWorld.addEntity((Entity)obj);
             }
         } catch (NoSuchMethodException | SecurityException
                 | IllegalAccessException | IllegalArgumentException
@@ -164,11 +156,9 @@ public class ClientNetworkObjectManager extends NetworkObjectManager {
 
     /**
      * Called remotely when an object is destroyed. Delete it from local game.
-     * 
-     * @param buf
-     *            ByteBuffer sent via networking containing details about object
+     *
+     * @param buf ByteBuffer sent via networking containing details about object
      *            to be destroyed
-     * 
      */
     private synchronized void objDestroyed(ByteBuffer buf) {
         System.out.println("Receiving object deletion message from server");
@@ -176,18 +166,17 @@ public class ClientNetworkObjectManager extends NetworkObjectManager {
         NetworkObject toBeDestroyedObject = this.getNetworkObject(objID);
         toBeDestroyedObject.destroy();
         if (toBeDestroyedObject instanceof Entity) {
-            clientWorld.removeEntity((Entity) toBeDestroyedObject);
+            clientWorld.removeEntity((Entity)toBeDestroyedObject);
             GameEngine g = GameEngine.getSingleton();
-            ClientWorld world = (ClientWorld) g.getWorld();
+            ClientWorld world = (ClientWorld)g.getWorld();
             GameChat c = world.getGameChat();
         }
     }
 
     /**
      * Called remotely when map seed is generated Set received map.
-     * 
-     * @param buf
-     *            - ByteBuffer containing map seed information
+     *
+     * @param buf - ByteBuffer containing map seed information
      */
     private synchronized void receiveMapSeed(ByteBuffer buf) {
         long seed = buf.getLong();
@@ -198,20 +187,18 @@ public class ClientNetworkObjectManager extends NetworkObjectManager {
     /**
      * Called remotely when we receive a message from the server to tell us what
      * our UUID is. Set the received UUID to current player.
-     * 
-     * @param buf
-     *            - ByteBuffer to be processed containing UUID information
+     *
+     * @param buf - ByteBuffer to be processed containing UUID information
      */
     private synchronized void registerPlayerIdentity(ByteBuffer buf) {
         System.out.println("Registering player identity");
         UUID myPlayerUUID = UUID.fromString(NetworkUtils.getStringFromBuf(buf));
-        myPlayer = (Player) networkObjects.get(myPlayerUUID);
+        myPlayer = (Player)networkObjects.get(myPlayerUUID);
         System.out.println("Created and set player.");
     }
 
     /**
-     * @param uuid
-     *            - object's UUID which is required
+     * @param uuid - object's UUID which is required
      * @return the network object which has the given UUID if any
      */
     @Override
@@ -228,9 +215,8 @@ public class ClientNetworkObjectManager extends NetworkObjectManager {
 
     /**
      * Send to the server what we want our name to be.
-     * 
-     * @param buf
-     *            - ByteBuffer containing desired name
+     *
+     * @param buf - ByteBuffer containing desired name
      */
     private synchronized void receiveReadySignal(ByteBuffer buf) {
         System.out.println("Sending name");
@@ -245,9 +231,8 @@ public class ClientNetworkObjectManager extends NetworkObjectManager {
     /**
      * Wait for all information to be received - e.g., map seed, object details,
      * player identity.
-     * 
-     * @param serverSender
-     *            - set the server sender for our player in the manager
+     *
+     * @param serverSender - set the server sender for our player in the manager
      */
     public void init(SendToServer serverSender) {
         super.init();
@@ -279,7 +264,6 @@ public class ClientNetworkObjectManager extends NetworkObjectManager {
     }
 
     /**
-     * 
      * @return whether the setup has finished or not
      */
     public boolean hasFinishedSetup() {
@@ -288,9 +272,8 @@ public class ClientNetworkObjectManager extends NetworkObjectManager {
 
     /**
      * Called remotely to add new message to the game chat.
-     * 
-     * @param message
-     *            - ByteBuffer containing a message came from server
+     *
+     * @param message - ByteBuffer containing a message came from server
      */
     public void addToChat(ByteBuffer message) {
         this.teamChat.offer(message);
@@ -298,7 +281,7 @@ public class ClientNetworkObjectManager extends NetworkObjectManager {
 
     /**
      * Takes next message if any from current player and send it to server.
-     * 
+     *
      * @return ByteBuffer to be sent to the server and then forwarded to players
      */
     public ByteBuffer takeNextMessageToSend() {
@@ -314,11 +297,9 @@ public class ClientNetworkObjectManager extends NetworkObjectManager {
     }
 
     /**
-     * 
-     * @param b
-     *            the ByteBuffer containing the player's state on the server
-     *            which will be used by client prediction to reconciliate with
-     *            the server
+     * @param b the ByteBuffer containing the player's state on the server
+     *          which will be used by client prediction to reconciliate with
+     *          the server
      */
     public void addToPlayerStateOnServer(ByteBuffer b) {
         synchronized (this.myPlayerStateOnServer) {

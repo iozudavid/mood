@@ -10,22 +10,22 @@ public abstract class Area implements Serializable {
     private final Tile[][] grid;
     private final double[][] costGrid;
     private final double LAVA_TILE_COST = 20d;
-
+    
     public Area(Tile[][] grid) {
         this.width = grid.length;
         if (width < 1) {
             throw new IllegalArgumentException("Area cannot have width of 0");
         }
-
+        
         this.height = grid[0].length;
         if (height < 1) {
             throw new IllegalArgumentException("Area cannot have height of 0");
         }
-
+        
         this.grid = grid;
         this.costGrid = initCostGrid();
     }
-
+    
     private double[][] initCostGrid() {
         double[][] costGrid = new double[width][height];
         for (int i = 0; i < width; i++) {
@@ -36,7 +36,7 @@ public abstract class Area implements Serializable {
         }
         return costGrid;
     }
-
+    
     public Tile getTile(int x, int y) {
         if (x < 0 || x >= width || y < 0 || y >= height) {
             return AirTile.getInstance();
@@ -47,21 +47,21 @@ public abstract class Area implements Serializable {
     public void setTile(Tile tile, int x, int y) {
         this.grid[x][y] = tile;
     }
-
+    
     public double[][] getCostGrid() {
         return costGrid;
     }
-
+    
     public int getWidth() {
         return grid.length;
         //return width;
     }
-
+    
     public int getHeight() {
         return grid[0].length;
         //return height;
     }
-
+    
     public String toDebugString() {
         StringBuilder sBuilder = new StringBuilder("AREA\n" + "WIDTH = " + width + "\n" + "HEIGHT = " + height + "\n");
         for (int j = 0; j < height; j++) {
@@ -70,7 +70,7 @@ public abstract class Area implements Serializable {
             }
             sBuilder.append("\n");
         }
-
+        
         return sBuilder.toString();
     }
 }

@@ -4,6 +4,7 @@ import com.knightlore.game.entity.Entity;
 
 /**
  * A plain old data class, for storing information about what was hit in a raycast or linecast.
+ *
  * @author James
  */
 public final class RaycastHit {

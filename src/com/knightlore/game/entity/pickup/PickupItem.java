@@ -10,9 +10,8 @@ import com.knightlore.utils.Vector2D;
 /**
  * An item that a player can collect in the game world. A good example would be
  * a weapon or health pickup.
- * 
- * @author Joe Ellis
  *
+ * @author Joe Ellis
  */
 public abstract class PickupItem extends Entity {
 
@@ -22,7 +21,11 @@ public abstract class PickupItem extends Entity {
     private static final double FLOAT_BOB_SPEED = 0.10;
     private static final int FLOOR_OFFSET = 100;
     protected final DirectionalSprite sprite;
-
+    /**
+     * Manages all pickups placed, at the start of the game, on
+     * PickupTiles.
+     */
+    private final PickupManager pickupManager;
     /**
      * The time taken for a new pickup to be spawned by the
      * spawn manager when this pickup has been destroyed.
@@ -30,23 +33,18 @@ public abstract class PickupItem extends Entity {
      * pickup manager.
      */
     protected double spawnDelay;
-
-    /**
-     * Manages all pickups placed, at the start of the game, on
-     * PickupTiles.
-     */
-    private final PickupManager pickupManager;
     
     /**
-     * Produce a pickup item with the specified uuid, position vector, directional sprite and 
+     * Produce a pickup item with the specified uuid, position vector, directional sprite and
      * pickup manager.
+     *
      * @param uuid
      * @param position
      * @param sprite
      * @param pickupManager
      */
     public PickupItem(UUID uuid, Vector2D position, DirectionalSprite sprite, PickupManager pickupManager) {
-        super(uuid, PICKUP_SIZE , position, Vector2D.UP);
+        super(uuid, PICKUP_SIZE, position, Vector2D.UP);
         this.sprite = sprite;
         this.pickupManager = pickupManager;
     }
@@ -66,7 +64,7 @@ public abstract class PickupItem extends Entity {
 
         // Make the item bob up and down.
         long t = GameEngine.ticker.getTime();
-        zOffset = FLOOR_OFFSET + (int) (Math.sin(t * FLOAT_BOB_SPEED) * FLOAT_BOB_AMOUNT);
+        zOffset = FLOOR_OFFSET + (int)(Math.sin(t * FLOAT_BOB_SPEED) * FLOAT_BOB_AMOUNT);
 
         // Make the item rotate.
         double xprime = direction.getX() * Math.cos(ROTATION_SPEED) - direction.getY() * Math.sin(ROTATION_SPEED);
@@ -97,7 +95,7 @@ public abstract class PickupItem extends Entity {
      */
     public void addToPickupManager() {
         // Clients will have a null Pickup manager
-        if(pickupManager != null) {
+        if (pickupManager != null) {
             pickupManager.addToQueue(this);
         }
     }

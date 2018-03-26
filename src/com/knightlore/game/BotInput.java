@@ -17,9 +17,8 @@ import com.knightlore.utils.Vector2D;
 
 /**
  * Input module for those players that are controlled by bots.
- * 
- * @authors James Adey, Tom Wiliams
  *
+ * @authors James Adey, Tom Wiliams
  */
 public final class BotInput extends InputModule {
     
@@ -39,8 +38,33 @@ public final class BotInput extends InputModule {
     private Vector2D lookPos = Vector2D.ZERO;
     
     /**
+     * A helper method to convert a double value to an input axis. Input axes
+     * are floating point values always between -1 and 1. This method takes a
+     * double, and a threshold and returns which way <code>val</code> must
+     * change if it is to fit within the threshold.
+     *
+     * @param val the value to threshold
+     * @param acc A value used to form the threshold spanning <code>-acc</code>
+     *            to 0 to <code>acc</code>.
+     * @returns <li>1 if <code>val</code> > <code>acc</code>
+     * <li>-1 if <code>val</code> < <code>acc</code>
+     * <li>0 if <code>acc</code> <= <code>val</code> <=
+     * <code>acc</code>
+     */
+    private static double dblToAxis(double val, double acc) {
+        if (val > acc) {
+            return 1;
+        } else if (val < -acc) {
+            return -1;
+        } else {
+            return 0;
+        }
+        
+    }
+    
+    /**
      * Runs the main AI code, generates inputs for each AI player.
-     * 
+     *
      * @returns the new InputModule for the supplied player
      */
     @Override
@@ -63,9 +87,8 @@ public final class BotInput extends InputModule {
     /**
      * Updates the move inputs for this Bot. Sets the walk and strafe inputs. in
      * the input map.
-     * 
-     * @param myPlayer
-     *            the Player that this input module is serving
+     *
+     * @param myPlayer the Player that this input module is serving
      */
     private void move(Entity myPlayer) {
         Vector2D displacement = goalPos.subtract(myPlayer.getPosition());
@@ -93,9 +116,8 @@ public final class BotInput extends InputModule {
     
     /**
      * Determines where to look, which way to turn and when to shoot.
-     * 
-     * @param myPlayer
-     *            the Player that this input module is serving
+     *
+     * @param myPlayer the Player that this input module is serving
      */
     private void aim(Entity myPlayer) {
         
@@ -112,39 +134,10 @@ public final class BotInput extends InputModule {
     }
     
     /**
-     * A helper method to convert a double value to an input axis. Input axes
-     * are floating point values always between -1 and 1. This method takes a
-     * double, and a threshold and returns which way <code>val</code> must
-     * change if it is to fit within the threshold.
-     * 
-     * @param val
-     *            the value to threshold
-     * @param acc
-     *            A value used to form the threshold spanning <code>-acc</code>
-     *            to 0 to <code>acc</code>.
-     * @returns
-     *          <li>1 if <code>val</code> > <code>acc</code>
-     *          <li>-1 if <code>val</code> < <code>acc</code>
-     *          <li>0 if <code>acc</code> <= <code>val</code> <=
-     *          <code>acc</code>
-     */
-    private static double dblToAxis(double val, double acc) {
-        if (val > acc) {
-            return 1;
-        } else if (val < -acc) {
-            return -1;
-        } else {
-            return 0;
-        }
-        
-    }
-    
-    /**
      * A helper method that populates the path stored for this bot. Currently,
      * this is the path to random spawn postitions.
-     * 
-     * @param myPlayer
-     *            the Player that this input module is serving
+     *
+     * @param myPlayer the Player that this input module is serving
      */
     private void getPath(Entity myPlayer) {
         Vector2D goal = GameEngine.getSingleton().getWorld().getMap().getRandomSpawnPoint();
@@ -155,9 +148,8 @@ public final class BotInput extends InputModule {
     
     /**
      * Decides on the target that this bot should be aiming atF
-     * 
-     * @param myPlayer
-     *            the Player that this input module is serving
+     *
+     * @param myPlayer the Player that this input module is serving
      */
     private void think(Entity myPlayer) {
         target = null;
@@ -168,7 +160,7 @@ public final class BotInput extends InputModule {
             Player player = playerIter.next();
             
             // check for friendlies
-            if(myPlayer.team != Team.NONE && player.team == myPlayer.team) {
+            if (myPlayer.team != Team.NONE && player.team == myPlayer.team) {
                 continue;
             }
             
@@ -208,9 +200,8 @@ public final class BotInput extends InputModule {
     /**
      * Fills the map provided with mappings representing the input axes of this
      * bot.
-     * 
-     * @param inputState
-     *            the inputState to fill wiht mappings
+     *
+     * @param inputState the inputState to fill wiht mappings
      * @returns a modified <code>inputState</code> containing new mappings
      */
     private Map<ClientController, Byte> axesToInput(Map<ClientController, Byte> inputState) {

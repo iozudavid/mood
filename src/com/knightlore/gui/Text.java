@@ -7,32 +7,31 @@ import com.knightlore.render.font.Font;
 
 /**
  * Create and render text.
- * @author David Iozu, James Adey
  *
+ * @author David Iozu, James Adey
  */
 public class Text extends GUIObject {
-    protected String text;
-    protected char[] rawChars;
     private final double fontSize;
     public Color currentColor = Color.BLACK;
-
+    protected String text;
+    protected char[] rawChars;
+    
     public Text(int x, int y, int width, int height, String text, double fontSize) {
         super(x, y, width, height, 0);
         this.fontSize = fontSize / 15D;
         SetText(text);
     }
-
+    
     public Text(int x, int y, int width, int height, int depth, String text, double fontSize) {
         super(x, y, width, height, depth);
         this.fontSize = fontSize / 15D;
         SetText(text);
     }
-
+    
     /**
      * Set the current text.
-     * 
-     * @param newText
-     *            - new text to be set
+     *
+     * @param newText - new text to be set
      */
     public void SetText(String newText) {
         if (newText == null) {
@@ -42,7 +41,7 @@ public class Text extends GUIObject {
         }
         rawChars = text.toCharArray();
     }
-
+    
     /**
      * Draw the text on the screen.
      */
@@ -57,6 +56,6 @@ public class Text extends GUIObject {
         } else {
             pix.drawString(Font.DEFAULT_WHITE, new String(rawChars), rect.x, rect.y + hOffset, this.fontSize, 2);
         }
-
+        
     }
 }

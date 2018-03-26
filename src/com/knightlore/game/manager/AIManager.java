@@ -12,9 +12,7 @@ import com.knightlore.utils.pathfinding.PathFinder;
 import com.knightlore.utils.physics.Physics;
 
 /**
- * 
  * @authors James Adey, Kacper Kielak
- *
  */
 public class AIManager {
     static final int PATH_SMOOTH_ACCURACY = 100;
@@ -31,11 +29,9 @@ public class AIManager {
      * Finds a path through the map from <code> startPos </code> to
      * <code> endPos </code>. This uses A* to work out the path across world map
      * tiles tiles.
-     * 
-     * @param startPos
-     *            - starting location
-     * @param endPos
-     *            - ending location
+     *
+     * @param startPos - starting location
+     * @param endPos   - ending location
      * @returns a list of Points containing the path from start to end
      */
     public List<Point> findRawPath(Vector2D startPos, Vector2D endPos) {
@@ -46,7 +42,7 @@ public class AIManager {
     /**
      * Given a list of points, this method attempts to perform path smoothing on
      * them, by checking line of sight along the path.
-     * 
+     *
      * @param path
      * @returns the list of points without unnecessary nodes
      */

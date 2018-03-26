@@ -20,9 +20,8 @@ import com.knightlore.utils.Vector2D;
 
 /**
  * Contains data and methods to handle the Free For All game mode.
- * 
- * @author James
  *
+ * @author James
  */
 public class FFAGameManager extends GameManager {
     
@@ -38,9 +37,8 @@ public class FFAGameManager extends GameManager {
     
     /**
      * Creates a Game Manager with the given UUID.
-     * 
-     * @param uuid
-     *            the UUID of this network object
+     *
+     * @param uuid the UUID of this network object
      */
     public FFAGameManager(UUID uuid) {
         super(uuid);
@@ -61,7 +59,7 @@ public class FFAGameManager extends GameManager {
             p.respawn(spawnPos);
         }
         
-        gameOverTick = GameEngine.ticker.getTime() + (long) (GameEngine.UPDATES_PER_SECOND * ROUND_TIME_SECS);
+        gameOverTick = GameEngine.ticker.getTime() + (long)(GameEngine.UPDATES_PER_SECOND * ROUND_TIME_SECS);
         
     }
     
@@ -89,7 +87,7 @@ public class FFAGameManager extends GameManager {
     /**
      * Handles a Player death when killed by another player. Gives the
      * <code>inflictor</code> 1 point then calls onEntityDeath(victim);
-     * 
+     *
      * @see com.knightlore.game.manager.FFAGameManager#onEntityDeath(Player)
      */
     @Override
@@ -115,14 +113,14 @@ public class FFAGameManager extends GameManager {
     private void spawnPickup(Vector2D pos, WeaponType type) {
         WeaponPickup pickup;
         switch (type) {
-        case PISTOL:
-            pickup = new PistolPickup(pos, null);
-            break;
-        // If in doubt, spawn a shotgun.
-        case SHOTGUN:
-        default:
-            pickup = new ShotgunPickup(pos, null);
-            break;
+            case PISTOL:
+                pickup = new PistolPickup(pos, null);
+                break;
+            // If in doubt, spawn a shotgun.
+            case SHOTGUN:
+            default:
+                pickup = new ShotgunPickup(pos, null);
+                break;
         }
         pickup.init();
         // nice adding :)
@@ -167,7 +165,7 @@ public class FFAGameManager extends GameManager {
     public void startLobby() {
         gameState = GameState.LOBBY;
         PlayerManager playerManager = GameEngine.getSingleton().getWorld().getPlayerManager();
-        ServerWorld world = (ServerWorld) GameEngine.getSingleton().getWorld();
+        ServerWorld world = (ServerWorld)GameEngine.getSingleton().getWorld();
         if (desiredGameMode == GameMode.SURVIVAL) {
             for (int i = 0; i < numBots; i++) {
                 ZombieServer zom = new ZombieServer(world.getMap().getRandomSpawnPoint());

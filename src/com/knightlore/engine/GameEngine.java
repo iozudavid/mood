@@ -29,45 +29,30 @@ import com.knightlore.render.minimap.Minimap;
 /**
  * Game engine acting as sort of a 'hub' for each of the individual game
  * components.
- * 
- * @authors Joe Ellis, James Adey
  *
+ * @authors Joe Ellis, James Adey
  */
 public class GameEngine implements Runnable {
     
-    public static boolean HEADLESS;
-    
-    private static GameEngine singleton = null;
-    
-    private Thread thread;
-    private volatile boolean running = false;
-    
     public static final double UPDATES_PER_SECOND = 60D;
     public static final Ticker ticker = new Ticker();
-    
+    public static final Charset CHARSET = StandardCharsets.UTF_8;
+    public static boolean HEADLESS;
+    private static GameEngine singleton = null;
+    public GUIState guiState = GUIState.StartMenu;
+    private Thread thread;
+    private volatile boolean running = false;
     private MainWindow window;
     private Screen screen;
     private Display display;
-    
     private GameWorld world;
     private GameObjectManager gameObjectManager;
     private NetworkObjectManager networkObjectManager;
-    
     private PickupManager pickupManager;
-    
     private Camera camera;
-    public GUIState guiState = GUIState.StartMenu;
-    
     private float defaultVolume = -1;
     private SoundManager soundManager;
-    
     private boolean _doneInit = false;
-    
-    public static final Charset CHARSET = StandardCharsets.UTF_8;
-    
-    public boolean doneInit() {
-        return _doneInit;
-    }
     
     private GameEngine() {
         if (HEADLESS) {
@@ -79,10 +64,6 @@ public class GameEngine implements Runnable {
         this.gameObjectManager = new GameObjectManager();
     }
     
-    public SoundManager getSoundManager() {
-        return soundManager;
-    }
-    
     /**
      * @returns the GameEngine singleton, or creates one if none exists
      */
@@ -91,6 +72,14 @@ public class GameEngine implements Runnable {
             singleton = new GameEngine();
         }
         return singleton;
+    }
+    
+    public boolean doneInit() {
+        return _doneInit;
+    }
+    
+    public SoundManager getSoundManager() {
+        return soundManager;
     }
     
     public GameObjectManager getGameObjectManager() {
@@ -136,15 +125,15 @@ public class GameEngine implements Runnable {
         
         if (GameSettings.isServer()) {
             world = new ServerWorld();
-            networkObjectManager = new ServerNetworkObjectManager((ServerWorld) world);
+            networkObjectManager = new ServerNetworkObjectManager((ServerWorld)world);
             ServerManager networkManager = new ServerManager();
             new Thread(networkManager).start();
-            ((ServerNetworkObjectManager) networkObjectManager).init();
+            ((ServerNetworkObjectManager)networkObjectManager).init();
         }
         
         if (GameSettings.isClient()) {
             world = new ClientWorld();
-            networkObjectManager = new ClientNetworkObjectManager((ClientWorld) world);
+            networkObjectManager = new ClientNetworkObjectManager((ClientWorld)world);
             ClientManager networkManager;
             try {
                 networkManager = new ClientManager();
@@ -152,7 +141,7 @@ public class GameEngine implements Runnable {
                 throw new RuntimeException();
             }
             new Thread(networkManager).start();
-            ((ClientNetworkObjectManager) networkObjectManager).init(networkManager.getServerSender());
+            ((ClientNetworkObjectManager)networkObjectManager).init(networkManager.getServerSender());
         }
         
         System.out.println("Initialising NetworkObjectManager...");
@@ -165,12 +154,12 @@ public class GameEngine implements Runnable {
         }
         
         if (GameSettings.isClient()) {
-            ClientNetworkObjectManager cn = (ClientNetworkObjectManager) networkObjectManager;
+            ClientNetworkObjectManager cn = (ClientNetworkObjectManager)networkObjectManager;
             while (!cn.hasFinishedSetup()) {
                 // wait...
             }
             final int w = screen.getWidth(), h = screen.getHeight();
-            ClientWorld cworld = (ClientWorld) world;
+            ClientWorld cworld = (ClientWorld)world;
             cworld.setScreenHeight(h);
             cworld.setScreenWidth(w);
             Renderer renderer = new Renderer(w, 8 * h / 9, camera, cworld);

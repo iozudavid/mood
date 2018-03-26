@@ -9,23 +9,21 @@ import com.knightlore.utils.Vector2D;
 
 public abstract class TurretShared extends Entity {
     
-    protected int damage;
-    protected final Team team = Team.NONE;
-    
-    protected long nextCheckTime = 0;
     protected static final long TURRET_CHECK_DELAY = 20;
-    
-    protected Entity target = null;
-    protected byte targetByte = 0;
+    protected final Team team = Team.NONE;
     protected final double sqrRange = 25;
     protected final double range = 5;
+    protected int damage;
+    protected long nextCheckTime = 0;
+    protected Entity target = null;
+    protected byte targetByte = 0;
     
     protected TurretShared(double size, Vector2D position, Vector2D direction) {
         super(size, position, direction);
     }
     
     protected TurretShared(UUID uuid, Vector2D pos, Vector2D dir) {
-        super(uuid,pos,dir);
+        super(uuid, pos, dir);
     }
     
     @Override
@@ -35,7 +33,7 @@ public abstract class TurretShared extends Entity {
         buf.put(getTargetByte());
         return buf;
     }
-
+    
     @Override
     public synchronized void deserialize(ByteBuffer buf) {
         super.deserialize(buf);
@@ -47,13 +45,13 @@ public abstract class TurretShared extends Entity {
     
     /**
      * Screw java, it can't convert bool to byte. Do it here implicitly
+     *
      * @return 1 if true, 0 if false
      */
     private byte getTargetByte() {
-        if(hasTarget()) {
+        if (hasTarget()) {
             return 1;
-        }
-        else {
+        } else {
             return 0;
         }
     }
@@ -78,7 +76,7 @@ public abstract class TurretShared extends Entity {
     public DirectionalSprite getDirectionalSprite() {
         return DirectionalSprite.TURRET_DIRECTIONAL_SPRITE;
     }
-
+    
     @Override
     public String getClientClassName() {
         // turret client please :)

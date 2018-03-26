@@ -7,11 +7,9 @@ import java.util.List;
  * An animation is a collection of 'frame' objects in order. At any one time, an
  * animation object has a 'current frame' which can be cycled between all of the
  * available frames using the built-in methods.
- * 
- * @author Joe Ellis
  *
- * @param <T>
- *            the type of frame you want -- i.e. Graphic, DirectionalSprite.
+ * @param <T> the type of frame you want -- i.e. Graphic, DirectionalSprite.
+ * @author Joe Ellis
  */
 public class Animation<T> {
 
@@ -25,9 +23,8 @@ public class Animation<T> {
 
     /**
      * Add a frame to this animation.
-     * 
-     * @param g
-     *            the frame to add.
+     *
+     * @param g the frame to add.
      */
     public void addFrame(T g) {
         frames.add(g);
@@ -35,11 +32,20 @@ public class Animation<T> {
 
     /**
      * Get the current frame the animation is on.
-     * 
+     *
      * @return the current frame.
      */
     public T getFrame() {
         return frames.get(currentFrame);
+    }
+
+    /**
+     * Manually set the current frame.
+     *
+     * @param frame the frame index.
+     */
+    public void setFrame(int frame) {
+        currentFrame = frame;
     }
 
     /**
@@ -54,16 +60,6 @@ public class Animation<T> {
      */
     public void prevFrame() {
         currentFrame = (currentFrame + 1) % frames.size();
-    }
-
-    /**
-     * Manually set the current frame.
-     * 
-     * @param frame
-     *            the frame index.
-     */
-    public void setFrame(int frame) {
-        currentFrame = frame;
     }
     
     protected void clearFrames() {

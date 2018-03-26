@@ -2,12 +2,11 @@ package com.knightlore.network;
 
 /**
  * Details of important data we need to complete before connecting to a game.
- *
  */
 public class ConnectionDetails {
-
+    
     /**
-     * Default port run multiplayer game on. 
+     * Default port run multiplayer game on.
      */
     public static int DEFAULT_PORT = 27001;
     /**

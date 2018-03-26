@@ -46,13 +46,13 @@ public class ZombieServer extends ZombieShared {
     }
     
     private void checkDeath() {
-        if(GameSettings.isClient()) {
+        if (GameSettings.isClient()) {
             return;
         }
-    
+        
         GameManager gameManager = GameEngine.getSingleton().getWorld().getGameManager();
         if (currentHealth <= 0) {
-            if(lastInflictor == null) {
+            if (lastInflictor == null) {
                 System.out.println(this.getName() + " was killed by natural causes");
                 gameManager.onEntityDeath(this);
             } else {
@@ -62,7 +62,7 @@ public class ZombieServer extends ZombieShared {
                 } else {
                     gameManager.onEntityDeath(this);
                 }
-            }            
+            }
             removeAllBuffs();
             this.sendSystemMessage(this.getName(), lastInflictor);
         }
@@ -137,9 +137,9 @@ public class ZombieServer extends ZombieShared {
     @Override
     public void takeDamage(int damage, Entity inflictor) {
         currentHealth -= damage;
-        if(inflictor != null) {
+        if (inflictor != null) {
             lastInflictor = inflictor;
         }
     }
-
+    
 }

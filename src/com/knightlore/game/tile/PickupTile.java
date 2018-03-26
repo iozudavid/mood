@@ -8,7 +8,7 @@ import com.knightlore.game.entity.pickup.PickupType;
 import java.awt.*;
 
 public class PickupTile extends Tile {
-
+    
     private final PickupType pickupType;
     
     public PickupTile(PickupType pickupType) {
@@ -21,7 +21,7 @@ public class PickupTile extends Tile {
         // TODO: Return some texture
         return AirTile.getInstance().getWallTexture();
     }
-
+    
     @Override
     public Graphic getFloorTexture() {
         return Texture.WEAPON_SPAWN;
@@ -32,14 +32,14 @@ public class PickupTile extends Tile {
         if (pickupType == PickupType.HEALTH) {
             return Color.PINK.getRGB();
         }
-
+        
         return Color.darkGray.getRGB();
     }
     
     public PickupType getPickupType() {
         return pickupType;
     }
-
+    
     @Override
     public double getSolidity() {
         return 0.0;
@@ -49,7 +49,7 @@ public class PickupTile extends Tile {
     public double getOpacity() {
         return 0.0;
     }
-
+    
     @Override
     public String toString() {
         return pickupType.toString() + " pickup";
@@ -59,12 +59,12 @@ public class PickupTile extends Tile {
     public char toChar() {
         return 'p';
     }
-
+    
     @Override
     public Tile copy() {
         return new PickupTile(pickupType);
     }
-
+    
     @Override
     public void onEntered(Entity entity) {
     }

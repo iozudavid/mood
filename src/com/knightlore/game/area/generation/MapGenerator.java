@@ -32,14 +32,21 @@ public class MapGenerator extends ProceduralAreaGenerator {
     public MapGenerator() {
     }
 
+    public static void main(String[] arg) {
+        MapGenerator mg = new MapGenerator();
+        Map map = mg.createMap(40, 40, MapType.TDM, 40L);
+        System.out.println(map.toDebugString());
+    }
+
     /**
      * Returns a procedurally-generated map with the specified
      * width, height and map type
+     *
      * @param width
      * @param height
      * @param mt
-     * @author Thomas, Kacper
      * @return map
+     * @author Thomas, Kacper
      */
     public Map createMap(int width, int height, MapType mt) {
         Random rand = new Random();
@@ -51,6 +58,7 @@ public class MapGenerator extends ProceduralAreaGenerator {
      * width, height and map type. The seed is used to ensure
      * this process is deterministic and that the map will be
      * identical on server and clients alike
+     *
      * @param width
      * @param height
      * @param mt
@@ -59,11 +67,11 @@ public class MapGenerator extends ProceduralAreaGenerator {
      * @author Thomas, Kacper
      */
     public Map createMap(int width, int height, MapType mt, long seed) {
-        System.out.println("Creating "+mt+" map with seed: " + seed);
+        System.out.println("Creating " + mt + " map with seed: " + seed);
         mapType = mt;
         determineSymmetrical();
         rand = new Random(seed);
-        if(symmetrical) {
+        if (symmetrical) {
             width = width / 2;
         }
         grid = new Tile[width][height];
@@ -77,18 +85,18 @@ public class MapGenerator extends ProceduralAreaGenerator {
         fillGrid();
         return new Map(grid, seed);
     }
-
+    
     private void determineSymmetrical() {
-        switch(mapType) {
-        case FFA :
-            symmetrical = false;
-            break;
-        case TDM :
-            symmetrical = true;
-            break;
-        case LAVA_SUBMAP :
-            symmetrical = false;
-            break;
+        switch (mapType) {
+            case FFA:
+                symmetrical = false;
+                break;
+            case TDM:
+                symmetrical = true;
+                break;
+            case LAVA_SUBMAP:
+                symmetrical = false;
+                break;
         }
     }
     
@@ -100,7 +108,7 @@ public class MapGenerator extends ProceduralAreaGenerator {
             gaussSize = (rand.nextGaussian() * std_dev) + mean;
         }
 
-        return (int) Math.round(gaussSize);
+        return (int)Math.round(gaussSize);
     }
     
     public void determineRoomNum() {
@@ -109,69 +117,69 @@ public class MapGenerator extends ProceduralAreaGenerator {
         int area = width * height;
         int minRoomRange = area / 40;
         int maxRoomRange = area / 20;
-        maxRooms = getGaussianNum(minRoomRange, maxRoomRange); 
+        maxRooms = getGaussianNum(minRoomRange, maxRoomRange);
     }
-    
+
     @Override
     protected void fillGrid() {
         resetGrid();
         determineRoomsToBuild();
         generateRooms();
         generatePaths();
-        if(symmetrical) {
+        if (symmetrical) {
             makeSymY();
         }
         fillUndecidedTiles();
     }
-
+    
     private void determineRoomsToBuild() {
-        
-        if(mapType == MapType.LAVA_SUBMAP) {
+
+        if (mapType == MapType.LAVA_SUBMAP) {
             roomsToBuild.add(RoomType.LAVA_PLATFORM);
             roomsToBuild.add(RoomType.LAVA_PLATFORM);
             roomsToBuild.add(RoomType.LAVA_PLATFORM);
             return;
         }
-        
-        if(mapType == MapType.FFA) {
+
+        if (mapType == MapType.FFA) {
             roomsToBuild.add(RoomType.NORMAL);
             roomsToBuild.add(RoomType.NORMAL);
-        }else {
+        } else {
             roomsToBuild.add(RoomType.SPAWN);
             roomsToBuild.add(RoomType.SPAWN);
         }
-        
-        if(mapType == MapType.TRAILER) {
+
+        if (mapType == MapType.TRAILER) {
             return;
         }
-        
-        // TODO: A switch statement 
-        if(symmetrical) {
+
+        // TODO: A switch statement
+        if (symmetrical) {
             roomsToBuild.add(RoomType.MIDDLE);
             roomsToBuild.add(RoomType.MIDDLE);
         }
-        
-        if(grid.length > 20 && grid[0].length > 20) {
+
+        if (grid.length > 20 && grid[0].length > 20) {
             roomsToBuild.add(RoomType.BIG_LAVA_ROOM);
         }
-        
-        while(roomsToBuild.size() <= maxRooms) {
+
+        while (roomsToBuild.size() <= maxRooms) {
             double randInt = rand.nextDouble();
-            if(randInt >= 0.66) {
+            if (randInt >= 0.66) {
                 roomsToBuild.add(RoomType.WEAPON);
-            }else {
+            } else {
                 roomsToBuild.add(RoomType.NORMAL);
             }
         }
-        
+
     }
-    
+
     private void generateRooms() {
         RoomGenerator roomGenerator = new RoomGenerator();
 
-        for(RoomType rt : roomsToBuild) {
+        for (RoomType rt : roomsToBuild) {
             Room room = roomGenerator.createRoom(rand.nextLong(), rt);
-            if(setRoomPosition(room, rt)) {
+            if (setRoomPosition(room, rt)) {
                 rooms.add(room);
             }
         }
@@ -180,18 +188,18 @@ public class MapGenerator extends ProceduralAreaGenerator {
     private boolean setRoomPosition(Room room, RoomType rt) {
         int width = grid.length;
         int height = grid[0].length;
-        switch(rt){
-            case SPAWN :
-                int maxX = Math.max(width/4, room.getWidth()+1);
-                return setRoomPosition(room,0,0, maxX, height);
-            case WEAPON :
-                return setRoomPosition(room, width/4, height/4, width*3/4 , height*3/4);
-            case MIDDLE :
-                return setRoomPosition(room, width-(room.getWidth()), 0, width+1, height);
+        switch (rt) {
+            case SPAWN:
+                int maxX = Math.max(width / 4, room.getWidth() + 1);
+                return setRoomPosition(room, 0, 0, maxX, height);
+            case WEAPON:
+                return setRoomPosition(room, width / 4, height / 4, width * 3 / 4, height * 3 / 4);
+            case MIDDLE:
+                return setRoomPosition(room, width - (room.getWidth()), 0, width + 1, height);
             case LAVA_PLATFORM:
-                return setRoomPosition(room, 2, 2, width-3, height-3);
+                return setRoomPosition(room, 2, 2, width - 3, height - 3);
             default:
-                return setRoomPosition(room, 0,0, width, height);
+                return setRoomPosition(room, 0, 0, width, height);
         }
     }
 
@@ -305,7 +313,7 @@ public class MapGenerator extends ProceduralAreaGenerator {
     private void placePath(List<Point> path) {
         for (Point p : path) {
             Tile currentTile = grid[p.x][p.y];
-            if(currentTile.overiddenByPath()) {
+            if (currentTile.overiddenByPath()) {
                 grid[p.x][p.y] = AirTile.getInstance();
                 costGrid[p.x][p.y] = costGrid[p.x][p.y] * DOUBLE_PATH_COST_MODIFIER;
             }
@@ -318,9 +326,9 @@ public class MapGenerator extends ProceduralAreaGenerator {
         for (int x = 0; x < grid.length; x++) {
             for (int y = 0; y < grid[0].length; y++) {
                 if (grid[x][y] instanceof UndecidedTile) {
-                    if(mapType == MapType.LAVA_SUBMAP) {
+                    if (mapType == MapType.LAVA_SUBMAP) {
                         grid[x][y] = new LavaTile();
-                    }else {
+                    } else {
                         grid[x][y] = rand.nextDouble() < 0.66D ? new BrickTile() : new MossBrickTile();
                     }
                 }
@@ -330,26 +338,26 @@ public class MapGenerator extends ProceduralAreaGenerator {
             }
         }
     }
-
+    
     private void connectToY() {
         int width = grid.length;
-        
-        int numConnectToReflect = rand.nextInt( Math.max(1, rooms.size() / 3));
+
+        int numConnectToReflect = rand.nextInt(Math.max(1, rooms.size() / 3));
         numConnectToReflect = Math.max(1, numConnectToReflect);
-        for(int i=0; i < numConnectToReflect; i++) {
+        for (int i = 0; i < numConnectToReflect; i++) {
             Room rightmost = rooms.get(0);
             for (Room room : rooms) {
                 if (room.getCentre().getX() > rightmost.getCentre().getX()) {
                     rightmost = room;
                 }
             }
-            
+
             // now that rightmost has been found, remove it
             rooms.remove(rightmost);
             // set up pathFinder
             PathFinder pathFinder = new PathFinder(costGrid);
             pathFinder.setIsForMap(true);
-           
+
             Point start = rightmost.getCentre();
             int centreY = start.y;
             Point goal = new Point(width - 1, centreY - 2 + rand.nextInt(3));
@@ -376,12 +384,6 @@ public class MapGenerator extends ProceduralAreaGenerator {
         }
 
         grid = symMap;
-    }
-    
-    public static void main(String[] arg) {
-        MapGenerator mg = new MapGenerator();
-        Map map = mg.createMap(40, 40, MapType.TDM, 40L);
-        System.out.println(map.toDebugString());
     }
     
 }

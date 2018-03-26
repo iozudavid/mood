@@ -7,6 +7,7 @@ import com.knightlore.network.Connection;
 
 /**
  * Thread listening for new packets received by networking.
+ *
  * @author David Iozu, Will Miller
  */
 public class Receive implements Runnable {

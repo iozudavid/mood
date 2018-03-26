@@ -16,30 +16,26 @@ import com.knightlore.network.NetworkObject;
  * <p>
  * Note: This object only needs to be created server side, as it will be
  * automatically replicated on the client side.
- * 
- * @author James
  *
+ * @author James
  */
 public abstract class GameManager extends NetworkObject {
     
+    public static GameMode desiredGameMode = GameMode.FFA;
+    public static int numBots = 0;
+    public static int numZombies = 0;
+    protected static GameState gameState = GameState.LOBBY;
     protected long gameOverTick;
     protected long ticksLeft;
-    
     /**
      * Creates a Game Manager with the given UUID.
-     * 
-     * @param uuid
-     *            the UUID of this network object
+     *
+     * @param uuid the UUID of this network object
      */
     public GameManager(UUID uuid) {
         super(uuid);
     }
     
-    protected static GameState gameState = GameState.LOBBY;
-    public static GameMode desiredGameMode = GameMode.FFA;
-    public static int numBots = 0;
-    public static int numZombies = 0;
-
     public static GameState getGameState() {
         return gameState;
     }
@@ -61,37 +57,31 @@ public abstract class GameManager extends NetworkObject {
     
     /**
      * Handles a Zombie death, when caused by a Player.
-     * 
-     * @param victim
-     *            the Zombie who
-     * @param inflictor
-     *            the Player who caused the kill
+     *
+     * @param victim    the Zombie who
+     * @param inflictor the Player who caused the kill
      */
     public abstract void onEntityDeath(ZombieShared victim, Player inflictor);
     
     /**
      * Handles a Zombie death.
-     * 
-     * @param victim
-     *            the Zombie that died
+     *
+     * @param victim the Zombie that died
      */
     public abstract void onEntityDeath(ZombieShared victim);
     
     /**
      * Handles a Player death, when caused by another Player.
-     * 
-     * @param victim
-     *            the Player who died
-     * @param inflictor
-     *            the Player who caused the kill
+     *
+     * @param victim    the Player who died
+     * @param inflictor the Player who caused the kill
      */
     public abstract void onEntityDeath(Player victim, Player inflictor);
     
     /**
      * Handles a Player death.
-     * 
-     * @param victim
-     *            the Player who was killed
+     *
+     * @param victim the Player who was killed
      */
     public abstract void onEntityDeath(Player victim);
     
@@ -111,10 +101,10 @@ public abstract class GameManager extends NetworkObject {
     
     /**
      * @returns A Minutes:Seconds representation of the current time remaining.
-     *          e.g. 03:27
+     * e.g. 03:27
      */
     public String timeLeftString() {
-        long second = (long) (ticksLeft / GameEngine.UPDATES_PER_SECOND);
+        long second = (long)(ticksLeft / GameEngine.UPDATES_PER_SECOND);
         long minute = second / 60;
         return String.format("%02d:%02d", minute % 60, second % 60);
     }

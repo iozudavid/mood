@@ -19,10 +19,16 @@ import com.knightlore.utils.Vector2D;
 /**
  * Contains data and methods to handle the Team Deathmatch game mode
  * client-side.
- * 
+ *
  * @author James, Tom
  */
 public class TDMGameManager extends GameManager {
+    
+    private static final double ROUND_TIME_SECS = 300;
+    private final long SCORE_UPDATE_PERIOD = (long)GameEngine.UPDATES_PER_SECOND * 5;
+    private long nextScoreUpdate;
+    private int blueScore = 0;
+    private int redScore = 0;
     
     /**
      * Creates a Game Manager with a random UUID.
@@ -30,23 +36,14 @@ public class TDMGameManager extends GameManager {
     public TDMGameManager() {
         super(UUID.randomUUID());
     }
-    
     /**
      * Creates a Game Manager with the given UUID.
-     * 
-     * @param uuid
-     *            the UUID of this network object
+     *
+     * @param uuid the UUID of this network object
      */
     public TDMGameManager(UUID uuid) {
         super(uuid);
     }
-    
-    private static final double ROUND_TIME_SECS = 300;
-    private final long SCORE_UPDATE_PERIOD = (long) GameEngine.UPDATES_PER_SECOND * 5;
-    private long nextScoreUpdate;
-    
-    private int blueScore = 0;
-    private int redScore = 0;
     
     /**
      * Sets the game state to LOBBY and spawns the bots.
@@ -55,7 +52,7 @@ public class TDMGameManager extends GameManager {
     public void startLobby() {
         gameState = GameState.LOBBY;
         PlayerManager playerManager = GameEngine.getSingleton().getWorld().getPlayerManager();
-        ServerWorld world = (ServerWorld) GameEngine.getSingleton().getWorld();
+        ServerWorld world = (ServerWorld)GameEngine.getSingleton().getWorld();
         for (int i = 0; i < GameManager.numBots; i++) {
             // attempt even teams
             Team team = Team.BLUE;
@@ -86,7 +83,7 @@ public class TDMGameManager extends GameManager {
             Vector2D spawnPos = GameEngine.getSingleton().getWorld().getMap().getRandomSpawnPoint(p.team);
             p.respawn(spawnPos);
         }
-        gameOverTick = GameEngine.ticker.getTime() + (long) (GameEngine.UPDATES_PER_SECOND * ROUND_TIME_SECS);
+        gameOverTick = GameEngine.ticker.getTime() + (long)(GameEngine.UPDATES_PER_SECOND * ROUND_TIME_SECS);
         nextScoreUpdate = SCORE_UPDATE_PERIOD;
     }
     
@@ -101,7 +98,7 @@ public class TDMGameManager extends GameManager {
         if (blueScore > redScore) {
             winStr = "KNIGHTLORE WINS!";
         } else if (blueScore < redScore) {
-            winStr="THE ANARCHISTS WIN!";
+            winStr = "THE ANARCHISTS WIN!";
         } else {
             winStr = "DRAW! THE DAY BELONGS TO THE ZOMBIES!";
         }
@@ -134,7 +131,7 @@ public class TDMGameManager extends GameManager {
      * Handles a Player death when killed by another player. Gives the
      * <code>inflictor</code> 1 point then calls onEntityDeath(victim).
      * Penalises the <code>inflictor</code> instead if this is a team kill.
-     * 
+     *
      * @see com.knightlore.game.manager.TDMGameManager#onEntityDeath(Player)
      */
     @Override
@@ -165,14 +162,14 @@ public class TDMGameManager extends GameManager {
     private void spawnPickup(Vector2D pos, WeaponType type) {
         WeaponPickup pickup;
         switch (type) {
-        case PISTOL:
-            pickup = new PistolPickup(pos, null);
-            break;
-        // If in doubt, spawn a shotgun.
-        case SHOTGUN:
-        default:
-            pickup = new ShotgunPickup(pos, null);
-            break;
+            case PISTOL:
+                pickup = new PistolPickup(pos, null);
+                break;
+            // If in doubt, spawn a shotgun.
+            case SHOTGUN:
+            default:
+                pickup = new ShotgunPickup(pos, null);
+                break;
         }
         pickup.init();
         // nice adding :)

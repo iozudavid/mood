@@ -18,16 +18,18 @@ import com.knightlore.utils.funcptrs.BooleanFunction;
 
 /**
  * Class used to create and render TextField which let user to insert text with respect to its width.
- * @author David Iozu, James Adey.
  *
+ * @author David Iozu, James Adey.
  */
 public class TextField extends GUIObject {
-
+    
     private static final String CURSOR = "_";
-
+    
     private static final Color upColour = Color.WHITE;
     private static final Color downColour = Color.LIGHT_GRAY;
     private static final Color hoverColour = Color.GRAY;
+    public final Font font = Font.DEFAULT_WHITE;
+    public int fontSize = 1;
     private PixelBuffer pix;
     private SelectState state = SelectState.UP;
     private String text = "";
@@ -39,107 +41,98 @@ public class TextField extends GUIObject {
     private Optional<BooleanFunction<Character>> restrictText = Optional.empty();
     private Optional<BooleanFunction<Integer>> restrictTextLength = Optional.empty();
     private Optional<Predicate<String>> restrictValue = Optional.empty();
-    public int fontSize = 1;
-    public final Font font = Font.DEFAULT_WHITE;
-
+    
     public TextField(int x, int y, int width, int height) {
         super(x, y, width, height);
     }
-
+    
     TextField(int x, int y, int width, int height, int depth) {
         super(x, y, width, height, depth);
     }
-
+    
     public TextField(int x, int y, int width, int height, String text) {
         this(x, y, width, height, 0, text);
     }
-
-    /**
-     * Set a text on this TextField.
-     * 
-     * @param newText
-     *            - text to set on TextField
-     */
-    public void setText(String newText) {
-        text = newText;
-        displayText(text);
-    }
-
+    
     public TextField(int x, int y, int width, int height, int depth, String text) {
         super(x, y, width, height, depth);
         setText(text);
         displayText(text);
     }
-
+    
     /**
-     * 
      * @return current text rendered on this TextField
      */
     public String getText() {
         return text;
     }
-
+    
+    /**
+     * Set a text on this TextField.
+     *
+     * @param newText - text to set on TextField
+     */
+    public void setText(String newText) {
+        text = newText;
+        displayText(text);
+    }
+    
     /**
      * Set a restriction of characters inserted for this TextField.
-     * 
-     * @param restrict
-     *            - function to be applied
+     *
+     * @param restrict - function to be applied
      */
     public void setRestriction(BooleanFunction<Character> restrict) {
         this.restrictText = Optional.of(restrict);
     }
-
+    
     /**
      * Set a restriction of text length for this TextField.
-     * 
-     * @param restrict
-     *            - function to be applied
+     *
+     * @param restrict - function to be applied
      */
     public void setRestrictionLength(BooleanFunction<Integer> restrict) {
         this.restrictTextLength = Optional.of(restrict);
     }
-
+    
     /**
      * Set a restriction of string for this TextField.
-     * 
-     * @param restrict
-     *            - function to be applied
+     *
+     * @param restrict - function to be applied
      */
     public void setRestrictionValue(Predicate<String> restrict) {
         this.restrictValue = Optional.of(restrict);
     }
-
+    
     /**
      * Dispay the given text.
-     * 
-     * @param t
-     *            - text to be displayed
+     *
+     * @param t - text to be displayed
      */
     public void displayText(String t) {
         synchronized (this.rawChars) {
             rawChars = t.toCharArray();
         }
     }
-
+    
     /**
-     * 
      * @return the appropriate color for current state
      */
     public Color activeColor() {
         switch (state) {
-        case UP:
-            return upColour;
-
-        case HOVER:
-            return hoverColour;
-
-        case DOWN:
-            return downColour;
+            case UP:
+                return upColour;
+            
+            case HOVER:
+                return hoverColour;
+            
+            case DOWN:
+                return downColour;
         }
-
+        
         throw new IllegalStateException("State " + state + " is not legal");
     }
-
+    
     /**
      * Draw the TextField with the current text inserted. If text go beyond the
      * width limit, then shift the view to the right to let the last character
@@ -160,9 +153,9 @@ public class TextField extends GUIObject {
             color = activeColor().getRGB();
             int hOffset = font.getHeight();
             pix.fillRect(color, rect.x, rect.y, rect.width, rect.height);
-
+            
             Font font = state == SelectState.UP ? Font.DEFAULT_BLACK : Font.DEFAULT_WHITE;
-
+            
             if (text != null) {
                 int width = pix.stringWidth(font, new String(rawChars), this.fontSize / 1.5, 2);
                 if (width < this.rect.width) {
@@ -181,28 +174,27 @@ public class TextField extends GUIObject {
                         width = pix.stringWidth(font, new String(toDisplay), this.fontSize / 1.5, 2);
                     }
                     pix.drawString(font, new String(toDisplay), rect.x + 2, rect.y + hOffset, this.fontSize / 1.5, 2);
-
+                    
                 }
             }
             this.pix = pix;
         }
     }
-
+    
     @Override
     boolean isSelectable() {
         return select;
     }
-
+    
     /**
      * Set if selectable or not.
-     * 
-     * @param select
-     *            - whether can be selectablee or not
+     *
+     * @param select - whether can be selectablee or not
      */
     public void setSelect(boolean select) {
         this.select = select;
     }
-
+    
     /**
      * Called when TextField is accessed.
      */
@@ -210,9 +202,9 @@ public class TextField extends GUIObject {
     void onGainedFocus() {
         System.out.println("GAINED FOCUS");
         GUICanvas.setActiveTextField(this);
-
+        
     }
-
+    
     /**
      * Called when TextField lost the focus.
      */
@@ -232,18 +224,17 @@ public class TextField extends GUIObject {
                 } else {
                     text = "20";
                 }
-            
+                
             }
         });
         displayText(text);
     }
-
+    
     /**
      * Draw the char which was inserted from the keyboard. and move the position
      * of the cursor.
-     * 
-     * @param c
-     *            - character to be inserted
+     *
+     * @param c - character to be inserted
      */
     void onInputChar(char c) {
         if (text == null) {
@@ -256,13 +247,13 @@ public class TextField extends GUIObject {
                 return;
             }
         }
-
+        
         if (this.restrictTextLength.isPresent()) {
             if (!this.restrictTextLength.get().check(text.length() + 1)) {
                 return;
             }
         }
-
+        
         if (text.isEmpty()) {
             insertString = c + CURSOR;
         } else {
@@ -272,13 +263,12 @@ public class TextField extends GUIObject {
         insertPosition++;
         displayText(insertString);
     }
-
+    
     /**
      * Called when game chat is activated. Initialized the text as empty and
      * take the type of the message(i.e t for team, y for all)
-     * 
-     * @param c
-     *            - type of game chat
+     *
+     * @param c - type of game chat
      */
     void onMessage(char c) {
         this.sendTo = c;
@@ -290,20 +280,19 @@ public class TextField extends GUIObject {
         text = insertString.replace(CURSOR, "");
         displayText(insertString);
     }
-
+    
     /**
      * Called when user wants to send a message on game chat. Send to the server
      * and erase the text.
-     * 
-     * @param c
-     *            - char representing send the message
+     *
+     * @param c - char representing send the message
      */
     void onSendMessage(char c) {
         // do not send if null or nothing to send
         if (text == null || text.isEmpty()) {
             return;
         }
-        ClientNetworkObjectManager manager = (ClientNetworkObjectManager) GameEngine.getSingleton()
+        ClientNetworkObjectManager manager = (ClientNetworkObjectManager)GameEngine.getSingleton()
                 .getNetworkObjectManager();
         ByteBuffer nextMessage = constructMessage(manager.getMyPlayer().getObjectId());
         manager.addToChat(nextMessage);
@@ -312,7 +301,7 @@ public class TextField extends GUIObject {
         this.text = this.insertString.replaceAll(CURSOR, "");
         displayText(insertString);
     }
-
+    
     /**
      * Called when player wants to lost focus on the game chat.
      * Erase the text.
@@ -323,13 +312,12 @@ public class TextField extends GUIObject {
         this.text = this.insertString.replaceAll(CURSOR, "");
         displayText(insertString);
     }
-
+    
     /**
      * Construct a packet to be sent via networking.
-     * 
-     * @param uuid
-     *            - user UUID to let other players know where the message comes
-     *            from
+     *
+     * @param uuid - user UUID to let other players know where the message comes
+     *             from
      * @return the packet to be sent
      */
     public ByteBuffer constructMessage(UUID uuid) {
@@ -343,7 +331,7 @@ public class TextField extends GUIObject {
         NetworkUtils.putStringIntoBuf(bf, this.text);
         return bf;
     }
-
+    
     /**
      * Move the cursor to the left.
      */
@@ -352,11 +340,11 @@ public class TextField extends GUIObject {
         if (insertPosition < 0) {
             insertPosition = 0;
         }
-
+        
         insertString = text.substring(0, insertPosition) + CURSOR + text.substring(insertPosition);
         displayText(insertString);
     }
-
+    
     /**
      * Move the cursor to the right.
      */
@@ -368,7 +356,7 @@ public class TextField extends GUIObject {
         insertString = text.substring(0, insertPosition) + CURSOR + text.substring(insertPosition);
         displayText(insertString);
     }
-
+    
     /**
      * Delete the char which is to the left of the cursor.
      */
@@ -392,7 +380,7 @@ public class TextField extends GUIObject {
         }
         text = insertString.replace(CURSOR, "");
     }
-
+    
     /**
      * Set the state to hover.
      */
@@ -400,7 +388,7 @@ public class TextField extends GUIObject {
     void onMouseEnter() {
         state = SelectState.HOVER;
     }
-
+    
     /**
      * Set the state to hover.
      */
@@ -409,7 +397,7 @@ public class TextField extends GUIObject {
             state = SelectState.HOVER;
         }
     }
-
+    
     /**
      * Set the state to up.
      */
@@ -417,7 +405,7 @@ public class TextField extends GUIObject {
     void OnMouseExit() {
         state = SelectState.UP;
     }
-
+    
     /**
      * When click gain focus on this TextField. It gets the mouse position and
      * insert the cursor in that position if there is text. If the mouse is
@@ -431,7 +419,7 @@ public class TextField extends GUIObject {
         if (this.text == null) {
             this.text = "";
             this.insertPosition = 0;
-
+            
         } else {
             for (char c : this.text.toCharArray()) {
                 chooseLocation++;
@@ -455,7 +443,7 @@ public class TextField extends GUIObject {
         displayText(insertString);
         state = SelectState.DOWN;
     }
-
+    
     /**
      * Set the state to up.
      */

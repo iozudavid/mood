@@ -10,16 +10,17 @@ import com.knightlore.network.NetworkObject;
 /**
  * Contains data and methods to handle the client-side of the Free For All game
  * mode
- * 
- * @author James
  *
+ * @author James
  */
 public class ClientFFAGameManager extends FFAGameManager {
+    
+    boolean gameOver = false;
     
     /**
      * Creates a Game Manager with a random UUID. Calls the other constructor
      * with this UUID.
-     * 
+     *
      * @see com.knightlore.game.manager.ClientFFAGameManager#ClientFFAGameManager(UUID)
      */
     public ClientFFAGameManager() {
@@ -28,9 +29,8 @@ public class ClientFFAGameManager extends FFAGameManager {
     
     /**
      * Creates a Game Manager with the given UUID. Also changes
-     * 
-     * @param uuid
-     *            the UUID of this network object
+     *
+     * @param uuid the UUID of this network object
      */
     public ClientFFAGameManager(UUID uuid) {
         super(uuid);
@@ -41,11 +41,9 @@ public class ClientFFAGameManager extends FFAGameManager {
      * Called by the network when creating the client-side representation of
      * this object. Instantiates a copy of the client class, and deserializes
      * the state into it.
-     * 
-     * @param uuid
-     *            The uuid provided to this object
-     * @param state
-     *            The initial state of this object
+     *
+     * @param uuid  The uuid provided to this object
+     * @param state The initial state of this object
      * @returns The client-side network object
      * @see NetworkObject
      */
@@ -61,8 +59,6 @@ public class ClientFFAGameManager extends FFAGameManager {
     public String getClientClassName() {
         return ClientFFAGameManager.class.getName();
     }
-    
-    boolean gameOver = false;
     
     @Override
     public void startLobby() {

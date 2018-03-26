@@ -44,20 +44,24 @@ import com.knightlore.utils.Vector2D;
 
 /**
  * The main class for Players in our game.
- * 
- * @authors All
  *
+ * @authors All
  */
 public class Player extends Entity {
     
-    private PlayerMoveAnimation moveAnim;
-    
-    private PlayerStandAnimation standAnim;
-    
-    private Animation<DirectionalSprite> currentAnim;
-    
     public static final int MAX_HEALTH = 100;
     private static final double SIZE = 0.25;
+    private final BlockingQueue<ByteBuffer> teamMessagesToSend = new LinkedBlockingQueue<>();
+    private final BlockingQueue<ByteBuffer> allMessagesToSend = new LinkedBlockingQueue<>();
+    private PlayerMoveAnimation moveAnim;
+    private PlayerStandAnimation standAnim;
+    private Animation<DirectionalSprite> currentAnim;
+    private Map<ClientController, Byte> inputState = new HashMap<>();
+    private int score = 0;
+    private int currentHealth = MAX_HEALTH;
+    private Weapon currentWeapon;
+    private WeaponType currentWeaponType;
+    private boolean shootOnNextUpdate;
     // Maps all inputs that the player could be making to their values.
     private final ImmutableMap<ClientController, Runnable> ACTION_MAPPINGS = ImmutableMap
             .<ClientController, Runnable>builder().put(ClientController.FORWARD, this::moveForward)
@@ -65,17 +69,6 @@ public class Player extends Entity {
             .put(ClientController.BACKWARD, this::moveBackward)
             .put(ClientController.ROTATE_CLOCKWISE, this::rotateClockwise).put(ClientController.LEFT, this::strafeLeft)
             .put(ClientController.RIGHT, this::strafeRight).put(ClientController.SHOOT, this::shoot).build();
-    
-    private final BlockingQueue<ByteBuffer> teamMessagesToSend = new LinkedBlockingQueue<>();
-    private final BlockingQueue<ByteBuffer> allMessagesToSend = new LinkedBlockingQueue<>();
-    private Map<ClientController, Byte> inputState = new HashMap<>();
-    
-    private int score = 0;
-    private int currentHealth = MAX_HEALTH;
-    private Weapon currentWeapon;
-    private WeaponType currentWeaponType;
-    private boolean shootOnNextUpdate;
-    
     private boolean hasShot;
     private Vector2D prevPos, prevDir;
     
@@ -89,24 +82,6 @@ public class Player extends Entity {
     private int previousHealth;
     
     private PlayerGraphicMatrix.Color color = PlayerGraphicMatrix.Color.RED;
-    
-    /**
-     * Called by the network when creating the client-side representation of
-     * this object. Instantiates a copy of the client class, and deserializes
-     * the state into it.
-     * 
-     * @param uuid The uuid provided to this object
-     * @param state The initial state of this object
-     * @returns The client-side network object
-     * @see NetworkObject
-     */
-    public static NetworkObject build(UUID uuid, ByteBuffer state) {
-        System.out.println("Player build, state size: " + state.remaining());
-        NetworkObject obj = new Player(uuid, Vector2D.ONE, Vector2D.ONE);
-        obj.init();
-        obj.deserialize(state);
-        return obj;
-    }
     
     /**
      * Creates a player with the given parameters. Also initialises the
@@ -127,7 +102,7 @@ public class Player extends Entity {
                 PlayerGraphicMatrix.Stance.MOVE));
         
         standAnim = new PlayerStandAnimation(PlayerGraphicMatrix.getGraphic(color, PlayerGraphicMatrix.Weapon.PISTOL,
-                PlayerGraphicMatrix.Stance.STAND), (long) (GameEngine.UPDATES_PER_SECOND / 10));
+                PlayerGraphicMatrix.Stance.STAND), (long)(GameEngine.UPDATES_PER_SECOND / 10));
         
         this.setCurrentWeaponType(WeaponType.PISTOL);
         
@@ -139,7 +114,7 @@ public class Player extends Entity {
     /**
      * Generates a random UUID for this player, then calls the other
      * constructor.
-     * 
+     *
      * @param pos - spawn position
      * @param dir - spawn direction
      * @see Player#Player(UUID, Vector2D, Vector2D)
@@ -151,15 +126,33 @@ public class Player extends Entity {
     /**
      * Generates a random UUID for this player, then calls the other
      * constructor. Finally it sets the team.
-     * 
-     * @param pos - spawn position
-     * @param dir - spawn direction
+     *
+     * @param pos  - spawn position
+     * @param dir  - spawn direction
      * @param team - player team
      * @see Player#Player(UUID, Vector2D, Vector2D)
      */
     public Player(Vector2D pos, Vector2D dir, Team team) {
         this(UUID.randomUUID(), pos, dir);
         this.setTeam(team);
+    }
+    
+    /**
+     * Called by the network when creating the client-side representation of
+     * this object. Instantiates a copy of the client class, and deserializes
+     * the state into it.
+     *
+     * @param uuid  The uuid provided to this object
+     * @param state The initial state of this object
+     * @returns The client-side network object
+     * @see NetworkObject
+     */
+    public static NetworkObject build(UUID uuid, ByteBuffer state) {
+        System.out.println("Player build, state size: " + state.remaining());
+        NetworkObject obj = new Player(uuid, Vector2D.ONE, Vector2D.ONE);
+        obj.init();
+        obj.deserialize(state);
+        return obj;
     }
     
     /**
@@ -176,7 +169,7 @@ public class Player extends Entity {
         stats.add(this.getName());
         stats.add(this.team.toString());
         stats.add(this.score + "");
-        ClientWorld world = (ClientWorld) GameEngine.getSingleton().getWorld();
+        ClientWorld world = (ClientWorld)GameEngine.getSingleton().getWorld();
         if (world.getGameChat() != null) {
             world.getGameChat().addToTable(stats);
         }
@@ -219,9 +212,8 @@ public class Player extends Entity {
     /**
      * Reads a given byte array and puts it into the local inputState. Used as
      * part of prediction.
-     * 
-     * @param inputs
-     *            - the byte array encoded inputs
+     *
+     * @param inputs - the byte array encoded inputs
      * @see Prediction
      */
     public void setInputState(byte[] inputs) {
@@ -254,7 +246,7 @@ public class Player extends Entity {
     
     /**
      * Called by the server when synchronizing the state to send team messages.
-     * 
+     *
      * @returns a byte buffer containing a single pending team chat message.
      */
     public Optional<ByteBuffer> getTeamMessages() {
@@ -284,7 +276,7 @@ public class Player extends Entity {
     /**
      * Called by the server when synchronizing the state to send global
      * messages.
-     * 
+     *
      * @returns a byte buffer containing a single pending global chat message.
      */
     public Optional<ByteBuffer> getAllMessages() {
@@ -366,8 +358,8 @@ public class Player extends Entity {
             return;
         }
         final double p = 0.07D;
-        inertiaX += (int) (p * -inertiaX);
-        inertiaY += (int) (p * -inertiaY);
+        inertiaX += (int)(p * -inertiaX);
+        inertiaY += (int)(p * -inertiaY);
         Vector2D temp = new Vector2D(plane.getX() / plane.magnitude(), plane.getY() / plane.magnitude());
         double orthProjection = displacement.dot(temp);
         inertiaX -= orthProjection * currentWeapon.getInertiaCoeffX();
@@ -461,7 +453,7 @@ public class Player extends Entity {
         }
         
         
-        damage = (int) (damage * damageTakenModifier);
+        damage = (int)(damage * damageTakenModifier);
         int newHealth = currentHealth - damage;
         currentHealth = Math.max(0, Math.min(MAX_HEALTH, newHealth));
         if (inflictor != null) {
@@ -482,7 +474,7 @@ public class Player extends Entity {
             } else {
                 System.out.println(this.getName() + " was killed by " + lastInflictor.getName());
                 if (lastInflictor instanceof Player) {
-                    gameManager.onEntityDeath(this, (Player) lastInflictor);
+                    gameManager.onEntityDeath(this, (Player)lastInflictor);
                 } else {
                     gameManager.onEntityDeath(this);
                 }
@@ -499,10 +491,9 @@ public class Player extends Entity {
     /**
      * Heals the player, by applying takeDamage but with <code> -heal </code> as
      * the parameter and a null inflictor.
-     * 
-     * @param heal
-     *            How much to heal the player by, should be positive.
-     * @see Player#takeDamage(int,Entity)
+     *
+     * @param heal How much to heal the player by, should be positive.
+     * @see Player#takeDamage(int, Entity)
      */
     public void applyHeal(int heal) {
         takeDamage(-heal, null);
@@ -510,6 +501,17 @@ public class Player extends Entity {
     
     public int getScore() {
         return score;
+    }
+    
+    /**
+     * Assigns the score, note, any scores below 0 will be clamped at 0.
+     */
+    public void setScore(int score) {
+        if (score < 0) {
+            this.score = 0;
+        } else {
+            this.score = score;
+        }
     }
     
     /**
@@ -542,7 +544,7 @@ public class Player extends Entity {
     /**
      * Make the player hold a weapon of the given type. Instantiates a new
      * weapon of this type.
-     * 
+     *
      * @param wt The type of weapon for the player to be holding.
      */
     public synchronized void setCurrentWeaponType(WeaponType wt) {
@@ -557,14 +559,14 @@ public class Player extends Entity {
         
         PlayerGraphicMatrix.Weapon w;
         switch (currentWeaponType) {
-        case SHOTGUN:
-            w = PlayerGraphicMatrix.Weapon.SHOTGUN;
-            break;
-        case PISTOL:
-            w = PlayerGraphicMatrix.Weapon.PISTOL;
-            break;
-        default:
-            w = PlayerGraphicMatrix.Weapon.PISTOL;
+            case SHOTGUN:
+                w = PlayerGraphicMatrix.Weapon.SHOTGUN;
+                break;
+            case PISTOL:
+                w = PlayerGraphicMatrix.Weapon.PISTOL;
+                break;
+            default:
+                w = PlayerGraphicMatrix.Weapon.PISTOL;
         }
         
         System.out.println(w);
@@ -575,17 +577,6 @@ public class Player extends Entity {
     
     public int getCurrentHealth() {
         return currentHealth;
-    }
-    
-    /**
-     * Assigns the score, note, any scores below 0 will be clamped at 0.
-     */
-    public void setScore(int score) {
-        if (score < 0) {
-            this.score = 0;
-        } else {
-            this.score = score;
-        }
     }
     
     /**
@@ -604,7 +595,7 @@ public class Player extends Entity {
     
     /**
      * Sets health and plays grunt sounds.
-     * 
+     *
      * @param h The new health of this player
      */
     public void setHealth(int h) {
@@ -631,7 +622,7 @@ public class Player extends Entity {
     
     /**
      * Applies the SpawnVision and Immune buffs.
-     * 
+     *
      * @see SpawnVision
      * @see Immune
      */
@@ -646,7 +637,7 @@ public class Player extends Entity {
     /**
      * Sets the team of this player, and sets up the appropriate graphic sheet
      * for animation.
-     * 
+     *
      * @param team the new team of this player
      */
     public void setTeam(Team team) {
@@ -660,6 +651,6 @@ public class Player extends Entity {
                 PlayerGraphicMatrix.Stance.MOVE));
         
         standAnim = new PlayerStandAnimation(PlayerGraphicMatrix.getGraphic(color, PlayerGraphicMatrix.Weapon.PISTOL,
-                PlayerGraphicMatrix.Stance.STAND), (long) (GameEngine.UPDATES_PER_SECOND / 10));
+                PlayerGraphicMatrix.Stance.STAND), (long)(GameEngine.UPDATES_PER_SECOND / 10));
     }
 }

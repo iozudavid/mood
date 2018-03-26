@@ -5,9 +5,8 @@ import com.knightlore.render.graphic.GraphicSheet;
 
 /**
  * Dumb data holder for weapon sprites.
- * 
- * @author Joe Ellis
  *
+ * @author Joe Ellis
  */
 public final class WeaponSprite {
 

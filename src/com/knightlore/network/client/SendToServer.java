@@ -19,8 +19,8 @@ import com.knightlore.render.GameFeed;
 
 /**
  * Class which keep sending client updates to server
- * @author David Iozu, Will Miller
  *
+ * @author David Iozu, Will Miller
  */
 public class SendToServer implements Runnable {
     // How many times PER SECOND to check for new state, and send it if
@@ -30,33 +30,38 @@ public class SendToServer implements Runnable {
     // control state has changed. A value of 100 means that in every 100 ticks,
     // at *least* one update will be sent.
     private static final int REGULAR_UPDATE_FREQ = 100;
-
+    
     private final Connection conn;
+    private final ClientNetworkObjectManager manager;
+    private final Prediction prediction;
+    /**
+     * Send a ByteBuffer to the server.
+     *
+     * @param buf:
+     * The buffer to be sent.
+     */
+    int debug = 0;
     private BufferedReader user;
     private ByteBuffer lastState;
     // private byte[] currentState;
     // private Object lock;
     private int updateCounter = 1;
-
     private ByteBuffer currentState;
-    private final ClientNetworkObjectManager manager;
     private UUID myUUID;
-    private final Prediction prediction;
     private int lastPosition = 0;
     private long packetNumber = 0;
-
+    
     public SendToServer(Connection conn) {
         this.conn = conn;
-        this.manager = (ClientNetworkObjectManager) GameEngine.getSingleton()
+        this.manager = (ClientNetworkObjectManager)GameEngine.getSingleton()
                 .getNetworkObjectManager();
         this.prediction = new Prediction();
     }
-
+    
     /**
      * Get the current ByteBuffer of all inputs performed by current client.
-     * 
-     * @param time
-     *            - packet number to be sent
+     *
+     * @param time - packet number to be sent
      * @return a ByteBuffer containing player's actual state
      */
     private synchronized ByteBuffer getCurrentControlState(double time) {
@@ -83,15 +88,15 @@ public class SendToServer implements Runnable {
             }
             if (InputManager.isKeyDown(keyCode)
                     && !InputManager.getKeyboard().isTyping()) {
-                buf.put((byte) 1);
+                buf.put((byte)1);
             } else {
-                buf.put((byte) 0);
+                buf.put((byte)0);
             }
         }
         this.lastPosition = buf.position();
         return buf;
     }
-
+    
     /**
      * Closes the stream as the buffer is blocked waiting for a packet to arrive.
      */
@@ -105,7 +110,7 @@ public class SendToServer implements Runnable {
             System.exit(1);
         }
     }
-
+    
     /**
      * Gets the player's states stored on server and use them in prediction
      * class. Send new inputs to the server.
@@ -113,10 +118,10 @@ public class SendToServer implements Runnable {
     public void tick() {
         // Send a controls update if either the controls have changed or
         // a regular update is due.
-
+        
         synchronized (this.currentState) {
             ByteBuffer nextMessage = this.manager.takeNextMessageToSend();
-            if(nextMessage!=null) {
+            if (nextMessage != null) {
                 this.send(nextMessage);
             }
             ArrayList<ByteBuffer> lastStates = this.manager
@@ -128,7 +133,7 @@ public class SendToServer implements Runnable {
                 }
             }
             if (updateCounter++ >= REGULAR_UPDATE_FREQ) {
-
+                
                 updateCounter = 1;
                 this.send(currentState);
                 this.lastState = currentState;
@@ -154,7 +159,7 @@ public class SendToServer implements Runnable {
                 int count = 0;
                 for (int i = 0; i < ClientProtocol.getIndexActionMap()
                         .size(); i++) {
-                    inputsAsArray[count++] = (byte) this.currentState.getInt();
+                    inputsAsArray[count++] = (byte)this.currentState.getInt();
                     inputsAsArray[count++] = this.currentState.get();
                 }
                 this.prediction.update(this.manager.getMyPlayer(),
@@ -165,7 +170,7 @@ public class SendToServer implements Runnable {
             }
         }
     }
-
+    
     /**
      * Waits for manager to set the current player. Keep calling tick until the
      * connection will break.
@@ -173,11 +178,11 @@ public class SendToServer implements Runnable {
     @Override
     public void run() {
         double freq = (UPDATE_TICK_FREQ / 1000d);
-        long delay = (long) (1 / freq);
-
+        long delay = (long)(1 / freq);
+        
         Player player;
         while ((player = manager.getMyPlayer()) == null)
-            // Wait for UUID to be set.
+        // Wait for UUID to be set.
         {
             try {
                 Thread.sleep(delay);
@@ -190,13 +195,13 @@ public class SendToServer implements Runnable {
         this.packetNumber++;
         this.lastState = this.currentState;
         int lastHealth = player.getCurrentHealth();
-
+        
         while (!conn.terminated) {
-        	int currentHealth = player.getCurrentHealth();
-        	if(currentHealth<lastHealth){
-        		GameFeed.getInstance().printlnDamage("-"+(lastHealth-currentHealth));
-        		lastHealth = currentHealth;
-        	}else {
+            int currentHealth = player.getCurrentHealth();
+            if (currentHealth < lastHealth) {
+                GameFeed.getInstance().printlnDamage("-" + (lastHealth - currentHealth));
+                lastHealth = currentHealth;
+            } else {
                 lastHealth = currentHealth;
             }
             synchronized (this.currentState) {
@@ -213,14 +218,7 @@ public class SendToServer implements Runnable {
         }
         this.manager.getMyPlayer().destroy();
     }
-
-    /**
-     * Send a ByteBuffer to the server.
-     * 
-     * @param buf:
-     *            The buffer to be sent.
-     */
-    int debug=0;
+    
     public void send(ByteBuffer buf) {
         System.out.println("snd " + debug++);
         conn.send(buf);

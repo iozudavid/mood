@@ -4,9 +4,8 @@ import java.awt.Point;
 
 /**
  * A representation of 2D double precision coordinates in our game
- * 
- * @authors James, Joe, Kacper
  *
+ * @authors James, Joe, Kacper
  */
 public final class Vector2D {
     public static final Vector2D ZERO = new Vector2D(0, 0);
@@ -19,9 +18,22 @@ public final class Vector2D {
     private final double x;
     private final double y;
     
+    public Vector2D(Vector2D v) {
+        this(v.x, v.y);
+    }
+    
+    public Vector2D(Point p) {
+        this((double)p.x, (double)p.y);
+    }
+    
+    public Vector2D(double _x, double _y) {
+        x = _x;
+        y = _y;
+    }
+    
     /**
      * Adds two vectors together.
-     * 
+     *
      * @param a
      * @param b
      * @returns a new Vector2D with the result
@@ -32,7 +44,7 @@ public final class Vector2D {
     
     /**
      * Pairwise multiplies two vectors together.
-     * 
+     *
      * @param a
      * @param b
      * @returns a new Vector2D with the result
@@ -44,7 +56,7 @@ public final class Vector2D {
     
     /**
      * Multiplies a vector by a scalar
-     * 
+     *
      * @param a
      * @param b
      * @returns a new Vector2D with the result
@@ -55,7 +67,7 @@ public final class Vector2D {
     
     /**
      * Subtracts two vectors.
-     * 
+     *
      * @param a
      * @param b
      * @returns a new Vector2D with the result
@@ -64,22 +76,37 @@ public final class Vector2D {
         return new Vector2D(a.x - b.x, a.y - b.y);
     }
     
-    public Vector2D(Vector2D v) {
-        this(v.x, v.y);
+    /**
+     * @param point
+     * @returns a new Vector2D at the centre of the location specified by
+     * <code> point </code>
+     */
+    public static Vector2D fromTilePoint(Point point) {
+        return new Vector2D(point.x + 0.5, point.y + 0.5);
     }
     
-    public Vector2D(Point p) {
-        this((double) p.x, (double) p.y);
+    /**
+     * @param x
+     * @param y
+     * @returns a new Vector2D at the centre of this location
+     */
+    public static Vector2D fromGridRef(int x, int y) {
+        return new Vector2D(x + 0.5, y + 0.5);
     }
     
-    public Vector2D(double _x, double _y) {
-        x = _x;
-        y = _y;
+    /**
+     * Note: no correction for the centre of the tile is aplied here.
+     *
+     * @param point
+     * @returns a new Vector2D representation of the point
+     */
+    public static Vector2D fromPoint(Point point) {
+        return new Vector2D(point.x, point.y);
     }
     
     /**
      * Adds another vector to this one
-     * 
+     *
      * @returns a new Vector2D with the result
      */
     public Vector2D add(Vector2D v) {
@@ -88,7 +115,7 @@ public final class Vector2D {
     
     /**
      * Subtracts another vector from this one
-     * 
+     *
      * @returns a new Vector2D with the result
      */
     public Vector2D subtract(Vector2D v) {
@@ -97,7 +124,7 @@ public final class Vector2D {
     
     /**
      * Pairwise multiplies another vector with this one
-     * 
+     *
      * @returns a new Vector2D with the result
      */
     public Vector2D mul(Vector2D v) {
@@ -114,7 +141,7 @@ public final class Vector2D {
     /**
      * Computes the cross product of another vector <code>v</code> with this
      * one.
-     * 
+     *
      * @param v
      * @returns the cross product of the two vectors
      */
@@ -124,7 +151,7 @@ public final class Vector2D {
     
     /**
      * Computes the dot product of another vector <code>v</code> with this one.
-     * 
+     *
      * @param v
      * @returns the dot product of the two vectors
      */
@@ -135,10 +162,10 @@ public final class Vector2D {
     /**
      * Computes the distance between another vector <code>v</code> with this
      * one.
-     * 
+     * <p>
      * Note: this requires a square root, this may cause performance issues if
      * used in excess
-     * 
+     *
      * @param v
      * @returns the absolute distance between the two vectors
      */
@@ -150,10 +177,10 @@ public final class Vector2D {
     
     /**
      * Computes the length of this vector
-     * 
+     * <p>
      * Note: this requires a square root, this may cause performance issues if
      * used in excess
-     * 
+     *
      * @returns the absolute length of this vector
      */
     public double magnitude() {
@@ -188,47 +215,15 @@ public final class Vector2D {
     }
     
     /**
-     * 
      * @returns java.awt.Point corresponding to given vector (rounds down)
      */
     public Point toPoint() {
-        return new Point((int) Math.floor(x), (int) Math.floor(y));
+        return new Point((int)Math.floor(x), (int)Math.floor(y));
     }
     
     @Override
     public String toString() {
         return String.format("(%.20f, %.20f)", x, y);
-    }
-    
-    /**
-     * 
-     * @param point
-     * @returns a new Vector2D at the centre of the location specified by
-     *          <code> point </code>
-     */
-    public static Vector2D fromTilePoint(Point point) {
-        return new Vector2D(point.x + 0.5, point.y + 0.5);
-    }
-    
-    /**
-     * 
-     * @param x
-     * @param y
-     * @returns a new Vector2D at the centre of this location
-     */
-    public static Vector2D fromGridRef(int x, int y) {
-        return new Vector2D(x + 0.5, y + 0.5);
-    }
-    
-    /**
-     * 
-     * Note: no correction for the centre of the tile is aplied here.
-     * 
-     * @param point
-     * @returns a new Vector2D representation of the point
-     */
-    public static Vector2D fromPoint(Point point) {
-        return new Vector2D(point.x, point.y);
     }
     
     @Override
@@ -241,7 +236,7 @@ public final class Vector2D {
             return false;
         }
         
-        Vector2D vector = (Vector2D) v;
+        Vector2D vector = (Vector2D)v;
         return equals(vector, 0);
     }
     

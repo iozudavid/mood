@@ -22,11 +22,9 @@ public class SoundManager implements LineListener {
 
     /**
      * Plays the sound resource if it is not already playing.
-     * 
-     * @param res:
-     *            The sound resource to play.
-     * @param volume:
-     *            The volume to play it at.
+     *
+     * @param res:    The sound resource to play.
+     * @param volume: The volume to play it at.
      */
     public void playIfNotAlreadyPlaying(SoundResource res, float volume) {
         if (!res.isPlaying()) {
@@ -37,11 +35,9 @@ public class SoundManager implements LineListener {
     /**
      * Play a new instance of a resource, regardless of whether another instance
      * is already playing.
-     * 
-     * @param res:
-     *            The sound resource to play.
-     * @param volume:
-     *            The volume to play it at.
+     *
+     * @param res:    The sound resource to play.
+     * @param volume: The volume to play it at.
      */
     public synchronized void playConcurrently(SoundResource res, float volume) {
         play(res, volume, 0);
@@ -49,11 +45,9 @@ public class SoundManager implements LineListener {
 
     /**
      * Continuously loop the given sound resource.
-     * 
-     * @param res:
-     *            The sound resource to play.
-     * @param volume:
-     *            The volume to play it at.
+     *
+     * @param res:    The sound resource to play.
+     * @param volume: The volume to play it at.
      */
     public void loop(SoundResource res, float volume) {
         play(res, volume, Clip.LOOP_CONTINUOUSLY);
@@ -61,13 +55,10 @@ public class SoundManager implements LineListener {
 
     /**
      * Plays a sound resource through the given clip.
-     * 
-     * @param res:
-     *            The sound resource to play.
-     * @param volume:
-     *            The volume to play the clip at.
-     * @param numLoops:
-     *            The number of times to repeat the clip after the first play.
+     *
+     * @param res:      The sound resource to play.
+     * @param volume:   The volume to play the clip at.
+     * @param numLoops: The number of times to repeat the clip after the first play.
      */
     private void play(SoundResource res, float volume, int numLoops) {
         Clip clip = res.getNewClip();
@@ -76,7 +67,7 @@ public class SoundManager implements LineListener {
             return;
         }
 
-        final FloatControl control = (FloatControl) clip.getControl(FloatControl.Type.MASTER_GAIN);
+        final FloatControl control = (FloatControl)clip.getControl(FloatControl.Type.MASTER_GAIN);
         float range = control.getMaximum() - control.getMinimum();
         float gain = range * volume + control.getMinimum();
         control.setValue(gain);

@@ -11,9 +11,8 @@ import javax.swing.SwingUtilities;
 /**
  * Handles basic mouse input. This code was taken from my project at
  * https://github.com/joechrisellis/QuickGameEngine and modified slightly.
- * 
- * @author Joe Ellis
  *
+ * @author Joe Ellis
  */
 public final class Mouse implements MouseListener, MouseMotionListener, MouseWheelListener {
 
@@ -78,7 +77,7 @@ public final class Mouse implements MouseListener, MouseMotionListener, MouseWhe
 
     /**
      * Get the current x position of the mouse.
-     * 
+     *
      * @return int the current x position of the mouse.
      */
     public int getX() {
@@ -87,7 +86,7 @@ public final class Mouse implements MouseListener, MouseMotionListener, MouseWhe
 
     /**
      * Get the current y position of the mouse.
-     * 
+     *
      * @return int the current y position of the mouse.
      */
     public int getY() {
@@ -97,10 +96,10 @@ public final class Mouse implements MouseListener, MouseMotionListener, MouseWhe
     /**
      * Get the number of scroll wheel clicks since the last time this function
      * was called.
-     * 
+     *
      * @return int the number of scroll wheel clicks. Negative values if the
-     *         mouse wheel was rotated up/away from the user, and positive
-     *         values if the mouse wheel was rotated down/towards the user.
+     * mouse wheel was rotated up/away from the user, and positive
+     * values if the mouse wheel was rotated down/towards the user.
      */
     public int getScroll() {
         int retVal = scroll;
@@ -111,9 +110,9 @@ public final class Mouse implements MouseListener, MouseMotionListener, MouseWhe
     /**
      * Get a boolean value representing whether the left mouse button is pressed
      * or not.
-     * 
+     *
      * @return boolean A boolean representing the current state of the left
-     *         mouse button.
+     * mouse button.
      */
     public boolean isLeftHeld() {
         return leftHeld;
@@ -122,9 +121,9 @@ public final class Mouse implements MouseListener, MouseMotionListener, MouseWhe
     /**
      * Get a boolean value representing whether the right mouse button is
      * pressed or not.
-     * 
+     *
      * @return boolean A boolean representing the current state of the right
-     *         mouse button.
+     * mouse button.
      */
     public boolean isRightHeld() {
         return rightHeld;

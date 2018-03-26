@@ -10,35 +10,35 @@ public class AirTile extends Tile {
     
     private AirTile() {
     }
-
+    
     public static AirTile getInstance() {
         return instance;
     }
-
+    
     @Override
     public Graphic getWallTexture() {
         return Texture.AIR;
     }
-
+    
     @Override
     public double getSolidity() {
         return 0D;
     }
-
+    
     @Override
     public Tile copy() {
         return instance;
     }
-
+    
     @Override
     public void onEntered(Entity entity) {
     }
-
+    
     @Override
     public String toString() {
         return "Air";
     }
-
+    
     public char toChar() {
         return ' ';
     }

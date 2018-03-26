@@ -20,11 +20,9 @@ public final class TurretClient extends TurretShared {
      * Called by the network when creating the client-side representation of
      * this object. Instantiates a copy of the client class, and deserializes
      * the state into it.
-     * 
-     * @param uuid
-     *            The uuid provided to this object
-     * @param state
-     *            The initial state of this object
+     *
+     * @param uuid  The uuid provided to this object
+     * @param state The initial state of this object
      * @returns The client-side network object
      * @see NetworkObject
      */
@@ -43,12 +41,12 @@ public final class TurretClient extends TurretShared {
     protected void shoot() {
         
     }
-
+    
     @Override
     protected boolean hasTarget() {
         return targetByte == 1;
     }
-
+    
     @Override
     public void onUpdate() {
     }

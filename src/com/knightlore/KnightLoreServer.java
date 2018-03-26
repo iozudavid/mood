@@ -4,9 +4,8 @@ import com.knightlore.engine.GameEngine;
 
 /**
  * Server entry point.
- * 
- * @author James
  *
+ * @author James
  */
 public class KnightLoreServer {
     

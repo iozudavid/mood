@@ -4,11 +4,11 @@ import com.knightlore.engine.GameEngine;
 
 /**
  * Client game entry point.
- * @author James
  *
+ * @author James
  */
 public class KnightLoreGame {
-
+    
     public static void main(String[] args) {
         System.out.println("Starting Client...");
         GameSettings.client = true;
@@ -20,5 +20,5 @@ public class KnightLoreGame {
         engine.initEngine();
         engine.start();
     }
-
+    
 }

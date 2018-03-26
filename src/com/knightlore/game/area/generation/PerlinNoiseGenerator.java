@@ -47,8 +47,8 @@ public class PerlinNoiseGenerator {
         double xm = x % 1; // map to coordinates in unit square
         double ym = y % 1;
 
-        int x0 = (int) (x - xm); // get coordinates of square points surrounding
-        int y0 = (int) (y - ym); // x any y
+        int x0 = (int)(x - xm); // get coordinates of square points surrounding
+        int y0 = (int)(y - ym); // x any y
         int x1 = x0 + 1;
         int y1 = y0 + 1;
 

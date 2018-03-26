@@ -10,9 +10,8 @@ import com.knightlore.utils.physics.RaycastHit;
 
 /**
  * Class representing our Shotgun weapon as held by players.
- * 
- * @author James, Joe, Will
  *
+ * @author James, Joe, Will
  */
 public class Shotgun extends Weapon {
     
@@ -23,7 +22,7 @@ public class Shotgun extends Weapon {
     private long nextFireTime;
     
     public Shotgun() {
-        super(WeaponSprite.SHOTGUN, (int) (GameEngine.UPDATES_PER_SECOND * 0.25D), SHOOT_SFX);
+        super(WeaponSprite.SHOTGUN, (int)(GameEngine.UPDATES_PER_SECOND * 0.25D), SHOOT_SFX);
     }
     
     /**
@@ -53,7 +52,7 @@ public class Shotgun extends Weapon {
     @Override
     public int damageInflicted(Entity shooter, Entity target) {
         Vector2D displacement = shooter.getPosition().subtract(target.getPosition());
-        int dmg = (int) (BASE_DAMAGE - displacement.sqrMagnitude());
+        int dmg = (int)(BASE_DAMAGE - displacement.sqrMagnitude());
         if (dmg < 0) {
             dmg = 0;
         }

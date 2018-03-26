@@ -11,13 +11,13 @@ import com.knightlore.network.Connection;
 /**
  * Constantly checks for inactive client connections, and removes them from the
  * list.
- * 
+ *
  * @author Will Miller
  */
 public class ConnectionPruner implements Runnable {
     // The time to wait, in milliseconds, between checks for terminated threads.
     private static final int PERIOD_MILLIS = 1000;
-    private  final Map<UUID, Connection> conns;
+    private final Map<UUID, Connection> conns;
 
     public ConnectionPruner(Map<UUID, Connection> conns) {
         this.conns = conns;

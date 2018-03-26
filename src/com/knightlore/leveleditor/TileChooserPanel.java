@@ -27,7 +27,7 @@ public class TileChooserPanel extends JPanel {
             new TurretTile(Team.RED),
             new TurretTile(Team.NONE)
     );
-
+    
     public TileChooserPanel() {
         super();
         Box box = Box.createVerticalBox();
@@ -38,7 +38,7 @@ public class TileChooserPanel extends JPanel {
             button.addActionListener(e -> LevelEditorWindow.pen.stroke = o);
             box.add(button);
         }
-
+        
         add(box);
     }
 }

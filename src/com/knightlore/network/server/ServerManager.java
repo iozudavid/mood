@@ -13,7 +13,7 @@ import com.knightlore.network.TCPConnection;
 /**
  * A network connection manager that runs server-side and deals with all
  * connections to clients.
- * 
+ *
  * @author Will Miller
  */
 public class ServerManager implements Runnable {

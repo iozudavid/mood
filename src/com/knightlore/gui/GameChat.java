@@ -12,18 +12,18 @@ import com.knightlore.render.PixelBuffer;
 
 /**
  * Class rendering the game chat.
- * @author David Iozu
  *
+ * @author David Iozu
  */
 public class GameChat extends GUICanvas {
+    private final int screenWidth;
+    private final int screenHeight;
+    private final int timeToInteractive = 200;
     private TextArea textArea;
     private TextField textField;
     private PixelBuffer pix;
-    private final int screenWidth;
-    private final int screenHeight;
     private int count = 0;
     private boolean interactive = true;
-    private final int timeToInteractive = 200;
     private Image pauseImage;
     private Button resumeButton;
     private Button mainMenuButton;
@@ -33,7 +33,7 @@ public class GameChat extends GUICanvas {
     private Image scoreBoardImage;
     private Table scoreBoard;
     private Text timeLeftText;
-
+    
     public GameChat(int screenWidth, int screenHeight) {
         super(screenWidth, screenHeight);
         System.out.println("CHATTTTTTTTTTTTTTTTT");
@@ -42,16 +42,16 @@ public class GameChat extends GUICanvas {
         // shouldn't be in constructor... but damn race conditions
         init();
     }
-
+    
     @Override
     public void init() {
         super.init();
         this.pix = new PixelBuffer(screenWidth, screenHeight);
         this.pix.flood(-16711936);
-        this.textArea = new TextArea(0, 0, (int) (screenWidth * 0.3), (int) (screenHeight * 0.3));
+        this.textArea = new TextArea(0, 0, (int)(screenWidth * 0.3), (int)(screenHeight * 0.3));
         this.textField = new TextField(0,
-                (int) (this.textArea.getRectangle().getY() + this.textArea.getRectangle().getHeight()),
-                (int) (screenWidth * 0.3), (int) (screenHeight * 0.05));
+                (int)(this.textArea.getRectangle().getY() + this.textArea.getRectangle().getHeight()),
+                (int)(screenWidth * 0.3), (int)(screenHeight * 0.05));
         this.textField.fontSize = 2;
         this.textField.setSelect(false);
         this.addGUIObject(this.textArea);
@@ -67,8 +67,8 @@ public class GameChat extends GUICanvas {
         this.scoreBoardImage = new Image(GuiUtils.middleWidth(screenWidth, 150),
                 GuiUtils.calculateHeight(screenHeight, 10), 150, 50, "res/graphics/ScoreBoard.png");
         scoreBoardImage.needBackground = false;
-        this.scoreBoard = new Table(GuiUtils.middleWidth(screenWidth, (int) (screenWidth * 0.66)),
-                GuiUtils.calculateHeight(screenHeight, 20), (int) (screenWidth * 0.66), 20, 0);
+        this.scoreBoard = new Table(GuiUtils.middleWidth(screenWidth, (int)(screenWidth * 0.66)),
+                GuiUtils.calculateHeight(screenHeight, 20), (int)(screenWidth * 0.66), 20, 0);
         ArrayList<String> header = new ArrayList<>();
         header.add("Player Name");
         header.add("Team");
@@ -79,7 +79,7 @@ public class GameChat extends GUICanvas {
         this.addGUIObject(timeLeftText);
         timeLeftText.SetText("00:00");
         GUICanvas.setOnEscFunction(() -> GameChat.this.setPauseMenuVisible(!GameChat.this.lastPauseVisible));
-
+        
         GUICanvas.setOnQFunction(() -> {
             if (GameChat.this.lastScoreVisible) {
                 return;
@@ -87,7 +87,7 @@ public class GameChat extends GUICanvas {
             GameChat.this.lastScoreVisible = true;
             GameChat.this.setScoreMenuVisible();
         });
-
+        
         GUICanvas.setOnQReleaseFunction(() -> {
             if (!GameChat.this.lastScoreVisible) {
                 return;
@@ -96,7 +96,7 @@ public class GameChat extends GUICanvas {
             GameChat.this.setScoreMenuVisible();
         });
     }
-
+    
     /**
      * Hide the pause menu when we don't want it to be shown.
      */
@@ -120,7 +120,7 @@ public class GameChat extends GUICanvas {
             GameEngine.getSingleton().stop();
         };
     }
-
+    
     @Override
     public void render(PixelBuffer pix, int x, int y) {
         if (GUICanvas.activeTextField != null) {
@@ -141,9 +141,8 @@ public class GameChat extends GUICanvas {
         }
         super.render(pix, x, y);
     }
-
+    
     /**
-     * 
      * @return PixelBuffer we render on
      */
     public PixelBuffer getPixelBuffer() {
@@ -152,9 +151,8 @@ public class GameChat extends GUICanvas {
         this.pix.flood(-16711936);
         return copy;
     }
-
+    
     /**
-     * 
      * @return TextArea we show the messages
      */
     public TextArea getTextArea() {
@@ -162,30 +160,27 @@ public class GameChat extends GUICanvas {
         this.count = 0;
         return this.textArea;
     }
-
+    
     /**
      * Add entry to scoreboard.
-     * 
-     * @param entry
-     *            - entity stats to be added in scoreboard
+     *
+     * @param entry - entity stats to be added in scoreboard
      */
     public void addToTable(CopyOnWriteArrayList<String> entry) {
         this.scoreBoard.addTableEntry(entry);
     }
-
+    
     /**
      * Remove entry from scoreboard.
-     *
      */
     public void removeFromTable(String uuid) {
         this.scoreBoard.removeTableEntry(uuid);
     }
-
+    
     /**
      * Show/hide pause menu when user wants it.
-     * 
-     * @param b
-     *            - whether show or hide the pause menu
+     *
+     * @param b - whether show or hide the pause menu
      */
     private void setPauseMenuVisible(boolean b) {
         this.lastPauseVisible = b;
@@ -205,7 +200,7 @@ public class GameChat extends GUICanvas {
             this.exitButton = null;
         }
     }
-
+    
     /**
      * Show the scoreboard when user wants it to.
      */
@@ -218,12 +213,12 @@ public class GameChat extends GUICanvas {
             this.removeGUIObject(scoreBoard);
         }
     }
-
+    
     /*
      * Set the game's time left.
      */
     public void setTimeLeft(String time) {
         timeLeftText.SetText(time);
     }
-
+    
 }

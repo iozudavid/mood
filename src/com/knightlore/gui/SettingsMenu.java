@@ -8,11 +8,11 @@ import com.knightlore.render.PixelBuffer;
 
 /**
  * Class encapsulates all SettingsMenu GUIObjects.
- * @author David Iozu
  *
+ * @author David Iozu
  */
 public class SettingsMenu {
-
+    
     private final GUICanvas gui;
     private final int screenWidth;
     private final int screenHeight;
@@ -31,14 +31,12 @@ public class SettingsMenu {
     private final CheckBox bobCheckBox;
     private final Button applyButton;
     private final Button cancelButton;
-
+    
     /**
      * SetUp all GUIObjects needed for SettingsMenu
-     * 
-     * @param screenWidth
-     *            - width of the screen
-     * @param screenHeight
-     *            - height of the screen
+     *
+     * @param screenWidth  - width of the screen
+     * @param screenHeight - height of the screen
      */
     public SettingsMenu(int screenWidth, int screenHeight) {
         this.gui = new GUICanvas(screenWidth, screenHeight);
@@ -62,13 +60,13 @@ public class SettingsMenu {
         this.gui.addGUIObject(nameGroup);
         this.gui.addGUIObject(this.nameText);
         this.gui.addGUIObject(this.nameTextField);
-
-        this.blockinessText = new Text((int) (this.nameGroup.getRectangle().getX()) + 50,
+        
+        this.blockinessText = new Text((int)(this.nameGroup.getRectangle().getX()) + 50,
                 GuiUtils.calculateHeight(this.screenHeight, 40), 100, 30, "Blockiness: ", 25);
         this.blockinessSlider = new Slider(
-                (int) (this.blockinessText.getRectangle().getX() + (int) (this.blockinessText.getRectangle().getWidth()) + 90),
-                (int) (this.blockinessText.getRectangle().getHeight() / 2D) + (int) (this.blockinessText.getRectangle().getY())-5,
-                150, 10, 0, (float)(GameSettings.desiredBlockiness-5)/20F);
+                (int)(this.blockinessText.getRectangle().getX() + (int)(this.blockinessText.getRectangle().getWidth()) + 90),
+                (int)(this.blockinessText.getRectangle().getHeight() / 2D) + (int)(this.blockinessText.getRectangle().getY()) - 5,
+                150, 10, 0, (float)(GameSettings.desiredBlockiness - 5) / 20F);
         ArrayList<GUIObject> objsBlock = new ArrayList<>();
         objsBlock.add(blockinessText);
         objsBlock.add(blockinessSlider);
@@ -78,12 +76,12 @@ public class SettingsMenu {
         this.gui.addGUIObject(blockinessGroup);
         this.gui.addGUIObject(this.blockinessText);
         this.gui.addGUIObject(this.blockinessSlider);
-
-        this.soundText = new Text((int) (this.nameGroup.getRectangle().getX()) + 50,
+        
+        this.soundText = new Text((int)(this.nameGroup.getRectangle().getX()) + 50,
                 GuiUtils.calculateHeight(this.screenHeight, 55), 100, 30, "Sound Volume: ", 25);
         this.soundSlider = new Slider(
-                (int) (this.soundText.getRectangle().getX() + (int) (this.soundText.getRectangle().getWidth()) + 90),
-                (int) (this.soundText.getRectangle().getHeight() / 2D) + (int) (this.soundText.getRectangle().getY())-5,
+                (int)(this.soundText.getRectangle().getX() + (int)(this.soundText.getRectangle().getWidth()) + 90),
+                (int)(this.soundText.getRectangle().getHeight() / 2D) + (int)(this.soundText.getRectangle().getY()) - 5,
                 150, 10);
         ArrayList<GUIObject> soundBlock = new ArrayList<>();
         soundBlock.add(soundText);
@@ -94,13 +92,13 @@ public class SettingsMenu {
         this.gui.addGUIObject(soundGroup);
         this.gui.addGUIObject(soundText);
         this.gui.addGUIObject(soundSlider);
-
-        this.bobText = new Text((int) (this.nameGroup.getRectangle().getX()) + 50,
+        
+        this.bobText = new Text((int)(this.nameGroup.getRectangle().getX()) + 50,
                 GuiUtils.calculateHeight(this.screenHeight, 70f), 100, 20, "Motion bob: ", 25);
         this.bobCheckBox = new CheckBox(
-                (int) (this.bobText.getRectangle().getX() + (int) (this.bobText.getRectangle().getWidth()) + 90
+                (int)(this.bobText.getRectangle().getX() + (int)(this.bobText.getRectangle().getWidth()) + 90
                         + this.soundSlider.getRectangle().getWidth() / 2D),
-                (int) (this.bobText.getRectangle().getHeight() / 2D) + (int) (this.bobText.getRectangle().getY()) - 5,
+                (int)(this.bobText.getRectangle().getHeight() / 2D) + (int)(this.bobText.getRectangle().getY()) - 5,
                 20, 20, 0, true);
         ArrayList<GUIObject> bobBlock = new ArrayList<>();
         bobBlock.add(bobText);
@@ -111,29 +109,29 @@ public class SettingsMenu {
         this.gui.addGUIObject(bobGroup);
         this.gui.addGUIObject(bobText);
         this.gui.addGUIObject(bobCheckBox);
-
+        
         this.cancelButton = new Button(GuiUtils.middleWidth(this.screenWidth / 2, 300),
                 GuiUtils.calculateHeight(this.screenHeight, 85), 300, 40, "Cancel", 21);
         this.applyButton = new Button(GuiUtils.middleWidth(this.screenWidth / 2, 300) + this.screenWidth / 2,
                 GuiUtils.calculateHeight(this.screenHeight, 85), 300, 40, "Apply", 21);
         this.gui.addGUIObject(applyButton);
         this.gui.addGUIObject(cancelButton);
-
+        
         this.applyButton.clickFunction = () -> {
             GameSettings.motionBob = SettingsMenu.this.bobCheckBox.getBobingMode();
             GameEngine.getSingleton().setVolume(SettingsMenu.this.soundSlider.getValue());
-            GameSettings.desiredBlockiness = (int)(SettingsMenu.this.blockinessSlider.getValue()*20F);
+            GameSettings.desiredBlockiness = (int)(SettingsMenu.this.blockinessSlider.getValue() * 20F);
             GameSettings.playerName = SettingsMenu.this.nameTextField.getText();
             GameEngine.getSingleton().guiState = GUIState.SettingsMenuApply;
         };
-
+        
         this.cancelButton.clickFunction = () -> GameEngine.getSingleton().guiState = GUIState.SettingsMenuCancel;
-
+        
     }
-
+    
     /**
      * Used to save last SettingsMenu config if we cancel actual changes.
-     * 
+     *
      * @return the actual settings menu
      */
     public ArrayList<Object> getObj() {
@@ -144,33 +142,29 @@ public class SettingsMenu {
         obj.add(this.bobCheckBox.getBobingMode());
         return obj;
     }
-
+    
     /**
      * Set config for Settings. Used when we cancel actual changes and we want
      * our old config.
-     * 
-     * @param o
-     *            - config to be set.
+     *
+     * @param o - config to be set.
      */
     public void setObj(ArrayList<Object> o) {
-        this.nameTextField.setText((String) o.get(0));
-        this.blockinessSlider.setValue((float) o.get(1));
-        this.soundSlider.setValue((float) o.get(2));
-        this.bobCheckBox.setBobingMode((boolean) o.get(3));
+        this.nameTextField.setText((String)o.get(0));
+        this.blockinessSlider.setValue((float)o.get(1));
+        this.soundSlider.setValue((float)o.get(2));
+        this.bobCheckBox.setBobingMode((boolean)o.get(3));
     }
-
+    
     /**
      * Render actual SettingsMenu
-     * 
-     * @param pix
-     *            - PixelBuffer we render on
-     * @param x
-     *            - X position we start rendering from
-     * @param y
-     *            - Y position we start rendering from
+     *
+     * @param pix - PixelBuffer we render on
+     * @param x   - X position we start rendering from
+     * @param y   - Y position we start rendering from
      */
     public void render(PixelBuffer pix, int x, int y) {
         this.gui.render(pix, x, y);
     }
-
+    
 }

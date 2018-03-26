@@ -8,14 +8,14 @@ import com.knightlore.utils.physics.RaycastHit;
 import com.knightlore.utils.Vector2D;
 
 public final class TurretServer extends TurretShared {
-
+    
     private static final int DAMAGE = 5;
-
+    
     public TurretServer(double size, Vector2D position, Vector2D direction) {
         super(size, position, direction);
         // TODO Auto-generated constructor stub
     }
-
+    
     @Override
     public void onUpdate() {
         // 60 ticks per second
@@ -27,11 +27,11 @@ public final class TurretServer extends TurretShared {
             nextCheckTime = currentTime + TURRET_CHECK_DELAY;
         }
     }
-
+    
     @Override
     public void onCollide(Player player) {
     }
-
+    
     private void think() {
         List<Player> players = GameEngine.getSingleton().getGameObjectManager().findObjectsOfType(Player.class);
         for (Entity player : players) {
@@ -49,7 +49,7 @@ public final class TurretServer extends TurretShared {
         }
         target = null;
     }
-
+    
     protected void aim() {
         long currentTime = GameEngine.ticker.getTime();
         if (!hasTarget()) {
@@ -60,9 +60,9 @@ public final class TurretServer extends TurretShared {
         // we got a target, let's look at them
         this.direction = target.getPosition().subtract(this.getPosition());
         this.plane = direction.perpendicular();
-
+        
     }
-
+    
     @Override
     protected void shoot() {
         if (target == null) {
@@ -75,10 +75,10 @@ public final class TurretServer extends TurretShared {
         // just deal 15 damage
         target.takeDamage(DAMAGE, this);
     }
-
+    
     @Override
     protected boolean hasTarget() {
         return target != null;
     }
-
+    
 }

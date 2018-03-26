@@ -14,6 +14,7 @@ import com.knightlore.utils.Vector2D;
 
 /**
  * The server side implementation of the GameWorld.
+ *
  * @author James
  */
 public class ServerWorld extends GameWorld {
@@ -26,13 +27,13 @@ public class ServerWorld extends GameWorld {
     public void setUpWorld(Long mapSeed) {
         super.setUpWorld(mapSeed);
         switch (GameManager.desiredGameMode) {
-        case TDM:
-            gameManager = new TDMGameManager();
-            break;
-        case FFA:
-        default:
-            gameManager = new FFAGameManager();
-            break;
+            case TDM:
+                gameManager = new TDMGameManager();
+                break;
+            case FFA:
+            default:
+                gameManager = new FFAGameManager();
+                break;
         }
         
         gameManager.init();
@@ -73,7 +74,7 @@ public class ServerWorld extends GameWorld {
     /**
      * Creates a Player, sets their team, adds it into the player manager and
      * initialises the player.
-     * 
+     *
      * @returns The Player that was created.
      */
     public Player createPlayer() {

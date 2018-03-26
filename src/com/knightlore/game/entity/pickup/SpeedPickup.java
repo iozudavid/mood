@@ -11,21 +11,21 @@ import com.knightlore.utils.Vector2D;
 
 public class SpeedPickup extends PickupItem {
 
+    public SpeedPickup(Vector2D position, PickupManager pickupManager) {
+        this(UUID.randomUUID(), position, pickupManager);
+    }
+    
+    public SpeedPickup(UUID uuid, Vector2D position, PickupManager pickupManager) {
+        super(uuid, position, DirectionalSprite.SPEED_DIRECTION_SPRITE, pickupManager);
+        spawnDelay = 10;
+    }
+    
     // Returns a new instance. See NetworkObject for details.
     public static NetworkObject build(UUID uuid, ByteBuffer state) {
         NetworkObject obj = new SpeedPickup(uuid, Vector2D.ONE, null);
         obj.init();
         obj.deserialize(state);
         return obj;
-    }
-    
-    public SpeedPickup(Vector2D position, PickupManager pickupManager) {
-        this(UUID.randomUUID(), position, pickupManager);
-    }
-    
-    public SpeedPickup(UUID uuid, Vector2D position, PickupManager pickupManager) {
-        super(uuid, position, DirectionalSprite.SPEED_DIRECTION_SPRITE,pickupManager);
-        spawnDelay = 10;
     }
 
     @Override
@@ -46,7 +46,7 @@ public class SpeedPickup extends PickupItem {
     
     @Override
     public void onCollide(Player player) {
-        if(exists) {
+        if (exists) {
             // update pickup manager
             addToPickupManager();
             // apply speed buff

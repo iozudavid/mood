@@ -8,17 +8,17 @@ import java.nio.ByteBuffer;
 
 /**
  * Basic network connection based on TCP Protocol
+ *
  * @author David Iozu, Will Miller
  */
 public class TCPConnection extends Connection {
-
-    private DataInputStream infoReceive;
-    private DataOutputStream infoSend;
-    private final Socket socket;
-
+    
     final Object receiveLock = new Object();
     final Object sendLock = new Object();
-
+    private final Socket socket;
+    private DataInputStream infoReceive;
+    private DataOutputStream infoSend;
+    
     public TCPConnection(Socket socket) {
         this.socket = socket;
         try {
@@ -28,9 +28,9 @@ public class TCPConnection extends Connection {
         } catch (IOException e) {
             System.err.println("The connection doesn't seem to work...");
             System.exit(1);
-        } 
+        }
     }
-
+    
     /**
      * Closes the input and output streams, and also the socket itself.
      */
@@ -43,9 +43,10 @@ public class TCPConnection extends Connection {
             System.err.println("Something wrong " + e.getMessage());
         }
     }
-
+    
     /**
      * Sends a packet using standard TCP Protocol.
+     *
      * @param data - packet to be sent.
      */
     @Override
@@ -74,7 +75,7 @@ public class TCPConnection extends Connection {
             }
         }
     }
-
+    
     @Override
     public ByteBuffer receiveBlocking() {
         /*
@@ -120,5 +121,5 @@ public class TCPConnection extends Connection {
             }
         }
     }
-
+    
 }

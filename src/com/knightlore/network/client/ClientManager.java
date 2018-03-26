@@ -7,14 +7,15 @@ import java.net.UnknownHostException;
 import com.knightlore.network.ConnectionDetails;
 import com.knightlore.network.TCPConnection;
 import com.knightlore.network.server.Receive;
+
 /**
  * Class which starts the connection on client side.
- * @author David Iozu, Will Miller
  *
+ * @author David Iozu, Will Miller
  */
 public class ClientManager implements Runnable {
-	
-	private static Socket server;
+
+    private static Socket server;
     private final SendToServer sender;
     private final Receive receive;
     private final TCPConnection conn;
@@ -31,7 +32,7 @@ public class ClientManager implements Runnable {
                     "The server doesn't seem to be running " + e.getMessage());
             throw new RuntimeException();
         }
-        if(server==null){
+        if (server == null) {
             throw new RuntimeException();
         }
         System.out.println(
@@ -42,10 +43,23 @@ public class ClientManager implements Runnable {
         this.receive = new Receive(conn);
     }
 
+    /**
+     * Disconnect the client by closing this end of socket.
+     */
+    public static void disconnect() {
+        try {
+            server.close();
+            server = null;
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+    }
+
     public SendToServer getServerSender() {
         return sender;
     }
-
+    
     /**
      * Start receive and send threads and wait for them to finish.
      */
@@ -69,19 +83,6 @@ public class ClientManager implements Runnable {
         }
         System.out.println("End");
 
-    }
-    
-    /**
-     * Disconnect the client by closing this end of socket.
-     */
-    public static void disconnect(){
-    	try {
-			server.close();
-			server=null;
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
     }
 
 }

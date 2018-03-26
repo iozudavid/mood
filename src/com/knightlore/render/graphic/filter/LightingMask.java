@@ -7,9 +7,8 @@ import com.knightlore.render.PixelBuffer;
 
 /**
  * Masks can be applied to a pixel buffer to give a 'faded edges' look.
- * 
- * @author Joe Ellis
  *
+ * @author Joe Ellis
  */
 public class LightingMask {
 
@@ -25,11 +24,9 @@ public class LightingMask {
     /**
      * Apply a lighting mask to an entire pixelbuffer. Warning: this is
      * generally slow.
-     * 
-     * @param pix
-     *            the pixel buffer.
-     * @param eq
-     *            the lighting mask equation.
+     *
+     * @param pix the pixel buffer.
+     * @param eq  the lighting mask equation.
      */
     public void apply(PixelBuffer pix, DoubleUnaryOperator eq) {
         for (int y = 0; y < pix.getHeight(); y++) {
@@ -41,19 +38,13 @@ public class LightingMask {
 
     /**
      * Augments a single colour.
-     * 
-     * @param eq
-     *            the lighting mask equation.
-     * @param color
-     *            the colour to augment.
-     * @param x
-     *            the x-position of the colour in the pixel buffer.
-     * @param y
-     *            the y-position of the colour in the pixel buffer.
-     * @param w
-     *            the width of the pixel buffer.
-     * @param h
-     *            the height of the pixel buffer.
+     *
+     * @param eq    the lighting mask equation.
+     * @param color the colour to augment.
+     * @param x     the x-position of the colour in the pixel buffer.
+     * @param y     the y-position of the colour in the pixel buffer.
+     * @param w     the width of the pixel buffer.
+     * @param h     the height of the pixel buffer.
      * @return the augmented colour.
      */
     public int augmentColor(DoubleUnaryOperator eq, int color, int x, int y, int w, int h) {

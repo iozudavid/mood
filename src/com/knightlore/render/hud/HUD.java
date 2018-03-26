@@ -26,7 +26,7 @@ public class HUD {
         display.flood(0x1F1F1F);
         
         final int compassX = 10;
-        final int compassY = (int) (display.getHeight() / 2 - compass.compassSprite.getHeight() / 2.5D);
+        final int compassY = (int)(display.getHeight() / 2 - compass.compassSprite.getHeight() / 2.5D);
         compass.render(display, compassX, compassY);
         
         healthCounter.render(display, 0, 0);

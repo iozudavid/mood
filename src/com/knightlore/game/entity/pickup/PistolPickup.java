@@ -12,15 +12,21 @@ public class PistolPickup extends WeaponPickup {
     
     private static final DirectionalSprite DSPRITE = DirectionalSprite.PISTOL_DIRECTIONAL_SPRITE;
 
+    public PistolPickup(Vector2D position, PickupManager pickupManager) {
+        super(position, DSPRITE, pickupManager);
+    }
+
+    public PistolPickup(UUID uuid, Vector2D position, PickupManager pickupManager) {
+        super(uuid, position, DSPRITE, pickupManager);
+    }
+
     /**
      * Called by the network when creating the client-side representation of
      * this object. Instantiates a copy of the client class, and deserializes
      * the state into it.
-     * 
-     * @param uuid
-     *            The uuid provided to this object
-     * @param state
-     *            The initial state of this object
+     *
+     * @param uuid  The uuid provided to this object
+     * @param state The initial state of this object
      * @returns The client-side network object
      * @see NetworkObject
      */
@@ -29,14 +35,6 @@ public class PistolPickup extends WeaponPickup {
         obj.init();
         obj.deserialize(state);
         return obj;
-    }
-
-    public PistolPickup(Vector2D position, PickupManager pickupManager) {
-        super(position, DSPRITE, pickupManager);
-    }
-
-    public PistolPickup(UUID uuid, Vector2D position, PickupManager pickupManager) {
-        super(uuid, position, DSPRITE, pickupManager);
     }
 
     @Override

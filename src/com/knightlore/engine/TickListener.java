@@ -5,22 +5,21 @@ package com.knightlore.engine;
  * regular updates. Implementing classes must provide an interval, which
  * specifies how often they should be run, and an onTick() method specifying
  * what to do every interval.
- * 
- * @author Joe Ellis
  *
+ * @author Joe Ellis
  */
 public interface TickListener {
-
+    
     /**
      * What to do.
      */
     void onTick();
-
+    
     /**
      * The interval between updates.
-     * 
+     *
      * @return a long representing the interval between updates.
      */
     long interval();
-
+    
 }

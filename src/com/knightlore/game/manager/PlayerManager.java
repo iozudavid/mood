@@ -10,9 +10,8 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 
 /**
  * A container for all the Player objects that exist in the game.
- * 
- * @author James
  *
+ * @author James
  */
 public class PlayerManager {
     
@@ -27,7 +26,7 @@ public class PlayerManager {
     /**
      * Queues a new Player to be added to the manager, will actually be added
      * next world update.
-     * 
+     *
      * @param pl The Player to add
      */
     public void addPlayer(Player pl) {
@@ -37,7 +36,7 @@ public class PlayerManager {
     /**
      * Queues a new Player to be removed from the manager, will actually be
      * added next world update.
-     * 
+     *
      * @param pl The Player to remove
      */
     public void removePlayer(Player pl) {

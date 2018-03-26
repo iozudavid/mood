@@ -10,9 +10,10 @@ import com.knightlore.engine.GameEngine;
 import com.knightlore.render.graphic.texture.Texture;
 
 public class LavaTile extends Tile {
-
+    
     private static final TimedAnimation<Graphic> LAVA_ANIM =
-            new TimedAnimation<>((long) (GameEngine.UPDATES_PER_SECOND / 4));
+            new TimedAnimation<>((long)(GameEngine.UPDATES_PER_SECOND / 4));
+    
     static {
         LAVA_ANIM.addFrame(Texture.LAVA_F1);
         LAVA_ANIM.addFrame(Texture.LAVA_F2);
@@ -20,31 +21,31 @@ public class LavaTile extends Tile {
         LAVA_ANIM.addFrame(Texture.LAVA_F4);
         GameEngine.ticker.addTickListener(LAVA_ANIM);
     }
-
+    
     @Override
     public Graphic getWallTexture() {
         return LAVA_ANIM.getFrame();
     }
-
+    
     @Override
     public double getCost() {
         return 100D / (1 - getSolidity());
     }
-
+    
     @Override
     public Tile copy() {
         return new LavaTile();
     }
-
+    
     @Override
     public void onEntered(Entity entity) {
         // not quite sure which zombie class to use...
-        if(entity instanceof Player || entity instanceof ZombieServer) {
+        if (entity instanceof Player || entity instanceof ZombieServer) {
             entity.resetBuff(new Fire(entity));
         }
-
+        
     }
-
+    
     @Override
     public String toString() {
         return "Lava";
@@ -54,15 +55,15 @@ public class LavaTile extends Tile {
     public char toChar() {
         return 'L';
     }
-
+    
     @Override
     public double getSolidity() {
         return 0.75D;
     }
-
+    
     @Override
     public double getOpacity() {
         return 0D;
     }
-
+    
 }

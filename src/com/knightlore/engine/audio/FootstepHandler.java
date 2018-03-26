@@ -5,12 +5,11 @@ import com.knightlore.engine.GameEngine;
 public class FootstepHandler {
     
     private final double TRIGGER_FOOTSTEP_DISTANCE = 1D;
-    
-    private double nextFootstepDistance = TRIGGER_FOOTSTEP_DISTANCE;
     private final SoundResource footstepSFX = new SoundResource("res/sfx/footstep.wav");
+    private double nextFootstepDistance = TRIGGER_FOOTSTEP_DISTANCE;
     
     public void playFootstepIfNecessary(double distanceTravelled) {
-        if(distanceTravelled > nextFootstepDistance) {
+        if (distanceTravelled > nextFootstepDistance) {
             nextFootstepDistance += TRIGGER_FOOTSTEP_DISTANCE;
             playFootstep();
         }

@@ -11,15 +11,22 @@ import com.knightlore.utils.Vector2D;
 
 public class HealthPickup extends PickupItem {
 
+    public HealthPickup(Vector2D position, PickupManager pickupManager) {
+        this(UUID.randomUUID(), position, pickupManager);
+    }
+
+    public HealthPickup(UUID uuid, Vector2D position, PickupManager pickupManager) {
+        super(uuid, position, DirectionalSprite.HEALTHKIT_DIRECTIONAL_SPRITE, pickupManager);
+        spawnDelay = 10;
+    }
+
     /**
      * Called by the network when creating the client-side representation of
      * this object. Instantiates a copy of the client class, and deserializes
      * the state into it.
-     * 
-     * @param uuid
-     *            The uuid provided to this object
-     * @param state
-     *            The initial state of this object
+     *
+     * @param uuid  The uuid provided to this object
+     * @param state The initial state of this object
      * @returns The client-side network object
      * @see NetworkObject
      */
@@ -28,15 +35,6 @@ public class HealthPickup extends PickupItem {
         obj.init();
         obj.deserialize(state);
         return obj;
-    }
-
-    public HealthPickup(Vector2D position, PickupManager pickupManager) {
-        this(UUID.randomUUID(), position, pickupManager);
-    }
-
-    public HealthPickup(UUID uuid, Vector2D position, PickupManager pickupManager) {
-        super(uuid, position, DirectionalSprite.HEALTHKIT_DIRECTIONAL_SPRITE, pickupManager);
-        spawnDelay = 10;
     }
 
     @Override

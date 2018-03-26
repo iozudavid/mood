@@ -38,6 +38,7 @@ public class RoomGenerator extends ProceduralAreaGenerator {
     /**
      * Creates a room using the given seed, and according
      * to the provided room type.
+     *
      * @param seed
      * @param rt
      * @return a room
@@ -51,11 +52,11 @@ public class RoomGenerator extends ProceduralAreaGenerator {
         resetGrid();
         fillGrid();
         if (rt == RoomType.BIG_LAVA_ROOM) {
-            return new Room(grid,1 , 2);
+            return new Room(grid, 1, 2);
         }
         
         if (rt == RoomType.LAVA_PLATFORM) {
-            return new Room(grid, 1 , 2);
+            return new Room(grid, 1, 2);
         }
         
         if (rt == RoomType.SPAWN) {
@@ -138,7 +139,7 @@ public class RoomGenerator extends ProceduralAreaGenerator {
                 fillUndecidedTiles();
                 break;
             case LAVA_PLATFORM:
-                if(rand.nextDouble() < 0.5) {
+                if (rand.nextDouble() < 0.5) {
                     grid[midx][midy] = new PickupTile(randomPickupType());
                 }
                 fillUndecidedTiles();
@@ -232,14 +233,22 @@ public class RoomGenerator extends ProceduralAreaGenerator {
         int numOfAir = 0;
         int width = grid.length;
         int height = grid[0].length;
-        if(x <= radius+1) { return 0; }
-        if(y <= radius+1) { return 0; }
-        if(x >= width-1-radius) { return 0; }
-        if(y >= height-1-radius) { return 0; }
+        if (x <= radius + 1) {
+            return 0;
+        }
+        if (y <= radius + 1) {
+            return 0;
+        }
+        if (x >= width - 1 - radius) {
+            return 0;
+        }
+        if (y >= height - 1 - radius) {
+            return 0;
+        }
         
-        for(int i = x-radius; i <= x+radius; i++) {
-            for(int j = y-radius; j <= y+radius; j++) {
-                if( i == x && j == y) {
+        for (int i = x - radius; i <= x + radius; i++) {
+            for (int j = y - radius; j <= y + radius; j++) {
+                if (i == x && j == y) {
                     continue;
                 }
                 if (grid[i][j] instanceof AirTile) {
@@ -266,9 +275,9 @@ public class RoomGenerator extends ProceduralAreaGenerator {
     private List<Point> possiblePickupLocations() {
         List<Point> candidateLocations = new ArrayList<>();
         int minAirTiles = 24;
-        for(int i=0; i< grid.length - 1; i++) {
-            for(int j=0; j<grid[0].length - 1; j++) {
-                if(neighbouringAirTiles(i,j,2) >= minAirTiles) {
+        for (int i = 0; i < grid.length - 1; i++) {
+            for (int j = 0; j < grid[0].length - 1; j++) {
+                if (neighbouringAirTiles(i, j, 2) >= minAirTiles) {
                     candidateLocations.add(new Point(i, j));
                 }
             }
@@ -315,7 +324,7 @@ public class RoomGenerator extends ProceduralAreaGenerator {
             gaussSize = (rand.nextGaussian() * std_dev) + mean;
         }
 
-        return (int) Math.round(gaussSize);
+        return (int)Math.round(gaussSize);
     }
 
 }

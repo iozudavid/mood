@@ -12,16 +12,15 @@ import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.UnsupportedAudioFileException;
 
 public class SoundResource {
+    public final String path;
     // The cached data of the audio file.
     private byte[] data;
     private AudioFormat encoding;
     private Clip mostRecentClip;
-    public final String path;
 
     /**
-     * @param path:
-     *            The path to a wave file to read. N.B. the wave file MUST use
-     *            16-bit PCM encoding!
+     * @param path: The path to a wave file to read. N.B. the wave file MUST use
+     *              16-bit PCM encoding!
      */
     public SoundResource(String path) {
         this.path = path;
@@ -29,7 +28,7 @@ public class SoundResource {
         try (AudioInputStream stream = AudioSystem.getAudioInputStream(f)) {
             this.encoding = stream.getFormat();
             // Store the audio data in the byte array.
-            data = new byte[(int) (stream.getFrameLength() * stream.getFormat().getFrameSize())];
+            data = new byte[(int)(stream.getFrameLength() * stream.getFormat().getFrameSize())];
             stream.read(data, 0, data.length);
         } catch (IOException | UnsupportedAudioFileException e) {
             System.err.println("Error while reading sound file: ");

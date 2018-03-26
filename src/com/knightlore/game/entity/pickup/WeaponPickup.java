@@ -9,9 +9,8 @@ import com.knightlore.utils.Vector2D;
 
 /**
  * A weapon pickup item.
- * 
- * @author Will Miller, Joe Ellis
  *
+ * @author Will Miller, Joe Ellis
  */
 public abstract class WeaponPickup extends PickupItem {
     public WeaponPickup(Vector2D position, DirectionalSprite dSprite, PickupManager pickupManager) {

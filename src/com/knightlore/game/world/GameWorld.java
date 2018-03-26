@@ -22,26 +22,25 @@ import com.knightlore.utils.physics.RaycastHit;
 /**
  * Representation of the World in the Game. Subclass this to make new worlds.
  * Has Client and Server subclass implementations
- * 
+ *
  * @author James Adey
  * @see ClientWorld
  * @see ServerWorld
  */
 public abstract class GameWorld {
     
+    private final ConcurrentLinkedQueue<Entity> entsToAdd = new ConcurrentLinkedQueue<>();
+    private final ConcurrentLinkedQueue<Entity> entsToRemove = new ConcurrentLinkedQueue<>();
     protected Map map;
     protected PlayerManager playerManager;
     protected GameManager gameManager = null;
     private AIManager aiManager;
     private List<Entity> ents;
     
-    private final ConcurrentLinkedQueue<Entity> entsToAdd = new ConcurrentLinkedQueue<>();
-    private final ConcurrentLinkedQueue<Entity> entsToRemove = new ConcurrentLinkedQueue<>();
-    
     /**
      * Updates the PlayerManager, and makes any required changes the entity
      * list.
-     * 
+     *
      * @see PlayerManager
      */
     public void update() {
@@ -80,9 +79,8 @@ public abstract class GameWorld {
     /**
      * Queues a new entity to be added to the world, will actually be added next
      * world update.
-     * 
-     * @param ent
-     *            the Entity to add
+     *
+     * @param ent the Entity to add
      */
     public void addEntity(Entity ent) {
         entsToAdd.offer(ent);
@@ -91,9 +89,8 @@ public abstract class GameWorld {
     /**
      * Queues a new entity to be removed from the world, will actually be
      * removed next world update.
-     * 
-     * @param ent
-     *            the Entity to remove
+     *
+     * @param ent the Entity to remove
      */
     public void removeEntity(Entity ent) {
         entsToRemove.offer(ent);
@@ -103,9 +100,8 @@ public abstract class GameWorld {
      * Generates the map and creates the AIManager and the PlayerManager.
      * <p>
      * Note: a null map seed will cause the map to generate a random map.
-     * 
-     * @param mapSeed
-     *            the desired seed for this map
+     *
+     * @param mapSeed the desired seed for this map
      * @see MapGenerator
      * @see AIManager
      * @see PlayerManager
@@ -115,16 +111,16 @@ public abstract class GameWorld {
             mapSeed = new Random().nextLong();
         }
         MapType mapType = MapType.FFA;
-        if(GameManager.desiredGameMode == GameMode.TDM) {
+        if (GameManager.desiredGameMode == GameMode.TDM) {
             mapType = MapType.TDM;
         }
         
-        if(mapType == MapType.TDM) {
+        if (mapType == MapType.TDM) {
             // TDM maps need a minimum size
-            if(GameSettings.mapWidth < 32) {
+            if (GameSettings.mapWidth < 32) {
                 GameSettings.mapWidth = 32;
             }
-            if(GameSettings.mapHeight < 32) {
+            if (GameSettings.mapHeight < 32) {
                 GameSettings.mapHeight = 32;
             }
         }
@@ -143,18 +139,13 @@ public abstract class GameWorld {
      * Note: This method is a "quick" cast, so will check only
      * <code>segment</code> points along the line, this means it may miss some
      * intersections.
-     * 
-     * @param pos
-     *            the start point of this ray
-     * @param direction
-     *            the direction (doesn't have to be normalised) that this ray
-     *            travels in
-     * @param segments
-     *            how many points along the line to check
-     * @param maxDist
-     *            how far to cast the ray
-     * @param ignore
-     *            which entity to ignore whilst casting this ray
+     *
+     * @param pos       the start point of this ray
+     * @param direction the direction (doesn't have to be normalised) that this ray
+     *                  travels in
+     * @param segments  how many points along the line to check
+     * @param maxDist   how far to cast the ray
+     * @param ignore    which entity to ignore whilst casting this ray
      * @returns a RaycastHit structure with information about what was hit
      * @see RaycastHit
      */
@@ -169,8 +160,8 @@ public abstract class GameWorld {
         int x, y;
         
         for (int i = 0; i < segments; i++) {
-            x = (int) p.getX();
-            y = (int) p.getY();
+            x = (int)p.getX();
+            y = (int)p.getY();
             if (map.getTile(x, y).blockLOS()) {
                 return new RaycastHit(null);
             }
@@ -219,9 +210,8 @@ public abstract class GameWorld {
      * Changes the game manager, should be used for switching game modes. Called
      * to assign the game mode on the client once it receives it from the
      * server.
-     * 
-     * @param game
-     *            the new game manager
+     *
+     * @param game the new game manager
      */
     public void changeGameManager(GameManager game) {
         gameManager = game;
