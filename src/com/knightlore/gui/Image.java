@@ -12,7 +12,11 @@ import javax.imageio.ImageIO;
 
 import com.knightlore.render.PixelBuffer;
 import com.knightlore.render.graphic.Graphic;
-
+/**
+ * Class used to render images.
+ * @author David Iozu
+ *
+ */
 public class Image extends GUIObject {
 
     public Graphic graphic;
@@ -41,6 +45,9 @@ public class Image extends GUIObject {
         this.graphic = new Graphic(sheet);
     }
 
+    /**
+     * Draw the given image.
+     */
     @Override
     void Draw(PixelBuffer pix, int x, int y) {
         if (this.needBackground) {
@@ -50,6 +57,17 @@ public class Image extends GUIObject {
         pix.drawGraphic(graphic, rect.x, rect.y, rect.width, rect.height);
     }
 
+    /**
+     * Resized the image to the given parameters.
+     * 
+     * @param img
+     *            - image to be resized
+     * @param newW
+     *            - width to be resized
+     * @param newH
+     *            -height to be resized
+     * @return the resized image
+     */
     public static BufferedImage resize(BufferedImage img, int newW, int newH) {
         java.awt.Image tmp = img.getScaledInstance(newW, newH, java.awt.Image.SCALE_SMOOTH);
         BufferedImage dimg = new BufferedImage(newW, newH, BufferedImage.TYPE_INT_ARGB);

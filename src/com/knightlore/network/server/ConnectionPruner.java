@@ -12,7 +12,7 @@ import com.knightlore.network.Connection;
  * Constantly checks for inactive client connections, and removes them from the
  * list.
  * 
- * @author Will
+ * @author Will Miller
  */
 public class ConnectionPruner implements Runnable {
     // The time to wait, in milliseconds, between checks for terminated threads.

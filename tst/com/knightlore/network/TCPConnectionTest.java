@@ -27,53 +27,29 @@ public class TCPConnectionTest {
     private DataOutputStream os;
     
     @Before
-    public void setUp(){
+    public void setUp() throws Exception {
         socket = Mockito.mock(Socket.class);
         is = PowerMockito.mock(DataInputStream.class);
         os = PowerMockito.mock(DataOutputStream.class);
-        try {
-            PowerMockito.when(socket.getInputStream()).thenReturn(is);
-            PowerMockito.when(socket.getOutputStream()).thenReturn(os);
-            PowerMockito.whenNew(DataInputStream.class).withArguments(Matchers.any(InputStream.class)).thenReturn(is);
-        } catch (IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        } catch (Exception e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
+        PowerMockito.when(socket.getInputStream()).thenReturn(is);
+        PowerMockito.when(socket.getOutputStream()).thenReturn(os);
+        PowerMockito.whenNew(DataInputStream.class).withArguments(Matchers.any(InputStream.class)).thenReturn(is);
     }
     
     @Test
-    public void test_send(){
+    public void test_send() throws Exception {
          TCPConnection c = new TCPConnection(socket);
          ByteBuffer bb = ByteBuffer.allocate(4);
          bb.putInt(1);
          c.send(bb);
-         try {
-            Mockito.verify(os,Mockito.times(1)).write(bb.array(), 0, 4);
-        } catch (IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
+         Mockito.verify(os,Mockito.times(1)).write(bb.array(), 0, 4);
     }
     
     @Test
-    public void test_receive_null(){
-       
+    public void test_receive_null() throws Exception {
         TCPConnection conn = new TCPConnection(socket);
-        try {
-            PowerMockito.when(is.readInt()).thenReturn(0);
-        } catch (IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-        try {
-            assertTrue(conn.receiveBlocking()==null);
-        } catch (Exception e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
+        PowerMockito.when(is.readInt()).thenReturn(0);
+        assertTrue(conn.receiveBlocking()==null);
     }
     
 }

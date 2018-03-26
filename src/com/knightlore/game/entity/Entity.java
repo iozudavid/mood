@@ -30,23 +30,23 @@ import com.knightlore.utils.Vector2D;
  * An entity is any physical object that exists in the game world that is not a
  * tile.
  * 
- * @author Joe Ellis
+ * @authors All
  *
  */
 public abstract class Entity extends NetworkObject implements IMinimapObject, TickListener {
-
+    
     /**
      * The speed at which the entity can move when calling moveForward() and
      * moveBackward().
      */
     protected double moveSpeed = .04;
-
+    
     /**
      * The speed at which the entity can move when calling moveLeft() and
      * moveRight().
      */
     protected double strafeSpeed = .01;
-
+    
     /**
      * The speed at which the entity can rotate when calling rotateClockwise()
      * and rotateAnticlockwise().
@@ -67,7 +67,7 @@ public abstract class Entity extends NetworkObject implements IMinimapObject, Ti
      * Rate at which buffs are updated.
      */
     private static final double BUFF_TICK_RATE = GameEngine.UPDATES_PER_SECOND / 16;
-
+    
     // this constant will decide
     // how smooth will be rendered other entities
     private final double smoothiness = 0.1D;
@@ -77,19 +77,19 @@ public abstract class Entity extends NetworkObject implements IMinimapObject, Ti
      * detection.
      */
     private Map map;
-
+    
     /**
      * The size of the bounding rectangle of the entity.
      */
     protected double size;
-
+    
     protected Vector2D direction = Vector2D.ONE;
     protected Vector2D plane = Vector2D.ONE;
-
+    
     // cannot have invalid values
     // anyone can set a team and get a team
     public Team team = Team.NONE;
-
+    
     /**
      * Used for rendering exclusively. A higher zOffset means that the entities
      * are rendered more closely to the floor.
@@ -97,30 +97,29 @@ public abstract class Entity extends NetworkObject implements IMinimapObject, Ti
     protected int zOffset;
     private boolean creationCall;
     private boolean settingCall;
-
+    
     private String name = "entity";
-
+    
     protected BlockingQueue<ByteBuffer> systemMessages;
-
+    
     // Allow you to create an entity with a specified UUID. Useful for creating
     // "synchronised" objects on the client-side.
-    protected Entity(UUID uuid, double size, Vector2D position,
-            Vector2D direction) {
+    protected Entity(UUID uuid, double size, Vector2D position, Vector2D direction) {
         super(uuid, position);
         this.size = size;
         this.direction = direction;
         this.plane = direction.perpendicular();
         this.zOffset = 0;
         map = GameEngine.getSingleton().getWorld().getMap();
-
+        
         // tick listener for buffs
-        GameEngine.getSingleton().ticker.addTickListener(this);
+        GameEngine.ticker.addTickListener(this);
         
         this.creationCall = false;
         this.settingCall = false;
         this.systemMessages = new LinkedBlockingQueue<>();
     }
-
+    
     /**
      * Creates an Entity with random UUID
      * 
@@ -132,7 +131,7 @@ public abstract class Entity extends NetworkObject implements IMinimapObject, Ti
     protected Entity(double size, Vector2D position, Vector2D direction) {
         this(UUID.randomUUID(), size, position, direction);
     }
-
+    
     /**
      * Entity collision size defaults to 1
      * 
@@ -143,7 +142,7 @@ public abstract class Entity extends NetworkObject implements IMinimapObject, Ti
     protected Entity(UUID uuid, Vector2D position, Vector2D direction) {
         this(uuid, 1, position, direction);
     }
-
+    
     /**
      * This is called if this particular entity is the camera subject.
      * Subclasses are free to override this. By default, it does nothing.
@@ -161,7 +160,7 @@ public abstract class Entity extends NetworkObject implements IMinimapObject, Ti
     public void render(PixelBuffer pix, int x, int y, double distanceTraveled) {
         /* ONLY CALLED IF THIS ENTITY IS THE CAMERA SUBJECT */
     }
-
+    
     /**
      * Called when a player collides with this entity. Subclasses can override
      * this to damage the player, increase their health, etc.
@@ -170,7 +169,7 @@ public abstract class Entity extends NetworkObject implements IMinimapObject, Ti
      *            the player that intersects with this entity.
      */
     public abstract void onCollide(Player player);
-
+    
     /**
      * Periodically calls the onEntered method of the tile corresponding to the
      * player's current location.
@@ -182,7 +181,7 @@ public abstract class Entity extends NetworkObject implements IMinimapObject, Ti
         Tile t = map.getTile((int) position.getX(), (int) position.getY());
         t.onEntered(this);
     }
-
+    
     /**
      * Given the position of the player, returns the appropriate directional
      * sprite graphic.
@@ -192,25 +191,24 @@ public abstract class Entity extends NetworkObject implements IMinimapObject, Ti
      * @return the correct directional sprite graphic.
      */
     public Graphic getGraphic(Vector2D playerPos) {
-        return getDirectionalSprite().getCurrentGraphic(position, direction,
-                playerPos);
+        return getDirectionalSprite().getCurrentGraphic(position, direction, playerPos);
     }
-
+    
     /**
      * Gets the current directional sprite of this entity.
      * 
      * @return the directional sprite for this entity.
      */
     public abstract DirectionalSprite getDirectionalSprite();
-
+    
     public double getSize() {
         return size;
     }
-
+    
     public Vector2D getDirection() {
         return direction;
     }
-
+    
     /**
      * Gets an AWT.Rectangle2D.Double that bounds this entity.
      * 
@@ -219,29 +217,29 @@ public abstract class Entity extends NetworkObject implements IMinimapObject, Ti
     public Rectangle2D.Double getBoundingRectangle() {
         return new Rectangle2D.Double(getxPos(), getyPos(), size, size);
     }
-
+    
     public double getxDir() {
         return getDirection().getX();
     }
-
+    
     public double getyDir() {
         return getDirection().getY();
     }
-
+    
     public void setxDir(double xDir) {
         direction = new Vector2D(xDir, direction.getY());
         plane = direction.perpendicular();
     }
-
+    
     public void setyDir(double yDir) {
         direction = new Vector2D(direction.getX(), yDir);
         plane = direction.perpendicular();
     }
-
+    
     public Vector2D getPlane() {
         return plane;
     }
-
+    
     public int getzOffset() {
         return zOffset;
     }
@@ -249,7 +247,7 @@ public abstract class Entity extends NetworkObject implements IMinimapObject, Ti
     public void respawn(Vector2D spawnPos) {
         this.position = spawnPos;
     }
-
+    
     /**
      * Move this entity forward, accounting for collisions.
      */
@@ -262,7 +260,7 @@ public abstract class Entity extends NetworkObject implements IMinimapObject, Ti
         yPos += yDir * moveSpeed * (1 - yTile.getSolidity());
         position = new Vector2D(xPos, yPos);
     }
-
+    
     /**
      * Move this entity backward, accounting for collisions.
      */
@@ -275,45 +273,41 @@ public abstract class Entity extends NetworkObject implements IMinimapObject, Ti
         yPos -= yDir * moveSpeed * (1 - yTile.getSolidity());
         position = new Vector2D(xPos, yPos);
     }
-
+    
     /**
      * Move this entity left, accounting for collisions.
      */
     protected synchronized void strafeLeft() {
         double xPos = position.getX(), yPos = position.getY();
         double xDir = direction.getX(), yDir = direction.getY();
-        Tile xTile = map.getTile((int) (xPos - yDir * strafeSpeed),
-                (int) (yPos));
-        Tile yTile = map.getTile((int) (xPos),
-                (int) (yPos + xDir * strafeSpeed));
+        Tile xTile = map.getTile((int) (xPos - yDir * strafeSpeed), (int) (yPos));
+        Tile yTile = map.getTile((int) (xPos), (int) (yPos + xDir * strafeSpeed));
         xPos -= yDir * strafeSpeed * (1 - xTile.getSolidity());
         yPos -= -xDir * strafeSpeed * (1 - yTile.getSolidity());
         position = new Vector2D(xPos, yPos);
     }
-
+    
     /**
      * Move this entity right, accounting for collisions.
      */
     protected synchronized void strafeRight() {
         double xPos = position.getX(), yPos = position.getY();
         double xDir = direction.getX(), yDir = direction.getY();
-        Tile xTile = map.getTile((int) (xPos + yDir * strafeSpeed),
-                (int) (yPos));
-        Tile yTile = map.getTile((int) (xPos),
-                (int) (yPos + -xDir * strafeSpeed));
+        Tile xTile = map.getTile((int) (xPos + yDir * strafeSpeed), (int) (yPos));
+        Tile yTile = map.getTile((int) (xPos), (int) (yPos + -xDir * strafeSpeed));
         xPos += yDir * strafeSpeed * (1 - xTile.getSolidity());
         yPos += -xDir * strafeSpeed * (1 - yTile.getSolidity());
         position = new Vector2D(xPos, yPos);
     }
-
+    
     /**
-    * Move the player irrespective of the direction they're facing 
-    */
+     * Move the player irrespective of the direction they're facing
+     */
     public synchronized void absoluteMove(Vector2D absDir, double distance) {
         double xPos = position.getX(), yPos = position.getY();
-        double xDir = absDir.getX() , yDir = absDir.getY();
+        double xDir = absDir.getX(), yDir = absDir.getY();
         Tile xTile = map.getTile((int) (xPos + xDir * distance), (int) (yPos));
-        Tile yTile = map.getTile((int) (xPos), (int) (yPos + yDir *distance));
+        Tile yTile = map.getTile((int) (xPos), (int) (yPos + yDir * distance));
         xPos += xDir * distance * (1 - xTile.getSolidity());
         yPos += yDir * distance * (1 - yTile.getSolidity());
         position = new Vector2D(xPos, yPos);
@@ -328,29 +322,25 @@ public abstract class Entity extends NetworkObject implements IMinimapObject, Ti
         double xDir = direction.getX(), yDir = direction.getY();
         double oldxDir = xDir;
         xDir = xDir * Math.cos(rotationSpeed) - yDir * Math.sin(rotationSpeed);
-        yDir = oldxDir * Math.sin(rotationSpeed)
-                + yDir * Math.cos(rotationSpeed);
+        yDir = oldxDir * Math.sin(rotationSpeed) + yDir * Math.cos(rotationSpeed);
         direction = new Vector2D(xDir, yDir);
         plane = direction.perpendicular();
     }
-
+    
     /**
      * Same as rotating left but clockwise this time.
      */
     protected synchronized void rotateClockwise() {
         double xDir = direction.getX(), yDir = direction.getY();
         double oldxDir = xDir;
-        xDir = xDir * Math.cos(-rotationSpeed)
-                - yDir * Math.sin(-rotationSpeed);
-        yDir = oldxDir * Math.sin(-rotationSpeed)
-                + yDir * Math.cos(-rotationSpeed);
+        xDir = xDir * Math.cos(-rotationSpeed) - yDir * Math.sin(-rotationSpeed);
+        yDir = oldxDir * Math.sin(-rotationSpeed) + yDir * Math.cos(-rotationSpeed);
         direction = new Vector2D(xDir, yDir);
         plane = direction.perpendicular();
     }
-
+    
     @Override
     public synchronized ByteBuffer serialize() {
-        // TODO: serialise objects as well as primitives
         ByteBuffer buf = newByteBuffer("deserialize");
         buf.putDouble(size);
         buf.putDouble(position.getX());
@@ -363,12 +353,11 @@ public abstract class Entity extends NetworkObject implements IMinimapObject, Ti
         // buf.putInt(zOffset);
         return buf;
     }
-
+    
     @Override
     public synchronized void deserialize(ByteBuffer buf) {
         // interpolation only on client side
-        if (!this.creationCall || !this.settingCall
-                || GameSettings.isServer()) {
+        if (!this.creationCall || !this.settingCall || GameSettings.isServer()) {
             size = buf.getDouble();
             double posX = buf.getDouble();
             double posY = buf.getDouble();
@@ -380,7 +369,7 @@ public abstract class Entity extends NetworkObject implements IMinimapObject, Ti
             double planeY = buf.getDouble();
             plane = new Vector2D(planeX, planeY);
             // zOffset = buf.getInt();
-
+            
             // before starting interpolation
             // we need to wait for setting entity up...
             if (!this.creationCall) {
@@ -424,7 +413,7 @@ public abstract class Entity extends NetworkObject implements IMinimapObject, Ti
         }
         name = NetworkUtils.getStringFromBuf(buf);
     }
-
+    
     private Vector2D interpolate(Vector2D local, Vector2D remote) {
         double finalX = 0D;
         double finalY = 0D;
@@ -442,16 +431,25 @@ public abstract class Entity extends NetworkObject implements IMinimapObject, Ti
         }
         return new Vector2D(finalX, finalY);
     }
-
+    
     @Override
     public double getDrawSize() {
         return 2 * size;
     }
-
+    
     public void setSize(double s) {
         this.size = s;
     }
-
+    
+    /**
+     * Called to notify the entity when it should take damage. Does nothing by
+     * default
+     * 
+     * @param damage
+     *            - how much damage to take
+     * @param inflictor
+     *            - what caused this damage
+     */
     public void takeDamage(int damage, Entity inflictor) {
         // DO NOTHING
     }
@@ -488,18 +486,25 @@ public abstract class Entity extends NetworkObject implements IMinimapObject, Ti
         damageTakenModifier = d;
     }
     
+    /**
+     * Removes all buffs of the specified BuffType by calling it's setDone
+     * method.
+     * 
+     * @param bt
+     *            - the buff type to remove
+     */
     public synchronized void removeBuff(BuffType bt) {
-        for(Iterator<Buff> iter = buffList.iterator(); iter.hasNext(); ) {
+        for (Iterator<Buff> iter = buffList.iterator(); iter.hasNext();) {
             Buff b = iter.next();
-            if(b.getType() == bt) {
+            if (b.getType() == bt) {
                 b.setDone(true);
             }
         }
     }
     
     /**
-     * Append the given buff to the buff list, and call its
-     * onApply() method.
+     * Append the given buff to the buff list, and call its onApply() method.
+     * 
      * @param buff
      */
     private synchronized void addBuff(Buff buff) {
@@ -508,51 +513,53 @@ public abstract class Entity extends NetworkObject implements IMinimapObject, Ti
     }
     
     /**
-     * Restarts the current buff if its type is present in the
-     * entity's buff list, otherwise adds it to the buff list.
+     * Restarts the current buff if its type is present in the entity's buff
+     * list, otherwise adds it to the buff list.
+     * 
      * @param rbuff
      */
     public synchronized void resetBuff(Buff rbuff) {
         BuffType bt = rbuff.getType();
-        for(Buff buff : buffList) {
-            if(buff.getType() == bt) {
+        for (Buff buff : buffList) {
+            if (buff.getType() == bt) {
                 buff.reset();
-                return; //IMPORTANT WE RETURN
+                return; // IMPORTANT WE RETURN
             }
         }
         addBuff(rbuff);
     }
     
     /**
-     * Sets all buffs to done, ensuring they will be removed from the list
-     * on the next onTick() call.
+     * Sets all buffs to done, ensuring they will be removed from the list on
+     * the next onTick() call.
      */
     public synchronized void removeAllBuffs() {
-        for(Iterator<Buff> iter = buffList.iterator() ; iter.hasNext(); ) {
+        for (Iterator<Buff> iter = buffList.iterator(); iter.hasNext();) {
             iter.next().setDone(true);
         }
     }
     
     /**
-     * Iterates over the buff list, removing buffs or continuing their
-     * execution as appropriate.
+     * Iterates over the buff list, removing buffs or continuing their execution
+     * as appropriate.
      */
     @Override
     public synchronized void onTick() {
         
-        for(Iterator<Buff> iter = buffList.iterator() ; iter.hasNext(); ) {
+        for (Iterator<Buff> iter = buffList.iterator(); iter.hasNext();) {
             Buff buff = iter.next();
-            if(buff.isDone()) {
+            if (buff.isDone()) {
                 buff.onRemove();
                 iter.remove();
-            }else {
+            } else {
                 buff.loop();
             }
         }
     }
-
+    
     /**
      * Returns the rate at which buffs are checked and executed
+     * 
      * @return BUFF_TICK_RATE
      */
     public static double getBuffTickRate() {
@@ -565,33 +572,53 @@ public abstract class Entity extends NetworkObject implements IMinimapObject, Ti
         return (long) GameEngine.UPDATES_PER_SECOND / 16;
     }
     
-    public void sendSystemMessage(String message){
-    	ByteBuffer bf = ByteBuffer.allocate(NetworkObject.BYTE_BUFFER_DEFAULT_SIZE);
-    	NetworkUtils.putStringIntoBuf(bf, NetworkObjectManager.MANAGER_UUID.toString());
-    	NetworkUtils.putStringIntoBuf(bf, "displayMessage");
-    	NetworkUtils.putStringIntoBuf(bf, message);
+    /**
+     * Prints the supplied <code> message </code> to the chat and sends to
+     * everyone with "System" as the sender.
+     * 
+     * @param message
+     */
+    public void sendSystemMessage(String message) {
+        ByteBuffer bf = ByteBuffer.allocate(NetworkObject.BYTE_BUFFER_DEFAULT_SIZE);
+        NetworkUtils.putStringIntoBuf(bf, NetworkObjectManager.MANAGER_UUID.toString());
+        NetworkUtils.putStringIntoBuf(bf, "displayMessage");
+        NetworkUtils.putStringIntoBuf(bf, message);
+        this.systemMessages.offer(bf);
     }
-
-    protected void sendSystemMessage(String name, Entity inflictor){
+    
+    /**
+     * Sends a death message with the specified name, to all players. This
+     * message will appear in the chat.
+     * 
+     * @param name
+     *            - name to display
+     * @param inflictor
+     *            - what caused this death
+     */
+    protected void sendSystemMessage(String name, Entity inflictor) {
         String message;
-        if(inflictor == null) {
+        if (inflictor == null) {
             message = "System: " + name + " was killed by natural causes";
-        }else {
+        } else {
             message = "System : " + name + " was killed by " + inflictor.getName();
         }
-    	ByteBuffer bf = ByteBuffer.allocate(NetworkObject.BYTE_BUFFER_DEFAULT_SIZE);
-    	NetworkUtils.putStringIntoBuf(bf, NetworkObjectManager.MANAGER_UUID.toString());
-    	NetworkUtils.putStringIntoBuf(bf, "displayMessage");
-    	NetworkUtils.putStringIntoBuf(bf, message);
-    	this.systemMessages.offer(bf);
+        ByteBuffer bf = ByteBuffer.allocate(NetworkObject.BYTE_BUFFER_DEFAULT_SIZE);
+        NetworkUtils.putStringIntoBuf(bf, NetworkObjectManager.MANAGER_UUID.toString());
+        NetworkUtils.putStringIntoBuf(bf, "displayMessage");
+        NetworkUtils.putStringIntoBuf(bf, message);
+        this.systemMessages.offer(bf);
     }
     
-    
-    public Optional<ByteBuffer> getSystemMessages(){
-    	if(this.systemMessages.isEmpty()) {
+    /**
+     * Called by the server when synchronizing the state to send system messages.
+     * 
+     * @returns a byte buffer containing a single pending system chat message.
+     */
+    public Optional<ByteBuffer> getSystemMessages() {
+        if (this.systemMessages.isEmpty()) {
             return Optional.empty();
         }
-
+        
         try {
             return Optional.of(this.systemMessages.take());
         } catch (InterruptedException e) {
@@ -599,15 +626,18 @@ public abstract class Entity extends NetworkObject implements IMinimapObject, Ti
         }
         return Optional.empty();
     }
-
+    
     public String getName() {
         return name;
     }
-
+    
     public void setName(String name) {
         this.name = name;
     }
     
+    /**
+     * Whether or not to render this entities name above it.
+     */
     public boolean renderName() {
         return false;
     }

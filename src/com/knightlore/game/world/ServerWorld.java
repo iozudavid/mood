@@ -13,8 +13,16 @@ import com.knightlore.game.manager.GameManager;
 import com.knightlore.game.manager.TDMGameManager;
 import com.knightlore.utils.Vector2D;
 
+/**
+ * The server side implementation of the GameWorld.
+ * @author James
+ */
 public class ServerWorld extends GameWorld {
     
+    /**
+     * Creates the GameManager, AI Manager, Player Manager and Populates the
+     * world with any required zombies.
+     */
     @Override
     public void setUpWorld(Long mapSeed) {
         super.setUpWorld(mapSeed);
@@ -39,20 +47,14 @@ public class ServerWorld extends GameWorld {
             this.addEntity(zom);
         }
         
-        for (int i = 0; i < GameManager.numBots; i++) {
-            Player botPlayer = new Player(map.getRandomSpawnPoint(), Vector2D.UP);
-            botPlayer.setInputModule(new BotInput());
-            botPlayer.team = Team.BLUE;
-            botPlayer.init();
-            botPlayer.setName("bot" + i);
-            playerManager.addPlayer(botPlayer);
-        }
-        
         SpectatorCamera cam = new SpectatorCamera(new Vector2D(10, 20), Vector2D.UP);
         cam.init();
         this.addEntity(cam);
     }
     
+    /**
+     * Performs collisions between players and other entities
+     */
     @Override
     public void update() {
         super.update();
@@ -69,6 +71,12 @@ public class ServerWorld extends GameWorld {
         }
     }
     
+    /**
+     * Creates a Player, sets their team, adds it into the player manager and
+     * initialises the player.
+     * 
+     * @returns The Player that was created.
+     */
     public Player createPlayer() {
         Vector2D pos = map.getRandomSpawnPoint();
         Team team = Team.NONE;
@@ -80,10 +88,12 @@ public class ServerWorld extends GameWorld {
                 System.out.println("RED");
                 team = Team.RED;
             }
+            pos = map.getRandomSpawnPoint(team);
         }
-        Player player = new Player(pos, Vector2D.UP,team);
+        
+        Player player = new Player(pos, Vector2D.UP, team);
         player.init();
-        player.sendSystemMessage("System: Player " + player.getName() + " " + " has connected.");
+        player.sendSystemMessage("System: Player " + player.getName() + " has connected.");
         playerManager.addPlayer(player);
         return player;
     }

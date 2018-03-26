@@ -22,6 +22,11 @@ import com.knightlore.network.NetworkObjectManager;
 import com.knightlore.network.protocol.NetworkUtils;
 import com.knightlore.utils.Tuple;
 
+/**
+ * Class used to keep clients update with new changes
+ * @author David Iozu, Will Miller
+ *
+ */
 public class ServerNetworkObjectManager extends NetworkObjectManager {
    /**
     * How often to send an update of state, rather than just if the states have

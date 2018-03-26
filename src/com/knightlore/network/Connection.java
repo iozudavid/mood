@@ -6,6 +6,12 @@ import java.util.concurrent.LinkedBlockingQueue;
 
 import com.knightlore.network.server.Prunable;
 
+/**
+ * Abstraction of networking connection which implements timeout on socket
+ * 
+ * @author David Iozu, Will Miller
+ *
+ */
 public abstract class Connection implements Runnable, Prunable {
     /**
      *  Wait 5 seconds without receiving packets before disconnecting.

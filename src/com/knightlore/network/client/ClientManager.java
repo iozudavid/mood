@@ -9,7 +9,11 @@ import com.knightlore.gui.GUIState;
 import com.knightlore.network.ConnectionDetails;
 import com.knightlore.network.TCPConnection;
 import com.knightlore.network.server.Receive;
-
+/**
+ * Class which starts the connection on client side.
+ * @author David Iozu, Will Miller
+ *
+ */
 public class ClientManager implements Runnable {
 	
 	private static Socket server;

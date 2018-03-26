@@ -30,9 +30,6 @@ import com.knightlore.utils.physics.RaycastHitType;
  */
 public abstract class GameWorld {
     
-    private static final int TEST_XSIZE = 40; // 16;
-    private static final int TEST_YSIZE = 60; // 32;
-    
     protected Map map;
     protected PlayerManager playerManager;
     protected GameManager gameManager = null;
@@ -123,6 +120,15 @@ public abstract class GameWorld {
             mapType = MapType.TDM;
         }
         
+        if(mapType == MapType.TDM) {
+            // TDM maps need a minimum size
+            if(GameSettings.mapWidth < 32) {
+                GameSettings.mapWidth = 32;
+            }
+            if(GameSettings.mapHeight < 32) {
+                GameSettings.mapHeight = 32;
+            }
+        }
         map = new MapGenerator().createMap(GameSettings.mapWidth, GameSettings.mapHeight, mapType, mapSeed);
         System.out.println("Generated map.");
         ents = new LinkedList<>();

@@ -31,8 +31,8 @@ public final class BotInput extends InputModule {
     private static final double MOVE_ACC = 0.2;
     private static final byte ONE = 1;
     private static final byte ZERO = 0;
+    private static final long FOV = 60;
     private long nextThinkTime = 0;
-    private long fov = 60;
     private Entity target = null;
     private Vector2D goalPos = Vector2D.ZERO;
     private List<Point> path = new ArrayList<>();
@@ -128,7 +128,7 @@ public final class BotInput extends InputModule {
      *          <li>0 if <code>acc</code> <= <code>val</code> <=
      *          <code>acc</code>
      */
-    public static double dblToAxis(double val, double acc) {
+    private static double dblToAxis(double val, double acc) {
         if (val > acc) {
             return 1;
         } else if (val < -acc) {
@@ -166,6 +166,13 @@ public final class BotInput extends InputModule {
         Iterator<Player> playerIter = playerManager.getPlayerIterator();
         while (playerIter.hasNext()) {
             Player player = playerIter.next();
+            
+            // check for friendlies
+            if(myPlayer.team != Team.NONE && player.team == myPlayer.team) {
+                continue;
+            }
+            
+            
             Vector2D displacement = player.getPosition().subtract(myPlayer.getPosition());
             Vector2D dir = displacement.normalised();
             
@@ -176,7 +183,7 @@ public final class BotInput extends InputModule {
             }
             
             double dot = dir.dot(myPlayer.getDirection().normalised());
-            double cosFOV = Math.cos(Math.toRadians(fov));
+            double cosFOV = Math.cos(Math.toRadians(FOV));
             // check out of field of view
             if (dot > cosFOV) {
                 continue;

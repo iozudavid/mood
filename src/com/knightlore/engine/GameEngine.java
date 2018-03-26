@@ -1,5 +1,6 @@
 package com.knightlore.engine;
 
+import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 
@@ -13,9 +14,11 @@ import com.knightlore.game.world.ClientWorld;
 import com.knightlore.game.world.GameWorld;
 import com.knightlore.game.world.ServerWorld;
 import com.knightlore.gui.GUIState;
+import com.knightlore.network.NetworkObject;
 import com.knightlore.network.NetworkObjectManager;
 import com.knightlore.network.client.ClientManager;
 import com.knightlore.network.client.ClientNetworkObjectManager;
+import com.knightlore.network.protocol.NetworkUtils;
 import com.knightlore.network.server.ServerManager;
 import com.knightlore.network.server.ServerNetworkObjectManager;
 import com.knightlore.render.Camera;
@@ -178,14 +181,16 @@ public class GameEngine implements Runnable {
             this.display.setHud(hud);
             this.display.setMinimap(minimap);
             this.display.setRenderer(renderer);
-            this.guiState = GUIState.InGame;
+            
         }
+        this.guiState = GUIState.InGame;
         
         // start the lobby
         world.getGameManager().startLobby();
         world.getGameManager().beginGame();
         // build anything that requires the renderer
         // think gui
+        System.out.println("Engine init complete.");
         world.onPostEngineInit();
         _doneInit = true;
         
@@ -267,7 +272,7 @@ public class GameEngine implements Runnable {
                 synchronized (this.gameObjectManager) {
                     gameObjectManager.updateObjects();
                 }
-                if (world != null) {
+                if (guiState == GUIState.InGame && world != null) {
                     world.update();
                     GameFeed.getInstance().update();
                 }
@@ -320,5 +325,4 @@ public class GameEngine implements Runnable {
     public void setVolume(float newVolume) {
         this.defaultVolume = newVolume;
     }
-    
 }

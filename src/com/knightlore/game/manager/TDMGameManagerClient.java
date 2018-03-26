@@ -3,8 +3,14 @@ package com.knightlore.game.manager;
 import java.nio.ByteBuffer;
 import java.util.UUID;
 
+import com.knightlore.GameSettings;
 import com.knightlore.engine.GameEngine;
+import com.knightlore.game.BotInput;
+import com.knightlore.game.Team;
+import com.knightlore.game.entity.Player;
+import com.knightlore.game.world.ServerWorld;
 import com.knightlore.network.NetworkObject;
+import com.knightlore.utils.Vector2D;
 
 /**
  * Contains data and methods to handle the Free For All game mode client-side.
@@ -33,7 +39,32 @@ public class TDMGameManagerClient extends TDMGameManager {
         obj.deserialize(state);
         return obj;
     }
+
+    private boolean gameOver;
     
+    /**
+     * Sets the game state to LOBBY.
+     */
+    @Override
+    public void startLobby() {
+        gameState = GameState.LOBBY;
+    }
+    /**
+     * Checks if the game is over.
+     */
+    @Override
+    public void onUpdate() {
+        if (!gameOver && gameState == GameState.FINISHED) {
+            onGameOver();
+            gameOver = true;
+        }
+    }
+    
+    private void onGameOver() {
+        GameSettings.desiredBlockiness = 70;
+        System.out.println("!!!!!");
+    }
+
     /**
      * Creates a Game Manager with a random UUID. Calls the other constructor
      * with this UUID.

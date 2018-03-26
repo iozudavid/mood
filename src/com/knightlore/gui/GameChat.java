@@ -11,6 +11,11 @@ import com.knightlore.network.client.ClientManager;
 import com.knightlore.render.PixelBuffer;
 import com.knightlore.utils.funcptrs.VoidFunction;
 
+/**
+ * Class rendering the game chat.
+ * @author David Iozu
+ *
+ */
 public class GameChat extends GUICanvas {
     private TextArea textArea;
     private TextField textField;
@@ -32,6 +37,7 @@ public class GameChat extends GUICanvas {
 
     public GameChat(int screenWidth, int screenHeight) {
         super(screenWidth, screenHeight);
+        System.out.println("CHATTTTTTTTTTTTTTTTT");
         this.screenWidth = screenWidth;
         this.screenHeight = screenHeight;
         // shouldn't be in constructor... but damn race conditions
@@ -90,6 +96,9 @@ public class GameChat extends GUICanvas {
         });
     }
 
+    /**
+     * Hide the pause menu when we don't want it to be shown.
+     */
     private void initPauseHidden() {
         this.resumeButton = new Button(GuiUtils.middleWidth(screenWidth, 300),
                 GuiUtils.calculateHeight(screenHeight, 30), 300, 40, "Resume", 20);
@@ -132,6 +141,10 @@ public class GameChat extends GUICanvas {
         super.render(pix, x, y);
     }
 
+    /**
+     * 
+     * @return PixelBuffer we render on
+     */
     public PixelBuffer getPixelBuffer() {
         PixelBuffer copy = this.pix;
         this.pix = new PixelBuffer((int) (screenWidth), (int) (screenHeight));
@@ -139,20 +152,42 @@ public class GameChat extends GUICanvas {
         return copy;
     }
 
+    /**
+     * 
+     * @return TextArea we show the messages
+     */
     public TextArea getTextArea() {
         this.interactive = true;
         this.count = 0;
         return this.textArea;
     }
 
+    /**
+     * Add entry to scoreboard.
+     * 
+     * @param entry
+     *            - entity stats to be added in scoreboard
+     */
     public void addToTable(CopyOnWriteArrayList<String> entry) {
         this.scoreBoard.addTableEntry(entry);
     }
 
+    /**
+     * Remove entry from scoreboard.
+     * 
+     * @param entry
+     *            - entity stats to be removed in scoreboard
+     */
     public void removeFromTable(String uuid) {
         this.scoreBoard.removeTableEntry(uuid);
     }
 
+    /**
+     * Show/hide pause menu when user wants it.
+     * 
+     * @param b
+     *            - whether show or hide the pause menu
+     */
     private void setPauseMenuVisible(boolean b) {
         this.lastPauseVisible = b;
         if (b) {
@@ -172,6 +207,9 @@ public class GameChat extends GUICanvas {
         }
     }
 
+    /**
+     * Show the scoreboard when user wants it to.
+     */
     public void setScoreMenuVisible() {
         if (this.lastScoreVisible || GameManager.getGameState() == GameState.FINISHED) {
             this.addGUIObject(scoreBoardImage);
@@ -182,6 +220,9 @@ public class GameChat extends GUICanvas {
         }
     }
 
+    /*
+     * Set the game's time left.
+     */
     public void setTimeLeft(String time) {
         timeLeftText.SetText(time);
     }

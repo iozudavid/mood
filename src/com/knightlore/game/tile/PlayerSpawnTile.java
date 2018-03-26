@@ -12,7 +12,7 @@ import com.knightlore.utils.Vector2D;
 
 public class PlayerSpawnTile extends Tile {
     private final Team team;
-    private Vector2D pushVector = new Vector2D(0,0);
+    private final Vector2D pushVector;
     
     private static final TimedAnimation<Graphic> RED_LAVA_ANIM = new TimedAnimation<Graphic>(
             (long) (GameEngine.UPDATES_PER_SECOND / 4));
@@ -101,9 +101,9 @@ public class PlayerSpawnTile extends Tile {
     public char toChar() {
         if (team == Team.NONE) {
             return '0';
-        }else if(team == Team.BLUE) {
+        } else if (team == Team.BLUE) {
             return '1';
-        }else {
+        } else {
             return '2';
         }
     }
