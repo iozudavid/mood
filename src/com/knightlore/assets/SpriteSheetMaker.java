@@ -133,7 +133,7 @@ public class SpriteSheetMaker {
             try {
                 file.delete();
             } catch (Exception e) {
-                System.err.println(e);
+                e.printStackTrace();
                 System.out.println("Failed to delete " + fileName + ", see above error ^");
                 return;
             }
@@ -202,7 +202,7 @@ public class SpriteSheetMaker {
                 try {
                     file.delete();
                 } catch (Exception e) {
-                    System.err.println(e);
+                    e.printStackTrace();
                     System.out.println("Failed to delete " + fileName + ", see above error ^");
                     return;
                 }

@@ -7,7 +7,7 @@ import com.knightlore.utils.Vector2D;
 
 public class Compass extends HUDElement {
 
-    protected DirectionalSprite compassSprite;
+    protected final DirectionalSprite compassSprite;
 
     public Compass() {
         super();

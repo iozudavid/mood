@@ -34,11 +34,11 @@ public class ClientNetworkObjectManager extends NetworkObjectManager {
     private Player myPlayer = null;
     // Whether we've received enough information to start the game.
     private boolean finishedSetUp = false;
-    private ArrayList<ByteBuffer> myPlayerStateOnServer;
+    private final ArrayList<ByteBuffer> myPlayerStateOnServer;
 
-    private ClientWorld clientWorld;
+    private final ClientWorld clientWorld;
 
-    private BlockingQueue<ByteBuffer> teamChat;
+    private final BlockingQueue<ByteBuffer> teamChat;
     private SendToServer sendToServer;
 
     public ClientNetworkObjectManager(ClientWorld world) {
@@ -107,12 +107,12 @@ public class ClientNetworkObjectManager extends NetworkObjectManager {
             return;
         }
         String message = NetworkUtils.getStringFromBuf(b);
-        assert (message != null);
         GameEngine g = GameEngine.getSingleton();
         ClientWorld world = (ClientWorld) g.getWorld();
         GameChat c = world.getGameChat();
-        if (c == null)
+        if (c == null) {
             return;
+        }
         TextArea t = c.getTextArea();
         t.addText(message);
 

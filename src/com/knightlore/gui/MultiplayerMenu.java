@@ -6,7 +6,6 @@ import java.util.ArrayList;
 import com.knightlore.engine.GameEngine;
 import com.knightlore.network.ConnectionDetails;
 import com.knightlore.render.PixelBuffer;
-import com.knightlore.utils.funcptrs.BooleanFunction;
 import com.knightlore.utils.funcptrs.VoidFunction;
 /**
  * Creating and rendering all objects on multiplayer menu.
@@ -15,19 +14,19 @@ import com.knightlore.utils.funcptrs.VoidFunction;
  */
 public class MultiplayerMenu {
 
-    private GUICanvas gui;
+    private final GUICanvas gui;
     private final int screenHeight;
     private final int screenWidth;
-    private Image coverImage;
-    private Text ipText;
-    private TextField ipTextField;
-    private Group groupIp;
-    private Text portText;
-    private TextField portTextField;
-    private Group groupPort;
-    private Button connectButton;
-    private Button cancelButton;
-    private Text noConnection;
+    private final Image coverImage;
+    private final Text ipText;
+    private final TextField ipTextField;
+    private final Group groupIp;
+    private final Text portText;
+    private final TextField portTextField;
+    private final Group groupPort;
+    private final Button connectButton;
+    private final Button cancelButton;
+    private final Text noConnection;
 
     /**
      * SetUp all the GUIObjects needed for MultiplayerMenu
@@ -63,13 +62,7 @@ public class MultiplayerMenu {
         this.portTextField = new TextField(GuiUtils.middleWidth(this.screenWidth, 300),
                 GuiUtils.calculateHeight(this.screenHeight, 57), 300, 40, "" + ConnectionDetails.DEFAULT_PORT);
         this.portTextField.fontSize = 3;
-        this.portTextField.setRestriction(new BooleanFunction<Character>() {
-
-            @Override
-            public boolean check(Character value) {
-                return Character.isDigit(value);
-            }
-        });
+        this.portTextField.setRestriction(Character::isDigit);
         ArrayList<GUIObject> objsPort = new ArrayList<>();
         objsPort.add(portText);
         objsPort.add(portTextField);
@@ -81,7 +74,7 @@ public class MultiplayerMenu {
         this.gui.addGUIObject(this.portTextField);
         this.cancelButton = new Button(GuiUtils.middleWidth(this.screenWidth / 2, 300),
                 GuiUtils.calculateHeight(this.screenHeight, 80), 300, 40, "Cancel", 21);
-        this.connectButton = new Button((int) (GuiUtils.middleWidth(this.screenWidth / 2, 300) + this.screenWidth / 2),
+        this.connectButton = new Button(GuiUtils.middleWidth(this.screenWidth / 2, 300) + this.screenWidth / 2,
                 GuiUtils.calculateHeight(this.screenHeight, 80), 300, 40, "Connect", 21);
         this.gui.addGUIObject(connectButton);
         this.gui.addGUIObject(cancelButton);

@@ -40,7 +40,7 @@ public class TextField extends GUIObject {
     private Optional<BooleanFunction<Integer>> restrictTextLength = Optional.empty();
     private Optional<Predicate<String>> restrictValue = Optional.empty();
     public int fontSize = 1;
-    public Font font = Font.DEFAULT_WHITE;
+    public final Font font = Font.DEFAULT_WHITE;
 
     public TextField(int x, int y, int width, int height) {
         super(x, y, width, height);
@@ -160,8 +160,6 @@ public class TextField extends GUIObject {
             color = activeColor().getRGB();
             int hOffset = font.getHeight();
             pix.fillRect(color, rect.x, rect.y, rect.width, rect.height);
-            // draw the characters of the string
-            color = Color.BLACK.getRGB();
 
             Font font = state == SelectState.UP ? Font.DEFAULT_BLACK : Font.DEFAULT_WHITE;
 
@@ -222,20 +220,21 @@ public class TextField extends GUIObject {
     void onLostFocus() {
         System.out.println("LOST FOCUS");
         GUICanvas.activeTextField = null;
-        if (this.restrictValue.isPresent()) {
-            if (this.text.length() == 0) {
+        this.restrictValue.ifPresent(stringPredicate -> {
+            if (this.text.isEmpty()) {
                 text = "10";
             }
-            if (!this.restrictValue.get().test(text)) {
-                if (this.text.length() == 0) {
+            if (!stringPredicate.test(text)) {
+                if (this.text.isEmpty()) {
                     text = "10";
-                } else if (Integer.parseInt(this.text) < 5)
+                } else if (Integer.parseInt(this.text) < 5) {
                     text = "5";
-                else
+                } else {
                     text = "20";
-
+                }
+            
             }
-        }
+        });
         displayText(text);
     }
 
@@ -253,13 +252,15 @@ public class TextField extends GUIObject {
             return;
         }
         if (this.restrictText.isPresent()) {
-            if (!this.restrictText.get().check(c))
+            if (!this.restrictText.get().check(c)) {
                 return;
+            }
         }
 
         if (this.restrictTextLength.isPresent()) {
-            if (!this.restrictTextLength.get().check(text.length() + 1))
+            if (!this.restrictTextLength.get().check(text.length() + 1)) {
                 return;
+            }
         }
 
         if (text.isEmpty()) {
@@ -299,7 +300,7 @@ public class TextField extends GUIObject {
      */
     void onSendMessage(char c) {
         // do not send if null or nothing to send
-        if (text == null || text.length() == 0) {
+        if (text == null || text.isEmpty()) {
             return;
         }
         ClientNetworkObjectManager manager = (ClientNetworkObjectManager) GameEngine.getSingleton()

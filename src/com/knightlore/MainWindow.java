@@ -25,7 +25,7 @@ public class MainWindow extends JFrame {
     public static final int HEIGHT = WIDTH / 16 * 9; // 16:9 aspect ratio
 
     private Screen screen;
-    private boolean fullscreen;
+    private final boolean fullscreen;
 
     public MainWindow(String title) {
         this(title, -1, -1);

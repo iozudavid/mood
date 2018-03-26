@@ -1,12 +1,10 @@
 package com.knightlore.utils.physics;
 
 import com.knightlore.game.entity.Entity;
-import com.knightlore.utils.Vector2D;
 
 /**
  * A plain old data class, for storing information about what was hit in a raycast or linecast.
  * @author James
- * @see GameWorld#raycast
  */
 public final class RaycastHit {
     

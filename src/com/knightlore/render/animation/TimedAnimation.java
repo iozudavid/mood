@@ -4,7 +4,7 @@ import com.knightlore.engine.TickListener;
 
 public class TimedAnimation<T> extends Animation<T> implements TickListener {
 
-    private long interval;
+    private final long interval;
 
     public TimedAnimation(long interval) {
         super();

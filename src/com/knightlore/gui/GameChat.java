@@ -9,7 +9,6 @@ import com.knightlore.game.manager.GameManager;
 import com.knightlore.game.manager.GameState;
 import com.knightlore.network.client.ClientManager;
 import com.knightlore.render.PixelBuffer;
-import com.knightlore.utils.funcptrs.VoidFunction;
 
 /**
  * Class rendering the game chat.
@@ -20,8 +19,8 @@ public class GameChat extends GUICanvas {
     private TextArea textArea;
     private TextField textField;
     private PixelBuffer pix;
-    private int screenWidth;
-    private int screenHeight;
+    private final int screenWidth;
+    private final int screenHeight;
     private int count = 0;
     private boolean interactive = true;
     private final int timeToInteractive = 200;
@@ -82,15 +81,17 @@ public class GameChat extends GUICanvas {
         GUICanvas.setOnEscFunction(() -> GameChat.this.setPauseMenuVisible(!GameChat.this.lastPauseVisible));
 
         GUICanvas.setOnQFunction(() -> {
-            if (GameChat.this.lastScoreVisible)
+            if (GameChat.this.lastScoreVisible) {
                 return;
+            }
             GameChat.this.lastScoreVisible = true;
             GameChat.this.setScoreMenuVisible();
         });
 
         GUICanvas.setOnQReleaseFunction(() -> {
-            if (!GameChat.this.lastScoreVisible)
+            if (!GameChat.this.lastScoreVisible) {
                 return;
+            }
             GameChat.this.lastScoreVisible = false;
             GameChat.this.setScoreMenuVisible();
         });
@@ -147,7 +148,7 @@ public class GameChat extends GUICanvas {
      */
     public PixelBuffer getPixelBuffer() {
         PixelBuffer copy = this.pix;
-        this.pix = new PixelBuffer((int) (screenWidth), (int) (screenHeight));
+        this.pix = new PixelBuffer(screenWidth, screenHeight);
         this.pix.flood(-16711936);
         return copy;
     }
@@ -174,9 +175,7 @@ public class GameChat extends GUICanvas {
 
     /**
      * Remove entry from scoreboard.
-     * 
-     * @param entry
-     *            - entity stats to be removed in scoreboard
+     *
      */
     public void removeFromTable(String uuid) {
         this.scoreBoard.removeTableEntry(uuid);

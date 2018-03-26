@@ -16,7 +16,7 @@ public class LightingMask {
     /**
      * The colour of the lighting mask.
      */
-    private int color;
+    private final int color;
 
     public LightingMask(int color) {
         this.color = color;

@@ -80,8 +80,6 @@ public final class Vector2D {
     /**
      * Adds another vector to this one
      * 
-     * @param a
-     * @param b
      * @returns a new Vector2D with the result
      */
     public Vector2D add(Vector2D v) {
@@ -91,8 +89,6 @@ public final class Vector2D {
     /**
      * Subtracts another vector from this one
      * 
-     * @param a
-     * @param b
      * @returns a new Vector2D with the result
      */
     public Vector2D subtract(Vector2D v) {
@@ -102,8 +98,6 @@ public final class Vector2D {
     /**
      * Pairwise multiplies another vector with this one
      * 
-     * @param a
-     * @param b
      * @returns a new Vector2D with the result
      */
     public Vector2D mul(Vector2D v) {

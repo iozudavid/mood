@@ -24,7 +24,7 @@ public class PixelBuffer {
     public static final int CHROMA_KEY = 0xFF00FF00;
 
     private final int WIDTH, HEIGHT;
-    private int[] pixels;
+    private final int[] pixels;
 
     public PixelBuffer(int width, int height) {
         WIDTH = width;
@@ -39,8 +39,8 @@ public class PixelBuffer {
      *            the colour to fill the pixel buffer with.
      */
     public void flood(int color) {
-        for (int yy = 0; yy < 0 + getHeight(); yy++) {
-            for (int xx = 0; xx < 0 + getWidth(); xx++) {
+        for (int yy = 0; yy < getHeight(); yy++) {
+            for (int xx = 0; xx < getWidth(); xx++) {
                 if (!inBounds(xx, yy)) {
                     continue;
                 }
@@ -94,10 +94,6 @@ public class PixelBuffer {
      *            the x-position of where to render.
      * @param y
      *            the y-position of where to render.
-     * @param scaleX
-     *            the scaling in the x-direction.
-     * @param scaleY
-     *            the scaling in the y-direction.
      */
     public void drawGraphic(Graphic graphic, int x, int y, int width, int height) {
         for (int yy = 0; yy < height; yy++) {
@@ -281,8 +277,9 @@ public class PixelBuffer {
      *            the spacing between letters.
      */
     public void drawString(Font font, String str, int x, int y, double scaling, double spacing) {
-        if (!inBounds(x, y))
+        if (!inBounds(x, y)) {
             return;
+        }
 
         for (char c : str.toCharArray()) {
             Graphic g = font.getGraphic(c);
@@ -291,7 +288,7 @@ public class PixelBuffer {
         }
     }
 
-    private HashMap<TextWidthCache, Integer> twCache = new HashMap<TextWidthCache, Integer>();
+    private final HashMap<TextWidthCache, Integer> twCache = new HashMap<>();
 
     /**
      * Computes the width of a string if it were to be rendered on the pixel
@@ -379,10 +376,10 @@ public class PixelBuffer {
     }
 
     private class TextWidthCache {
-        Font font;
-        String string;
-        double scaling;
-        double spacing;
+        final Font font;
+        final String string;
+        final double scaling;
+        final double spacing;
 
         public TextWidthCache(Font font, String string, double scaling, double spacing) {
             this.font = font;
@@ -393,10 +390,12 @@ public class PixelBuffer {
 
         @Override
         public boolean equals(Object obj) {
-            if (obj == null)
+            if (obj == null) {
                 return false;
-            if (!(obj instanceof TextWidthCache))
+            }
+            if (!(obj instanceof TextWidthCache)) {
                 return false;
+            }
 
             TextWidthCache cache = (TextWidthCache) obj;
             return cache.font == font && cache.string.equals(string) && cache.scaling == scaling

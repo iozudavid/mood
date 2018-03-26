@@ -3,7 +3,6 @@ package com.knightlore.game.entity.pickup;
 import java.nio.ByteBuffer;
 import java.util.UUID;
 
-import com.knightlore.game.entity.Player;
 import com.knightlore.game.entity.weapon.WeaponType;
 import com.knightlore.network.NetworkObject;
 import com.knightlore.render.graphic.sprite.DirectionalSprite;
@@ -48,11 +47,6 @@ public class PistolPickup extends WeaponPickup {
     @Override
     public String getName() {
         return "PISTOL";
-    }
-
-    @Override
-    public void onCollide(Player player) {
-        super.onCollide(player);
     }
 
 }

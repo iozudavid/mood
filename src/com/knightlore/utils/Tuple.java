@@ -7,7 +7,7 @@ package com.knightlore.utils;
  * @param <Y>
  */
 public class Tuple<X, Y> {
-    public X x;
+    public final X x;
     public Y y;
 
     public Tuple(X x, Y y) {

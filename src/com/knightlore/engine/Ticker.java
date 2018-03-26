@@ -2,7 +2,6 @@ package com.knightlore.engine;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.ListIterator;
 import java.util.concurrent.LinkedBlockingQueue;
 
 /**
@@ -30,9 +29,9 @@ public class Ticker {
     /**
      * Listeners attached to this ticker.
      */
-    private List<TickListener> tickListeners;
+    private final List<TickListener> tickListeners;
     // Fix concurrent modification issues with a toAdd queue.
-    private LinkedBlockingQueue<TickListener> toAdd = new LinkedBlockingQueue<>();
+    private final LinkedBlockingQueue<TickListener> toAdd = new LinkedBlockingQueue<>();
 
     protected Ticker() {
         tick = 0;
@@ -69,9 +68,7 @@ public class Ticker {
             tickListeners.add(t);
         }
         tick++;
-        ListIterator<TickListener> itr = tickListeners.listIterator();
-        while (itr.hasNext()) {
-            TickListener t = itr.next();
+        for (TickListener t : tickListeners) {
             // if there's not an interval, ignore it.
             if (t.interval() == 0) {
                 continue;

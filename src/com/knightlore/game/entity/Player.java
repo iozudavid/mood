@@ -167,8 +167,9 @@ public class Player extends Entity {
      * server.
      */
     private void sendStatsToScoreBoard() {
-        if (GameSettings.isServer())
+        if (GameSettings.isServer()) {
             return;
+        }
         // add to scoreboard
         CopyOnWriteArrayList<String> stats = new CopyOnWriteArrayList<>();
         stats.add(this.getObjectId().toString());

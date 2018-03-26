@@ -17,7 +17,7 @@ import com.knightlore.render.font.Font;
  */
 public class TextArea extends GUIObject{
 
-	private BlockingQueue<String> text;
+	private final BlockingQueue<String> text;
 	private int positionXToRender;
 	private int positionYToRender;
 	private boolean active=true;

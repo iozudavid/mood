@@ -130,10 +130,6 @@ public class FFAGameManager extends GameManager {
         System.out.println(type + " Pickup Created");
     }
     
-    @Override
-    public void onCreate() {
-    }
-    
     /**
      * Determines when if game is over, when the timer runs out, the player with
      * the highest score wins.

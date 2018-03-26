@@ -10,7 +10,7 @@ import com.knightlore.network.Connection;
  * @author David Iozu, Will Miller
  */
 public class Receive implements Runnable {
-    private Connection conn;
+    private final Connection conn;
 
     public Receive(Connection conn) {
         this.conn = conn;

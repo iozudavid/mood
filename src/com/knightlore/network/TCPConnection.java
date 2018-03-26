@@ -14,10 +14,10 @@ public class TCPConnection extends Connection {
 
     private DataInputStream infoReceive;
     private DataOutputStream infoSend;
-    private Socket socket;
+    private final Socket socket;
 
-    Object receiveLock = new Object();
-    Object sendLock = new Object();
+    final Object receiveLock = new Object();
+    final Object sendLock = new Object();
 
     public TCPConnection(Socket socket) {
         this.socket = socket;

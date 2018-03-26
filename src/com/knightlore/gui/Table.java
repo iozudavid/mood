@@ -2,7 +2,6 @@ package com.knightlore.gui;
 
 import java.awt.Color;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -17,9 +16,9 @@ import com.knightlore.render.font.Font;
  */
 public class Table extends GUIObject{
 	 
-	private HashMap<String,Double> headersAndWidth;
+	private final HashMap<String,Double> headersAndWidth;
 	//...
-	private CopyOnWriteArrayList<CopyOnWriteArrayList<String>> entries;
+	private final CopyOnWriteArrayList<CopyOnWriteArrayList<String>> entries;
 	
 	public Table(int x, int y, int width, int height, int depth) {
 	        super(x, y, width, height, depth);
@@ -35,10 +34,11 @@ public class Table extends GUIObject{
      */
 	public void setTableHeader(ArrayList<String> headers){
 		int maxNoOfChars=0;
-		for(String t : headers)
-			maxNoOfChars += t.toCharArray().length;
+		for(String t : headers) {
+            maxNoOfChars += t.toCharArray().length;
+        }
 		for(String t : headers){
-			this.headersAndWidth.put(t, (double)((double)t.toCharArray().length/(double)maxNoOfChars));
+			this.headersAndWidth.put(t, (double)t.toCharArray().length/(double)maxNoOfChars);
 		}
 	}
 	
@@ -75,11 +75,10 @@ public class Table extends GUIObject{
 					toBeRemoved = entry;
 					break;
 				}
-				if (toBeRemoved != null)
-					break;
 			}
-			if (toBeRemoved != null)
-				this.entries.remove(toBeRemoved);
+			if (toBeRemoved != null) {
+                this.entries.remove(toBeRemoved);
+            }
 		}
 	}
 	
@@ -87,20 +86,21 @@ public class Table extends GUIObject{
 	 * Order it in descending order.
 	 */
 	private void orderTableByScore() {
-		if (this.entries.size() < 2)
-			return;
+		if (this.entries.size() < 2) {
+            return;
+        }
 		try {
-			this.entries.sort(new Comparator<CopyOnWriteArrayList<String>>() {
-
-				@Override
-				public int compare(CopyOnWriteArrayList<String> o1, CopyOnWriteArrayList<String> o2) {
-					int score1 = Integer.parseInt(o1.get(o1.size() - 1));
-					int score2 = Integer.parseInt(o2.get(o2.size() - 1));
-					return score1 > score2 ? -1 : 1;
-				}
-			});
+			this.entries.sort((o1, o2) -> {
+                int score1 = Integer.parseInt(o1.get(o1.size() - 1));
+                int score2 = Integer.parseInt(o2.get(o2.size() - 1));
+                if (score1 == score2) {
+                    return 0;
+                }
+                
+                return score1 > score2 ? -1 : 1;
+            });
 		} catch (NumberFormatException e) {
-			return;
+			e.printStackTrace();
 		}
 	}
 
@@ -111,7 +111,7 @@ public class Table extends GUIObject{
 	void Draw(PixelBuffer pix, int x, int y) {
 		synchronized (this.entries) {
 		    int color = Color.DARK_GRAY.getRGB();
-			int totalHeight = 0;
+			int totalHeight;
 			totalHeight = (Font.DEFAULT_WHITE.getHeight() + 15) * (1 + this.entries.size());
 			pix.fillRect(color, rect.x, rect.y, rect.width, totalHeight);
 			color = Color.WHITE.getRGB();

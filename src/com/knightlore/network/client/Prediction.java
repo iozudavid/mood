@@ -23,7 +23,7 @@ import com.knightlore.utils.Vector2D;
 public class Prediction {
 
 	// first double is the input timestemp
-	private LinkedHashMap<Double, byte[]> clientInputHistory;
+	private final LinkedHashMap<Double, byte[]> clientInputHistory;
 	private Player nextPrediction;
 	private ByteBuffer lastReceivedFromServer;
 	private final double maxTolerance = 0.5D;
@@ -125,7 +125,7 @@ public class Prediction {
 	 * @param packetNumber - number of packet sent
 	 * @return new player state
 	 */
-	public Player update(Player player, byte[] input, double packetNumber) {
+	public void update(Player player, byte[] input, double packetNumber) {
 		//use last prediction based on server stats
 		//to construct the new position
 		if (this.nextPrediction != null) {
@@ -179,8 +179,7 @@ public class Prediction {
 		synchronized(this.clientInputHistory){
 			this.clientInputHistory.put(packetNumber,input);
 		}
-		return player;
-	}
+    }
 	
 	/**
 	 * Called when local machine needs to reconciliate with server.

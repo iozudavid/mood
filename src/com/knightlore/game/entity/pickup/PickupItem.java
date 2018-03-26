@@ -35,7 +35,7 @@ public abstract class PickupItem extends Entity {
      * Manages all pickups placed, at the start of the game, on
      * PickupTiles.
      */
-    private PickupManager pickupManager;
+    private final PickupManager pickupManager;
     
     /**
      * Produce a pickup item with the specified uuid, position vector, directional sprite and 

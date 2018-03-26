@@ -4,8 +4,6 @@ import java.io.IOException;
 import java.net.Socket;
 import java.net.UnknownHostException;
 
-import com.knightlore.engine.GameEngine;
-import com.knightlore.gui.GUIState;
 import com.knightlore.network.ConnectionDetails;
 import com.knightlore.network.TCPConnection;
 import com.knightlore.network.server.Receive;
@@ -17,9 +15,9 @@ import com.knightlore.network.server.Receive;
 public class ClientManager implements Runnable {
 	
 	private static Socket server;
-    private SendToServer sender;
-    private Receive receive;
-    private TCPConnection conn;
+    private final SendToServer sender;
+    private final Receive receive;
+    private final TCPConnection conn;
 
     public ClientManager() {
         try {

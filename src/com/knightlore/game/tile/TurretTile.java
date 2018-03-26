@@ -28,11 +28,6 @@ public class TurretTile extends Tile {
     }
 
     @Override
-    public void onShot() {
-        // Maybe play some turrety noise??
-    }
-
-    @Override
     public double getCost() {
         return 10D / (1D - getSolidity());
     }

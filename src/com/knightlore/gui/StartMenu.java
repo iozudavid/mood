@@ -5,7 +5,6 @@ import java.awt.Color;
 import com.knightlore.engine.GameEngine;
 import com.knightlore.network.ConnectionDetails;
 import com.knightlore.render.PixelBuffer;
-import com.knightlore.utils.funcptrs.VoidFunction;
 
 /**
  * Class to render all StartMenu GUIObjects
@@ -14,16 +13,16 @@ import com.knightlore.utils.funcptrs.VoidFunction;
  */
 public class StartMenu {
 
-    private GUICanvas gui;
+    private final GUICanvas gui;
     private final int screenHeight;
     private final int screenWidth;
-    private Image coverImage;
-    private Image name;
-    private Button singlePlayerButton;
-    private Button multiPlayerButton;
-    private Button settingsButton;
-    private Button quitButton;
-    private Text noConnection;
+    private final Image coverImage;
+    private final Image name;
+    private final Button singlePlayerButton;
+    private final Button multiPlayerButton;
+    private final Button settingsButton;
+    private final Button quitButton;
+    private final Text noConnection;
 
     /**
      * SetUp all GUIObjects for StartMenu.
@@ -62,50 +61,33 @@ public class StartMenu {
                 GuiUtils.calculateHeight(this.screenHeight, 35), 120, 40, "No connection!", 21);
         noConnection.currentColor = Color.RED;
 
-        this.singlePlayerButton.clickFunction = new VoidFunction() {
-
-            @Override
-            public void call() {
-                // start new session
-                // on the local machine
-                ConnectionDetails.SERVER_HOSTNAME = "localhost";
-                ConnectionDetails.PORT = ConnectionDetails.DEFAULT_PORT;
-                // remove this gui
-                try {
-                    GameEngine.getSingleton().startGame();
-                } catch (Exception e) {
-                    StartMenu.this.gui.addGUIObject(StartMenu.this.noConnection);
-                    return;
-                }
-                StartMenu.this.gui.destroy();
+        this.singlePlayerButton.clickFunction = () -> {
+            // start new session
+            // on the local machine
+            ConnectionDetails.SERVER_HOSTNAME = "localhost";
+            ConnectionDetails.PORT = ConnectionDetails.DEFAULT_PORT;
+            // remove this gui
+            try {
+                GameEngine.getSingleton().startGame();
+            } catch (Exception e) {
+                StartMenu.this.gui.addGUIObject(StartMenu.this.noConnection);
+                return;
             }
+            StartMenu.this.gui.destroy();
         };
 
-        this.settingsButton.clickFunction = new VoidFunction() {
-
-            @Override
-            public void call() {
-                StartMenu.this.gui.destroy();
-                GameEngine.getSingleton().guiState = GUIState.SettingsMenu;
-            }
+        this.settingsButton.clickFunction = () -> {
+            StartMenu.this.gui.destroy();
+            GameEngine.getSingleton().guiState = GUIState.SettingsMenu;
         };
 
-        this.multiPlayerButton.clickFunction = new VoidFunction() {
-            @Override
-            public void call() {
-                StartMenu.this.gui.destroy();
+        this.multiPlayerButton.clickFunction = () -> {
+            StartMenu.this.gui.destroy();
 
-                GameEngine.getSingleton().guiState = GUIState.MultiplayerMenu;
-            }
+            GameEngine.getSingleton().guiState = GUIState.MultiplayerMenu;
         };
 
-        this.quitButton.clickFunction = new VoidFunction() {
-
-            @Override
-            public void call() {
-                GameEngine.getSingleton().stop();
-            }
-        };
+        this.quitButton.clickFunction = () -> GameEngine.getSingleton().stop();
 
         gui.addGUIObject(coverImage);
         gui.addGUIObject(name);

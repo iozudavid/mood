@@ -14,9 +14,9 @@ import com.knightlore.utils.Vector2D;
  */
 public class Slider extends GUIObject {
 
-    public Color upColour = Color.GRAY;
-    public Color hoverColour = Color.DARK_GRAY;
-    public Color downColour = Color.BLACK;
+    public final Color upColour = Color.GRAY;
+    public final Color hoverColour = Color.DARK_GRAY;
+    public final Color downColour = Color.BLACK;
 
     private Rectangle sliderPos;
     private float defaultValue = 0.8f;
@@ -152,15 +152,14 @@ public class Slider extends GUIObject {
     private void calculatePosition(){
         Vector2D mousePos = InputManager.getMousePos();
         double mouseXPos = mousePos.getX();
-        if(mouseXPos<this.rect.getX())
+        if(mouseXPos<this.rect.getX()) {
             this.actualValue = 0f;
-        else if(mouseXPos>this.rect.getX()+this.rect.getWidth())
+        } else if(mouseXPos>this.rect.getX()+this.rect.getWidth()) {
             this.actualValue = 1f;
-        else{
+        } else{
             float distanceFromStart = (float)(mouseXPos - this.rect.getX());
             float allDistance = (float)(this.rect.getWidth());
-            float procent = (float) (distanceFromStart/allDistance);
-            this.actualValue = procent;
+            this.actualValue = distanceFromStart/allDistance;
         }
     }
     

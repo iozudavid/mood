@@ -15,7 +15,7 @@ import com.knightlore.utils.Vector2D;
  */
 public class Camera implements IRenderable {
     
-    private FootstepHandler fhandler;
+    private final FootstepHandler fhandler;
 
     /**
      * This variable dictates the length of the plane (handedness) vector. The

@@ -31,14 +31,14 @@ public class DirectionalSprite {
     public static final DirectionalSprite HEALTHKIT_DIRECTIONAL_SPRITE = new DirectionalSprite(
             GraphicSheet.HEALTHKIT_SPRITES);
 
-    private List<Graphic> angles;
+    private final List<Graphic> angles;
 
     public DirectionalSprite(List<Graphic> angles) {
         this.angles = angles;
     }
 
     public DirectionalSprite(GraphicSheet sheet) {
-        this.angles = new ArrayList<Graphic>(ANGLES);
+        this.angles = new ArrayList<>(ANGLES);
         for (int i = 0; i < ANGLES; i++) {
             addGraphic(sheet.graphicAt(0, i));
         }

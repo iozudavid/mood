@@ -5,7 +5,7 @@ import com.knightlore.game.entity.Entity;
 
 public abstract class Buff {
     
-    protected Entity ent;
+    protected final Entity ent;
     protected boolean done = false;
     private final int applyGap; // on multiples of the applyGap,
                           // the counter will trigger the

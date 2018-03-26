@@ -3,9 +3,6 @@ package com.knightlore.gui;
 import java.awt.Color;
 import java.util.ArrayList;
 
-import com.knightlore.render.ColorUtils;
-import com.knightlore.render.PixelBuffer;
-
 /**
  * Utils used to render game panels.
  * @author David Iozu
@@ -38,8 +35,7 @@ public class GuiUtils {
      *         of width screen
      */
     public static int formatToRight(int screenWidth, int objWidth) {
-        int toRight = screenWidth - objWidth;
-        return toRight;
+		return screenWidth - objWidth;
     }
 	
     /**

@@ -26,10 +26,6 @@ public class AirTile extends Tile {
     }
 
     @Override
-    public void onShot() {
-    }
-
-    @Override
     public Tile copy() {
         return instance;
     }

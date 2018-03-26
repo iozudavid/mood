@@ -10,7 +10,7 @@ import com.knightlore.utils.Vector2D;
 public abstract class TurretShared extends Entity {
     
     protected int damage;
-    protected Team team = Team.NONE;
+    protected final Team team = Team.NONE;
     
     protected long nextCheckTime = 0;
     protected static final long TURRET_CHECK_DELAY = 20;
@@ -27,11 +27,6 @@ public abstract class TurretShared extends Entity {
     protected TurretShared(UUID uuid, Vector2D pos, Vector2D dir) {
         super(uuid,pos,dir);
     }
-
-    @Override
-    public void onCreate() {
-    }
-    
     
     @Override
     public synchronized ByteBuffer serialize() {

@@ -173,7 +173,6 @@ public class RoomGenerator extends ProceduralAreaGenerator {
             if (numHorizontalInternalWalls == maxHorizontalInternalWalls) {
                 break;
             }
-            ;
             if (rand.nextDouble() <= INTERNAL_WALL_PROBABILITY) {
                 addHorizontalInternalWall(j);
                 numHorizontalInternalWalls++;
@@ -185,7 +184,6 @@ public class RoomGenerator extends ProceduralAreaGenerator {
             if (numVerticalInternalWalls == maxVerticalInternalWalls) {
                 break;
             }
-            ;
             if (rand.nextDouble() <= INTERNAL_WALL_PROBABILITY) {
                 addVerticalInternalWall(i);
                 numVerticalInternalWalls++;
@@ -208,10 +206,9 @@ public class RoomGenerator extends ProceduralAreaGenerator {
     private void addVerticalInternalWall(int x) {
         int height = grid[0].length;
         int distanceIntoRoom = 2 + rand.nextInt(height / 4);
-        int start = distanceIntoRoom;
         int end = (height - 1) - distanceIntoRoom;
         // place straight wall
-        for (int j = start; j < end; j++) {
+        for (int j = distanceIntoRoom; j < end; j++) {
             grid[x][j] = new BrickTile();
             grid[x][j].setPathable(false);
         }
@@ -256,12 +253,13 @@ public class RoomGenerator extends ProceduralAreaGenerator {
 
     private PickupType randomPickupType() {
         int randInt = rand.nextInt(3);
-        if (randInt == 0) {
-            return PickupType.SHOTGUN;
-        } else if(randInt == 1){
-            return PickupType.HEALTH;
-        }else {
-            return PickupType.SPEED;
+        switch (randInt) {
+            case 0:
+                return PickupType.SHOTGUN;
+            case 1:
+                return PickupType.HEALTH;
+            default:
+                return PickupType.SPEED;
         }
     }
 

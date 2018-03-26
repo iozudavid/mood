@@ -26,17 +26,17 @@ import com.knightlore.utils.Vector2D;
  */
 public class Renderer {
 
-    private PixelBuffer pix;
+    private final PixelBuffer pix;
 
     /**
      * Viewport into the world. Can be bound to any entity.
      */
-    private Camera camera;
+    private final Camera camera;
 
     /**
      * The world to render.
      */
-    private ClientWorld world;
+    private final ClientWorld world;
 
     public Renderer(int width, int height, Camera camera, ClientWorld world) {
         this.pix = new PixelBuffer(width, height);
@@ -89,8 +89,8 @@ public class Renderer {
             int mapX = (int) camera.getxPos();
             int mapY = (int) camera.getyPos();
 
-            double sideDistX = 0;
-            double sideDistY = 0;
+            double sideDistX;
+            double sideDistY;
 
             // Length of ray from one side to next in map
             double deltaDistX = Math.sqrt(1 + (rayY * rayY) / (rayX * rayX));
@@ -99,7 +99,7 @@ public class Renderer {
             double wallX = 0;
             double distanceToWall = 0;
 
-            int drawStart = 0, drawEnd = 0;
+            int drawStart, drawEnd = 0;
 
             // hit = true when the ray has hit a wall.
             // side = true or false depending on the side.
@@ -225,7 +225,7 @@ public class Renderer {
         int h = pix.getHeight();
         drawEnd = drawEnd < 0 ? h : drawEnd;
 
-        Graphic floor = world.getEnvironment().getFloorTexture();
+        Graphic floor;
         Graphic ceil = world.getEnvironment().getCeilingTexture();
 
         // stops us from getting weird rendering artifacts, since
@@ -294,19 +294,14 @@ public class Renderer {
     private synchronized void drawSprites(PixelBuffer pix, double[] zbuffer, int offset) {
         synchronized (world) {
             Entity[] entities = world.getEntityArray();
-            Comparator<Entity> c = new Comparator<Entity>() {
-
-                @Override
-                public int compare(Entity o1, Entity o2) {
-                    final double distance1 = camera.getPosition().sqrDistTo(o1.getPosition());
-                    final double distance2 = camera.getPosition().sqrDistTo(o2.getPosition());
-                    return Double.compare(distance2, distance1);
-                }
-
+            Comparator<Entity> c = (o1, o2) -> {
+                final double distance1 = camera.getPosition().sqrDistTo(o1.getPosition());
+                final double distance2 = camera.getPosition().sqrDistTo(o2.getPosition());
+                return Double.compare(distance2, distance1);
             };
             Arrays.sort(entities, c);
 
-            List<Entity> visible = new ArrayList<Entity>();
+            List<Entity> visible = new ArrayList<>();
 
             synchronized (entities) {
                 for (Entity m : entities) {

@@ -24,14 +24,14 @@ public class GameObjectManager {
      * ensure that all game objects have their onCreate() method called before
      * their first update.
      */
-    private List<GameObject> notifyToCreate;
+    private final List<GameObject> notifyToCreate;
 
     /**
      * List of things that are due to be destroyed in the next update. This
      * ensures that all game object have the onDestroy() method called before
      * they're destroyed.
      */
-    private List<GameObject> notifyToDestroy;
+    private final List<GameObject> notifyToDestroy;
 
     public GameObjectManager() {
         this.objects = new ArrayList<>();
@@ -79,12 +79,8 @@ public class GameObjectManager {
         // perform internal list management before updating.
         // as modifying a list whilst iterating over it is a very bad idea.
         synchronized (notifyToCreate) {
-            for (GameObject obj : notifyToCreate) {
-                // add the object to the update list
-                objects.add(obj);
-                // notify the object it has been created
-                obj.onCreate();
-            }
+            // add the object to the update list
+            objects.addAll(notifyToCreate);
             notifyToCreate.clear();
         }
         synchronized (notifyToDestroy) {

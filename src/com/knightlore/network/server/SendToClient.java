@@ -14,10 +14,10 @@ import com.knightlore.network.Connection;
  */
 public class SendToClient implements Runnable {
 
-    private Connection conn;
-    private BlockingQueue<ByteBuffer> commandQueue = new LinkedBlockingQueue<>();
-    private UUID uuid;
-    private ServerNetworkObjectManager manager;
+    private final Connection conn;
+    private final BlockingQueue<ByteBuffer> commandQueue = new LinkedBlockingQueue<>();
+    private final UUID uuid;
+    private final ServerNetworkObjectManager manager;
 
     public SendToClient(Connection conn) {
         this.conn = conn;

@@ -105,11 +105,6 @@ public abstract class Tile implements Serializable {
     }
 
     /**
-     * Called when the block is shot.
-     */
-    public abstract void onShot();
-
-    /**
      * Called when an entity enters this block.
      * 
      * @param entity

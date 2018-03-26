@@ -75,13 +75,13 @@ public class GraphicSheet {
     private final int cellSize;
     private BufferedImage sheet;
 
-    private Map<GraphicCacheItem, Graphic> cache;
+    private final Map<GraphicCacheItem, Graphic> cache;
 
     /**
      * A colour filter for the graphicsheet. This can be used to give the models
      * in the graphicsheet a different colour tint.
      */
-    private ColorFilter filter;
+    private final ColorFilter filter;
 
     public GraphicSheet(String path, int cellSize) {
         this(path, cellSize, null);
@@ -90,7 +90,7 @@ public class GraphicSheet {
     public GraphicSheet(String path, int cellSize, ColorFilter filter) {
         this.cellSize = cellSize;
         this.filter = filter;
-        this.cache = new HashMap<GraphicCacheItem, Graphic>();
+        this.cache = new HashMap<>();
         load(path);
     }
 
@@ -155,7 +155,10 @@ public class GraphicSheet {
     }
 
     class GraphicCacheItem {
-        public int x, y, xx, yy;
+        public final int x;
+        public final int y;
+        public final int xx;
+        public final int yy;
 
         public GraphicCacheItem(int x, int y, int xx, int yy) {
             this.x = x;
@@ -166,10 +169,12 @@ public class GraphicSheet {
 
         @Override
         public boolean equals(Object obj) {
-            if (obj == null)
+            if (obj == null) {
                 return false;
-            if (!(obj instanceof GraphicCacheItem))
+            }
+            if (!(obj instanceof GraphicCacheItem)) {
                 return false;
+            }
 
             GraphicCacheItem c = (GraphicCacheItem) obj;
             return x == c.x && y == c.y && xx == c.xx && yy == c.yy;

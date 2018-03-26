@@ -20,10 +20,6 @@ public class UndecidedTile extends Tile {
     }
 
     @Override
-    public void onShot() {
-    }
-
-    @Override
     public void onEntered(Entity entity) {
     }
 

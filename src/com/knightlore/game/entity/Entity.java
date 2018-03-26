@@ -61,7 +61,7 @@ public abstract class Entity extends NetworkObject implements IMinimapObject, Ti
     /**
      * A list of active buffs possessed by the entity.
      */
-    private ArrayList<Buff> buffList = new ArrayList<Buff>();
+    private final ArrayList<Buff> buffList = new ArrayList<>();
     
     /**
      * Rate at which buffs are updated.
@@ -424,19 +424,19 @@ public abstract class Entity extends NetworkObject implements IMinimapObject, Ti
     }
     
     private Vector2D interpolate(Vector2D local, Vector2D remote) {
-        double finalX = 0D;
-        double finalY = 0D;
+        double finalX;
+        double finalY;
         double difX = remote.getX() - local.getX();
         if (Math.abs(difX) < this.treshold) {
             finalX = remote.getX();
         } else {
-            finalX = local.getX() + difX * this.SMOOTHINESS;
+            finalX = local.getX() + difX * SMOOTHINESS;
         }
         double difY = remote.getY() - local.getY();
         if (Math.abs(difY) < this.treshold) {
             finalY = remote.getY();
         } else {
-            finalY = local.getY() + difY * this.SMOOTHINESS;
+            finalY = local.getY() + difY * SMOOTHINESS;
         }
         return new Vector2D(finalX, finalY);
     }
@@ -503,8 +503,7 @@ public abstract class Entity extends NetworkObject implements IMinimapObject, Ti
      *            - the buff type to remove
      */
     public synchronized void removeBuff(BuffType bt) {
-        for (Iterator<Buff> iter = buffList.iterator(); iter.hasNext();) {
-            Buff b = iter.next();
+        for (Buff b : buffList) {
             if (b.getType() == bt) {
                 b.setDone(true);
             }
@@ -543,8 +542,8 @@ public abstract class Entity extends NetworkObject implements IMinimapObject, Ti
      * the next onTick() call.
      */
     public synchronized void removeAllBuffs() {
-        for (Iterator<Buff> iter = buffList.iterator(); iter.hasNext();) {
-            iter.next().setDone(true);
+        for (Buff aBuffList : buffList) {
+            aBuffList.setDone(true);
         }
     }
     

@@ -42,7 +42,7 @@ public class Minimap implements TickListener {
      * How zoomed in the minimap should appear. The higher this value, the more
      * zoomed in.
      */
-    public double scale = 8;
+    public final double scale = 8;
 
     /**
      * The resolution of the minimap. This is the size to draw a single pixel. A
@@ -59,15 +59,15 @@ public class Minimap implements TickListener {
      */
     public static final int SCOPE = 90;
 
-    private PixelBuffer display;
+    private final PixelBuffer display;
 
     private int width, height;
     private int[] pixelMap;
-    private LightingMask mask;
+    private final LightingMask mask;
     private DoubleUnaryOperator eq; // for lighting mask
 
     private Camera camera;
-    private ClientWorld world;
+    private final ClientWorld world;
 
     public Minimap(Camera camera, ClientWorld world, int size) {
         this.camera = camera;

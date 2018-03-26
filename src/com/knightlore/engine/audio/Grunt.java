@@ -8,9 +8,9 @@ public enum Grunt {
                     new SoundResource("res/sfx/grunt3.wav"));
     
     // Caching.
-    private static Grunt[] VALUES = values();
+    private static final Grunt[] VALUES = values();
 
-    private SoundResource res;
+    private final SoundResource res;
 
     Grunt(SoundResource res) {
         this.res = res;

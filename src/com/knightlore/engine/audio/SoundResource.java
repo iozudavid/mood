@@ -16,7 +16,7 @@ public class SoundResource {
     private byte[] data;
     private AudioFormat encoding;
     private Clip mostRecentClip;
-    public String path;
+    public final String path;
 
     /**
      * @param path:

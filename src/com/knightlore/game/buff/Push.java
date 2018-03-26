@@ -5,8 +5,8 @@ import com.knightlore.utils.Vector2D;
 
 public class Push extends Buff {
 
-    private static double MOVE_DISTANCE = .06;
-    private Vector2D direction;
+    private static final double MOVE_DISTANCE = .06;
+    private final Vector2D direction;
     
     private static final double PUSH_FREQUENCY = 1D / 32;
     private static final double PUSH_LENGTH = 0.5;

@@ -12,11 +12,11 @@ import com.knightlore.render.PixelBuffer;
  */
 public class Group extends GUIObject{
 	
-	private ArrayList<GUIObject> objectToGroup;
+	private final ArrayList<GUIObject> objectToGroup;
 	private final Color upColor = GuiUtils.makeTransparent(Color.LIGHT_GRAY, 75);
 	private final Color hoverColor = GuiUtils.makeTransparent(Color.WHITE, 150);
-	private double padding;
-	private int screenHeight;
+	private final double padding;
+	private final int screenHeight;
 	private SelectState state = SelectState.UP;
 	private double widthPadding = 0;
 	

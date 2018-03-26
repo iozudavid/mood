@@ -6,12 +6,12 @@ import com.knightlore.render.font.Font;
 
 public class HUD {
     
-    private PixelBuffer display;
+    private final PixelBuffer display;
     
-    private Player myPlayer;
+    private final Player myPlayer;
     
-    private HealthCounter healthCounter;
-    private Compass compass;
+    private final HealthCounter healthCounter;
+    private final Compass compass;
     
     public HUD(Player myPlayer, int width, int height) {
         this.myPlayer = myPlayer;

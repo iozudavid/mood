@@ -8,7 +8,7 @@ public class PathTile extends Tile {
     /** PathTile is used exclusively in procedural generation
      *  and replaced with air before the map is returned 
      */
-    private static PathTile instance = new PathTile();
+    private static final PathTile instance = new PathTile();
     
     public static PathTile getInstance() {
         return instance;
@@ -17,10 +17,6 @@ public class PathTile extends Tile {
     @Override
     public Graphic getWallTexture() {
         return AirTile.getInstance().getWallTexture();
-    }
-
-    @Override
-    public void onShot() {
     }
 
     @Override

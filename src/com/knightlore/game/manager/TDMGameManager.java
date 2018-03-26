@@ -42,7 +42,7 @@ public class TDMGameManager extends GameManager {
     }
     
     private static final double ROUND_TIME_SECS = 300;
-    private long SCORE_UPDATE_PERIOD = (long) GameEngine.UPDATES_PER_SECOND * 5;
+    private final long SCORE_UPDATE_PERIOD = (long) GameEngine.UPDATES_PER_SECOND * 5;
     private long nextScoreUpdate;
     
     private int blueScore = 0;
@@ -178,10 +178,6 @@ public class TDMGameManager extends GameManager {
         // nice adding :)
         GameEngine.getSingleton().getWorld().addEntity(pickup);
         System.out.println(type + " Pickup Created");
-    }
-    
-    @Override
-    public void onCreate() {
     }
     
     /**

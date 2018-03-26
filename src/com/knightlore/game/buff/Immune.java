@@ -4,8 +4,8 @@ import com.knightlore.game.entity.Entity;
 
 public class Immune extends Buff {
 
-    private static double IMMUNE_FREQUENCY = 1;
-    private static double IMMUNE_LENGTH = 15;
+    private static final double IMMUNE_FREQUENCY = 1;
+    private static final double IMMUNE_LENGTH = 15;
 
     public Immune(Entity ent) {
         super(ent, IMMUNE_FREQUENCY, IMMUNE_LENGTH);

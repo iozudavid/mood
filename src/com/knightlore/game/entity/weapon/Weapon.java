@@ -28,7 +28,7 @@ public abstract class Weapon {
     private final SoundResource shootSFX;
     private final int fireRate;
     private int timer;
-    protected Graphic graphic;
+    protected final Graphic graphic;
     
     private final int weaponBobX = GameSettings.motionBob ? 20 : 0;
     private final int weaponBobY = GameSettings.motionBob ? 30 : 0;

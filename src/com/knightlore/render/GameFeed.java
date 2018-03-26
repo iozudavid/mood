@@ -2,7 +2,6 @@ package com.knightlore.render;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.ListIterator;
 
 import com.knightlore.engine.GameEngine;
 import com.knightlore.gui.GameChat;
@@ -19,24 +18,22 @@ public class GameFeed implements IRenderable {
         return singleton;
     }
 
-    private List<GameFeedMessage> messages;
-    private List<GameFeedMessage> damageMessages;
+    private final List<GameFeedMessage> messages;
+    private final List<GameFeedMessage> damageMessages;
     private final long MESSAGE_DURATION = (long) (GameEngine.UPDATES_PER_SECOND * 4);
 
     private GameFeed() {
-        this.messages = new ArrayList<GameFeedMessage>();
+        this.messages = new ArrayList<>();
         this.damageMessages = new ArrayList<>();
     }
 
     @Override
     public void render(PixelBuffer pix, int x, int y) {
 		synchronized (damageMessages) {
-			ListIterator<GameFeedMessage> itr = damageMessages.listIterator();
-			while (itr.hasNext()) {
-				GameFeedMessage msg = itr.next();
-				pix.drawString(Font.DEFAULT_WHITE, msg.message, pix.getWidth() - 100, pix.getHeight() - 100, 3, 2);
-				y += 10;
-			}
+            for (GameFeedMessage msg : damageMessages) {
+                pix.drawString(Font.DEFAULT_WHITE, msg.message, pix.getWidth() - 100, pix.getHeight() - 100, 3, 2);
+                y += 10;
+            }
 		}
     }
     
@@ -75,8 +72,8 @@ public class GameFeed implements IRenderable {
     
     private class GameFeedMessage {
 
-        private String message;
-        private long timeWhenGone;
+        private final String message;
+        private final long timeWhenGone;
 
         GameFeedMessage(String message, long timeWhenGone) {
             this.message = message;

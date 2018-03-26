@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import com.knightlore.GameSettings;
 import com.knightlore.engine.GameEngine;
 import com.knightlore.render.PixelBuffer;
-import com.knightlore.utils.funcptrs.VoidFunction;
 
 /**
  * Class encapsulates all SettingsMenu GUIObjects.
@@ -14,24 +13,24 @@ import com.knightlore.utils.funcptrs.VoidFunction;
  */
 public class SettingsMenu {
 
-    private GUICanvas gui;
-    private int screenWidth;
-    private int screenHeight;
-    private Image coverImage;
-    private Text nameText;
-    private TextField nameTextField;
-    private Group nameGroup;
-    private Text blockinessText;
-    private Slider blockinessSlider;
-    private Group blockinessGroup;
-    private Group soundGroup;
-    private Text soundText;
-    private Slider soundSlider;
-    private Group bobGroup;
-    private Text bobText;
-    private CheckBox bobCheckBox;
-    private Button applyButton;
-    private Button cancelButton;
+    private final GUICanvas gui;
+    private final int screenWidth;
+    private final int screenHeight;
+    private final Image coverImage;
+    private final Text nameText;
+    private final TextField nameTextField;
+    private final Group nameGroup;
+    private final Text blockinessText;
+    private final Slider blockinessSlider;
+    private final Group blockinessGroup;
+    private final Group soundGroup;
+    private final Text soundText;
+    private final Slider soundSlider;
+    private final Group bobGroup;
+    private final Text bobText;
+    private final CheckBox bobCheckBox;
+    private final Button applyButton;
+    private final Button cancelButton;
 
     /**
      * SetUp all GUIObjects needed for SettingsMenu
@@ -115,30 +114,20 @@ public class SettingsMenu {
 
         this.cancelButton = new Button(GuiUtils.middleWidth(this.screenWidth / 2, 300),
                 GuiUtils.calculateHeight(this.screenHeight, 85), 300, 40, "Cancel", 21);
-        this.applyButton = new Button((int) (GuiUtils.middleWidth(this.screenWidth / 2, 300) + this.screenWidth / 2),
+        this.applyButton = new Button(GuiUtils.middleWidth(this.screenWidth / 2, 300) + this.screenWidth / 2,
                 GuiUtils.calculateHeight(this.screenHeight, 85), 300, 40, "Apply", 21);
         this.gui.addGUIObject(applyButton);
         this.gui.addGUIObject(cancelButton);
 
-        this.applyButton.clickFunction = new VoidFunction() {
-
-            @Override
-            public void call() {
-                GameSettings.motionBob = SettingsMenu.this.bobCheckBox.getBobingMode();
-                GameEngine.getSingleton().setVolume(SettingsMenu.this.soundSlider.getValue());
-                GameSettings.desiredBlockiness = (int)(SettingsMenu.this.blockinessSlider.getValue()*20F);
-                GameSettings.playerName = SettingsMenu.this.nameTextField.getText();
-                GameEngine.getSingleton().guiState = GUIState.SettingsMenuApply;
-            }
+        this.applyButton.clickFunction = () -> {
+            GameSettings.motionBob = SettingsMenu.this.bobCheckBox.getBobingMode();
+            GameEngine.getSingleton().setVolume(SettingsMenu.this.soundSlider.getValue());
+            GameSettings.desiredBlockiness = (int)(SettingsMenu.this.blockinessSlider.getValue()*20F);
+            GameSettings.playerName = SettingsMenu.this.nameTextField.getText();
+            GameEngine.getSingleton().guiState = GUIState.SettingsMenuApply;
         };
 
-        this.cancelButton.clickFunction = new VoidFunction() {
-
-            @Override
-            public void call() {
-                GameEngine.getSingleton().guiState = GUIState.SettingsMenuCancel;
-            }
-        };
+        this.cancelButton.clickFunction = () -> GameEngine.getSingleton().guiState = GUIState.SettingsMenuCancel;
 
     }
 

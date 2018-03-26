@@ -43,7 +43,7 @@ public class ServerNetworkObjectManager extends NetworkObjectManager {
     // Counter for REGULAR_UPDATE_FREQ
     private int updateCount = 1;
 
-    private ServerWorld serverWorld;
+    private final ServerWorld serverWorld;
 
     public ServerNetworkObjectManager(ServerWorld world) {
         super();
@@ -133,17 +133,6 @@ public class ServerNetworkObjectManager extends NetworkObjectManager {
             ByteBuffer msg = getObjectCreationMessage(obj);
             sender.send(msg);
         }
-    }
-
-
-    /**
-     * Disconnect client with the given id. onUpdate functionwill do the job
-     * 
-     * @param uuid
-     *            - object's UUID we want to disconnect
-     */
-    public void disconnectClient(UUID uuid) {
-        // TODO
     }
 
     /**

@@ -44,13 +44,7 @@ public class PickupPlacement implements Comparable<PickupPlacement>{
      */
     @Override
     public int compareTo(PickupPlacement arg) {
-        if(placementTime < arg.placementTime) {
-            return -1;
-        }
-        if(placementTime > arg.placementTime) {
-            return 1;
-        }
-        return 0;
+        return Double.compare(placementTime, arg.placementTime);
     }
     
 }

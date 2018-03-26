@@ -21,8 +21,8 @@ import com.knightlore.utils.physics.Physics;
  */
 public class GUICanvas extends GameObject implements IRenderable {
 
-	private int screenWidth;
-	private int screenHeight;
+	private final int screenWidth;
+	private final int screenHeight;
 	private static final Color BACKGROUND_COLOR = new Color(0xFF00FF00,true);
 
 	static TextField activeTextField;
@@ -38,7 +38,7 @@ public class GUICanvas extends GameObject implements IRenderable {
 	private static Optional<VoidFunction> onPressEscape=Optional.empty();
 	private static Optional<VoidFunction> onPressQ=Optional.empty();
 	private static Optional<VoidFunction> onReleaseQ=Optional.empty();
-    public boolean isVisible;
+    public final boolean isVisible;
 	
 	public GUICanvas(int screenWidth, int screenHeight){
 		super();
@@ -120,7 +120,9 @@ public class GUICanvas extends GameObject implements IRenderable {
 		if (activeTextField != null) {
 			activeTextField = null;
 			gameTextField.escape();
-		} else onPressEscape.ifPresent(VoidFunction::call);
+		} else {
+			onPressEscape.ifPresent(VoidFunction::call);
+		}
 	}
 	
 	/**
@@ -190,10 +192,6 @@ public class GUICanvas extends GameObject implements IRenderable {
                 gui.Draw(pix, x, y);
             }
         }
-	}
-
-	@Override
-	public void onCreate() {
 	}
 	
     /**

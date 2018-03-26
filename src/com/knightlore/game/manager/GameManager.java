@@ -115,14 +115,12 @@ public abstract class GameManager extends NetworkObject {
      */
     public String timeLeftString() {
         long second = (long) (ticksLeft / GameEngine.UPDATES_PER_SECOND);
-        long minute = (long) (second / 60);
+        long minute = second / 60;
         return String.format("%02d:%02d", minute % 60, second % 60);
     }
     
     /**
-     * serialises the state of this object into a ByteBuffer
-     * 
-     * @see deserialize()
+     * Serialises the state of this object into a ByteBuffer
      */
     @Override
     public ByteBuffer serialize() {
@@ -134,8 +132,6 @@ public abstract class GameManager extends NetworkObject {
     
     /**
      * Deserialises the state of this object from a ByteBuffer
-     * 
-     * @see serialise()
      */
     @Override
     public void deserialize(ByteBuffer buffer) {

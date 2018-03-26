@@ -25,7 +25,7 @@ public class Font {
     private static final int BOUNDS_COLOR = 0xFFFF0000; // pure red.
 
     private BufferedImage sheet;
-    private Map<Character, Graphic> symbols;
+    private final Map<Character, Graphic> symbols;
 
     private Font(String path, String order, int color) {
         this.symbols = new HashMap<>();

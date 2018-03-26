@@ -1,7 +1,6 @@
 package com.knightlore.gui;
 
 import java.awt.Color;
-import java.awt.image.BufferedImage;
 
 import com.knightlore.render.PixelBuffer;
 import com.knightlore.render.font.Font;
@@ -24,7 +23,7 @@ public class Button extends GUIObject {
     }
 
     public Button(int x, int y, int width, int height, String text, int fontSize) {
-        this(x, y, width, height, 0, text, ((double)(fontSize / 15D)));
+        this(x, y, width, height, 0, text, fontSize / 15D);
     }
 
     public Button(int x, int y, int width, int height, int depth, String text, double fontSize) {
@@ -42,11 +41,11 @@ public class Button extends GUIObject {
     public SelectState state = SelectState.UP_PHASE_1;
 
     // no harm in changing these externally
-    public Color upColour1 = new Color(177, 177, 177);
-    public Color upColour2 = new Color(191, 191, 191);
-    public Color hoverColour1 = new Color(209, 209, 209);
-    public Color hoverColour2 = new Color(230, 230, 230);
-    public Color downColour = new Color(250, 250, 250);
+    public final Color upColour1 = new Color(177, 177, 177);
+    public final Color upColour2 = new Color(191, 191, 191);
+    public final Color hoverColour1 = new Color(209, 209, 209);
+    public final Color hoverColour2 = new Color(230, 230, 230);
+    public final Color downColour = new Color(250, 250, 250);
 
     public VoidFunction clickFunction;
 
@@ -104,7 +103,7 @@ public class Button extends GUIObject {
     @Override
     void Draw(PixelBuffer pix, int x, int y) {
 
-        int color = Color.BLACK.getRGB();
+        int color;
         if (state != SelectState.UP_PHASE_1 && state != SelectState.UP_PHASE_2 && activeGraphic != null
                 && activeGraphic.getImage() != null) {
             pix.drawGraphic(activeGraphic, (int) (rect.x - rect.getHeight() - 20), rect.y, 50, 50);
@@ -120,39 +119,42 @@ public class Button extends GUIObject {
         color = activeColor().getRGB();
         for (int x1 = rect.x; x1 < rect.width + rect.x; x1++) {
             for (int y1 = rect.y; y1 < rect.height + rect.y; y1++) {
-                if (state == SelectState.HOVER_PHASE_1) {
-                    if (x1 % 2 == 0 || y1 % 2 == 0) {
+                switch (state) {
+                    case HOVER_PHASE_1:
+                        if (x1 % 2 == 0 || y1 % 2 == 0) {
+                            pix.fillRect(color, x1, y1, 1, 1);
+                        }
+                        break;
+                    case HOVER_PHASE_2:
+                        if (!(x1 % 2 == 0 || y1 % 2 == 0)) {
+                            color = hoverColour2.getRGB();
+                        } else {
+                            color = hoverColour1.getRGB();
+                        }
                         pix.fillRect(color, x1, y1, 1, 1);
-                    }
-                } else if (state == SelectState.HOVER_PHASE_2) {
-                    if (!(x1 % 2 == 0 || y1 % 2 == 0)) {
-                        color = hoverColour2.getRGB();
-                    } else {
-                        color = hoverColour1.getRGB();
-                    }
-                    pix.fillRect(color, x1, y1, 1, 1);
-                } else if (state == SelectState.UP_PHASE_1) {
-                    if (x1 % 2 == 0 || y1 % 2 == 0) {
+                        break;
+                    case UP_PHASE_1:
+                        if (x1 % 2 == 0 || y1 % 2 == 0) {
+                            pix.fillRect(color, x1, y1, 1, 1);
+                        }
+                        break;
+                    case UP_PHASE_2:
+                        if (!(x1 % 2 == 0 || y1 % 2 == 0)) {
+                            color = upColour2.getRGB();
+                        } else {
+                            color = upColour1.getRGB();
+                        }
                         pix.fillRect(color, x1, y1, 1, 1);
-                    }
-                } else if (state == SelectState.UP_PHASE_2) {
-                    if (!(x1 % 2 == 0 || y1 % 2 == 0)) {
-                        color = upColour2.getRGB();
-                    } else {
-                        color = upColour1.getRGB();
-                    }
-                    pix.fillRect(color, x1, y1, 1, 1);
-                } else {
-                    pix.fillRect(color, x1, y1, 1, 1);
+                        break;
+                    default:
+                        pix.fillRect(color, x1, y1, 1, 1);
+                        break;
                 }
             }
         }
-        color = Color.BLACK.getRGB();
-        int width = pix.stringWidth(Font.DEFAULT_WHITE, textArea, this.fontSize, 2);
-        int height = Font.DEFAULT_WHITE.getHeight();
-        width = rect.width - width;
+        int width = rect.width - pix.stringWidth(Font.DEFAULT_WHITE, textArea, this.fontSize, 2);
         width /= 2f;
-        height = (int) (rect.height / 2f);
+        int height = (int) (rect.height / 2f);
         height += fontSize / 2;
         pix.drawString(Font.DEFAULT_WHITE, textArea, rect.x + width, rect.y + height, this.fontSize, 2);
 

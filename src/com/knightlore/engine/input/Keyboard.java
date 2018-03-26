@@ -22,7 +22,7 @@ public class Keyboard extends KeyAdapter {
      * to a boolean value representing whether or not they are pressed. For
      * instance, if keys[KeyEvent.VK_W] == true then the key 'w' is pressed.
      */
-    private boolean[] keys;
+    private final boolean[] keys;
 
     public Keyboard() {
         // 0-255 encapsulates the range of keycodes we might want to use
@@ -81,8 +81,9 @@ public class Keyboard extends KeyAdapter {
     		GUICanvas.escape();
     	} else if(GameEngine.getSingleton().guiState==GUIState.InGame && eChar=='q'){
     		GUICanvas.pressQ();
-    	} else
-    		GUICanvas.inputChar(e.getKeyChar());
+    	} else {
+            GUICanvas.inputChar(e.getKeyChar());
+        }
     }
 
     /**

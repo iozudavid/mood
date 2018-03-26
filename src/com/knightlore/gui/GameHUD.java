@@ -7,7 +7,7 @@ package com.knightlore.gui;
  */
 public class GameHUD extends GUICanvas {
 
-    private Text timeLeftText;
+    private final Text timeLeftText;
 
     public GameHUD(int screenWidth, int screenHeight) {
         super(screenWidth, screenHeight);

@@ -12,9 +12,9 @@ public class PickupManager implements TickListener{
 
     private double currentTime = 0.0;
 
-    private GameEngine engine;
-    private PriorityQueue<PickupPlacement> pickupQueue 
-      = new PriorityQueue<PickupPlacement>();
+    private final GameEngine engine;
+    private final PriorityQueue<PickupPlacement> pickupQueue
+      = new PriorityQueue<>();
     
     /**
      * The pickupManager is used to keep track of the placement of

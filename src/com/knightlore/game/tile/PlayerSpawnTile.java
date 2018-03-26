@@ -3,7 +3,6 @@ package com.knightlore.game.tile;
 import com.knightlore.engine.GameEngine;
 import com.knightlore.game.Team;
 import com.knightlore.game.buff.Push;
-import com.knightlore.game.buff.SpawnVision;
 import com.knightlore.game.entity.Entity;
 import com.knightlore.render.animation.TimedAnimation;
 import com.knightlore.render.graphic.Graphic;
@@ -14,8 +13,8 @@ public class PlayerSpawnTile extends Tile {
     private final Team team;
     private final Vector2D pushVector;
     
-    private static final TimedAnimation<Graphic> RED_LAVA_ANIM = new TimedAnimation<Graphic>(
-            (long) (GameEngine.UPDATES_PER_SECOND / 4));
+    private static final TimedAnimation<Graphic> RED_LAVA_ANIM = new TimedAnimation<>(
+            (long)(GameEngine.UPDATES_PER_SECOND / 4));
     static {
         RED_LAVA_ANIM.addFrame(Texture.RED_LAVA_F1);
         RED_LAVA_ANIM.addFrame(Texture.RED_LAVA_F2);
@@ -24,8 +23,8 @@ public class PlayerSpawnTile extends Tile {
         GameEngine.ticker.addTickListener(RED_LAVA_ANIM);
     }
     
-    private static final TimedAnimation<Graphic> BLUE_LAVA_ANIM = new TimedAnimation<Graphic>(
-            (long) (GameEngine.UPDATES_PER_SECOND / 4));
+    private static final TimedAnimation<Graphic> BLUE_LAVA_ANIM = new TimedAnimation<>(
+            (long)(GameEngine.UPDATES_PER_SECOND / 4));
     static {
         BLUE_LAVA_ANIM.addFrame(Texture.BLUE_LAVA_F1);
         BLUE_LAVA_ANIM.addFrame(Texture.BLUE_LAVA_F2);
@@ -89,32 +88,30 @@ public class PlayerSpawnTile extends Tile {
     }
 
     @Override
-    public void onShot() {
-    }
-
-    @Override
     public String toString() {
         return team.toString() + " spawn";
     }
 
     @Override
     public char toChar() {
-        if (team == Team.NONE) {
-            return '0';
-        } else if (team == Team.BLUE) {
-            return '1';
-        } else {
-            return '2';
+        switch (team) {
+            case NONE:
+                return '0';
+            case BLUE:
+                return '1';
+            default:
+                return '2';
         }
     }
 
     public Tile reflectTileX() {
-        if (team == Team.NONE) {
-            return new PlayerSpawnTile(Team.NONE);
-        } else if (team == Team.BLUE){
-            return new PlayerSpawnTile(Team.RED);
-        } else {
-            return new PlayerSpawnTile(Team.BLUE);
+        switch (team) {
+            case NONE:
+                return new PlayerSpawnTile(Team.NONE);
+            case BLUE:
+                return new PlayerSpawnTile(Team.RED);
+            default:
+                return new PlayerSpawnTile(Team.BLUE);
         }
     }
 

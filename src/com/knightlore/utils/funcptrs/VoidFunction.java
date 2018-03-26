@@ -6,7 +6,6 @@ package com.knightlore.utils.funcptrs;
  * 
  * @author James
  *
- * @param <T>
  */
 @FunctionalInterface
 public interface VoidFunction {

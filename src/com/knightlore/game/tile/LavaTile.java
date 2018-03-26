@@ -27,10 +27,6 @@ public class LavaTile extends Tile {
     }
 
     @Override
-    public void onShot() {
-    }
-
-    @Override
     public double getCost() {
         return 100D / (1 - getSolidity());
     }

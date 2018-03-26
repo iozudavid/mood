@@ -2,7 +2,6 @@ package com.knightlore.game.world;
 
 import java.util.Iterator;
 
-import com.knightlore.game.BotInput;
 import com.knightlore.game.Team;
 import com.knightlore.game.entity.Entity;
 import com.knightlore.game.entity.Player;

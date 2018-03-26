@@ -1,6 +1,5 @@
 package com.knightlore.engine;
 
-import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 
@@ -14,11 +13,9 @@ import com.knightlore.game.world.ClientWorld;
 import com.knightlore.game.world.GameWorld;
 import com.knightlore.game.world.ServerWorld;
 import com.knightlore.gui.GUIState;
-import com.knightlore.network.NetworkObject;
 import com.knightlore.network.NetworkObjectManager;
 import com.knightlore.network.client.ClientManager;
 import com.knightlore.network.client.ClientNetworkObjectManager;
-import com.knightlore.network.protocol.NetworkUtils;
 import com.knightlore.network.server.ServerManager;
 import com.knightlore.network.server.ServerNetworkObjectManager;
 import com.knightlore.render.Camera;
@@ -131,10 +128,11 @@ public class GameEngine implements Runnable {
         System.out.println("Starting game...");
         // The NetworkObjectManager will call setUpWorld() on the world when
         // it's ready to do so.
-        if (defaultVolume != -1)
+        if (defaultVolume != -1) {
             this.soundManager = new SoundManager(defaultVolume);
-        else
+        } else {
             this.soundManager = new SoundManager();
+        }
         
         if (GameSettings.isServer()) {
             world = new ServerWorld();
@@ -147,7 +145,7 @@ public class GameEngine implements Runnable {
         if (GameSettings.isClient()) {
             world = new ClientWorld();
             networkObjectManager = new ClientNetworkObjectManager((ClientWorld) world);
-            ClientManager networkManager = null;
+            ClientManager networkManager;
             try {
                 networkManager = new ClientManager();
             } catch (Exception e) {

@@ -22,9 +22,9 @@ public abstract class NetworkObjectManager implements INetworkable, Runnable {
     // This is a special UUID that refers to the NetworkObjectManager itself.
     public static final UUID MANAGER_UUID = UUID
             .fromString("00000000-0000-0000-0000-000000000000");
-    protected Map<String, Consumer<ByteBuffer>> networkConsumers = new HashMap<>();
+    protected final Map<String, Consumer<ByteBuffer>> networkConsumers = new HashMap<>();
 
-    private BlockingQueue<ByteBuffer> messages = new LinkedBlockingQueue<>();
+    private final BlockingQueue<ByteBuffer> messages = new LinkedBlockingQueue<>();
 
     public void processMessage(ByteBuffer buffer) {
         this.messages.add(buffer);

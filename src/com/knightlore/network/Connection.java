@@ -16,11 +16,11 @@ public abstract class Connection implements Runnable, Prunable {
     /**
      *  Wait 5 seconds without receiving packets before disconnecting.
      */
-    protected static int TIMEOUT_MILLIS = 500 * 1000;
+    protected static final int TIMEOUT_MILLIS = 500 * 1000;
 
     public volatile boolean terminated;
     // Stores the most recently received packet.
-    private BlockingQueue<ByteBuffer> packets;
+    private final BlockingQueue<ByteBuffer> packets;
 
     public Connection() {
         this.terminated = false;

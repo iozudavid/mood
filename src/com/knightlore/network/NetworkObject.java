@@ -23,12 +23,12 @@ import com.knightlore.utils.Vector2D;
  * likely be overwritten by deserialisation anyway.
  */
 public abstract class NetworkObject extends GameObject implements INetworkable {
-    private UUID objectUniqueID;
-    private NetworkObjectManager networkObjectManager = GameEngine.getSingleton().getNetworkObjectManager();
+    private final UUID objectUniqueID;
+    private final NetworkObjectManager networkObjectManager = GameEngine.getSingleton().getNetworkObjectManager();
     protected Vector2D posT1, dirT1, posT2, dirT2;
     protected final double treshold = 0.05D;
 
-    protected Map<String, Consumer<ByteBuffer>> networkConsumers = new HashMap<>();
+    protected final Map<String, Consumer<ByteBuffer>> networkConsumers = new HashMap<>();
 
     public NetworkObject(UUID uuid) {
         this(uuid, Vector2D.ZERO);
@@ -62,15 +62,6 @@ public abstract class NetworkObject extends GameObject implements INetworkable {
     public void init() {
         super.init();
         networkObjectManager.registerNetworkObject(this);
-    }
-
-    /**
-     * Game Engine will call this method when a new object of this type is
-     * created. If there must be a special action to be performed at creation
-     * time, this method should implement it.
-     */
-    @Override
-    public void onCreate() {
     }
 
     /**

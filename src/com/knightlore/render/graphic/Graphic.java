@@ -9,7 +9,8 @@ public class Graphic {
 
     public static final Graphic EMPTY = GraphicSheet.TEXTURES.graphicAt(3, 3);
 
-    protected int width, height;
+    protected final int width;
+    protected final int height;
     protected int[] pixels;
 
     private BufferedImage img;

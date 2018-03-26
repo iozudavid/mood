@@ -43,7 +43,7 @@ public class Display implements IRenderable {
     private MultiplayerMenu mpMenu;
     private SettingsMenu settingsMenu;
     private ArrayList<Object> settingsObj;
-    private List<GUICanvas> guis;
+    private final List<GUICanvas> guis;
     private GUIState gs = GUIState.StartMenu;
 
     public Display() {
@@ -84,27 +84,31 @@ public class Display implements IRenderable {
             break;
 
         case StartMenu:
-            if (this.startMenu == null)
+            if (this.startMenu == null) {
                 this.startMenu = new StartMenu(pix.getHeight(), pix.getWidth());
+            }
             this.startMenu.render(pix, x, y);
             this.clearDisplay();
             gs = GUIState.StartMenu;
             break;
 
         case MultiplayerMenu:
-            if (this.mpMenu == null)
+            if (this.mpMenu == null) {
                 this.mpMenu = new MultiplayerMenu(pix.getHeight(),
                         pix.getWidth());
+            }
             this.mpMenu.render(pix, x, y);
             this.clearDisplay();
             gs = GUIState.MultiplayerMenu;
             break;
 
         case SettingsMenu:
-            if (this.settingsMenu == null)
+            if (this.settingsMenu == null) {
                 this.settingsMenu = new SettingsMenu(pix.getWidth(), pix.getHeight());
-            if (gs != GUIState.SettingsMenu)
+            }
+            if (gs != GUIState.SettingsMenu) {
                 this.settingsObj = this.settingsMenu.getObj();
+            }
             this.settingsMenu.render(pix, x, y);
             this.clearDisplay();
             gs = GUIState.SettingsMenu;
@@ -130,24 +134,30 @@ public class Display implements IRenderable {
     public void clearDisplay() {
         switch (GameEngine.getSingleton().guiState) {
         case InGame:
-            if (this.mpMenu != null)
+            if (this.mpMenu != null) {
                 this.mpMenu = null;
-            if (this.startMenu != null)
+            }
+            if (this.startMenu != null) {
                 this.startMenu = null;
+            }
             return;
         case StartMenu:
-            if (this.mpMenu != null)
+            if (this.mpMenu != null) {
                 this.mpMenu = null;
+            }
             return;
         case MultiplayerMenu:
-            if (this.startMenu != null)
+            if (this.startMenu != null) {
                 this.startMenu = null;
+            }
             return;
         case SettingsMenu:
-            if (this.mpMenu != null)
+            if (this.mpMenu != null) {
                 this.mpMenu = null;
-            if (this.startMenu != null)
+            }
+            if (this.startMenu != null) {
                 this.startMenu = null;
+            }
         default:
             return;
         }

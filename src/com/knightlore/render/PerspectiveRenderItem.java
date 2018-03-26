@@ -18,17 +18,17 @@ import com.knightlore.render.graphic.Graphic;
  */
 public class PerspectiveRenderItem {
 
-    public double opacity;
-    public int drawStart;
-    public int drawEnd;
-    public int lineHeight;
+    public final double opacity;
+    public final int drawStart;
+    public final int drawEnd;
+    public final int lineHeight;
 
-    public Graphic texture;
+    public final Graphic texture;
 
-    public int texX;
-    public double distanceToWall;
-    public int xx;
-    public boolean side;
+    public final int texX;
+    public final double distanceToWall;
+    public final int xx;
+    public final boolean side;
 
     public PerspectiveRenderItem(double opacity, int drawStart, int drawEnd, int lineHeight, Graphic texture, int texX,
             double distanceToWall, int xx, boolean side) {

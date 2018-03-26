@@ -11,7 +11,7 @@ public enum WeaponType {
     // Cache the values to avoid recreating the array each time.
     public static final WeaponType VALUES[] = values();
 
-    private Class<? extends Weapon> cls;
+    private final Class<? extends Weapon> cls;
 
     WeaponType(Class<? extends Weapon> cls) {
         this.cls = cls;

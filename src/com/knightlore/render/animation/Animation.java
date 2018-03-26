@@ -15,7 +15,7 @@ import java.util.List;
  */
 public class Animation<T> {
 
-    protected List<T> frames;
+    protected final List<T> frames;
     protected int currentFrame;
 
     public Animation() {

@@ -9,7 +9,7 @@ import java.awt.*;
 
 public class PickupTile extends Tile {
 
-    private PickupType pickupType;
+    private final PickupType pickupType;
     
     public PickupTile(PickupType pickupType) {
         this.pickupType = pickupType;
@@ -27,10 +27,6 @@ public class PickupTile extends Tile {
         return Texture.WEAPON_SPAWN;
     }
     
-    @Override
-    public void onShot() {
-    }
-
     @Override
     public int getMinimapColor() {
         if (pickupType == PickupType.HEALTH) {

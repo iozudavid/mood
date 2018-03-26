@@ -1,8 +1,6 @@
 package com.knightlore.game.area;
 
 import com.knightlore.game.tile.AirTile;
-import com.knightlore.game.tile.LavaTile;
-import com.knightlore.game.tile.PlayerSpawnTile;
 import com.knightlore.game.tile.Tile;
 
 import java.io.Serializable;

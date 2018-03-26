@@ -35,8 +35,8 @@ public abstract class GameWorld {
     private AIManager aiManager;
     private List<Entity> ents;
     
-    private final ConcurrentLinkedQueue<Entity> entsToAdd = new ConcurrentLinkedQueue<Entity>();
-    private final ConcurrentLinkedQueue<Entity> entsToRemove = new ConcurrentLinkedQueue<Entity>();
+    private final ConcurrentLinkedQueue<Entity> entsToAdd = new ConcurrentLinkedQueue<>();
+    private final ConcurrentLinkedQueue<Entity> entsToRemove = new ConcurrentLinkedQueue<>();
     
     /**
      * Updates the PlayerManager, and makes any required changes the entity

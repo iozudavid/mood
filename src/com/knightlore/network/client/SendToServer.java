@@ -31,7 +31,7 @@ public class SendToServer implements Runnable {
     // at *least* one update will be sent.
     private static final int REGULAR_UPDATE_FREQ = 100;
 
-    private Connection conn;
+    private final Connection conn;
     private BufferedReader user;
     private ByteBuffer lastState;
     // private byte[] currentState;
@@ -39,9 +39,9 @@ public class SendToServer implements Runnable {
     private int updateCounter = 1;
 
     private ByteBuffer currentState;
-    private ClientNetworkObjectManager manager;
+    private final ClientNetworkObjectManager manager;
     private UUID myUUID;
-    private Prediction prediction;
+    private final Prediction prediction;
     private int lastPosition = 0;
     private long packetNumber = 0;
 
@@ -72,7 +72,7 @@ public class SendToServer implements Runnable {
             // Encode the current control as an integer.
             buf.putInt(i);
             // taking the current control
-            ClientController currentControl = null;
+            ClientController currentControl;
             int keyCode;
             try {
                 currentControl = ClientProtocol.getByIndex(i);
@@ -116,8 +116,9 @@ public class SendToServer implements Runnable {
 
         synchronized (this.currentState) {
             ByteBuffer nextMessage = this.manager.takeNextMessageToSend();
-            if(nextMessage!=null)
+            if(nextMessage!=null) {
                 this.send(nextMessage);
+            }
             ArrayList<ByteBuffer> lastStates = this.manager
                     .getPlayerStateOnServer();
             if (!lastStates.isEmpty()) {
@@ -195,8 +196,9 @@ public class SendToServer implements Runnable {
         	if(currentHealth<lastHealth){
         		GameFeed.getInstance().printlnDamage("-"+(lastHealth-currentHealth));
         		lastHealth = currentHealth;
-        	}else
-        		lastHealth = currentHealth;
+        	}else {
+                lastHealth = currentHealth;
+            }
             synchronized (this.currentState) {
                 this.currentState = getCurrentControlState(this.packetNumber);
                 this.packetNumber++;

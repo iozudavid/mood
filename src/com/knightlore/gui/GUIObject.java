@@ -12,8 +12,8 @@ import com.knightlore.render.PixelBuffer;
 public abstract class GUIObject {	
     // these should be change-able at runtime by other classes
     // no getter and setter required
-	public int depth;
-	public Rectangle rect;
+	public final int depth;
+	public final Rectangle rect;
     public boolean isVisible;
 	
 
