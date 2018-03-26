@@ -9,7 +9,7 @@ import org.junit.Test;
 
 public class NetworkUtilsTest {
     
-    private String test = "test";
+    private static final String TEST = "test";
     private ByteBuffer bb;
     
     @Before
@@ -19,18 +19,18 @@ public class NetworkUtilsTest {
     
     @Test
     public void test_put_string(){
-        NetworkUtils.putStringIntoBuf(bb, test);
+        NetworkUtils.putStringIntoBuf(bb, TEST);
         bb.rewind();
-        assertEquals(bb.getInt(), test.getBytes().length);
-        byte[] testBytes = new byte[test.getBytes().length];
-        bb.get(testBytes, 0, test.getBytes().length);
-        assertEquals(new String(testBytes),test);
+        assertEquals(bb.getInt(), TEST.getBytes().length);
+        byte[] testBytes = new byte[TEST.getBytes().length];
+        bb.get(testBytes, 0, TEST.getBytes().length);
+        assertEquals(new String(testBytes), TEST);
     }
     
     @Test
     public void test_get_string(){
-        NetworkUtils.putStringIntoBuf(bb, test);
+        NetworkUtils.putStringIntoBuf(bb, TEST);
         bb.rewind();
-        assertEquals(NetworkUtils.getStringFromBuf(bb),test);
+        assertEquals(NetworkUtils.getStringFromBuf(bb), TEST);
     }
 }

@@ -102,4 +102,19 @@ public class Room extends Area {
 
         return true;
     }
+    
+    @Override
+    public String toString() {
+        StringBuilder builder = new StringBuilder(width * height);
+        
+        for (int i = 0; i < this.getWidth(); i++) {
+            for (int j = 0; j < this.getHeight(); j++) {
+               builder.append(getTile(i, j).toChar());
+            }
+    
+            builder.append('\n');
+        }
+        
+        return builder.toString();
+    }
 }
