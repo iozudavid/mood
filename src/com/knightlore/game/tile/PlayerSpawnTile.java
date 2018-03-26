@@ -105,17 +105,6 @@ public class PlayerSpawnTile extends Tile {
         }
     }
     
-    public Tile reflectTileX() {
-        switch (team) {
-            case NONE:
-                return new PlayerSpawnTile(Team.NONE);
-            case BLUE:
-                return new PlayerSpawnTile(Team.RED);
-            default:
-                return new PlayerSpawnTile(Team.BLUE);
-        }
-    }
-    
     public Tile reflectTileY() {
         Team teamR;
         switch (team) {

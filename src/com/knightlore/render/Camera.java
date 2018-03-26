@@ -2,7 +2,6 @@ package com.knightlore.render;
 
 import com.knightlore.GameSettings;
 import com.knightlore.engine.audio.FootstepHandler;
-import com.knightlore.game.area.Map;
 import com.knightlore.game.entity.Entity;
 import com.knightlore.utils.Vector2D;
 
@@ -45,7 +44,7 @@ public class Camera implements IRenderable {
      */
     private double distanceTraveled;
     
-    public Camera(Map map) {
+    public Camera() {
         super();
         this.lastPos = new Vector2D(0, 0);
         this.fhandler = new FootstepHandler();

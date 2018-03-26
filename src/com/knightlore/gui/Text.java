@@ -14,16 +14,10 @@ public class Text extends GUIObject {
     private final double fontSize;
     public Color currentColor = Color.BLACK;
     protected String text;
-    protected char[] rawChars;
+    private char[] rawChars;
     
     public Text(int x, int y, int width, int height, String text, double fontSize) {
         super(x, y, width, height, 0);
-        this.fontSize = fontSize / 15D;
-        SetText(text);
-    }
-    
-    public Text(int x, int y, int width, int height, int depth, String text, double fontSize) {
-        super(x, y, width, height, depth);
         this.fontSize = fontSize / 15D;
         SetText(text);
     }

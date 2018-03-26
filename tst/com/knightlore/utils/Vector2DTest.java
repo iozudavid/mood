@@ -53,11 +53,11 @@ public class Vector2DTest {
     public void fromPoint() {
         // Given
         Point point = new Point(-3, 0);
-    
+        
         // When
         Vector2D vector = Vector2D.fromPoint(point);
         Vector2D expectedVector = new Vector2D(-3, 0);
-    
+        
         assertThat(vector, is(expectedVector));
     }
     
@@ -78,7 +78,7 @@ public class Vector2DTest {
         Vector2D product2 = Vector2D.mul(vector2, constant);
         Vector2D expectedProduct1 = new Vector2D(29.085105, 69.7647453);
         Vector2D expectedProduct2 = new Vector2D(171.390963, -42.381153);
-    
+        
         // Then
         assertThat(product1, isCloseTo(expectedProduct1, 0.00001));
         assertThat(product2, isCloseTo(expectedProduct2, 0.00001));
@@ -89,7 +89,7 @@ public class Vector2DTest {
         // When
         Vector2D difference = Vector2D.sub(vector1, vector2);
         Vector2D expectedDifference = new Vector2D(-10.446, 8.2321);
-    
+        
         // Then
         assertThat(difference, is(expectedDifference));
     }
@@ -99,7 +99,7 @@ public class Vector2DTest {
         // When
         Vector2D sum = vector1.add(vector2);
         Vector2D expectedSum = new Vector2D(14.716, 2.0101);
-    
+        
         // Then
         assertThat(sum, is(expectedSum));
     }
@@ -109,7 +109,7 @@ public class Vector2DTest {
         // When
         Vector2D difference = vector1.subtract(vector2);
         Vector2D expectedDifference = new Vector2D(-10.446, 8.2321);
-    
+        
         // Then
         assertThat(difference, is(expectedDifference));
     }
@@ -120,8 +120,8 @@ public class Vector2DTest {
         Vector2D perpendicular1 = vector1.perpendicular();
         Vector2D perpendicular2 = vector2.perpendicular();
         Vector2D expectedPerpendicular1 = new Vector2D(5.1211, -2.135);
-        Vector2D expectedPerpendicular2 = new Vector2D( -3.111, -12.581);
-    
+        Vector2D expectedPerpendicular2 = new Vector2D(-3.111, -12.581);
+        
         // Then
         assertThat(perpendicular1, is(expectedPerpendicular1));
         assertThat(perpendicular2, is(expectedPerpendicular2));
@@ -132,7 +132,7 @@ public class Vector2DTest {
         // When
         Double cross = vector1.cross(vector2);
         Double expectedCross = -71.0705441;
-    
+        
         // Then
         assertThat(cross, isCloseTo(expectedCross, 0.00001));
     }
@@ -142,7 +142,7 @@ public class Vector2DTest {
         // When
         double dot = vector1.dot(vector2);
         double expectedDot = 10.9286929;
-    
+        
         // Then
         assertThat(dot, isCloseTo(expectedDot, 0.00001));
     }
@@ -152,7 +152,7 @@ public class Vector2DTest {
         // When
         double distance = vector1.distance(vector2);
         double expectedDistance = 13.2998641501;
-    
+        
         // Then
         assertThat(distance, isCloseTo(expectedDistance, 0.00001));
     }
@@ -164,7 +164,7 @@ public class Vector2DTest {
         double expectedMagnitude1 = 5.54832318904;
         double magnitude2 = vector2.magnitude();
         double expectedMagnitude2 = 12.959933719;
-    
+        
         // Then
         assertThat(magnitude1, isCloseTo(expectedMagnitude1, 0.00001));
         assertThat(magnitude2, isCloseTo(expectedMagnitude2, 0.00001));
@@ -177,7 +177,7 @@ public class Vector2DTest {
         double expectedMagnitude1 = 30.78389021;
         double magnitude2 = vector2.sqrMagnitude();
         double expectedMagnitude2 = 167.959882;
-    
+        
         // Then
         assertThat(magnitude1, isCloseTo(expectedMagnitude1, 0.00001));
         assertThat(magnitude2, isCloseTo(expectedMagnitude2, 0.00001));
@@ -190,7 +190,7 @@ public class Vector2DTest {
         double sqrMagnitude1 = vector1.sqrMagnitude();
         double magnitude2 = vector2.magnitude();
         double sqrMagnitude2 = vector2.sqrMagnitude();
-    
+        
         // Then
         assertThat(magnitude1 * magnitude1, isCloseTo(sqrMagnitude1, 0.00001));
         assertThat(magnitude2 * magnitude2, isCloseTo(sqrMagnitude2, 0.00001));
@@ -201,7 +201,7 @@ public class Vector2DTest {
         // When
         double distance = vector1.sqrDistTo(vector2);
         double expectedDistance = 176.886386411;
-    
+        
         // Then
         assertThat(distance, isCloseTo(expectedDistance, 0.00001));
     }
@@ -211,7 +211,7 @@ public class Vector2DTest {
         // When
         double distance1 = vector1.distance(vector2);
         double sqrDistanceTo1 = vector1.sqrDistTo(vector2);
-    
+        
         // Then
         assertThat(distance1 * distance1, isCloseTo(sqrDistanceTo1, 0.00001));
     }
@@ -237,7 +237,7 @@ public class Vector2DTest {
         Point point2 = vector2.toPoint();
         Point expectedPoint1 = new Point(2, 5);
         Point expectedPoint2 = new Point(12, -4);
-    
+        
         // Then
         assertThat(point1, is(expectedPoint1));
         assertThat(point2, is(expectedPoint2));
@@ -267,7 +267,7 @@ public class Vector2DTest {
         assertThat(areEqual2, is(true));
     }
     
-    @Test(expected=IllegalArgumentException.class)
+    @Test(expected = IllegalArgumentException.class)
     public void equals_incorrectEpsilon() {
         // When
         vector1.equals(vector2, -0.001);

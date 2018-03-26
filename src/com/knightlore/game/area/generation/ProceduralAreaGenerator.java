@@ -8,11 +8,7 @@ import java.util.Random;
 abstract class ProceduralAreaGenerator {
     protected Random rand;
     protected Tile[][] grid;
-
-    protected abstract void fillGrid();
-
-    protected abstract void fillUndecidedTiles();
-
+    
     protected void resetGrid() {
         for (int i = 0; i < grid.length; i++) {
             for (int j = 0; j < grid[0].length; j++) {

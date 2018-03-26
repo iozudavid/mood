@@ -450,24 +450,12 @@ public abstract class Entity extends NetworkObject implements IMinimapObject, Ti
         // DO NOTHING
     }
     
-    public double getMoveSpeed() {
-        return moveSpeed;
-    }
-    
     public void setMoveSpeed(double speed) {
         moveSpeed = speed;
     }
     
-    public double getRotateSpeed() {
-        return rotationSpeed;
-    }
-    
     public void setRotateSpeed(double speed) {
         rotationSpeed = speed;
-    }
-    
-    public double getStrafeSpeed() {
-        return strafeSpeed;
     }
     
     public void setStrafeSpeed(double speed) {

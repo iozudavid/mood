@@ -8,7 +8,6 @@ import com.knightlore.MainWindow;
 import com.knightlore.engine.audio.SoundManager;
 import com.knightlore.engine.input.InputManager;
 import com.knightlore.engine.input.Mouse;
-import com.knightlore.game.entity.pickup.PickupManager;
 import com.knightlore.game.world.ClientWorld;
 import com.knightlore.game.world.GameWorld;
 import com.knightlore.game.world.ServerWorld;
@@ -39,7 +38,7 @@ public class GameEngine implements Runnable {
     public static final Charset CHARSET = StandardCharsets.UTF_8;
     public static boolean HEADLESS;
     private static GameEngine singleton = null;
-    public GUIState guiState = GUIState.StartMenu;
+    public GUIState guiState = GUIState.START_MENU;
     private Thread thread;
     private volatile boolean running = false;
     private MainWindow window;
@@ -48,7 +47,6 @@ public class GameEngine implements Runnable {
     private GameWorld world;
     private GameObjectManager gameObjectManager;
     private NetworkObjectManager networkObjectManager;
-    private PickupManager pickupManager;
     private Camera camera;
     private float defaultVolume = -1;
     private SoundManager soundManager;
@@ -148,11 +146,6 @@ public class GameEngine implements Runnable {
         
         System.out.println("World Initialised Successfully.");
         
-        if (GameSettings.isServer()) {
-            // map must be initialised before handing it the pickup manager
-            pickupManager = new PickupManager(world.getMap());
-        }
-        
         if (GameSettings.isClient()) {
             ClientNetworkObjectManager cn = (ClientNetworkObjectManager)networkObjectManager;
             while (!cn.hasFinishedSetup()) {
@@ -170,7 +163,7 @@ public class GameEngine implements Runnable {
             this.display.setRenderer(renderer);
             
         }
-        this.guiState = GUIState.InGame;
+        this.guiState = GUIState.IN_GAME;
         
         // start the lobby
         world.getGameManager().startLobby();
@@ -188,10 +181,10 @@ public class GameEngine implements Runnable {
      */
     private void createWindow() {
         if (GameSettings.FULLSCREEN) {
-            window = new MainWindow(MainWindow.TITLE);
+            window = new MainWindow();
         } else {
             final int w = MainWindow.WIDTH, h = MainWindow.HEIGHT;
-            window = new MainWindow(MainWindow.TITLE, w, h);
+            window = new MainWindow(w, h);
         }
         window.finalise();
         this.screen = window.getScreen();
@@ -259,7 +252,7 @@ public class GameEngine implements Runnable {
                 synchronized (this.gameObjectManager) {
                     gameObjectManager.updateObjects();
                 }
-                if (guiState == GUIState.InGame && world != null) {
+                if (guiState == GUIState.IN_GAME && world != null) {
                     world.update();
                     GameFeed.getInstance().update();
                 }

@@ -6,11 +6,11 @@ package com.knightlore.gui;
  * @author David Iozu
  */
 public enum GUIState {
-    StartMenu,
-    MultiplayerMenu,
-    SettingsMenu,
-    SettingsMenuApply,
-    SettingsMenuCancel,
-    InGame,
-    Pause
+    START_MENU,
+    MULTIPLAYER_MENU,
+    SETTINGS_MENU,
+    SETTINGS_MENU_APPLY,
+    SETTINGS_MENU_CANCEL,
+    IN_GAME,
+    PAUSE
 }

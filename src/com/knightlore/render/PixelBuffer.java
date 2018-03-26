@@ -67,18 +67,6 @@ public class PixelBuffer {
     }
     
     /**
-     * Draws a graphic at the given x and y position. Draws the graphic at a 1
-     * to 1 scale.
-     *
-     * @param graphic the graphic (class: Graphic) to render.
-     * @param x       the x-position of the graphic.
-     * @param y       the y-positon of the graphic.
-     */
-    public void drawGraphic(Graphic graphic, int x, int y) {
-        drawGraphic(graphic, x, y, 1, 1);
-    }
-    
-    /**
      * Draws a graphic at the given x and y position, scaled as necessary.
      *
      * @param graphic the graphic (class: Graphic) to render.
@@ -154,23 +142,6 @@ public class PixelBuffer {
         drawLine(color, x, y + h, x + w, y + h);
         drawLine(color, x, y, x, y + h);
         drawLine(color, x + w, y, x + w, y + h);
-    }
-    
-    /**
-     * Fills an oval of the given colour, width and height. Uses a default value
-     * for the number of points to draw (approx 314). Should be perfectly fine
-     * for small ovals.
-     *
-     * @param color the colour to draw the oval.
-     * @param x     the x-position of the square bounding the oval.
-     * @param y     the y-position of the square bounding the oval.
-     * @param w     the width of the circle.
-     * @param h     the height of the circle.
-     */
-    public void fillOval(int color, int x, int y, int w, int h) {
-        // ~ 314 points. Good enough for small circles.
-        final int DEFAULT_POINTS = (int)(Math.PI / 0.01);
-        fillOval(color, x, y, w, h, DEFAULT_POINTS);
     }
     
     /**
@@ -311,10 +282,6 @@ public class PixelBuffer {
      */
     private boolean inBounds(int x, int y) {
         return x >= 0 && x < WIDTH && y >= 0 && y < HEIGHT;
-    }
-    
-    public int[] getPixels() {
-        return pixels;
     }
     
     public int getWidth() {

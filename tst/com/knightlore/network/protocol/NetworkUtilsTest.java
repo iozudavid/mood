@@ -13,12 +13,12 @@ public class NetworkUtilsTest {
     private ByteBuffer bb;
     
     @Before
-    public void setUp(){
+    public void setUp() {
         bb = ByteBuffer.allocate(100);
     }
     
     @Test
-    public void test_put_string(){
+    public void test_put_string() {
         NetworkUtils.putStringIntoBuf(bb, TEST);
         bb.rewind();
         assertEquals(bb.getInt(), TEST.getBytes().length);
@@ -28,7 +28,7 @@ public class NetworkUtilsTest {
     }
     
     @Test
-    public void test_get_string(){
+    public void test_get_string() {
         NetworkUtils.putStringIntoBuf(bb, TEST);
         bb.rewind();
         assertEquals(NetworkUtils.getStringFromBuf(bb), TEST);

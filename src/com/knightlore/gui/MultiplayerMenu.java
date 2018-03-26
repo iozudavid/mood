@@ -30,13 +30,13 @@ public class MultiplayerMenu {
     private final Text noConnection;
     
     /**
-     * SetUp all the GUIObjects needed for MultiplayerMenu
+     * SetUp all the GUIObjects needed for MULTIPLAYER_MENU
      *
      * @param screenHeight - height of the screen
      * @param screenWidth  - width of the screen
      */
     public MultiplayerMenu(int screenHeight, int screenWidth) {
-        this.gui = new GUICanvas(screenWidth, screenHeight);
+        this.gui = new GUICanvas();
         this.gui.init();
         this.screenHeight = screenHeight;
         this.screenWidth = screenWidth;
@@ -80,7 +80,7 @@ public class MultiplayerMenu {
         
         this.cancelButton.clickFunction = () -> {
             MultiplayerMenu.this.gui.destroy();
-            GameEngine.getSingleton().guiState = GUIState.StartMenu;
+            GameEngine.getSingleton().guiState = GUIState.START_MENU;
         };
         
         this.connectButton.clickFunction = new VoidFunction() {

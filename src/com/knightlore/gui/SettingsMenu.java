@@ -7,7 +7,7 @@ import com.knightlore.engine.GameEngine;
 import com.knightlore.render.PixelBuffer;
 
 /**
- * Class encapsulates all SettingsMenu GUIObjects.
+ * Class encapsulates all SETTINGS_MENU GUIObjects.
  *
  * @author David Iozu
  */
@@ -33,13 +33,13 @@ public class SettingsMenu {
     private final Button cancelButton;
     
     /**
-     * SetUp all GUIObjects needed for SettingsMenu
+     * SetUp all GUIObjects needed for SETTINGS_MENU
      *
      * @param screenWidth  - width of the screen
      * @param screenHeight - height of the screen
      */
     public SettingsMenu(int screenWidth, int screenHeight) {
-        this.gui = new GUICanvas(screenWidth, screenHeight);
+        this.gui = new GUICanvas();
         this.gui.init();
         this.screenWidth = screenWidth;
         this.screenHeight = screenHeight;
@@ -122,15 +122,15 @@ public class SettingsMenu {
             GameEngine.getSingleton().setVolume(SettingsMenu.this.soundSlider.getValue());
             GameSettings.desiredBlockiness = (int)(SettingsMenu.this.blockinessSlider.getValue() * 20F);
             GameSettings.playerName = SettingsMenu.this.nameTextField.getText();
-            GameEngine.getSingleton().guiState = GUIState.SettingsMenuApply;
+            GameEngine.getSingleton().guiState = GUIState.SETTINGS_MENU_APPLY;
         };
         
-        this.cancelButton.clickFunction = () -> GameEngine.getSingleton().guiState = GUIState.SettingsMenuCancel;
+        this.cancelButton.clickFunction = () -> GameEngine.getSingleton().guiState = GUIState.SETTINGS_MENU_CANCEL;
         
     }
     
     /**
-     * Used to save last SettingsMenu config if we cancel actual changes.
+     * Used to save last SETTINGS_MENU config if we cancel actual changes.
      *
      * @return the actual settings menu
      */
@@ -157,7 +157,7 @@ public class SettingsMenu {
     }
     
     /**
-     * Render actual SettingsMenu
+     * Render actual SETTINGS_MENU
      *
      * @param pix - PixelBuffer we render on
      * @param x   - X position we start rendering from

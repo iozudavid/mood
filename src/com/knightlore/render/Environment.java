@@ -5,10 +5,9 @@ import com.knightlore.render.graphic.Graphic;
 import com.knightlore.render.graphic.texture.Texture;
 
 public enum Environment {
-    DARK_OUTDOORS(15, Texture.SLAB, Texture.MUD,
-            BackgroundMusic.THEME_1), LIGHT_OUTDOORS(3, Texture.BRICK,
-            Texture.BRICK, BackgroundMusic.THEME_1), DUNGEON(20,
-            Texture.WOOD, Texture.MUD, BackgroundMusic.THEME_1);
+    DARK_OUTDOORS(15, Texture.SLAB, Texture.MUD, BackgroundMusic.THEME_1),
+    LIGHT_OUTDOORS(3, Texture.BRICK, Texture.BRICK, BackgroundMusic.THEME_1),
+    DUNGEON(20, Texture.WOOD, Texture.MUD, BackgroundMusic.THEME_1);
     
     private final int darkness;
     private final Graphic floorTexture;

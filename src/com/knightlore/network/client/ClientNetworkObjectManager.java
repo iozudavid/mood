@@ -167,9 +167,6 @@ public class ClientNetworkObjectManager extends NetworkObjectManager {
         toBeDestroyedObject.destroy();
         if (toBeDestroyedObject instanceof Entity) {
             clientWorld.removeEntity((Entity)toBeDestroyedObject);
-            GameEngine g = GameEngine.getSingleton();
-            ClientWorld world = (ClientWorld)g.getWorld();
-            GameChat c = world.getGameChat();
         }
     }
 
@@ -221,7 +218,7 @@ public class ClientNetworkObjectManager extends NetworkObjectManager {
     private synchronized void receiveReadySignal(ByteBuffer buf) {
         System.out.println("Sending name");
         sendName();
-        Camera camera = new Camera(clientWorld.getMap());
+        Camera camera = new Camera();
         camera.setSubject(myPlayer);
         GameEngine.getSingleton().setCamera(camera);
         // We can now start the game.

@@ -17,10 +17,6 @@ public class Speed extends Buff {
         super(ent, SPEED_BUFF_FREQUENCY, SPEED_BUFF_LENGTH);
     }
     
-    protected Speed(Entity ent, double frequency, double length) {
-        super(ent, frequency, length);
-    }
-    
     @Override
     public void onApply() {
         // TODO: Maybe make some kind of sound

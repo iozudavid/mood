@@ -38,27 +38,11 @@ public class Animation<T> {
     public T getFrame() {
         return frames.get(currentFrame);
     }
-
-    /**
-     * Manually set the current frame.
-     *
-     * @param frame the frame index.
-     */
-    public void setFrame(int frame) {
-        currentFrame = frame;
-    }
-
+    
     /**
      * Cycle one frame along.
      */
     public void nextFrame() {
-        currentFrame = (currentFrame + 1) % frames.size();
-    }
-
-    /**
-     * Cycle one frame backwards.
-     */
-    public void prevFrame() {
         currentFrame = (currentFrame + 1) % frames.size();
     }
     

@@ -94,20 +94,6 @@ public final class Mouse implements MouseListener, MouseMotionListener, MouseWhe
     }
 
     /**
-     * Get the number of scroll wheel clicks since the last time this function
-     * was called.
-     *
-     * @return int the number of scroll wheel clicks. Negative values if the
-     * mouse wheel was rotated up/away from the user, and positive
-     * values if the mouse wheel was rotated down/towards the user.
-     */
-    public int getScroll() {
-        int retVal = scroll;
-        scroll = 0;
-        return retVal;
-    }
-
-    /**
      * Get a boolean value representing whether the left mouse button is pressed
      * or not.
      *
@@ -116,17 +102,6 @@ public final class Mouse implements MouseListener, MouseMotionListener, MouseWhe
      */
     public boolean isLeftHeld() {
         return leftHeld;
-    }
-
-    /**
-     * Get a boolean value representing whether the right mouse button is
-     * pressed or not.
-     *
-     * @return boolean A boolean representing the current state of the right
-     * mouse button.
-     */
-    public boolean isRightHeld() {
-        return rightHeld;
     }
 
     /* UNUSED -- NEEDED SINCE WE ARE IMPLEMENTING AN INTERFACE */

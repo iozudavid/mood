@@ -43,18 +43,6 @@ public final class Vector2D {
     }
     
     /**
-     * Pairwise multiplies two vectors together.
-     *
-     * @param a
-     * @param b
-     * @returns a new Vector2D with the result
-     */
-    public static Vector2D mul(Vector2D a, Vector2D b) {
-        return new Vector2D(a.x * b.x, a.y * b.y);
-        
-    }
-    
-    /**
      * Multiplies a vector by a scalar
      *
      * @param a
@@ -120,15 +108,6 @@ public final class Vector2D {
      */
     public Vector2D subtract(Vector2D v) {
         return new Vector2D(x - v.x, y - v.y);
-    }
-    
-    /**
-     * Pairwise multiplies another vector with this one
-     *
-     * @returns a new Vector2D with the result
-     */
-    public Vector2D mul(Vector2D v) {
-        return new Vector2D(x * v.x, y * v.y);
     }
     
     /**

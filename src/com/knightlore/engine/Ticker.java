@@ -14,12 +14,6 @@ import java.util.concurrent.LinkedBlockingQueue;
 public class Ticker {
     
     /**
-     * Somewhat left in as a joke because this will never happen. Assuming that
-     * we have 60 updates per second, it'll take 4,874,520,144 years for this to
-     * ever overflow.
-     */
-    private final long TICK_MAX = Long.MAX_VALUE - 1337;
-    /**
      * Listeners attached to this ticker.
      */
     private final List<TickListener> tickListeners;

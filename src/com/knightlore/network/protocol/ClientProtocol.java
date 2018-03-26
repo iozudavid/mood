@@ -1,7 +1,6 @@
 package com.knightlore.network.protocol;
 
 import java.io.IOException;
-import java.nio.ByteBuffer;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -11,11 +10,7 @@ import java.util.Map;
  * @author David Iozu, Will Miller
  */
 public final class ClientProtocol {
-    /**
-     * The number of bytes taken up at the start of each packet with metadata.
-     */
-    public static final int METADATA_LENGTH = 8;
-
+    
     /**
      * Position in the byte array - key map convention of the client to create the packet
      */
@@ -47,39 +42,9 @@ public final class ClientProtocol {
     }
 
     /**
-     * Pass the control and receive its index in map.
-     *
-     * @param key - control passed to get the index
-     * @return index of the given control
-     * @throws IOException when no control is found in map
-     */
-    public static int getByKey(ClientController key) throws IOException {
-        if (!indexAction.containsValue(key)) {
-            throw new IOException();
-        }
-        for (int i : indexAction.keySet()) {
-            if (indexAction.get(i) == key) {
-                return i;
-            }
-        }
-        return -1;
-    }
-
-    /**
      * @return the index - control map convention
      */
     public static Map<Integer, ClientController> getIndexActionMap() {
         return indexAction;
     }
-
-
-    /**
-     * @return generic metadata to be placed at the start of each packet.
-     */
-    public static byte[] getMetadata() {
-        ByteBuffer metadata = ByteBuffer.allocate(METADATA_LENGTH);
-        metadata.putLong(System.currentTimeMillis());
-        return metadata.array();
-    }
-
 }

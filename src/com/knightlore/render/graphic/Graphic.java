@@ -11,7 +11,7 @@ public class Graphic {
 
     protected final int width;
     protected final int height;
-    protected int[] pixels;
+    private int[] pixels;
 
     private BufferedImage img;
 

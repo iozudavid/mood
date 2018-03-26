@@ -8,11 +8,7 @@ import com.knightlore.utils.Vector2D;
 
 public final class TurretClient extends TurretShared {
     
-    protected TurretClient(double size, Vector2D position, Vector2D direction) {
-        super(size, position, direction);
-    }
-    
-    public TurretClient(UUID uuid, Vector2D one, Vector2D one2) {
+    private TurretClient(UUID uuid, Vector2D one, Vector2D one2) {
         super(uuid, one, one2);
     }
     

@@ -113,10 +113,6 @@ public abstract class Tile implements Serializable {
         return '?';
     }
     
-    public Tile reflectTileX() {
-        return this;
-    }
-    
     public Tile reflectTileY() {
         return this;
     }

@@ -7,7 +7,7 @@ import com.knightlore.network.ConnectionDetails;
 import com.knightlore.render.PixelBuffer;
 
 /**
- * Class to render all StartMenu GUIObjects
+ * Class to render all START_MENU GUIObjects
  *
  * @author David Iozu
  */
@@ -25,13 +25,13 @@ public class StartMenu {
     private final Text noConnection;
     
     /**
-     * SetUp all GUIObjects for StartMenu.
+     * SetUp all GUIObjects for START_MENU.
      *
      * @param screenHeight - height of the screen
      * @param screenWidth  - width of the screen.
      */
     public StartMenu(int screenHeight, int screenWidth) {
-        this.gui = new GUICanvas(screenWidth, screenHeight);
+        this.gui = new GUICanvas();
         this.gui.init();
         this.screenHeight = screenHeight;
         this.screenWidth = screenWidth;
@@ -76,13 +76,13 @@ public class StartMenu {
         
         this.settingsButton.clickFunction = () -> {
             StartMenu.this.gui.destroy();
-            GameEngine.getSingleton().guiState = GUIState.SettingsMenu;
+            GameEngine.getSingleton().guiState = GUIState.SETTINGS_MENU;
         };
         
         this.multiPlayerButton.clickFunction = () -> {
             StartMenu.this.gui.destroy();
             
-            GameEngine.getSingleton().guiState = GUIState.MultiplayerMenu;
+            GameEngine.getSingleton().guiState = GUIState.MULTIPLAYER_MENU;
         };
         
         this.quitButton.clickFunction = () -> GameEngine.getSingleton().stop();
@@ -96,7 +96,7 @@ public class StartMenu {
     }
     
     /**
-     * Render actual StartMenu
+     * Render actual START_MENU
      *
      * @param pix - PixelBuffer we render on
      * @param x   - X position we start rendering from

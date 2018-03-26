@@ -10,17 +10,17 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 
 public class RoomGeneratorTest {
-
+    
     @Test
     public void createRoom_normalRoom() {
         // Given
         long seed = 890312312355623L;
-
+        
         // When
         RoomGenerator generator = new RoomGenerator();
         Room room = generator.createRoom(seed, RoomType.NORMAL);
-
-
+        
+        
         // Then
         Tile[][] expectedGrid = new Tile[10][8];
         for (int i = 0; i < expectedGrid.length; i++) {
@@ -34,19 +34,19 @@ public class RoomGeneratorTest {
             }
         }
         Room expectedRoom = new Room(expectedGrid);
-
+        
         assertThat(room, is(expectedRoom));
     }
-
+    
     @Test
     public void createRoom_spawnRoom() {
         // Given
         long seed = 890312312355623L;
-
+        
         // When
         RoomGenerator generator = new RoomGenerator();
         Room room = generator.createRoom(seed, RoomType.SPAWN);
-
+        
         // Then
         Tile[][] expectedGrid = new Tile[7][7];
         for (int i = 0; i < expectedGrid.length; i++) {
@@ -61,7 +61,7 @@ public class RoomGeneratorTest {
             }
         }
         Room expectedRoom = new Room(expectedGrid);
-
+        
         assertThat(room, is(expectedRoom));
     }
 }

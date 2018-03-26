@@ -183,7 +183,7 @@ public class Player extends Entity {
         super.render(pix, x, y, distanceTraveled);
         
         if (currentWeapon != null) {
-            currentWeapon.render(pix, x, y, inertiaX, inertiaY, distanceTraveled, hasShot);
+            currentWeapon.render(pix, x, inertiaX, inertiaY, distanceTraveled, hasShot);
         }
     }
     

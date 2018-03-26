@@ -22,17 +22,6 @@ public class GuiUtils {
     }
     
     /**
-     * @param screenWidth - width of the screen
-     * @param objWidth    - width of the given object
-     * @return the X Position to start render in order to allign the object on
-     * the right of the width screen to finish rendering it at the end
-     * of width screen
-     */
-    public static int formatToRight(int screenWidth, int objWidth) {
-        return screenWidth - objWidth;
-    }
-    
-    /**
      * @param screenHeight - height of the screen
      * @param procent      - the percentage of the screen we want to leave before the
      *                     object

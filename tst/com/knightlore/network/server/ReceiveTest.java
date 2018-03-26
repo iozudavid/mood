@@ -18,14 +18,14 @@ import com.knightlore.network.NetworkObjectManager;
 @RunWith(PowerMockRunner.class)
 @PrepareForTest(GameEngine.class)
 public class ReceiveTest {
-
+    
     private Connection conn;
     private Receive rec;
     private GameEngine ge;
     private NetworkObjectManager nom;
     
     @Before
-    public void setUp(){
+    public void setUp() {
         nom = Mockito.mock(NetworkObjectManager.class);
         ge = Mockito.mock(GameEngine.class);
         conn = Mockito.mock(Connection.class);
@@ -33,7 +33,7 @@ public class ReceiveTest {
     }
     
     @Test(expected = NullPointerException.class)
-    public void test_receive() throws Exception{
+    public void test_receive() throws Exception {
         PowerMockito.when(conn.receive()).thenReturn(ByteBuffer.allocate(100));
         PowerMockito.mockStatic(GameEngine.class);
         PowerMockito.when(GameEngine.getSingleton()).thenReturn(ge);

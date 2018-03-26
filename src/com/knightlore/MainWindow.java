@@ -25,11 +25,11 @@ public class MainWindow extends JFrame {
     private final boolean fullscreen;
     private Screen screen;
     
-    public MainWindow(String title) {
-        this(title, -1, -1);
+    public MainWindow() {
+        this(-1, -1);
     }
     
-    public MainWindow(String title, int width, int height) {
+    public MainWindow(int width, int height) {
         super(TITLE);
         fullscreen = width <= 0 || height <= 0;
         

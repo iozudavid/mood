@@ -75,13 +75,12 @@ public abstract class Weapon {
      *
      * @param pix              - the PixelBuffer to draw into
      * @param x                - the x coordinate of the pixel buffer
-     * @param y                - the y coordinate of the pixel buffer
      * @param inertiaX         - how much to offset the weapon by horizontally
      * @param inertiaY         - how much to offset the weapon by vertically
      * @param distanceTraveled - how far the holder has moved
      * @param muzzleFlash      - do we draw a muzzle flash
      */
-    public void render(PixelBuffer pix, int x, int y, int inertiaX, int inertiaY, double distanceTraveled,
+    public void render(PixelBuffer pix, int x, int inertiaX, int inertiaY, double distanceTraveled,
                        boolean muzzleFlash) {
         // Used a linear equation to get the expression below.
         // With a screen height of 558, we want a scale of 5.

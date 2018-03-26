@@ -72,13 +72,4 @@ public class Screen extends Canvas {
         return img;
     }
     
-    /**
-     * Gets the main pixel buffer.
-     *
-     * @return the main pixel buffer.
-     */
-    public PixelBuffer getMainPixelBuffer() {
-        return mainPixelBuffer;
-    }
-    
 }

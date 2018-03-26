@@ -38,26 +38,6 @@ public class Group extends GUIObject {
     }
     
     /**
-     * Add an object to this group.
-     *
-     * @param g - object to be added to this group
-     */
-    public void addToGroup(GUIObject g) {
-        this.objectToGroup.add(g);
-        this.recalculate();
-    }
-    
-    /**
-     * Remove an object from this group.
-     *
-     * @param g - object to be removed from this group
-     */
-    public void removeFromGroup(GUIObject g) {
-        this.objectToGroup.remove(g);
-        this.recalculate();
-    }
-    
-    /**
      * Calculate the height and width for this group by considering all the
      * elements from it.
      */

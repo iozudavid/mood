@@ -40,21 +40,6 @@ public class MapGenerator extends ProceduralAreaGenerator {
 
     /**
      * Returns a procedurally-generated map with the specified
-     * width, height and map type
-     *
-     * @param width
-     * @param height
-     * @param mt
-     * @return map
-     * @author Thomas, Kacper
-     */
-    public Map createMap(int width, int height, MapType mt) {
-        Random rand = new Random();
-        return createMap(width, height, mt, rand.nextLong());
-    }
-
-    /**
-     * Returns a procedurally-generated map with the specified
      * width, height and map type. The seed is used to ensure
      * this process is deterministic and that the map will be
      * identical on server and clients alike
@@ -100,27 +85,6 @@ public class MapGenerator extends ProceduralAreaGenerator {
         }
     }
     
-    private int getGaussianNum(int min, int max) {
-        int mean = (max + min) / 2;
-        int std_dev = (mean - min) / 2;
-        double gaussSize = min - 1;
-        while (gaussSize < min || gaussSize > max) {
-            gaussSize = (rand.nextGaussian() * std_dev) + mean;
-        }
-
-        return (int)Math.round(gaussSize);
-    }
-    
-    public void determineRoomNum() {
-        int width = grid.length;
-        int height = grid[0].length;
-        int area = width * height;
-        int minRoomRange = area / 40;
-        int maxRoomRange = area / 20;
-        maxRooms = getGaussianNum(minRoomRange, maxRoomRange);
-    }
-
-    @Override
     protected void fillGrid() {
         resetGrid();
         determineRoomsToBuild();
@@ -321,7 +285,6 @@ public class MapGenerator extends ProceduralAreaGenerator {
         }
     }
 
-    @Override
     protected void fillUndecidedTiles() {
         for (int x = 0; x < grid.length; x++) {
             for (int y = 0; y < grid[0].length; y++) {

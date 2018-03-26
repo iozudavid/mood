@@ -1,6 +1,5 @@
 package com.knightlore.gui;
 
-import java.awt.Color;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -21,28 +20,20 @@ import com.knightlore.utils.physics.Physics;
  */
 public class GUICanvas extends GameObject implements IRenderable {
     
-    private static final Color BACKGROUND_COLOR = new Color(0xFF00FF00, true);
     static TextField activeTextField;
     static TextField gameTextField;
     private static Optional<VoidFunction> onPressEscape = Optional.empty();
     private static Optional<VoidFunction> onPressQ = Optional.empty();
     private static Optional<VoidFunction> onReleaseQ = Optional.empty();
-    public final boolean isVisible;
-    private final int screenWidth;
-    private final int screenHeight;
-    private final List<GUIObject> guis;
+    private final List<GUIObject> guis = new ArrayList<>();;
     // the object that was selected when the mouse was pressed down
     private GUIObject downSelected;
     private GUIObject focussed;
     private GUIObject lastSelected;
     private boolean lastHeld;
     
-    public GUICanvas(int screenWidth, int screenHeight) {
+    public GUICanvas() {
         super();
-        this.screenWidth = screenWidth;
-        this.screenHeight = screenHeight;
-        guis = new ArrayList<>();
-        isVisible = true;
     }
     
     /**
@@ -96,12 +87,11 @@ public class GUICanvas extends GameObject implements IRenderable {
      * Called from the keyboard when user wants to send the message to the game
      * chat.
      *
-     * @param c - character typed
      */
-    public static void sendMessage(char c) {
+    public static void sendMessage() {
         if (gameTextField != null) {
             activeTextField = gameTextField;
-            gameTextField.onSendMessage(c);
+            gameTextField.onSendMessage();
         }
     }
     

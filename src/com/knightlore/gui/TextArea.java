@@ -31,14 +31,6 @@ public class TextArea extends GUIObject {
         this.positionYToRender = 0;
     }
     
-    public TextArea(int x, int y, int width, int height, String text) {
-        super(x, y, width, height);
-        this.text = new LinkedBlockingQueue<>();
-        this.text.add(text);
-        this.positionXToRender = 0;
-        this.positionYToRender = 0;
-    }
-    
     /**
      * Set if active. If not active then draw background transparent. If active
      * then draw background gray.

@@ -13,7 +13,6 @@ public abstract class TurretShared extends Entity {
     protected final Team team = Team.NONE;
     protected final double sqrRange = 25;
     protected final double range = 5;
-    protected int damage;
     protected long nextCheckTime = 0;
     protected Entity target = null;
     protected byte targetByte = 0;

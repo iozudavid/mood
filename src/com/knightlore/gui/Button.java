@@ -26,17 +26,16 @@ public class Button extends GUIObject {
     private double fontSize;
     private Graphic activeGraphic = null;
     private Graphic activeGraphic2 = null;
-    public Button(int x, int y, int width, int height, int depth) {
-        super(x, y, width, height, depth);
-    }
-    public Button(int x, int y, int width, int height) {
-        this(x, y, width, height, 0);
-    }
+    
     public Button(int x, int y, int width, int height, String text, int fontSize) {
         this(x, y, width, height, 0, text, fontSize / 15D);
     }
     
-    public Button(int x, int y, int width, int height, int depth, String text, double fontSize) {
+    private Button(int x, int y, int width, int height, int depth) {
+        super(x, y, width, height, depth);
+    }
+    
+    private Button(int x, int y, int width, int height, int depth, String text, double fontSize) {
         this(x, y, width, height, depth);
         this.textArea = text;
         this.fontSize = fontSize;
@@ -45,7 +44,7 @@ public class Button extends GUIObject {
     /**
      * @return the color depending of the object state.
      */
-    public Color activeColor() {
+    private Color activeColor() {
         switch (state) {
             case UP_PHASE_1:
                 return upColour1;

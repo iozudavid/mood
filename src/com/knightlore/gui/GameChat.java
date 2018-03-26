@@ -35,7 +35,7 @@ public class GameChat extends GUICanvas {
     private Text timeLeftText;
     
     public GameChat(int screenWidth, int screenHeight) {
-        super(screenWidth, screenHeight);
+        super();
         System.out.println("CHATTTTTTTTTTTTTTTTT");
         this.screenWidth = screenWidth;
         this.screenHeight = screenHeight;
@@ -112,7 +112,7 @@ public class GameChat extends GUICanvas {
             GameEngine.getSingleton().stopGame();
             ClientManager.disconnect();
             GameChat.this.destroy();
-            GameEngine.getSingleton().guiState = GUIState.StartMenu;
+            GameEngine.getSingleton().guiState = GUIState.START_MENU;
         };
         this.exitButton.clickFunction = () -> {
             ClientManager.disconnect();
@@ -143,16 +143,6 @@ public class GameChat extends GUICanvas {
     }
     
     /**
-     * @return PixelBuffer we render on
-     */
-    public PixelBuffer getPixelBuffer() {
-        PixelBuffer copy = this.pix;
-        this.pix = new PixelBuffer(screenWidth, screenHeight);
-        this.pix.flood(-16711936);
-        return copy;
-    }
-    
-    /**
      * @return TextArea we show the messages
      */
     public TextArea getTextArea() {
@@ -168,13 +158,6 @@ public class GameChat extends GUICanvas {
      */
     public void addToTable(CopyOnWriteArrayList<String> entry) {
         this.scoreBoard.addTableEntry(entry);
-    }
-    
-    /**
-     * Remove entry from scoreboard.
-     */
-    public void removeFromTable(String uuid) {
-        this.scoreBoard.removeTableEntry(uuid);
     }
     
     /**

@@ -1,9 +1,7 @@
 package com.knightlore.render;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
-import java.util.List;
 import java.util.Stack;
 
 import com.knightlore.GameSettings;
@@ -299,9 +297,7 @@ public class Renderer {
                 return Double.compare(distance2, distance1);
             };
             Arrays.sort(entities, c);
-            
-            List<Entity> visible = new ArrayList<>();
-            
+    
             synchronized (entities) {
                 for (Entity m : entities) {
                     boolean isVisible = false;

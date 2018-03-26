@@ -60,26 +60,6 @@ public class Table extends GUIObject {
     }
     
     /**
-     * Remove an entry from the table.
-     *
-     * @param uuid - UUID entry to be removed
-     */
-    public void removeTableEntry(String uuid) {
-        synchronized (this.entries) {
-            CopyOnWriteArrayList<String> toBeRemoved = null;
-            for (CopyOnWriteArrayList<String> entry : this.entries) {
-                if (entry.get(0).equals(uuid)) {
-                    toBeRemoved = entry;
-                    break;
-                }
-            }
-            if (toBeRemoved != null) {
-                this.entries.remove(toBeRemoved);
-            }
-        }
-    }
-    
-    /**
      * Order it in descending order.
      */
     private void orderTableByScore() {

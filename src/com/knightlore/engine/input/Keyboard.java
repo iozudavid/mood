@@ -45,7 +45,7 @@ public class Keyboard extends KeyAdapter {
             return;
         }
 
-        if (GameEngine.getSingleton().guiState == GUIState.InGame && e.getKeyChar() == 'q') {
+        if (GameEngine.getSingleton().guiState == GUIState.IN_GAME && e.getKeyChar() == 'q') {
             GUICanvas.releaseQ();
         }
         keys[e.getKeyCode()] = false;
@@ -70,15 +70,15 @@ public class Keyboard extends KeyAdapter {
         //vk_back_space not working here
         if (eChar == '\b') {
             GUICanvas.deleteChar();
-        } else if (GameEngine.getSingleton().guiState == GUIState.InGame && eChar == 't') {
+        } else if (GameEngine.getSingleton().guiState == GUIState.IN_GAME && eChar == 't') {
             GUICanvas.startMessageTeam(e.getKeyChar());
-        } else if (GameEngine.getSingleton().guiState == GUIState.InGame && eChar == 'y') {
+        } else if (GameEngine.getSingleton().guiState == GUIState.IN_GAME && eChar == 'y') {
             GUICanvas.startMessageAll(e.getKeyChar());
-        } else if (GameEngine.getSingleton().guiState == GUIState.InGame && eChar == '\n') {
-            GUICanvas.sendMessage(e.getKeyChar());
-        } else if (GameEngine.getSingleton().guiState == GUIState.InGame && e.getKeyChar() == KeyEvent.VK_ESCAPE) {
+        } else if (GameEngine.getSingleton().guiState == GUIState.IN_GAME && eChar == '\n') {
+            GUICanvas.sendMessage();
+        } else if (GameEngine.getSingleton().guiState == GUIState.IN_GAME && e.getKeyChar() == KeyEvent.VK_ESCAPE) {
             GUICanvas.escape();
-        } else if (GameEngine.getSingleton().guiState == GUIState.InGame && eChar == 'q') {
+        } else if (GameEngine.getSingleton().guiState == GUIState.IN_GAME && eChar == 'q') {
             GUICanvas.pressQ();
         } else {
             GUICanvas.inputChar(e.getKeyChar());

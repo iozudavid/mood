@@ -20,7 +20,7 @@ import org.powermock.modules.junit4.PowerMockRunner;
 @RunWith(PowerMockRunner.class)
 @PrepareForTest(System.class)
 public class TCPConnectionTest {
-   
+    
     private Socket socket;
     private DataInputStream is;
     private DataOutputStream os;
@@ -37,18 +37,18 @@ public class TCPConnectionTest {
     
     @Test
     public void test_send() throws Exception {
-         TCPConnection c = new TCPConnection(socket);
-         ByteBuffer bb = ByteBuffer.allocate(4);
-         bb.putInt(1);
-         c.send(bb);
-         Mockito.verify(os,Mockito.times(1)).write(bb.array(), 0, 4);
+        TCPConnection c = new TCPConnection(socket);
+        ByteBuffer bb = ByteBuffer.allocate(4);
+        bb.putInt(1);
+        c.send(bb);
+        Mockito.verify(os, Mockito.times(1)).write(bb.array(), 0, 4);
     }
     
     @Test
     public void test_receive_null() throws Exception {
         TCPConnection conn = new TCPConnection(socket);
         PowerMockito.when(is.readInt()).thenReturn(0);
-        assertTrue(conn.receiveBlocking()==null);
+        assertTrue(conn.receiveBlocking() == null);
     }
     
 }

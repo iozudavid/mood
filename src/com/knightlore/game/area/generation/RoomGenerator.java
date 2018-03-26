@@ -88,7 +88,6 @@ public class RoomGenerator extends ProceduralAreaGenerator {
         grid = new Tile[width][height];
     }
 
-    @Override
     protected void fillGrid() {
         int width = grid.length;
         int height = grid[0].length;
@@ -299,7 +298,6 @@ public class RoomGenerator extends ProceduralAreaGenerator {
         grid[placeLocation.x][placeLocation.y] = pTile;
     }
 
-    @Override
     protected void fillUndecidedTiles() {
         for (int x = 0; x < grid.length; x++) {
             for (int y = 0; y < grid[0].length; y++) {

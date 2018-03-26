@@ -21,20 +21,21 @@ import com.knightlore.utils.physics.PhysicsTest;
 
 @RunWith(Suite.class)
 @SuiteClasses({
-    PerlinNoiseGeneratorTest.class,
-    RoomConnectionTest.class,
-    RoomGeneratorTest.class,
-    MapTest.class,
-    RoomTest.class,
-    AIManagerTest.class,
-    PenTest.class,
-    TileButtonTest.class,
-    PathFinderTest.class,
-    NetworkUtilsTest.class,
-    ReceiveTest.class,
-    TCPConnectionTest.class,
-    PhysicsTest.class,
-    SendToClientTest.class
+        PerlinNoiseGeneratorTest.class,
+        RoomConnectionTest.class,
+        RoomGeneratorTest.class,
+        MapTest.class,
+        RoomTest.class,
+        AIManagerTest.class,
+        PenTest.class,
+        TileButtonTest.class,
+        PathFinderTest.class,
+        NetworkUtilsTest.class,
+        ReceiveTest.class,
+        TCPConnectionTest.class,
+        PhysicsTest.class,
+        SendToClientTest.class
 })
 
-public class AllTests {}
+public class AllTests {
+}

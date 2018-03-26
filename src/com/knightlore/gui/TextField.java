@@ -46,15 +46,11 @@ public class TextField extends GUIObject {
         super(x, y, width, height);
     }
     
-    TextField(int x, int y, int width, int height, int depth) {
-        super(x, y, width, height, depth);
-    }
-    
     public TextField(int x, int y, int width, int height, String text) {
         this(x, y, width, height, 0, text);
     }
     
-    public TextField(int x, int y, int width, int height, int depth, String text) {
+    private TextField(int x, int y, int width, int height, int depth, String text) {
         super(x, y, width, height, depth);
         setText(text);
         displayText(text);
@@ -96,15 +92,6 @@ public class TextField extends GUIObject {
     }
     
     /**
-     * Set a restriction of string for this TextField.
-     *
-     * @param restrict - function to be applied
-     */
-    public void setRestrictionValue(Predicate<String> restrict) {
-        this.restrictValue = Optional.of(restrict);
-    }
-    
-    /**
      * Dispay the given text.
      *
      * @param t - text to be displayed
@@ -141,7 +128,7 @@ public class TextField extends GUIObject {
      */
     @Override
     void Draw(PixelBuffer pix, int x, int y) {
-        if ((GameEngine.getSingleton().guiState == GUIState.InGame) && GUICanvas.activeTextField == null) {
+        if ((GameEngine.getSingleton().guiState == GUIState.IN_GAME) && GUICanvas.activeTextField == null) {
             return;
         }
         synchronized (this.rawChars) {
@@ -285,9 +272,8 @@ public class TextField extends GUIObject {
      * Called when user wants to send a message on game chat. Send to the server
      * and erase the text.
      *
-     * @param c - char representing send the message
      */
-    void onSendMessage(char c) {
+    void onSendMessage() {
         // do not send if null or nothing to send
         if (text == null || text.isEmpty()) {
             return;

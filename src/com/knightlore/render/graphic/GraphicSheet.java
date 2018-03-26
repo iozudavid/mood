@@ -34,13 +34,6 @@ public class GraphicSheet {
     public final static GraphicSheet WEAPONS = new GraphicSheet("res/graphics/weapon_sprites.png", 128);
     
     /**
-     * A graphicsheet for the player directional sprite. The PLAYER_SPRITES is
-     * plain white. The coloured player sprites have a colour filter applied to
-     * them.
-     */
-    public final static GraphicSheet ZOMBIE_SPRITES = new GraphicSheet("res/models/player_sprites.png", 128);
-    
-    /**
      * A graphicsheet for the shotgun directional sprite.
      */
     public final static GraphicSheet SHOTGUN_SPRITES = new GraphicSheet("res/models/shotgun_sprites.png", 128);

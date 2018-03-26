@@ -16,22 +16,22 @@ import org.powermock.modules.junit4.PowerMockRunner;
 import com.knightlore.engine.GameEngine;
 import com.knightlore.network.Connection;
 
-@RunWith(PowerMockRunner.class) 
+@RunWith(PowerMockRunner.class)
 @PrepareForTest({GameEngine.class})
 public class SendToClientTest {
-
+    
     @Mock
     private GameEngine ge;
     private Connection conn;
     
     @Before
-    public void setUp(){
+    public void setUp() {
         PowerMockito.mockStatic(GameEngine.class);
         PowerMockito.when(GameEngine.getSingleton()).thenReturn(ge);
     }
     
     @Test
-    public void test_stop_sending_packet(){
+    public void test_stop_sending_packet() {
         ServerNetworkObjectManager serverManager = PowerMockito.mock(ServerNetworkObjectManager.class);
         PowerMockito.when(ge.getNetworkObjectManager()).thenReturn(serverManager);
         PowerMockito.when(serverManager.registerClientSender(Matchers.any(SendToClient.class))).thenReturn(UUID.randomUUID());
@@ -41,7 +41,7 @@ public class SendToClientTest {
         PowerMockito.when(conn.getTerminated()).thenReturn(true);
         s.send(ByteBuffer.allocate(100));
         s.run();
-        Mockito.verify(conn,Mockito.times(0)).send(Matchers.any(ByteBuffer.class));
+        Mockito.verify(conn, Mockito.times(0)).send(Matchers.any(ByteBuffer.class));
     }
     
 }

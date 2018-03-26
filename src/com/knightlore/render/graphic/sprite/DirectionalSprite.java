@@ -58,12 +58,8 @@ public class DirectionalSprite {
         return i;
     }
     
-    public void addGraphic(Graphic g) {
+    private void addGraphic(Graphic g) {
         angles.add(g);
-    }
-    
-    public List<Graphic> getAngles() {
-        return angles;
     }
     
     public int getWidth() {

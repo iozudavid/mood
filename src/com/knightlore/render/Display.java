@@ -41,7 +41,7 @@ public class Display implements IRenderable {
     private MultiplayerMenu mpMenu;
     private SettingsMenu settingsMenu;
     private ArrayList<Object> settingsObj;
-    private GUIState gs = GUIState.StartMenu;
+    private GUIState gs = GUIState.START_MENU;
     
     public Display() {
         this.guis = new ArrayList<>();
@@ -51,12 +51,12 @@ public class Display implements IRenderable {
     @Override
     public void render(PixelBuffer pix, int x, int y) {
         switch (GameEngine.getSingleton().guiState) {
-            case InGame:
+            case IN_GAME:
                 renderer.render();
                 minimap.render();
                 hud.render();
                 
-                final int w = pix.getWidth(), h = pix.getHeight();
+                final int w = pix.getWidth();
                 pix.composite(renderer.getPixelBuffer(), x, y);
                 
                 PixelBuffer minimapBuffer = minimap.getPixelBuffer();
@@ -77,49 +77,49 @@ public class Display implements IRenderable {
                 GameFeed.getInstance().render(pix, x, y);
                 
                 this.clearDisplay();
-                gs = GUIState.InGame;
+                gs = GUIState.IN_GAME;
                 break;
             
-            case StartMenu:
+            case START_MENU:
                 if (this.startMenu == null) {
                     this.startMenu = new StartMenu(pix.getHeight(), pix.getWidth());
                 }
                 this.startMenu.render(pix, x, y);
                 this.clearDisplay();
-                gs = GUIState.StartMenu;
+                gs = GUIState.START_MENU;
                 break;
             
-            case MultiplayerMenu:
+            case MULTIPLAYER_MENU:
                 if (this.mpMenu == null) {
                     this.mpMenu = new MultiplayerMenu(pix.getHeight(),
                             pix.getWidth());
                 }
                 this.mpMenu.render(pix, x, y);
                 this.clearDisplay();
-                gs = GUIState.MultiplayerMenu;
+                gs = GUIState.MULTIPLAYER_MENU;
                 break;
             
-            case SettingsMenu:
+            case SETTINGS_MENU:
                 if (this.settingsMenu == null) {
                     this.settingsMenu = new SettingsMenu(pix.getWidth(), pix.getHeight());
                 }
-                if (gs != GUIState.SettingsMenu) {
+                if (gs != GUIState.SETTINGS_MENU) {
                     this.settingsObj = this.settingsMenu.getObj();
                 }
                 this.settingsMenu.render(pix, x, y);
                 this.clearDisplay();
-                gs = GUIState.SettingsMenu;
+                gs = GUIState.SETTINGS_MENU;
                 break;
             
-            case SettingsMenuApply:
+            case SETTINGS_MENU_APPLY:
                 this.clearDisplay();
-                GameEngine.getSingleton().guiState = GUIState.StartMenu;
+                GameEngine.getSingleton().guiState = GUIState.START_MENU;
                 break;
             
-            case SettingsMenuCancel:
+            case SETTINGS_MENU_CANCEL:
                 this.settingsMenu.setObj(this.settingsObj);
                 this.clearDisplay();
-                GameEngine.getSingleton().guiState = GUIState.StartMenu;
+                GameEngine.getSingleton().guiState = GUIState.START_MENU;
                 break;
             
             default:
@@ -130,7 +130,7 @@ public class Display implements IRenderable {
     
     public void clearDisplay() {
         switch (GameEngine.getSingleton().guiState) {
-            case InGame:
+            case IN_GAME:
                 if (this.mpMenu != null) {
                     this.mpMenu = null;
                 }
@@ -138,17 +138,17 @@ public class Display implements IRenderable {
                     this.startMenu = null;
                 }
                 return;
-            case StartMenu:
+            case START_MENU:
                 if (this.mpMenu != null) {
                     this.mpMenu = null;
                 }
                 return;
-            case MultiplayerMenu:
+            case MULTIPLAYER_MENU:
                 if (this.startMenu != null) {
                     this.startMenu = null;
                 }
                 return;
-            case SettingsMenu:
+            case SETTINGS_MENU:
                 if (this.mpMenu != null) {
                     this.mpMenu = null;
                 }
@@ -160,33 +160,12 @@ public class Display implements IRenderable {
         }
     }
     
-    public void setStartMenu(StartMenu sm) {
-        this.startMenu = sm;
-    }
-    
-    public void setMultiplayerMenu(MultiplayerMenu mp) {
-        this.mpMenu = mp;
-        
-    }
-    
-    public Renderer getRenderer() {
-        return renderer;
-    }
-    
     public void setRenderer(Renderer r) {
         this.renderer = r;
     }
     
-    public Minimap getMinimap() {
-        return minimap;
-    }
-    
     public void setMinimap(Minimap m) {
         this.minimap = m;
-    }
-    
-    public HUD getHud() {
-        return hud;
     }
     
     public void setHud(HUD hud) {
@@ -195,10 +174,6 @@ public class Display implements IRenderable {
     
     public void addGUICanvas(GUICanvas g) {
         guis.add(g);
-    }
-    
-    public void removeGUICanvas(GUICanvas g) {
-        guis.remove(g);
     }
     
 }

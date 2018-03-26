@@ -14,8 +14,6 @@ public abstract class GUIObject {
     // no getter and setter required
     public final int depth;
     public final Rectangle rect;
-    public boolean isVisible;
-    
     
     GUIObject(int x, int y, int width, int height, int depth) {
         this.depth = depth;

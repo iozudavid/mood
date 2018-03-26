@@ -56,33 +56,33 @@ public class PlayerManagerTest {
         }
         
         Iterator<Player> playerIterator = manager.getPlayerIterator();
-    
+        
         // Then
         assertThat(manager.numPlayer(), is(4));
         for (int i = 0; i < 4; i++) {
             assertThat(playerIterator.hasNext(), is(true));
             playerIterator.next();
         }
-    
+        
         assertThat(playerIterator.hasNext(), is(false));
     }
     
     @Test
     public void addPlayer_update() {
         Player player = mock(Player.class);
-    
+        
         // When
         manager.addPlayer(player);
         manager.update();
         Iterator<Player> playerIterator = manager.getPlayerIterator();
-    
+        
         // Then
         assertThat(manager.numPlayer(), is(5));
         for (int i = 0; i < 5; i++) {
             assertThat(playerIterator.hasNext(), is(true));
             playerIterator.next();
         }
-    
+        
         assertThat(playerIterator.hasNext(), is(false));
     }
     
@@ -93,9 +93,9 @@ public class PlayerManagerTest {
             manager.removePlayer(players[i]);
         }
         manager.update();
-    
+        
         Iterator<Player> playerIterator = manager.getPlayerIterator();
-    
+        
         // Then
         assertThat(manager.numPlayer(), is(0));
         assertThat(playerIterator.hasNext(), is(false));

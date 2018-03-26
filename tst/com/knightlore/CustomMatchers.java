@@ -10,7 +10,7 @@ public class CustomMatchers {
         return new BaseMatcher<Vector2D>() {
             @Override
             public boolean matches(final Object item) {
-                final Vector2D vector = (Vector2D) item;
+                final Vector2D vector = (Vector2D)item;
                 return v.equals(vector, epsilon);
             }
             
@@ -25,7 +25,7 @@ public class CustomMatchers {
         return new BaseMatcher<Double>() {
             @Override
             public boolean matches(final Object item) {
-                double value = (double) item;
+                double value = (double)item;
                 return d > value - epsilon && d < value + epsilon;
             }
             
