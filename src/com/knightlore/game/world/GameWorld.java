@@ -18,7 +18,6 @@ import com.knightlore.game.area.generation.MapType;
 import com.knightlore.game.entity.Entity;
 import com.knightlore.utils.Vector2D;
 import com.knightlore.utils.physics.RaycastHit;
-import com.knightlore.utils.physics.RaycastHitType;
 
 /**
  * Representation of the World in the Game. Subclass this to make new worlds.
