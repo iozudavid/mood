@@ -69,7 +69,7 @@ public class SettingsMenu {
         this.blockinessSlider = new Slider(
                 (int) (this.blockinessText.getRectangle().getX() + (int) (this.blockinessText.getRectangle().getWidth()) + 90),
                 (int) (this.blockinessText.getRectangle().getHeight() / 2D) + (int) (this.blockinessText.getRectangle().getY())-5,
-                150, 10, 0, (float)(GameSettings.DEFAULT_BLOCKINESS-5)/20F);
+                150, 10, 0, (float)(GameSettings.desiredBlockiness-5)/20F);
         ArrayList<GUIObject> objsBlock = new ArrayList<>();
         objsBlock.add(blockinessText);
         objsBlock.add(blockinessSlider);
@@ -124,10 +124,10 @@ public class SettingsMenu {
 
             @Override
             public void call() {
-                GameSettings.MOTION_BOB = SettingsMenu.this.bobCheckBox.getBobingMode();
+                GameSettings.motionBob = SettingsMenu.this.bobCheckBox.getBobingMode();
                 GameEngine.getSingleton().setVolume(SettingsMenu.this.soundSlider.getValue());
                 GameSettings.desiredBlockiness = (int)(SettingsMenu.this.blockinessSlider.getValue()*20F);
-                GameSettings.PLAYER_NAME = SettingsMenu.this.nameTextField.getText();
+                GameSettings.playerName = SettingsMenu.this.nameTextField.getText();
                 GameEngine.getSingleton().guiState = GUIState.SettingsMenuApply;
             }
         };

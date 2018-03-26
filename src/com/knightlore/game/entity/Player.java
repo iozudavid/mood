@@ -372,7 +372,7 @@ public class Player extends Entity {
     }
     
     private void updateInertia(Vector2D displacement) {
-        if (!GameSettings.MOTION_BOB) {
+        if (!GameSettings.motionBob) {
             inertiaX = 0;
             inertiaY = 0;
             return;
