@@ -22,6 +22,13 @@ import com.knightlore.network.NetworkObjectManager;
 import com.knightlore.network.protocol.NetworkUtils;
 import com.knightlore.render.Camera;
 
+/**
+ * Manager on the client side. Updates other game objects states to keep the
+ * client in touch with the game
+ * 
+ * @author David Iozu, Will Miller
+ *
+ */
 public class ClientNetworkObjectManager extends NetworkObjectManager {
     private final Map<UUID, NetworkObject> networkObjects = new HashMap<>();
     private Player myPlayer = null;

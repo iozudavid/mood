@@ -17,6 +17,11 @@ import com.knightlore.network.protocol.ClientProtocol;
 import com.knightlore.network.protocol.NetworkUtils;
 import com.knightlore.render.GameFeed;
 
+/**
+ * Class which keep sending client updates to server
+ * @author David Iozu, Will Miller
+ *
+ */
 public class SendToServer implements Runnable {
     // How many times PER SECOND to check for new state, and send it if
     // necessary.

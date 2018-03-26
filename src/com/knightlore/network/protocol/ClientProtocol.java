@@ -7,7 +7,7 @@ import java.util.Map;
 
 /**
  * Protocol of how data is encapsulating in a packet by the client
- *
+ * @author David Iozu, Will Miller
  */
 public final class ClientProtocol {
     /**

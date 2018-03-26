@@ -10,7 +10,7 @@ import com.knightlore.network.Connection;
 
 /**
  * Thread which sends packets about game state to the client.
- *
+ * @author David Iozu
  */
 public class SendToClient implements Runnable {
 

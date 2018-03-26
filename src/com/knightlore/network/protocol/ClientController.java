@@ -5,7 +5,7 @@ import java.io.IOException;
 
 /**
  * Controllers performed by user
- *
+ * @author David Iozu, Will Miller
  */
 public enum ClientController {
     FORWARD, LEFT, BACKWARD, RIGHT, ROTATE_CLOCKWISE, ROTATE_ANTI_CLOCKWISE, SHOOT;
