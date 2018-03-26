@@ -7,6 +7,11 @@ import com.knightlore.engine.GameEngine;
 import com.knightlore.render.PixelBuffer;
 import com.knightlore.utils.funcptrs.VoidFunction;
 
+/**
+ * Class encapsulates all SettingsMenu GUIObjects.
+ * @author David Iozu
+ *
+ */
 public class SettingsMenu {
 
     private GUICanvas gui;
@@ -28,6 +33,14 @@ public class SettingsMenu {
     private Button applyButton;
     private Button cancelButton;
 
+    /**
+     * SetUp all GUIObjects needed for SettingsMenu
+     * 
+     * @param screenWidth
+     *            - width of the screen
+     * @param screenHeight
+     *            - height of the screen
+     */
     public SettingsMenu(int screenWidth, int screenHeight) {
         this.gui = new GUICanvas(screenWidth, screenHeight);
         this.gui.init();
@@ -129,6 +142,11 @@ public class SettingsMenu {
 
     }
 
+    /**
+     * Used to save last SettingsMenu config if we cancel actual changes.
+     * 
+     * @return the actual settings menu
+     */
     public ArrayList<Object> getObj() {
         ArrayList<Object> obj = new ArrayList<>();
         obj.add(this.nameTextField.getText());
@@ -138,6 +156,13 @@ public class SettingsMenu {
         return obj;
     }
 
+    /**
+     * Set config for Settings. Used when we cancel actual changes and we want
+     * our old config.
+     * 
+     * @param o
+     *            - config to be set.
+     */
     public void setObj(ArrayList<Object> o) {
         this.nameTextField.setText((String) o.get(0));
         this.blockinessSlider.setValue((float) o.get(1));
@@ -145,6 +170,16 @@ public class SettingsMenu {
         this.bobCheckBox.setBobingMode((boolean) o.get(3));
     }
 
+    /**
+     * Render actual SettingsMenu
+     * 
+     * @param pix
+     *            - PixelBuffer we render on
+     * @param x
+     *            - X position we start rendering from
+     * @param y
+     *            - Y position we start rendering from
+     */
     public void render(PixelBuffer pix, int x, int y) {
         this.gui.render(pix, x, y);
     }

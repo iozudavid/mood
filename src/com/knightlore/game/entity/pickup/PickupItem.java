@@ -23,23 +23,38 @@ public abstract class PickupItem extends Entity {
     private static final int FLOOR_OFFSET = 100;
     protected final DirectionalSprite sprite;
 
+    /**
+     * The time taken for a new pickup to be spawned by the
+     * spawn manager when this pickup has been destroyed.
+     * This only applies if this item was produced by the
+     * pickup manager.
+     */
     protected double spawnDelay;
 
+    /**
+     * Manages all pickups placed, at the start of the game, on
+     * PickupTiles.
+     */
     private PickupManager pickupManager;
-
-    /*
-    PickupItem(UUID uuid, Vector2D position, DirectionalSprite sprite) {
-        super(uuid, PICKUP_SIZE, position, Vector2D.UP);
-        this.sprite = sprite;
-    }
-    */
     
+    /**
+     * Produce a pickup item with the specified uuid, position vector, directional sprite and 
+     * pickup manager.
+     * @param uuid
+     * @param position
+     * @param sprite
+     * @param pickupManager
+     */
     public PickupItem(UUID uuid, Vector2D position, DirectionalSprite sprite, PickupManager pickupManager) {
         super(uuid, PICKUP_SIZE , position, Vector2D.UP);
         this.sprite = sprite;
         this.pickupManager = pickupManager;
     }
 
+    /**
+     * Upon update, the pickup spins around and bobs up and down slightly by setting its
+     * direction and zOffset respectively.
+     */
     @Override
     public void onUpdate() {
         super.onUpdate();
@@ -74,6 +89,12 @@ public abstract class PickupItem extends Entity {
         return "NAME THIS";
     }
     
+    /**
+     * If the given pickup has a pickup manager, it is placed in the queue
+     * of the pickup manager so it can be spawned after its spawn delay expires.
+     * Items on the client, or items whose placement was not determined by
+     * Pickup Tiles while not have a pickup manager.
+     */
     public void addToPickupManager() {
         // Clients will have a null Pickup manager
         if(pickupManager != null) {

@@ -5,6 +5,11 @@ import java.awt.Color;
 import com.knightlore.render.PixelBuffer;
 import com.knightlore.render.font.Font;
 
+/**
+ * Create and render text.
+ * @author David Iozu, James Adey
+ *
+ */
 public class Text extends GUIObject {
     protected String text;
     protected char[] rawChars;
@@ -23,6 +28,12 @@ public class Text extends GUIObject {
         SetText(text);
     }
 
+    /**
+     * Set the current text.
+     * 
+     * @param newText
+     *            - new text to be set
+     */
     public void SetText(String newText) {
         if (newText == null) {
             text = "";
@@ -32,6 +43,9 @@ public class Text extends GUIObject {
         rawChars = text.toCharArray();
     }
 
+    /**
+     * Draw the text on the screen.
+     */
     @Override
     void Draw(PixelBuffer pix, int x, int y) {
         int hOffset = Font.DEFAULT_WHITE.getHeight();

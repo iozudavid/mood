@@ -4,13 +4,16 @@ import java.util.Iterator;
 import java.util.UUID;
 
 import com.knightlore.engine.GameEngine;
+import com.knightlore.game.BotInput;
 import com.knightlore.game.Team;
+import com.knightlore.game.entity.Entity;
 import com.knightlore.game.entity.Player;
 import com.knightlore.game.entity.ZombieShared;
 import com.knightlore.game.entity.pickup.PistolPickup;
 import com.knightlore.game.entity.pickup.ShotgunPickup;
 import com.knightlore.game.entity.pickup.WeaponPickup;
 import com.knightlore.game.entity.weapon.WeaponType;
+import com.knightlore.game.world.ServerWorld;
 import com.knightlore.utils.Vector2D;
 
 /**
@@ -46,14 +49,28 @@ public class TDMGameManager extends GameManager {
     private int redScore = 0;
     
     /**
-     * Sets the game state to LOBBY.
+     * Sets the game state to LOBBY and spawns the bots.
      */
     @Override
     public void startLobby() {
         gameState = GameState.LOBBY;
+        PlayerManager playerManager = GameEngine.getSingleton().getWorld().getPlayerManager();
+        ServerWorld world = (ServerWorld) GameEngine.getSingleton().getWorld();
+        for (int i = 0; i < GameManager.numBots; i++) {
+            // attempt even teams
+            Team team = Team.BLUE;
+            if (i % 2 == 0) {
+                team = Team.RED;
+            }
+            Vector2D pos = world.getMap().getRandomSpawnPoint(team);
+            Player botPlayer = new Player(pos, Vector2D.UP, team);
+            botPlayer.init();
+            
+            botPlayer.setInputModule(new BotInput());
+            botPlayer.setName("bot" + i);
+            playerManager.addPlayer(botPlayer);
+        }
     }
-    
-    // TODO: PLAYER TEAM ASSIGNMENT
     
     /**
      * Sets the game state to be PLAYING and respawns all of the players. Also
@@ -80,13 +97,19 @@ public class TDMGameManager extends GameManager {
     public void gameOver() {
         gameState = GameState.FINISHED;
         System.out.println("GAME OVER");
+        String winStr;
         if (blueScore > redScore) {
-            System.out.println("KNIGHTLORE WINS!");
+            winStr = "KNIGHTLORE WINS!";
         } else if (blueScore < redScore) {
-            System.out.println("THE ANARCHISTS WIN!");
+            winStr="THE ANARCHISTS WIN!";
         } else {
-            System.out.println("DRAW! THE DAY BELONGS TO THE ZOMBIES!");
+            winStr = "DRAW! THE DAY BELONGS TO THE ZOMBIES!";
         }
+        
+        System.out.println(winStr);
+        // grab any entity
+        Entity randEnt = GameEngine.getSingleton().getWorld().getEntityIterator().next();
+        randEnt.sendSystemMessage(winStr);
     }
     
     /**
@@ -109,13 +132,21 @@ public class TDMGameManager extends GameManager {
     
     /**
      * Handles a Player death when killed by another player. Gives the
-     * <code>inflictor</code> 1 point then calls onEntityDeath(victim);
+     * <code>inflictor</code> 1 point then calls onEntityDeath(victim).
+     * Penalises the <code>inflictor</code> instead if this is a team kill.
      * 
      * @see com.knightlore.game.manager.TDMGameManager#onEntityDeath(Player)
      */
     @Override
     public void onEntityDeath(Player victim, Player inflictor) {
-        inflictor.addScore(1);
+        if (victim.team == inflictor.team) {
+            // penalise inflictor for TK
+            inflictor.addScore(-1);
+            // offset death penalty
+            victim.addScore(1);
+        } else {
+            inflictor.addScore(1);
+        }
         onEntityDeath(victim);
     }
     
@@ -162,6 +193,7 @@ public class TDMGameManager extends GameManager {
         
         if (GameEngine.ticker.getTime() > gameOverTick && gameState != GameState.FINISHED) {
             gameState = GameState.FINISHED;
+            gameOver();
         }
         
         if (GameEngine.ticker.getTime() > nextScoreUpdate) {

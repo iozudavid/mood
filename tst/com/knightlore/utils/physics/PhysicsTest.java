@@ -1,6 +1,5 @@
 package com.knightlore.utils.physics;
 
-import static org.junit.Assert.assertTrue;
 
 import java.awt.Rectangle;
 
@@ -19,8 +18,11 @@ import com.knightlore.game.tile.Tile;
 import com.knightlore.game.world.GameWorld;
 import com.knightlore.utils.Vector2D;
 
+import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertThat;
+
 @RunWith(PowerMockRunner.class) 
-@PrepareForTest({GameEngine.class})
+@PrepareForTest(GameEngine.class)
 public class PhysicsTest {
 
     private Map m;
@@ -37,10 +39,11 @@ public class PhysicsTest {
     public void test_point_in_rect(){
         Vector2D pos = new Vector2D(1.2,1.5);
         Rectangle rect = new Rectangle(1,1,1,1);
-        assertTrue(Physics.pointInAWTRectangleTest(pos, rect));
         Vector2D pos2 = new Vector2D(1.2,1.5);
         Rectangle rect2 = new Rectangle(0,0,1,1);
-        assertTrue(!Physics.pointInAWTRectangleTest(pos2, rect2));
+    
+        assertThat(Physics.pointInAWTRectangleTest(pos, rect), is(true));
+        assertThat(Physics.pointInAWTRectangleTest(pos2, rect2), is(false));
     }
     
     @Test(expected = IllegalStateException.class)
@@ -57,7 +60,8 @@ public class PhysicsTest {
         PowerMockito.when(w.getMap()).thenReturn(m);
         PowerMockito.when(m.getTile(Matchers.anyInt(), Matchers.anyInt())).thenReturn(t);
         PowerMockito.when(t.blockLOS()).thenReturn(true);
-        Physics.linecastQuick(new Vector2D(1.1,1.5), new Vector2D(1.2,1.5), 2);
+        boolean linecast = Physics.linecastQuick(new Vector2D(1.1,1.5), new Vector2D(1.2,1.5), 2);
+        assertThat(linecast, is(true));
     }
     
     @Test
@@ -69,7 +73,8 @@ public class PhysicsTest {
         PowerMockito.when(w.getMap()).thenReturn(m);
         PowerMockito.when(m.getTile(Matchers.anyInt(), Matchers.anyInt())).thenReturn(t);
         PowerMockito.when(t.blockLOS()).thenReturn(false);
-        Physics.linecastQuick(new Vector2D(1.1,1.5), new Vector2D(1.2,1.5), 2);
+        boolean linecast = Physics.linecastQuick(new Vector2D(1.1,1.5), new Vector2D(1.2,1.5), 2);
+        assertThat(linecast, is(false));
     }
     
 }

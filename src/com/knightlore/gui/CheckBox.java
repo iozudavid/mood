@@ -2,6 +2,11 @@ package com.knightlore.gui;
 
 import com.knightlore.render.PixelBuffer;
 
+/**
+ * Class creating a checkbox whether ticked or not.
+ * @author David Iozu
+ *
+ */
 public class CheckBox extends GUIObject{
     
     private boolean switcher;
@@ -11,6 +16,9 @@ public class CheckBox extends GUIObject{
         this.switcher = switcher;
     }
 
+    /**
+     * Draw the checkbox.
+     */
     @Override
     void Draw(PixelBuffer pix, int x, int y) {        
         pix.drawRect(0x000000, rect.x, rect.y, rect.width, rect.height);
@@ -37,15 +45,28 @@ public class CheckBox extends GUIObject{
         return true;
     }
     
+    /**
+     * Set whether is it ticked or not
+     * 
+     * @param b
+     *            - set the tick or untick state.
+     */
     public void setBobingMode(boolean b){
         this.switcher = b;
     }
     
+    /**
+     * Switch the tick to untick and vice-versa.
+     */
     @Override
     void OnClick() {
         this.switcher = !this.switcher;
     }
     
+    /**
+     * 
+     * @return whether it is ticked or not
+     */
     public boolean getBobingMode(){
         return this.switcher;
     }

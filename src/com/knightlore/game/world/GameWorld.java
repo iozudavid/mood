@@ -10,6 +10,8 @@ import com.knightlore.game.manager.AIManager;
 import com.knightlore.game.manager.GameManager;
 import com.knightlore.game.entity.Player;
 import com.knightlore.game.manager.PlayerManager;
+import com.knightlore.GameSettings;
+import com.knightlore.game.GameMode;
 import com.knightlore.game.area.Map;
 import com.knightlore.game.area.generation.MapGenerator;
 import com.knightlore.game.area.generation.MapType;
@@ -27,9 +29,6 @@ import com.knightlore.utils.physics.RaycastHitType;
  * @see ServerWorld
  */
 public abstract class GameWorld {
-    
-    private static final int TEST_XSIZE = 40; // 16;
-    private static final int TEST_YSIZE = 60; // 32;
     
     protected Map map;
     protected PlayerManager playerManager;
@@ -116,7 +115,22 @@ public abstract class GameWorld {
         if (mapSeed == null) {
             mapSeed = new Random().nextLong();
         }
-        map = new MapGenerator().createMap(TEST_XSIZE, TEST_YSIZE, MapType.FFA, mapSeed);
+        MapType mapType = MapType.FFA;
+        if(GameManager.desiredGameMode == GameMode.TDM) {
+            mapType = MapType.TDM;
+        }
+        
+        if(mapType == MapType.TDM) {
+            // TDM maps need a minimum size
+            if(GameSettings.mapWidth < 32) {
+                GameSettings.mapWidth = 32;
+            }
+            if(GameSettings.mapHeight < 32) {
+                GameSettings.mapHeight = 32;
+            }
+        }
+        map = new MapGenerator().createMap(GameSettings.mapWidth, GameSettings.mapHeight, mapType, mapSeed);
+        System.out.println("Generated map.");
         ents = new LinkedList<>();
         aiManager = new AIManager(map);
         playerManager = new PlayerManager();

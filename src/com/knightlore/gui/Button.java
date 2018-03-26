@@ -8,6 +8,11 @@ import com.knightlore.render.font.Font;
 import com.knightlore.render.graphic.Graphic;
 import com.knightlore.utils.funcptrs.VoidFunction;
 
+/**
+ * Class creating a button with functionalities.
+ * @author David Iozu, James Adey
+ *
+ */
 public class Button extends GUIObject {
 
     public Button(int x, int y, int width, int height, int depth) {
@@ -45,6 +50,10 @@ public class Button extends GUIObject {
 
     public VoidFunction clickFunction;
 
+    /**
+     * 
+     * @return the color depending of the object state.
+     */
     public Color activeColor() {
         switch (state) {
         case UP_PHASE_1:
@@ -68,14 +77,30 @@ public class Button extends GUIObject {
 
     }
 
+    /**
+     * Set a graphic to be rendered to the left of the button.
+     * 
+     * @param g
+     *            - graphic to be rendered to the left of the button
+     */
     public void setGraphic(Graphic g) {
         this.activeGraphic = g;
     }
 
+    /**
+     * Set a graphic to be rendered to the right of the button.
+     * 
+     * @param g
+     *            - graphic to be rendered to the right of the button
+     */
     public void setGraphic2(Graphic g) {
         this.activeGraphic2 = g;
     }
 
+    /**
+     * Draw the button on the actual state (i.e hover) and graphics to the left
+     * and right if any.
+     */
     @Override
     void Draw(PixelBuffer pix, int x, int y) {
 
@@ -133,6 +158,9 @@ public class Button extends GUIObject {
 
     }
 
+    /**
+     * Applies the function set for this button when clicked
+     */
     @Override
     void OnClick() {
         if (clickFunction == null) {
@@ -142,25 +170,40 @@ public class Button extends GUIObject {
 
     }
 
+    /**
+     * Change the state to hover.
+     */
     @Override
     void onMouseEnter() {
         state = SelectState.HOVER_PHASE_2;
     }
 
+    /**
+     * Change the state to hover.
+     */
     void onMouseOver() {
         state = SelectState.HOVER_PHASE_2;
     }
 
+    /**
+     * Change the state to up.
+     */
     @Override
     void OnMouseExit() {
         state = SelectState.UP_PHASE_1;
     }
 
+    /**
+     * Change the state to up.
+     */
     @Override
     void onMouseDown() {
         state = SelectState.UP_PHASE_2;
     }
 
+    /**
+     * Change the state to hover.
+     */
     @Override
     void onMouseUp() {
         if (state == SelectState.UP_PHASE_1) {

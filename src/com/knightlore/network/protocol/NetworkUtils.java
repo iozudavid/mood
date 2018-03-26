@@ -4,6 +4,11 @@ import java.nio.ByteBuffer;
 
 import com.knightlore.engine.GameEngine;
 
+/**
+ * Class used to pack/unpack strings into ByteBuffer
+ * @author Will Miller
+ *
+ */
 public class NetworkUtils {
 
     /**

@@ -11,6 +11,13 @@ import java.util.function.Consumer;
 import com.knightlore.network.client.ClientNetworkObjectManager;
 import com.knightlore.network.protocol.NetworkUtils;
 
+/**
+ * Abstract network manager to be implemented on both client and server sides.
+ * Handle to deserialize correctly a new packet received by networking.
+ * 
+ * @author David Iozu, Will Miller
+ *
+ */
 public abstract class NetworkObjectManager implements INetworkable, Runnable {
     // This is a special UUID that refers to the NetworkObjectManager itself.
     public static final UUID MANAGER_UUID = UUID
@@ -64,6 +71,8 @@ public abstract class NetworkObjectManager implements INetworkable, Runnable {
      * arrive. Then it's depacked up to the method name to be called. When we
      * know the class and the method we need to call, just perform the call and
      * pass the packet by.
+     * For user prediction, packet containing player states it's not deserialize,
+     * it's used to predict or correct user states.
      */
     @Override
     public void run() {

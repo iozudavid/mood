@@ -8,44 +8,53 @@ import com.knightlore.game.entity.Entity;
 import com.knightlore.game.entity.Player;
 import com.knightlore.game.entity.SpectatorCamera;
 import com.knightlore.game.entity.ZombieServer;
+import com.knightlore.game.manager.FFAGameManager;
+import com.knightlore.game.manager.GameManager;
 import com.knightlore.game.manager.TDMGameManager;
 import com.knightlore.utils.Vector2D;
 
+/**
+ * The server side implementation of the GameWorld.
+ * @author James
+ */
 public class ServerWorld extends GameWorld {
-
+    
+    /**
+     * Creates the GameManager, AI Manager, Player Manager and Populates the
+     * world with any required zombies.
+     */
     @Override
     public void setUpWorld(Long mapSeed) {
         super.setUpWorld(mapSeed);
-        // gameManager = new FFAGameManager();
-        gameManager = new TDMGameManager();
+        switch (GameManager.desiredGameMode) {
+        case TDM:
+            gameManager = new TDMGameManager();
+            break;
+        case FFA:
+        default:
+            gameManager = new FFAGameManager();
+            break;
+        }
+        
         gameManager.init();
         buildEntities();
     }
-
+    
     private void buildEntities() {
-        for (int i = 0; i < 1; i++) {
+        for (int i = 0; i < GameManager.numZombies; i++) {
             ZombieServer zom = new ZombieServer(map.getRandomSpawnPoint());
             zom.init();
             this.addEntity(zom);
         }
-
-        // TurretShared tboi = new TurretServer(3, map.getRandomSpawnPoint(),
-        // Vector2D.UP);
-        // tboi.init();
-        for (int i = 0; i < 0; i++) {
-            Player botPlayer = new Player(map.getRandomSpawnPoint(), Vector2D.UP);
-            botPlayer.setInputModule(new BotInput());
-            botPlayer.team = Team.BLUE;
-            botPlayer.init();
-            botPlayer.setName("bot" + i);
-            playerManager.addPlayer(botPlayer);
-        }
-
+        
         SpectatorCamera cam = new SpectatorCamera(new Vector2D(10, 20), Vector2D.UP);
         cam.init();
         this.addEntity(cam);
     }
-
+    
+    /**
+     * Performs collisions between players and other entities
+     */
     @Override
     public void update() {
         super.update();
@@ -61,10 +70,14 @@ public class ServerWorld extends GameWorld {
             }
         }
     }
-
+    
+    /**
+     * Creates a Player, sets their team, adds it into the player manager and
+     * initialises the player.
+     * 
+     * @returns The Player that was created.
+     */
     public Player createPlayer() {
-        // TODO: Initialise given player team in the
-        // player the constructor
         Vector2D pos = map.getRandomSpawnPoint();
         Team team = Team.NONE;
         if (gameManager instanceof TDMGameManager) {
@@ -75,16 +88,18 @@ public class ServerWorld extends GameWorld {
                 System.out.println("RED");
                 team = Team.RED;
             }
+            pos = map.getRandomSpawnPoint(team);
         }
-        Player player = new Player(pos, Vector2D.UP);
+        
+        Player player = new Player(pos, Vector2D.UP, team);
         player.init();
-        player.sendSystemMessage("System: Player " + player.getName() + " " + " has connected.");
+        player.sendSystemMessage("System: Player " + player.getName() + " has connected.");
         playerManager.addPlayer(player);
         return player;
     }
-
+    
     @Override
     public void onPostEngineInit() {
-
+        
     }
 }

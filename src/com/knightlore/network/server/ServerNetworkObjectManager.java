@@ -11,6 +11,7 @@ import java.util.UUID;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.function.Predicate;
 
+import com.knightlore.GameSettings;
 import com.knightlore.engine.GameEngine;
 import com.knightlore.engine.TickListener;
 import com.knightlore.game.entity.Player;
@@ -21,6 +22,11 @@ import com.knightlore.network.NetworkObjectManager;
 import com.knightlore.network.protocol.NetworkUtils;
 import com.knightlore.utils.Tuple;
 
+/**
+ * Class used to keep clients update with new changes
+ * @author David Iozu, Will Miller
+ *
+ */
 public class ServerNetworkObjectManager extends NetworkObjectManager {
    /**
     * How often to send an update of state, rather than just if the states have
@@ -253,8 +259,13 @@ public class ServerNetworkObjectManager extends NetworkObjectManager {
             }
 
         });
-        // Initialise the world without specifying a seed.
-        serverWorld.setUpWorld(null);
+        if(GameSettings.randomMap) {
+        
+            serverWorld.setUpWorld(null);
+        }
+        else {
+            serverWorld.setUpWorld((long)GameSettings.mapSeed);
+        }
     }
 
     /**

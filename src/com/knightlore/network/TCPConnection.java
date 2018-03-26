@@ -6,11 +6,10 @@ import java.io.IOException;
 import java.net.Socket;
 import java.nio.ByteBuffer;
 
-/*
- * Basic network connection
- * start using tcp for now, adpat it in the future to use udp
+/**
+ * Basic network connection based on TCP Protocol
+ * @author David Iozu, Will Miller
  */
-
 public class TCPConnection extends Connection {
 
     private DataInputStream infoReceive;

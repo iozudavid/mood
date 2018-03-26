@@ -14,6 +14,12 @@ import com.knightlore.network.protocol.ClientProtocol;
 import com.knightlore.network.protocol.NetworkUtils;
 import com.knightlore.utils.Vector2D;
 
+/**
+ * Class used to predict the next client state for current user.
+ * As well as server reconciliation.
+ * @author David Iozu
+ *
+ */
 public class Prediction {
 
 	// first double is the input timestemp

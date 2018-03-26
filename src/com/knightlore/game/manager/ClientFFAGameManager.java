@@ -64,6 +64,11 @@ public class ClientFFAGameManager extends FFAGameManager {
     
     boolean gameOver = false;
     
+    @Override
+    public void startLobby() {
+        gameState = GameState.LOBBY;
+    }
+    
     /**
      * Checks if the game is over.
      */

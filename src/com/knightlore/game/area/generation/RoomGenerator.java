@@ -57,9 +57,11 @@ public class RoomGenerator extends ProceduralAreaGenerator {
         if (rt == RoomType.LAVA_PLATFORM) {
             return new Room(grid, 1 , 2);
         }
+        
         if (rt == RoomType.SPAWN) {
             return new Room(grid, SPAWN_ROOM_MIN_CONNECTIONS, SPAWN_ROOM_MAX_CONNECTIONS);
         }
+        
         return new Room(grid, DEFAULT_MIN_CONNECTIONS, DEFAULT_MAX_CONNECTIONS);
     }
 
@@ -195,10 +197,9 @@ public class RoomGenerator extends ProceduralAreaGenerator {
     private void addHorizontalInternalWall(int y) {
         int width = grid.length;
         int distanceIntoRoom = 2 + rand.nextInt(width / 4);
-        int start = distanceIntoRoom;
         int end = (width - 1) - distanceIntoRoom;
         // place straight wall
-        for (int i = start; i < end; i++) {
+        for (int i = distanceIntoRoom; i < end; i++) {
             grid[i][y] = new BrickTile();
             grid[i][y].setPathable(false);
         }
@@ -265,7 +266,7 @@ public class RoomGenerator extends ProceduralAreaGenerator {
     }
 
     private List<Point> possiblePickupLocations() {
-        List<Point> candidateLocations = new ArrayList<Point>();
+        List<Point> candidateLocations = new ArrayList<>();
         int minAirTiles = 24;
         for(int i=0; i< grid.length - 1; i++) {
             for(int j=0; j<grid[0].length - 1; j++) {

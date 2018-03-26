@@ -10,6 +10,11 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import com.knightlore.render.PixelBuffer;
 import com.knightlore.render.font.Font;
 
+/**
+ * Class used to create a table(i.e scoreboard)
+ * @author David Iozu
+ *
+ */
 public class Table extends GUIObject{
 	 
 	private HashMap<String,Double> headersAndWidth;
@@ -22,6 +27,12 @@ public class Table extends GUIObject{
 	        this.entries = new CopyOnWriteArrayList<>();
 	 }
 	
+    /**
+     * Set the table header.
+     * 
+     * @param headers
+     *            - list of headers to be set.
+     */
 	public void setTableHeader(ArrayList<String> headers){
 		int maxNoOfChars=0;
 		for(String t : headers)
@@ -31,6 +42,12 @@ public class Table extends GUIObject{
 		}
 	}
 	
+    /**
+     * Add an entry to the table.
+     * 
+     * @param entry
+     *            - list of entries to be added.
+     */
 	public void addTableEntry(CopyOnWriteArrayList<String> entry){
 		synchronized (this.entries) {
 			for(CopyOnWriteArrayList<String> elem : this.entries){
@@ -44,6 +61,12 @@ public class Table extends GUIObject{
 		}
 	}
 	
+    /**
+     * Remove an entry from the table.
+     * 
+     * @param uuid
+     *            - UUID entry to be removed
+     */
 	public void removeTableEntry(String uuid) {
 		synchronized (this.entries) {
 			CopyOnWriteArrayList<String> toBeRemoved = null;
@@ -60,6 +83,9 @@ public class Table extends GUIObject{
 		}
 	}
 	
+	/**
+	 * Order it in descending order.
+	 */
 	private void orderTableByScore() {
 		if (this.entries.size() < 2)
 			return;
@@ -78,6 +104,9 @@ public class Table extends GUIObject{
 		}
 	}
 
+	/**
+	 * Draw the table in descending order.
+	 */
 	@Override
 	void Draw(PixelBuffer pix, int x, int y) {
 		synchronized (this.entries) {

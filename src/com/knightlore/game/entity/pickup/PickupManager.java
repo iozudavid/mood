@@ -11,12 +11,17 @@ import com.knightlore.utils.Vector2D;
 public class PickupManager implements TickListener{
 
     private double currentTime = 0.0;
+
     private GameEngine engine;
-    
-    // keep track of the pickup object and when to place
     private PriorityQueue<PickupPlacement> pickupQueue 
       = new PriorityQueue<PickupPlacement>();
     
+    /**
+     * The pickupManager is used to keep track of the placement of
+     * pickup items on Pickup Tiles. These items, upon being collided with,
+     * are destroyed and then replaced after their spawn delay has expired. 
+     * @param map
+     */
     public PickupManager(Map map) {
         
         this.engine = GameEngine.getSingleton();
@@ -53,12 +58,20 @@ public class PickupManager implements TickListener{
         GameEngine.ticker.addTickListener(this);
     }
 
+    /**
+     * Adds a pickup item to the queue, so it can be added to the game engine
+     * after it's spawn delay.
+     * @param item
+     */
     public void addToQueue(PickupItem item) {
-        System.out.println("Adding to queue item!");
         double nextTime = currentTime + item.getSpawnDelay();
         pickupQueue.add(new PickupPlacement(nextTime, item));
     }
     
+    /**
+     * On tick, the pickup manager iterates through its queue of pickup placements - 
+     * placing items as needed, and adjusts it's current time appropriates.
+     */
     @Override
     public void onTick() {
 
@@ -78,6 +91,9 @@ public class PickupManager implements TickListener{
         currentTime += 1;
     }
 
+    /**
+     * The pickup manager is checked every second.
+     */
     @Override
     public long interval() {
         // once per second
