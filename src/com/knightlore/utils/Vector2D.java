@@ -3,24 +3,30 @@ package com.knightlore.utils;
 import java.awt.Point;
 
 public final class Vector2D {
-    
-    private double x;
-    private double y;
-    
     public static final Vector2D ZERO = new Vector2D(0, 0);
     public static final Vector2D UP = new Vector2D(0, 1);
     public static final Vector2D DOWN = new Vector2D(0, -1);
     public static final Vector2D LEFT = new Vector2D(-1, 0);
     public static final Vector2D RIGHT = new Vector2D(1, 0);
     public static final Vector2D ONE = new Vector2D(1, 1);
-    public static final Vector2D HALF = new Vector2D(0.5, 0.5);
+    
+    private final double x;
+    private final double y;
+    
+    public static Vector2D fromTilePoint(Point point) {
+        return new Vector2D(point.x+0.5,point.y+0.5);
+    }
+    
+    public static Vector2D fromGridRef(int x, int y) {
+        return new Vector2D(x + 0.5 , y + 0.5);
+    }
+    
+    public static Vector2D fromPoint(Point point) {
+        return new Vector2D(point.x,point.y);
+    }
     
     public static Vector2D add(Vector2D a, Vector2D b) {
         return new Vector2D(a.x + b.x, a.y + b.y);
-    }
-    
-    public static Vector2D mul(Vector2D a, Vector2D b) {
-        return new Vector2D(a.x * b.x, a.y * b.y);
     }
     
     public static Vector2D mul(Vector2D a, double b) {
@@ -29,6 +35,10 @@ public final class Vector2D {
     
     public static Vector2D sub(Vector2D a, Vector2D b) {
         return new Vector2D(a.x - b.x, a.y - b.y);
+    }
+    
+    public Vector2D(Vector2D v) {
+        this(v.x, v.y);
     }
     
     public Vector2D(Point p) {
@@ -50,10 +60,6 @@ public final class Vector2D {
         return new Vector2D(x - v.x, y - v.y);
     }
     
-    public Vector2D mul(Vector2D v) {
-        return new Vector2D(x * v.x, y * v.y);
-    }
-    
     // allocates a new vector, does not modify the original
     public Vector2D perpendicular() {
         return new Vector2D(y, -x);
@@ -68,20 +74,20 @@ public final class Vector2D {
     }
     
     public double distance(Vector2D v) {
-        double xDist = Math.abs(x - v.x);
-        double yDist = Math.abs(y - v.y);
-        return Math.sqrt(Math.pow(xDist, 2) + Math.pow(yDist, 2));
+        double xDist = x - v.x;
+        double yDist = y - v.y;
+        return Math.sqrt(xDist*xDist + yDist*yDist);
     }
     
     public double magnitude() {
-        return Math.sqrt(Math.pow(x, 2) + Math.pow(y, 2));
+        return Math.sqrt(x*x + y*y);
     }
     
-    public synchronized double getX() {
+    public double getX() {
         return x;
     }
     
-    public synchronized double getY() {
+    public double getY() {
         return y;
     }
     
@@ -105,9 +111,7 @@ public final class Vector2D {
     }
     
     /**
-     * returns integer coordinate (lossy)
-     * 
-     * @return
+     * @return java.awt.Point corresponding to given vector (rounds down)
      */
     public Point toPoint() {
         return new Point((int)Math.floor(x), (int)Math.floor(y));
@@ -116,18 +120,6 @@ public final class Vector2D {
     @Override
     public String toString() {
         return String.format("(%.20f, %.20f)", x, y);
-    }
-
-    public static Vector2D fromTilePoint(Point point) {
-        return new Vector2D(point.x+0.5,point.y+0.5);
-    }
-    
-    public static Vector2D fromGridRef(int x, int y) {
-        return new Vector2D(x + 0.5 , y + 0.5);
-    }
-    
-    public static Vector2D fromPoint(Point point) {
-        return new Vector2D(point.x,point.y);
     }
 
     @Override
@@ -145,6 +137,10 @@ public final class Vector2D {
     }
 
     public boolean equals(Vector2D v, double epsilon) {
+        if (epsilon < 0) {
+            throw new IllegalArgumentException("Epsilon can't be less the zero (found: " + epsilon + ")");
+        }
+        
         return v != null && Math.abs(x - v.x) <= epsilon && Math.abs(y - v.y) <= epsilon;
     }
 }
