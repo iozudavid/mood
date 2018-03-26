@@ -119,10 +119,6 @@ public final class Mouse implements MouseListener, MouseMotionListener, MouseWhe
         return leftHeld;
     }
 
-    public boolean isLeftClick() {
-        return leftClick;
-    }
-
     /**
      * Get a boolean value representing whether the right mouse button is
      * pressed or not.

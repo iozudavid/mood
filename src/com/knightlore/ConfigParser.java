@@ -73,6 +73,7 @@ public class ConfigParser {
             }
             try {
                 int destPort = Integer.parseInt(valStr);
+                destPort = Utils.clamp(destPort, 1, 65535);
                 ConnectionDetails.DEFAULT_PORT = destPort;
             } catch (Exception e) {
                 System.err.println("Failed to read dest_port, value given=" + valStr);
@@ -122,6 +123,7 @@ public class ConfigParser {
             }
             try {
                 int listenPort = Integer.parseInt(valStr);
+                listenPort = Utils.clamp(listenPort, 1, 65535);
                 ConnectionDetails.PORT = listenPort;
             } catch (Exception e) {
                 System.err.println("Failed to read listen_port, value given=" + valStr);

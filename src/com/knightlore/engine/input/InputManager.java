@@ -29,11 +29,17 @@ public class InputManager {
         return new Vector2D(mouse.getX(), mouse.getY());
     }
 
+    /**
+     * Creates the keyboard and mouse
+     */
     public static void init() {
         keyboard = new Keyboard();
         mouse = new Mouse();
     }
 
+    /**
+     * Clears the saved mouse presses, called at the end of each game loop.
+     */
     public static void clearMouse() {
         mouse.clearButtons();
     }

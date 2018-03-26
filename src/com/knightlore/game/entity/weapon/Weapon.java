@@ -7,38 +7,53 @@ import com.knightlore.engine.audio.SoundResource;
 import com.knightlore.game.entity.Entity;
 import com.knightlore.render.PixelBuffer;
 import com.knightlore.render.graphic.Graphic;
-import com.knightlore.render.graphic.sprite.WeaponSprite;
 import com.knightlore.utils.Vector2D;
 
+/**
+ * An abstract weapon class containing shared methods and useful data common to
+ * all weapons
+ * 
+ * @authors James, Joe, Will
+ *
+ */
 public abstract class Weapon {
     // How far away an entity should be from us before we don't play the shoot
     // sound. Sound effects for shots fired closer than this will have their
     // volume scaled linearly.
     private static final float SHOOT_SFX_CUTOFF_DISTANCE = 10;
-
+    
     protected Graphic graphic;
     protected boolean automatic;
     protected int fireRate, timer;
-
+    
     private SoundResource shootSFX;
-
+    
     Weapon(Graphic graphic, boolean automatic, int fireRate, SoundResource shootSFX) {
         this.graphic = graphic;
         this.automatic = automatic;
         this.fireRate = fireRate;
         this.shootSFX = shootSFX;
     }
-
+    
+    /**
+     * Helper method that each weapon must implement to calculate damage of it's shot.
+     */
     public abstract int damageInflicted(Entity shooter, Entity target);
-
+    
+    /**
+     * Resets the fire timer, and plays a sound effect on the client
+     * 
+     * @param shooter
+     *            - the entity that fired
+     */
     public void fire(Entity shooter) {
         this.timer = 0;
-
+        
         if (GameSettings.isClient()) {
             playShotSFX(shooter);
         }
     }
-
+    
     private void playShotSFX(Entity shooter) {
         // Determine volume to play sound effect based on distance from us.
         Vector2D ourPos = GameEngine.getSingleton().getCamera().getPosition();
@@ -53,11 +68,29 @@ public abstract class Weapon {
             soundManager.playConcurrently(shootSFX, volume);
         }
     }
-
+    
     private int weaponBobX = GameSettings.MOTION_BOB ? 20 : 0, weaponBobY = GameSettings.MOTION_BOB ? 30 : 0;
     private double weaponBobSpeed = 2;
     private int inertiaCoeffX = 125, inertiaCoeffY = 35;
-
+    
+    /**
+     * Draws this weapon on the player's HUD. And applies weapon bob.
+     * 
+     * @param pix
+     *            - the PixelBuffer to draw into
+     * @param x
+     *            - the x coordinate of the pixel buffer
+     * @param y
+     *            - the y coordinate of the pixel buffer
+     * @param inertiaX
+     *            - how much to offset the weapon by horizontally
+     * @param inertiaY
+     *            - how much to offset the weapon by vertically
+     * @param distanceTraveled
+     *            - how far the holder has moved
+     * @param muzzleFlash
+     *            - do we draw a muzzle flash
+     */
     public void render(PixelBuffer pix, int x, int y, int inertiaX, int inertiaY, double distanceTraveled,
             boolean muzzleFlash) {
         // Used a linear equation to get the expression below.
@@ -66,43 +99,53 @@ public abstract class Weapon {
         // The linear equation relating is therefore y = 1/242 * (h - 558),
         // hence below
         int SCALE = (int) (5 + 1 / 242D * (pix.getHeight() - 558));
-
+        
         Graphic g = getGraphic();
         final int width = g.getWidth() * SCALE, height = g.getHeight() * SCALE;
-
+        
         int xx = x + (pix.getWidth() - width) / 2;
         int yy = pix.getHeight() - height + 28 * SCALE;
-
+        
         int xOffset = (int) (Math.cos(distanceTraveled * weaponBobSpeed) * weaponBobX);
         int yOffset = (int) (Math.abs(Math.sin(distanceTraveled * weaponBobSpeed) * weaponBobY)) - 85;
-
+        
         if (muzzleFlash) {
             pix.fillOval(0xFCC07F, xx + xOffset + inertiaX + width / 4, yy + yOffset + inertiaY + height / 4, width / 2,
                     height / 2, 500);
         }
         pix.drawGraphic(g, xx + xOffset + inertiaX, yy + yOffset + inertiaY, width, height);
     }
-
+    
+    /**
+     * Increases the weapon timer
+     */
     public void update() {
         timer++;
     }
-
+    
+    /**
+     * @returns TRUE if the weapon can fire, that is if the elapsed time since
+     *          the last shot is greater than the firing delay
+     */
     public boolean canFire() {
         return timer > fireRate;
     }
-
+    
     public Graphic getGraphic() {
         return graphic;
     }
-
+    
     public int getInertiaCoeffX() {
         return inertiaCoeffX;
     }
-
+    
     public int getInertiaCoeffY() {
         return inertiaCoeffY;
     }
-
+    
+    /**
+     * @returns The type of the current weapon.
+     */
     public abstract WeaponType getWeaponType();
-
+    
 }
