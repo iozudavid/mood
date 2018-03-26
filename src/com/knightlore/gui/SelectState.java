@@ -1,5 +1,10 @@
 package com.knightlore.gui;
 
+/**
+ * 
+ * Possible states for GUIObjects.
+ * @author David Iozu
+ */
 public enum SelectState {
 	UP,
     UP_PHASE_1, 

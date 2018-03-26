@@ -7,6 +7,11 @@ import com.knightlore.network.ConnectionDetails;
 import com.knightlore.render.PixelBuffer;
 import com.knightlore.utils.funcptrs.VoidFunction;
 
+/**
+ * Class to render all StartMenu GUIObjects
+ * @author David Iozu
+ *
+ */
 public class StartMenu {
 
     private GUICanvas gui;
@@ -20,6 +25,14 @@ public class StartMenu {
     private Button quitButton;
     private Text noConnection;
 
+    /**
+     * SetUp all GUIObjects for StartMenu.
+     * 
+     * @param screenHeight
+     *            - height of the screen
+     * @param screenWidth
+     *            - width of the screen.
+     */
     public StartMenu(int screenHeight, int screenWidth) {
         this.gui = new GUICanvas(screenWidth, screenHeight);
         this.gui.init();
@@ -102,6 +115,16 @@ public class StartMenu {
         gui.addGUIObject(quitButton);
     }
 
+    /**
+     * Render actual StartMenu
+     * 
+     * @param pix
+     *            - PixelBuffer we render on
+     * @param x
+     *            - X position we start rendering from
+     * @param y
+     *            - Y position we start rendering from
+     */
     public void render(PixelBuffer pix, int x, int y) {
         gui.render(pix, x, y);
     }

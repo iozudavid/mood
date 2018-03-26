@@ -7,6 +7,11 @@ import com.knightlore.engine.input.InputManager;
 import com.knightlore.render.PixelBuffer;
 import com.knightlore.utils.Vector2D;
 
+/**
+ * Class used to create a slider useful to adjust values.
+ * @author David Iozu
+ *
+ */
 public class Slider extends GUIObject {
 
     public Color upColour = Color.GRAY;
@@ -36,6 +41,10 @@ public class Slider extends GUIObject {
                 (int) (y - (double) (height) / 2D), 5, height * 2);
     }
 
+    /**
+     * 
+     * @return the appropriate color for the current state.
+     */
     public Color activeColor() {
         switch (state) {
         case UP:
@@ -53,6 +62,12 @@ public class Slider extends GUIObject {
 
     }
     
+    /**
+     * Set a new value for the slider.
+     * 
+     * @param v
+     *            - value to be set
+     */
     public void setValue(float v){
         this.actualValue = v;
     }
@@ -62,6 +77,9 @@ public class Slider extends GUIObject {
         return true;
     }
 
+    /**
+     * Draw the slider on the current position.
+     */
     @Override
     void Draw(PixelBuffer pix, int x, int y) {
         int color = Color.DARK_GRAY.getRGB();
@@ -72,18 +90,27 @@ public class Slider extends GUIObject {
         pix.fillRect(color, sliderPos.x, sliderPos.y, sliderPos.width, sliderPos.height);
     }
 
+    /**
+     * Recalculate the slider position.
+     */
     @Override
     void OnClick() {
         this.isClicked = true;
         this.calculatePosition();
     }
 
+    /**
+     * Change the state to hover.
+     */
     @Override
     void onMouseEnter() {
         this.isClicked = false;
         state = SelectState.HOVER;
     }
 
+    /**
+     * If slider clicked, rerender the slider on the new position.
+     */
     void onMouseOver() {
         if(this.isClicked){
             this.calculatePosition();
@@ -91,24 +118,37 @@ public class Slider extends GUIObject {
         state = SelectState.HOVER;
     }
 
+    /**
+     * Change the state to up.
+     */
     @Override
     void OnMouseExit() {
         this.isClicked = false;
         state = SelectState.UP;
     }
 
+    /**
+     * Change the state to down.
+     */
     @Override
     void onMouseDown() {
         this.isClicked = true;
         state = SelectState.DOWN;
     }
 
+    /**
+     * Change the state to up.
+     */
     @Override
     void onMouseUp() {
         this.isClicked = false;
         state = SelectState.UP;
     }
     
+    /**
+     * Takes the mouse position and recalculate the slider position depending on
+     * the mouse position
+     */
     private void calculatePosition(){
         Vector2D mousePos = InputManager.getMousePos();
         double mouseXPos = mousePos.getX();

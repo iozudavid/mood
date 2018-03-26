@@ -8,7 +8,11 @@ import com.knightlore.network.ConnectionDetails;
 import com.knightlore.render.PixelBuffer;
 import com.knightlore.utils.funcptrs.BooleanFunction;
 import com.knightlore.utils.funcptrs.VoidFunction;
-
+/**
+ * Creating and rendering all objects on multiplayer menu.
+ * @author David Iozu.
+ *
+ */
 public class MultiplayerMenu {
 
     private GUICanvas gui;
@@ -25,6 +29,14 @@ public class MultiplayerMenu {
     private Button cancelButton;
     private Text noConnection;
 
+    /**
+     * SetUp all the GUIObjects needed for MultiplayerMenu
+     * 
+     * @param screenHeight
+     *            - height of the screen
+     * @param screenWidth
+     *            - width of the screen
+     */
     public MultiplayerMenu(int screenHeight, int screenWidth) {
         this.gui = new GUICanvas(screenWidth, screenHeight);
         this.gui.init();
@@ -101,6 +113,16 @@ public class MultiplayerMenu {
 
     }
 
+    /**
+     * Render actual menu
+     * 
+     * @param pix
+     *            - PixelBuffer we render on
+     * @param x
+     *            - X position to start render from
+     * @param y
+     *            - Y position to start render from
+     */
     public void render(PixelBuffer pix, int x, int y) {
         this.gui.render(pix, x, y);
     }

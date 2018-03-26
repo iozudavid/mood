@@ -13,6 +13,12 @@ import com.knightlore.utils.Vector2D;
 import com.knightlore.utils.funcptrs.VoidFunction;
 import com.knightlore.utils.physics.Physics;
 
+/**
+ * The manager of all GUIObjects.
+ * Keep them updated and rendered.
+ * @author David Iozu, James Adey
+ *
+ */
 public class GUICanvas extends GameObject implements IRenderable {
 
 	private int screenWidth;
@@ -42,14 +48,25 @@ public class GUICanvas extends GameObject implements IRenderable {
 		isVisible = true;
 	}
 	
-	/** Called from the keyboard when a textual character is typed
-	 */
+    /**
+     * Called from the keyboard when a textual character is typed
+     * 
+     * @param c
+     *            - character typed
+     */
 	public static void inputChar(char c) {
 		if (activeTextField != null) {
 			activeTextField.onInputChar(c);
 		}
 	}
 	
+    /**
+     * Called from the keyboard when a textual character is typed to the game
+     * chat to be sent to the team
+     * 
+     * @param c
+     *            - character typed
+     */
 	public static void startMessageTeam(char c) {
 		if (activeTextField == null) {
 			if (gameTextField != null) {
@@ -62,6 +79,13 @@ public class GUICanvas extends GameObject implements IRenderable {
 		
 	}
 	
+    /**
+     * Called from the keyboard when a textual character is typed to the game
+     * chat to be sent to all players
+     * 
+     * @param c
+     *            - character typed
+     */
 	public static void startMessageAll(char c) {
 		if (activeTextField == null) {
 			if (gameTextField != null) {
@@ -74,6 +98,13 @@ public class GUICanvas extends GameObject implements IRenderable {
 		
 	}
 	
+    /**
+     * Called from the keyboard when user wants to send the message to the game
+     * chat.
+     * 
+     * @param c
+     *            - character typed
+     */
 	public static void sendMessage(char c) {
 		if (gameTextField != null) {
 			activeTextField=gameTextField;
@@ -81,6 +112,10 @@ public class GUICanvas extends GameObject implements IRenderable {
 		}
 	}
 	
+    /**
+     * Called from the keyboard when user wants to exit the game chat.
+     * 
+     */
 	public static void escape(){
 		if (activeTextField != null) {
 			activeTextField = null;
@@ -88,38 +123,66 @@ public class GUICanvas extends GameObject implements IRenderable {
 		} else onPressEscape.ifPresent(VoidFunction::call);
 	}
 	
+	/**
+	 * Called from the keyboard when Q button is pressed.
+	 * Call if any the function associated with this.
+	 */
 	public static void pressQ(){
 		onPressQ.ifPresent(VoidFunction::call);
 	}
 	
+	/**
+     * Called from the keyboard when Q button is released.
+     * Call if any the function associated with this.
+     */
 	public static void releaseQ(){
 		onReleaseQ.ifPresent(VoidFunction::call);
 	}
 	
-	
+	/**
+	 * 
+     * Called from the keyboard when left arrow is pressed.
+     * Move the mouse cursor to the left from TextField if is focused.
+	 */
 	public static void inputLeftArrow(){
 		if (activeTextField != null) {
 			activeTextField.onLeftArrow();
 		}
 	}
 	
+	/**
+     * 
+     * Called from the keyboard when right arrow is pressed.
+     * Move the mouse cursor to the right from TextField if is focused.
+     */
 	public static void inputRightArrow() {
 		if (activeTextField != null) {
 			activeTextField.onRightArrow();
 		}
 	}
 	
+    /**
+     * 
+     * Called from the keyboard when backspace is pressed. Delete a char from
+     * the current cursor position from TextField if is focused.
+     */
 	public static void deleteChar() {
 		if (activeTextField != null) {
 			activeTextField.onDeleteChar();
 		}
 	}
 	
+	/**
+	 * 
+	 * @return whether the TextField is focused on not.
+	 */
 	public static boolean isTyping() {
 		return activeTextField != null;
 	}
 	
-	
+	/**
+	 * Render all objects from this GUICanvas.
+	 */
 	@Override
 	public void render(PixelBuffer pix, int x, int y) {
         synchronized (guis) {
@@ -133,6 +196,9 @@ public class GUICanvas extends GameObject implements IRenderable {
 	public void onCreate() {
 	}
 	
+    /**
+     * Update the GUIObjects response depending on the mouse state.
+     */
 	@Override
 	public void onUpdate() {
 		Vector2D mousePos = InputManager.getMousePos();
@@ -211,6 +277,10 @@ public class GUICanvas extends GameObject implements IRenderable {
         }
 	}
 	
+    /**
+     *  Lower depths are first, therefore, draw in order. 
+     *  Deeper things are drawn first
+     */
 	private void sort() {
         synchronized (guis) {
             for (int i = 1; i < guis.size(); i++) {
@@ -225,6 +295,12 @@ public class GUICanvas extends GameObject implements IRenderable {
         }
 	}
 
+    /**
+     * Add a new GUIObject to this GUICanvas.
+     * 
+     * @param gui
+     *            - object to be added
+     */
 	public void addGUIObject(GUIObject gui) {
         synchronized (guis) {
             if (gui instanceof TextField) {
@@ -238,24 +314,54 @@ public class GUICanvas extends GameObject implements IRenderable {
         }
 	}
 	
+    /**
+     * Remove a GUIObject from this GUICanvas.
+     * 
+     * @param gui
+     *            - object to be removed.
+     */
 	public void removeGUIObject(GUIObject gui) {
 	    synchronized(guis){
 	        guis.remove(gui);
 	    }
 	}
 
+    /**
+     * Set the current selected TextField from this GUICanvas if any.
+     * 
+     * @param activeTextField
+     *            - TextField to be set
+     */
 	public static void setActiveTextField(TextField activeTextField) {
 		GUICanvas.activeTextField = activeTextField;
 	}
 	
+    /**
+     * Set a function for pressing Escape button from keyboard.
+     * 
+     * @param func
+     *            - function to be called on Escape
+     */
 	public static void setOnEscFunction(VoidFunction func){
 		onPressEscape=Optional.of(func);
 	}
 	
+    /**
+     * Set a function for pressing Q button from keyboard.
+     * 
+     * @param func
+     *            - function to be called on Q
+     */
 	public static void setOnQFunction(VoidFunction func){
 		onPressQ=Optional.of(func);
 	}
 	
+    /**
+     * Set a function for releasing Q button from keyboard.
+     * 
+     * @param func
+     *            - function to be called on releasing Q
+     */
 	public static void setOnQReleaseFunction(VoidFunction func){
 		onReleaseQ=Optional.of(func);
 	}

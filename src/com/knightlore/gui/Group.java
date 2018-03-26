@@ -5,6 +5,11 @@ import java.util.ArrayList;
 
 import com.knightlore.render.PixelBuffer;
 
+/**
+ * 
+ * Class which group some GUIObjects by appling a background for them.
+ * @author David Iozu
+ */
 public class Group extends GUIObject{
 	
 	private ArrayList<GUIObject> objectToGroup;
@@ -32,21 +37,42 @@ public class Group extends GUIObject{
         this.recalculate();
     }
 
+    /**
+     * Add an object to this group.
+     * 
+     * @param g
+     *            - object to be added to this group
+     */
     public void addToGroup(GUIObject g){
 		this.objectToGroup.add(g);
 		this.recalculate();
 	}
 	
+    /**
+     * Remove an object from this group.
+     * 
+     * @param g
+     *            - object to be removed from this group
+     */
 	public void removeFromGroup(GUIObject g){
 		this.objectToGroup.remove(g);
 		this.recalculate();
 	}
 
+    /**
+     * Calculate the height and width for this group by considering all the
+     * elements from it.
+     */
 	private void recalculate(){
 		this.rect.height = calculateHeight();
 		this.rect.width = calculateWidth();
 	}
 
+    /**
+     * Calculate the total width of the group.
+     * 
+     * @return the group width
+     */
 	private int calculateWidth(){
 		int width = 0;
 		for(GUIObject g : this.objectToGroup){
@@ -57,7 +83,11 @@ public class Group extends GUIObject{
 		return width;
 	}
 
-	
+    /**
+     * Calculate the total height of the group.
+     * 
+     * @return the group height
+     */
 	private int calculateHeight(){
 		int height = 0;
 		for(GUIObject g : this.objectToGroup){
@@ -70,26 +100,45 @@ public class Group extends GUIObject{
 		return height;
 	}
 	
+	/**
+	 * Change the state to up.
+	 */
 	void OnMouseExit() {
 		this.state = SelectState.UP;
 	}
 	
+   /**
+     * Change the state to hover.
+     */
 	void onMouseEnter() {
 		this.state = SelectState.HOVER;
 	}
 	
+	/**
+     * Change the state to hover.
+     */
 	void onMouseOver() {
 		this.state = SelectState.HOVER;
 	}
 	
+	/**
+     * Change the state to hover.
+     */
 	void onMouseUp() {
 		this.state = SelectState.HOVER;
 	}
 	
+	/**
+     * Change the state to hover.
+     */
 	void onMouseDown() {
 		this.state = SelectState.HOVER;
 	}
 	
+    /**
+     * 
+     * @return the appropriate color for the current group state.
+     */
 	public Color activeColor () {
 		switch(state){
 			case UP:
@@ -107,6 +156,9 @@ public class Group extends GUIObject{
 		return true;
 	}
 
+	/**
+	 * Draw the group.
+	 */
 	@Override
 	void Draw(PixelBuffer pix, int x, int y) {
 		pix.fillRect(activeColor().getRGB(),rect.x, rect.y, rect.width, rect.height);

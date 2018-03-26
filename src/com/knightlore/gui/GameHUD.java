@@ -1,5 +1,10 @@
 package com.knightlore.gui;
 
+/**
+ * Let the user know game time left.
+ * @author David Iozu
+ *
+ */
 public class GameHUD extends GUICanvas {
 
     private Text timeLeftText;
@@ -12,6 +17,12 @@ public class GameHUD extends GUICanvas {
         timeLeftText.SetText("00:00");
     }
 
+    /**
+     * Set time left for this game.
+     * 
+     * @param time
+     *            - set game time
+     */
     public void setTimeLeft(String time) {
         timeLeftText.SetText(time);
     }
