@@ -9,12 +9,18 @@ import com.knightlore.render.graphic.sprite.WeaponSprite;
 import com.knightlore.utils.Vector2D;
 import com.knightlore.utils.physics.RaycastHit;
 
+/**
+ * Class representing our Pistol weapon as held by players.
+ * 
+ * @author Joe, Will
+ *
+ */
 public class Pistol extends Weapon {
 
     private static final SoundResource SHOOT_SFX = new SoundResource("res/sfx/pistol.wav");
     private static final long FIRE_DELAY = 10;
-    private static final int BASE_DAMAGE = 100;
-    private static final float SQR_RANGE = 10;
+    private static final int BASE_DAMAGE = 40;
+    private static final float SQR_RANGE = 40;
     private long nextFireTime;
 
     public Pistol() {

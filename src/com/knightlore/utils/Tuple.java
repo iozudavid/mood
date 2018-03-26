@@ -1,6 +1,11 @@
 package com.knightlore.utils;
 
-// An arbitrary pair of objects.
+/**
+ * An arbitrary generic pair of objects
+ *
+ * @param <X>
+ * @param <Y>
+ */
 public class Tuple<X, Y> {
     public X x;
     public Y y;

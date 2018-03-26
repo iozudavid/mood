@@ -1,7 +1,6 @@
 package com.knightlore.engine;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -33,8 +32,6 @@ public class GameObjectManager {
      * they're destroyed.
      */
     private List<GameObject> notifyToDestroy;
-    
-    private boolean stillRuning=true;
 
     public GameObjectManager() {
         this.objects = new ArrayList<>();

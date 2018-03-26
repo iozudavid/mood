@@ -58,6 +58,9 @@ public class Keyboard extends KeyAdapter {
         }
     }
     
+    /**
+     * @returns TRUE if a gui is currently being typed into
+     */
     public boolean isTyping(){
     	return GUICanvas.isTyping();
     }
