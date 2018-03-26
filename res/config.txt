@@ -13,6 +13,7 @@ map_seed = 31415926
 listen_port = 27001
 
 // GAME MODES
-game_mode = TDM
+// either FFA, TDM or ZOM
+game_mode = FFA
 num_bots = 10
 num_zombies = 0

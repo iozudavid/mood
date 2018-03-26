@@ -1,7 +1,6 @@
 package com.knightlore;
 
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.FileReader;
 
 import com.knightlore.game.GameMode;
@@ -9,6 +8,12 @@ import com.knightlore.game.manager.GameManager;
 import com.knightlore.network.ConnectionDetails;
 import com.knightlore.utils.Utils;
 
+/**
+ * A parser for the game config file located at res/config.txt
+ * 
+ * @author James
+ *
+ */
 public class ConfigParser {
     
     private static final String PREFIX = "//";
@@ -18,6 +23,10 @@ public class ConfigParser {
         
     }
     
+    /**
+     * Parses the config file located at res/config.txt. This sets various
+     * important game variables before the game is loaded.
+     */
     public static void doParse() {
         
         try (FileReader file = new FileReader(filePath); BufferedReader reader = new BufferedReader(file)) {
@@ -59,7 +68,7 @@ public class ConfigParser {
         
         switch (keyStr) {
         case "dest_port":
-            if(GameSettings.isServer()) {
+            if (GameSettings.isServer()) {
                 break;
             }
             try {
@@ -108,7 +117,7 @@ public class ConfigParser {
             }
             break;
         case "listen_port":
-            if(GameSettings.isClient()) {
+            if (GameSettings.isClient()) {
                 break;
             }
             try {
