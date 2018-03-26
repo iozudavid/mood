@@ -181,8 +181,9 @@ public class GameEngine implements Runnable {
             this.display.setHud(hud);
             this.display.setMinimap(minimap);
             this.display.setRenderer(renderer);
-            this.guiState = GUIState.InGame;
+            
         }
+        this.guiState = GUIState.InGame;
         
         // start the lobby
         world.getGameManager().startLobby();
@@ -271,7 +272,7 @@ public class GameEngine implements Runnable {
                 synchronized (this.gameObjectManager) {
                     gameObjectManager.updateObjects();
                 }
-                if (world != null) {
+                if (guiState == GUIState.InGame && world != null) {
                     world.update();
                     GameFeed.getInstance().update();
                 }

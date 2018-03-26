@@ -30,7 +30,7 @@ import com.knightlore.utils.Vector2D;
  * An entity is any physical object that exists in the game world that is not a
  * tile.
  * 
- * @author Joe Ellis
+ * @authors All
  *
  */
 public abstract class Entity extends NetworkObject implements IMinimapObject, TickListener {
@@ -341,7 +341,6 @@ public abstract class Entity extends NetworkObject implements IMinimapObject, Ti
     
     @Override
     public synchronized ByteBuffer serialize() {
-        // TODO: serialise objects as well as primitives
         ByteBuffer buf = newByteBuffer("deserialize");
         buf.putDouble(size);
         buf.putDouble(position.getX());

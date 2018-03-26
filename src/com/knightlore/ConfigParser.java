@@ -1,7 +1,6 @@
 package com.knightlore;
 
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.FileReader;
 
 import com.knightlore.game.GameMode;
@@ -10,7 +9,7 @@ import com.knightlore.network.ConnectionDetails;
 import com.knightlore.utils.Utils;
 
 /**
- * A parser for the game config file
+ * A parser for the game config file located at res/config.txt
  * 
  * @author James
  *
