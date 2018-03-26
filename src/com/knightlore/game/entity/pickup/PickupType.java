@@ -1,5 +1,11 @@
 package com.knightlore.game.entity.pickup;
 
+/**
+ * Used by the pickup manager, room generator and pickup tile to
+ * specify or identify the appropriate pickup item.
+ * @author Thomas
+ *
+ */
 public enum PickupType {
     SHOTGUN("Shotgun"),
     PISTOL("Pistol"),
