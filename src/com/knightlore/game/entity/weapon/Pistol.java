@@ -24,7 +24,7 @@ public class Pistol extends Weapon {
     private long nextFireTime;
 
     public Pistol() {
-        super(WeaponSprite.SHOTGUN, false, (int) (GameEngine.UPDATES_PER_SECOND * 0.25D), SHOOT_SFX);
+        super(WeaponSprite.SHOTGUN, (int) (GameEngine.UPDATES_PER_SECOND * 0.25D), SHOOT_SFX);
     }
 
     @Override

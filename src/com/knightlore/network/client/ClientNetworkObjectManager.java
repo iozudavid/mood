@@ -274,7 +274,7 @@ public class ClientNetworkObjectManager extends NetworkObjectManager {
         // Let the server know who we are.
         NetworkUtils.putStringIntoBuf(buf,
                 this.myPlayer.getObjectId().toString());
-        NetworkUtils.putStringIntoBuf(buf, GameSettings.PLAYER_NAME);
+        NetworkUtils.putStringIntoBuf(buf, GameSettings.playerName);
         this.sendToServer.send(buf);
     }
 

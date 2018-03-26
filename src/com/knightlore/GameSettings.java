@@ -11,14 +11,13 @@ public final class GameSettings {
 
     static boolean client = false;
     static boolean server = false;
-
-    public static final int DEFAULT_BLOCKINESS = 10;
-    public static int desiredBlockiness = DEFAULT_BLOCKINESS;
+    
+    public static int desiredBlockiness = 10;
     public static int actualBlockiness = desiredBlockiness;
 
-    public static String PLAYER_NAME = "Client Player";
+    public static String playerName = "Client Player";
 
-    public static boolean MOTION_BOB = true;
+    public static boolean motionBob = true;
 
     public static int mapWidth = 16;
 

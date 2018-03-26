@@ -18,7 +18,6 @@ import com.knightlore.game.area.generation.MapType;
 import com.knightlore.game.entity.Entity;
 import com.knightlore.utils.Vector2D;
 import com.knightlore.utils.physics.RaycastHit;
-import com.knightlore.utils.physics.RaycastHitType;
 
 /**
  * Representation of the World in the Game. Subclass this to make new worlds.
@@ -173,7 +172,7 @@ public abstract class GameWorld {
             x = (int) p.getX();
             y = (int) p.getY();
             if (map.getTile(x, y).blockLOS()) {
-                return new RaycastHit(RaycastHitType.WALL, p, null);
+                return new RaycastHit(null);
             }
             
             double sqrDist;
@@ -189,7 +188,7 @@ public abstract class GameWorld {
                 sqrSize = player.getSize() * player.getSize();
                 sqrDist = player.getPosition().sqrDistTo(p);
                 if (sqrDist < sqrSize) {
-                    return new RaycastHit(RaycastHitType.PLAYER, p, player);
+                    return new RaycastHit(player);
                 }
             }
             // now against entities
@@ -203,13 +202,13 @@ public abstract class GameWorld {
                 sqrSize = ent.getSize() * ent.getSize();
                 sqrDist = ent.getPosition().sqrDistTo(p);
                 if (sqrDist < sqrSize) {
-                    return new RaycastHit(RaycastHitType.ENTITY, p, ent);
+                    return new RaycastHit(ent);
                 }
             }
             p = p.add(step);
         }
         
-        return new RaycastHit(RaycastHitType.NOTHING, Vector2D.ZERO, null);
+        return new RaycastHit(null);
     }
     
     public GameManager getGameManager() {

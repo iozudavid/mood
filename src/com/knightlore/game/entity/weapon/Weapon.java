@@ -21,16 +21,21 @@ public abstract class Weapon {
     // sound. Sound effects for shots fired closer than this will have their
     // volume scaled linearly.
     private static final float SHOOT_SFX_CUTOFF_DISTANCE = 10;
+    private static final double WEAPON_BOB_SPEED = 2;
+    private static final int INERTIA_COEFF_X = 125;
+    private static final int INERTIA_COEFF_Y = 35;
     
+    private final SoundResource shootSFX;
+    private final int fireRate;
+    private int timer;
     protected Graphic graphic;
-    protected boolean automatic;
-    protected int fireRate, timer;
     
-    private SoundResource shootSFX;
+    private final int weaponBobX = GameSettings.motionBob ? 20 : 0;
+    private final int weaponBobY = GameSettings.motionBob ? 30 : 0;
     
-    Weapon(Graphic graphic, boolean automatic, int fireRate, SoundResource shootSFX) {
+    
+    Weapon(Graphic graphic, int fireRate, SoundResource shootSFX) {
         this.graphic = graphic;
-        this.automatic = automatic;
         this.fireRate = fireRate;
         this.shootSFX = shootSFX;
     }
@@ -58,7 +63,7 @@ public abstract class Weapon {
         // Determine volume to play sound effect based on distance from us.
         Vector2D ourPos = GameEngine.getSingleton().getCamera().getPosition();
         Vector2D theirPos = shooter.getPosition();
-        float distance = (float) ourPos.distance(theirPos);
+        float distance = (float)ourPos.distance(theirPos);
         // This must be a decimal from 0 to 1.
         float scale = 1 - (distance / SHOOT_SFX_CUTOFF_DISTANCE);
         SoundManager soundManager = GameEngine.getSingleton().getSoundManager();
@@ -68,10 +73,6 @@ public abstract class Weapon {
             soundManager.playConcurrently(shootSFX, volume);
         }
     }
-    
-    private int weaponBobX = GameSettings.MOTION_BOB ? 20 : 0, weaponBobY = GameSettings.MOTION_BOB ? 30 : 0;
-    private double weaponBobSpeed = 2;
-    private int inertiaCoeffX = 125, inertiaCoeffY = 35;
     
     /**
      * Draws this weapon on the player's HUD. And applies weapon bob.
@@ -106,8 +107,8 @@ public abstract class Weapon {
         int xx = x + (pix.getWidth() - width) / 2;
         int yy = pix.getHeight() - height + 28 * SCALE;
         
-        int xOffset = (int) (Math.cos(distanceTraveled * weaponBobSpeed) * weaponBobX);
-        int yOffset = (int) (Math.abs(Math.sin(distanceTraveled * weaponBobSpeed) * weaponBobY)) - 85;
+        int xOffset = (int) (Math.cos(distanceTraveled * WEAPON_BOB_SPEED) * weaponBobX);
+        int yOffset = (int) (Math.abs(Math.sin(distanceTraveled * WEAPON_BOB_SPEED) * weaponBobY)) - 85;
         
         if (muzzleFlash) {
             pix.fillOval(0xFCC07F, xx + xOffset + inertiaX + width / 4, yy + yOffset + inertiaY + height / 4, width / 2,
@@ -136,11 +137,11 @@ public abstract class Weapon {
     }
     
     public int getInertiaCoeffX() {
-        return inertiaCoeffX;
+        return INERTIA_COEFF_X;
     }
     
     public int getInertiaCoeffY() {
-        return inertiaCoeffY;
+        return INERTIA_COEFF_Y;
     }
     
     /**

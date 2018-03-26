@@ -26,12 +26,12 @@ public class Camera implements IRenderable {
     /**
      * How much should the camera bob when the player moves?
      */
-    private static final double MOTION_BOB_AMOUNT = GameSettings.MOTION_BOB ? 15.0D : 0;
+    private static final double MOTION_BOB_AMOUNT = GameSettings.motionBob ? 15.0D : 0;
 
     /**
      * How fast should the camera bob when the player moves?
      */
-    private static final double MOTION_BOB_SPEED = GameSettings.MOTION_BOB ? 1.5D : 0;
+    private static final double MOTION_BOB_SPEED = GameSettings.motionBob ? 1.5D : 0;
 
     /**
      * The entity that this camera is tracking.

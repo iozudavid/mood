@@ -18,8 +18,8 @@ public class PlayerManager {
     
     private final List<Player> players = new LinkedList<>();
     
-    private ConcurrentLinkedQueue<Player> playersToAdd = new ConcurrentLinkedQueue<Player>();
-    private ConcurrentLinkedQueue<Player> playersToRemove = new ConcurrentLinkedQueue<Player>();
+    private final ConcurrentLinkedQueue<Player> playersToAdd = new ConcurrentLinkedQueue<>();
+    private final ConcurrentLinkedQueue<Player> playersToRemove = new ConcurrentLinkedQueue<>();
     
     public PlayerManager() {
     }
@@ -28,8 +28,7 @@ public class PlayerManager {
      * Queues a new Player to be added to the manager, will actually be added
      * next world update.
      * 
-     * @param pl
-     *            the Player to add
+     * @param pl The Player to add
      */
     public void addPlayer(Player pl) {
         playersToAdd.offer(pl);
@@ -39,8 +38,7 @@ public class PlayerManager {
      * Queues a new Player to be removed from the manager, will actually be
      * added next world update.
      * 
-     * @param pl
-     *            the Player to remove
+     * @param pl The Player to remove
      */
     public void removePlayer(Player pl) {
         playersToRemove.offer(pl);
@@ -51,7 +49,6 @@ public class PlayerManager {
     }
     
     /**
-     * 
      * @returns How many players there are in total
      */
     public int numPlayer() {
@@ -59,9 +56,7 @@ public class PlayerManager {
     }
     
     /**
-     * 
-     * @param t
-     *            The Team to search for
+     * @param t The Team to search for
      * @returns How many players exist on that team
      */
     public synchronized int numPlayers(Team t) {
