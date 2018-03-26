@@ -28,6 +28,9 @@ public abstract class GameObject {
         this.position = position;
     }
 
+    /**
+     * Adds this object to the GameObjectMaanager
+     */
     public void init() {
         exists = true;
         getGOM().addGameObject(this);

@@ -1,5 +1,10 @@
 package com.knightlore;
 
+/**
+ * Data holder class for global game settings
+ * @author James
+ *
+ */
 public final class GameSettings {
 
     public static final boolean FULLSCREEN = false;
