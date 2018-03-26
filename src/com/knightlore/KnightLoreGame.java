@@ -2,6 +2,11 @@ package com.knightlore;
 
 import com.knightlore.engine.GameEngine;
 
+/**
+ * Client game entry point.
+ * @author James
+ *
+ */
 public class KnightLoreGame {
 
     public static void main(String[] args) {

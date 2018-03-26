@@ -2,8 +2,14 @@ package com.knightlore;
 
 import com.knightlore.engine.GameEngine;
 
+/**
+ * Server entry point.
+ * 
+ * @author James
+ *
+ */
 public class KnightLoreServer {
-
+    
     public static void main(String[] args) {
         System.out.println("Starting Server...");
         GameSettings.server = true;
@@ -16,5 +22,5 @@ public class KnightLoreServer {
         engine.startGame();
         engine.start();
     }
-
+    
 }

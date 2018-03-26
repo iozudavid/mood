@@ -6,6 +6,13 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import javax.imageio.ImageIO;
 
+/**
+ * The second half of the graphics pipeline. This should be used as a command
+ * line tool for creating sprite sheets.
+ * 
+ * @author James
+ *
+ */
 public class SpriteSheetMaker {
     
     private static String baseFileName;
